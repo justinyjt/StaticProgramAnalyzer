@@ -1,0 +1,57 @@
+name: CI for Cmake Project - MacOS
+run-name: ${{ github.actor }} is running MacOS CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  schedule:
+    - cron: "0 23 * * *"
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  lint:
+    name: MacOS Lint
+    runs-on: windows-latest
+    timeout-minutes: 3
+    strategy:
+      fail-fast: true
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Run cpplint linter to check code styles
+        working-directory: Team35/Code35
+        run: |
+          pip install cpplint; bash ./linter.sh
+
+  build:
+    name: MacOS Build
+    runs-on: macos-latest
+    timeout-minutes: 3
+    strategy:
+      fail-fast: true
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create Build Environment
+        run: cmake -E make_directory ${{runner.workspace}}/build
+
+      - name: Configure CMake
+        shell: bash
+        working-directory: ${{runner.workspace}}/build
+        run: cmake $GITHUB_WORKSPACE/Team35/Code35/ -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+
+      - name: Build Project
+        working-directory: ${{runner.workspace}}/build
+        shell: bash
+        run: cmake --build . --config $BUILD_TYPE

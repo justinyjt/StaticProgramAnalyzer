@@ -1,5 +1,5 @@
-class TNode
-{
-public:
+#pragma once
 
+class TNode {
+ public:
 };
