@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "PKB.h"
+#include "pkb/PKB.h"
 
 int DesignExtractor() {
     return 0;

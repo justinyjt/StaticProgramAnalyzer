@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "Parser.h"
-#include "TNode.h"
+#include "commons/TNode.h"
 
 int Parse() {
     return 0;

@@ -2,9 +2,11 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_set>
+#include <utility>
 
 #include "PKB.h"
-#include "TNode.h"
+#include "commons/TNode.h"
 
 int PKB::setProcToAST(PROC p, TNode* r) {
     return 0;
