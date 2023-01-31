@@ -1,14 +1,12 @@
 #pragma once
 
-#include<stdio.h>
+#include <stdio.h>
 #include <iostream>
 #include <string>
 #include <vector>
 
 #include "pkb/db/RelationshipTable.h"
 #include "commons/types.h"
-
-
 
 typedef int PROC;
 
