@@ -1,5 +1,5 @@
-#ifndef SPA_TYPES_H
-#define SPA_TYPES_H
+#ifndef TEAM35_CODE35_SRC_SPA_SRC_COMMONS_TYPES_H_
+#define TEAM35_CODE35_SRC_SPA_SRC_COMMONS_TYPES_H_
 
 #include <string>
 
@@ -10,4 +10,5 @@ typedef int STMT_NUM;
 enum class StmtNameRelationship {
     Modifies, Uses, Calls, Reads, Prints, None
 };
-#endif //SPA_TYPES_H
+
+#endif  // TEAM35_CODE35_SRC_SPA_SRC_COMMONS_TYPES_H_

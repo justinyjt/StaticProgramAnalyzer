@@ -1,5 +1,5 @@
-#ifndef INC_22S2_CP_SPA_TEAM_35_RELATIONSHIPTABLE_H
-#define INC_22S2_CP_SPA_TEAM_35_RELATIONSHIPTABLE_H
+#ifndef TEAM35_CODE35_SRC_SPA_SRC_PKB_DB_RELATIONSHIPTABLE_H_
+#define TEAM35_CODE35_SRC_SPA_SRC_PKB_DB_RELATIONSHIPTABLE_H_
 
 #include <unordered_map>
 #include <unordered_set>
@@ -7,8 +7,7 @@
 
 struct hash_pair {
     template <class T1, class T2>
-    size_t operator()(const std::pair<T1, T2>& p) const
-    {
+    size_t operator()(const std::pair<T1, T2>& p) const {
         auto hash1 = std::hash<T1>{}(p.first);
         auto hash2 = std::hash<T2>{}(p.second);
 
@@ -27,8 +26,10 @@ class RelationshipTable {
     std::unordered_map<TValue, std::unordered_set<TKey>> valueKeyMap;
     std::unordered_set<std::pair<TKey, TValue>, hash_pair> keyValuePairSet;
 
-    inline static const std::unordered_set<TValue> emptyValSet = std::unordered_set<TValue>();
-    inline static const std::unordered_set<TKey> emptyKeySet = std::unordered_set<TKey>();
+    static const std::unordered_set<TValue> emptyValSet =
+            std::unordered_set<TValue>();
+    static const std::unordered_set<TKey> emptyKeySet =
+            std::unordered_set<TKey>();
 
  public:
     const std::unordered_set<TKey> &getKeys(TValue val) const {
@@ -68,4 +69,4 @@ class RelationshipTable {
         return true;
     }
 };
-#endif //INC_22S2_CP_SPA_TEAM_35_RELATIONSHIPTABLE_H
+#endif  // TEAM35_CODE35_SRC_SPA_SRC_PKB_DB_RELATIONSHIPTABLE_H_

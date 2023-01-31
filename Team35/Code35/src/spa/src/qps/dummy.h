@@ -1,14 +1,7 @@
-//
-// Created by Justin Yip on 31/1/23.
-//
-
-#ifndef SPA_DUMMY_H
-#define SPA_DUMMY_H
-
+#ifndef TEAM35_CODE35_SRC_SPA_SRC_QPS_DUMMY_H_
+#define TEAM35_CODE35_SRC_SPA_SRC_QPS_DUMMY_H_
 
 class dummy {
-
 };
 
-
-#endif //SPA_DUMMY_H
+#endif  // TEAM35_CODE35_SRC_SPA_SRC_QPS_DUMMY_H_

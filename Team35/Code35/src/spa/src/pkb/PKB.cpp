@@ -7,22 +7,11 @@
 
 #include "PKB.h"
 #include "commons/TNode.h"
-#include "commons/types.h"
 
-//int PKB::setProcToAST(PROC p, TNode* r) {
-//    return 0;
-//}
-//
-//TNode* PKB::getRootAST(PROC p) {
-//    return nullptr;
-//}
+int PKB::setProcToAST(PROC p, TNode* r) {
+    return 0;
+}
 
-//bool getStmtNameRelationshipTable(StmtNameRelationship relationshipType) {
-//
-//}
-//
-//bool addStmtNameRelationships(StmtNameRelationship relationshipType,
-//                              std::unordered_set<std::pair<STMT_NUM, ENT_NAME>> STMT_NAME_set) {
-//
-//}
-
+TNode* PKB::getRootAST(PROC p) {
+    return nullptr;
+}
