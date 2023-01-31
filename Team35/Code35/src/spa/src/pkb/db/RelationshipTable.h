@@ -26,9 +26,9 @@ class RelationshipTable {
     std::unordered_map<TValue, std::unordered_set<TKey>> valueKeyMap;
     std::unordered_set<std::pair<TKey, TValue>, hash_pair> keyValuePairSet;
 
-    static const std::unordered_set<TValue> emptyValSet =
+    inline static const std::unordered_set<TValue> emptyValSet =
             std::unordered_set<TValue>();
-    static const std::unordered_set<TKey> emptyKeySet =
+    inline static const std::unordered_set<TKey> emptyKeySet =
             std::unordered_set<TKey>();
 
  public:
