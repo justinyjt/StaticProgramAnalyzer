@@ -5,26 +5,31 @@
 #include <string>
 #include <vector>
 
-#include "pkb/db/RelationshipTable.h"
 #include "commons/types.h"
+#include "pkb/db/EntityTable.h"
+#include "pkb/db/RelationshipTable.h"
+#include "pkb/db/PatternTable.h"
 
 typedef int PROC;
 
 class TNode;
 
-class VarTable;  // no need to #include "VarTable.h" as all I need is pointer
-
 class PKB {
  public:
-    static VarTable* varTable;
-    static int setProcToAST(PROC p, TNode* r);
-    static TNode* getRootAST(PROC p);
+    const EntityTable<ENT_NAME> &getEntityTable(Entity entityType) const;
+    const RelationshipTable<STMT_NUM, ENT_NAME> &getStmtNameRelationshipTable(StmtNameRelationship tableType) const;
+    const RelationshipTable<ENT_NAME, ENT_NAME> &getNameNameRelationshipTable(NameNameRelationship tableType) const;
+    const PatternTable &getPatternTable() const;
 
+    RelationshipTable<STMT_NUM, ENT_NAME> &getStmtNameRelationshipTable(StmtNameRelationship tableType);
+    RelationshipTable<ENT_NAME, ENT_NAME> &getNameNameRelationshipTable(NameNameRelationship tableType);
+    EntityTable<ENT_NAME> &getEntityTable(Entity entityType);
+    PatternTable &getPatternTable();
+
+ private:
     RelationshipTable<STMT_NUM, ENT_NAME> modifiesStmtNameTable;
     RelationshipTable<STMT_NUM, ENT_NAME> usesStmtNameTable;
-    RelationshipTable<STMT_NUM, ENT_NAME> callsStmtNameTable;
-    RelationshipTable<STMT_NUM, ENT_NAME> readsStmtNameTable;
-    RelationshipTable<STMT_NUM, ENT_NAME> printsStmtNameTable;
-    bool checkRelationshipExists(StmtNameRelationship tableType);
-//    const RelationshipTable<STMT_NUM, ENT_NAME> &getStmtNameRelationshipTable(StmtNameRelationship tableType) const;
+    EntityTable<ENT_NAME> variableTable;
+    EntityTable<ENT_NAME> constantTable;
+    PatternTable patternTable;
 };
