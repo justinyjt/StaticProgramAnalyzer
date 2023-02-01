@@ -8,10 +8,7 @@
 #include <unordered_set>
 #include <utility>
 
-
-
 #include "commons/TNode.h"
-
 
 const EntityTable<ENT_NAME> &PKB::getEntityTable(Entity entityType) const {
     switch (entityType) {

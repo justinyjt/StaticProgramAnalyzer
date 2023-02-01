@@ -1,5 +1,6 @@
 #ifndef TEAM35_CODE35_SRC_SPA_SRC_PKB_DB_PATTERNTABLE_H_
 #define TEAM35_CODE35_SRC_SPA_SRC_PKB_DB_PATTERNTABLE_H_
+
 #include <unordered_map>
 #include <string>
 #include "commons/types.h"

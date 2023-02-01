@@ -6,23 +6,16 @@
 #include <vector>
 
 #include "commons/types.h"
-
 #include "pkb/db/EntityTable.h"
 #include "pkb/db/RelationshipTable.h"
 #include "pkb/db/PatternTable.h"
-
-
 
 typedef int PROC;
 
 class TNode;
 
-class VarTable;  // no need to #include "VarTable.h" as all I need is pointer
-
 class PKB {
  public:
-    static VarTable* varTable;
-
     const EntityTable<ENT_NAME> &getEntityTable(Entity entityType) const;
     const RelationshipTable<STMT_NUM, ENT_NAME> &getStmtNameRelationshipTable(StmtNameRelationship tableType) const;
     const RelationshipTable<ENT_NAME, ENT_NAME> &getNameNameRelationshipTable(NameNameRelationship tableType) const;
