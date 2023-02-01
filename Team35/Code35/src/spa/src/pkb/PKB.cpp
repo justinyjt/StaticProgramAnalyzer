@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_set>
 #include <utility>
+#include <assert.h>
 
 #include "PKB.h"
 #include "commons/TNode.h"
