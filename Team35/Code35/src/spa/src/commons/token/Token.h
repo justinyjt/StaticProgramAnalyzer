@@ -57,6 +57,7 @@ class Token {
       String,
 
       // misc
+      NewLine,
       EndOfFile
     };
     Token(Lexeme lexeme, Tag tag, LineNumber line_number);
