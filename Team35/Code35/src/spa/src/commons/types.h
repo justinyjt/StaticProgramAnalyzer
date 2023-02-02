@@ -3,11 +3,18 @@
 
 #include <string>
 #include <unordered_set>
+#include <unordered_map>
+#include <utility>
 
 typedef  std::string ENT_NAME;
 typedef int STMT_NUM;
-typedef std::unordered_set<STMT_NUM> STMT_SET;
+typedef std::pair<STMT_NUM, ENT_NAME> STMT_ENT;
+typedef std::pair<ENT_NAME , ENT_NAME> ENT_ENT;
 
+typedef std::unordered_set<STMT_NUM> STMT_SET;
+typedef std::unordered_set<ENT_NAME> ENT_SET;
+typedef std::unordered_set<STMT_ENT> STMT_ENT_SET;
+typedef std::unordered_set<ENT_ENT> ENT_ENT_SET;
 
 enum class StmtNameRelationship {
     Modifies, Uses, Calls, Reads, Prints, None
