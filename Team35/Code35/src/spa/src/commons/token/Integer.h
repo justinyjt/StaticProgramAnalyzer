@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "commons/token/Token.h"
 
 class Integer : Token {
