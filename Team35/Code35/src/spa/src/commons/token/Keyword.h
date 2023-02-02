@@ -1,6 +1,6 @@
 #pragma once
 
-#include "commons/token/Token.h"
+#include "Token.h"
 
 class Keyword : Token {
  public:

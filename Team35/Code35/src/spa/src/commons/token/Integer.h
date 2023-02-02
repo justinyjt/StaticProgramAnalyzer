@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "commons/token/Token.h"
+#include "Token.h"
 
 class Integer : Token {
  public:
