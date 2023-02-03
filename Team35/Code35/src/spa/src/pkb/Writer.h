@@ -4,7 +4,7 @@
 
 #include <string>
 #include <unordered_map>
-#include <utility>
+
 class Writer {
  public:
     explicit Writer(PKB &);
@@ -16,8 +16,4 @@ class Writer {
 
  private:
     PKB &pkb;
-
-    bool addEntityToTable(EntityTable<ENT_NAME> &table, ENT_NAME entity);
-    template<typename K, typename V>
-    bool addRelationshipToTable(RelationshipTable<K, V> &table, std::pair<K, V> pair);
 };

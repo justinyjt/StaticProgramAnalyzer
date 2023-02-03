@@ -52,4 +52,16 @@ PatternTable &PKB::getPatternTable() {
     return const_cast<PatternTable &>(pkbPtr->getPatternTable());
 }
 
+bool PKB::addEntityToTable(Entity entityType, ENT_NAME entity) {
+    EntityTable<ENT_NAME> &table = this->getEntityTable(entityType);
+    return table.addEntity(entity);
+}
+bool PKB::addRelationshipToTable(StmtNameRelationship tableType, STMT_ENT stmtEnt) {
+    RelationshipTable<STMT_NUM, ENT_NAME> &table = this->getStmtNameRelationshipTable(tableType);
+    return table.insertPair(stmtEnt.first, stmtEnt.second);
+}
+bool PKB::addPattern(STMT_NUM stmtNum, std::string pattern) {
+    return patternTable.addPattern(stmtNum, pattern);
+}
+
 
