@@ -1,8 +1,8 @@
-#include "Writer.h"
+#include "PKBWriter.h"
 
-Writer::Writer(PKB &pkb) : pkb(pkb) {}
+PKBWriter::PKBWriter(PKB &pkb) : pkb(pkb) {}
 
-bool Writer::addEntities(Entity entity, ENT_SET entitySet) {
+bool PKBWriter::addEntities(Entity entity, ENT_SET entitySet) {
     for (auto ent : entitySet) {
         if (!pkb.addEntityToTable(entity, ent)) {
             return false;
@@ -11,7 +11,7 @@ bool Writer::addEntities(Entity entity, ENT_SET entitySet) {
     return true;
 }
 
-bool Writer::addStmtEntityRelationships(StmtNameRelationship tableType, STMT_ENT_SET set) {
+bool PKBWriter::addStmtEntityRelationships(StmtNameRelationship tableType, STMT_ENT_SET set) {
     for (auto stmtEnt : set) {
         if (!pkb.addRelationshipToTable(tableType, stmtEnt)) {
             return false;
@@ -20,7 +20,7 @@ bool Writer::addStmtEntityRelationships(StmtNameRelationship tableType, STMT_ENT
     return true;
 }
 
-bool Writer::addPatterns(std::unordered_map<STMT_NUM, std::string> patternMap) {
+bool PKBWriter::addPatterns(std::unordered_map<STMT_NUM, std::string> patternMap) {
     std::unordered_map<STMT_NUM , std::string>:: iterator p;
     for (p = patternMap.begin(); p != patternMap.end(); p++) {
         if (!pkb.addPattern(p->first, p -> second)) {

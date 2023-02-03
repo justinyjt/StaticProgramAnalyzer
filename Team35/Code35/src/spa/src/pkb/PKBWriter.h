@@ -5,9 +5,9 @@
 #include <string>
 #include <unordered_map>
 
-class Writer {
+class PKBWriter {
  public:
-    explicit Writer(PKB &);
+    explicit PKBWriter(PKB &);
 
     bool addEntities(Entity entity, ENT_SET entitySet);
     bool addStmtEntityRelationships(StmtNameRelationship tableType, STMT_ENT_SET set);

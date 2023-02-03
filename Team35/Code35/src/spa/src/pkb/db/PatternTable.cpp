@@ -5,6 +5,7 @@ bool PatternTable::addPattern(STMT_NUM stmt, std::string pattern) {
     return true;
 }
 
+
 STMT_SET PatternTable::getExactPatternMatch(std::string pattern) const {
     STMT_SET result;
 
