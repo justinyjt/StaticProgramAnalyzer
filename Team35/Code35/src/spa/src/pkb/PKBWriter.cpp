@@ -20,6 +20,16 @@ bool PKBWriter::addStmtEntityRelationships(StmtNameRelationship tableType, STMT_
     return true;
 }
 
+bool PKBWriter::addEntityEntityRelationships(NameNameRelationship tableType, ENT_ENT_SET set) {
+    for (auto entEnt : set) {
+        if (!pkb.addRelationshipToTable(tableType, entEnt)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
 bool PKBWriter::addPatterns(std::unordered_map<STMT_NUM, std::string> patternMap) {
     std::unordered_map<STMT_NUM , std::string>:: iterator p;
     for (p = patternMap.begin(); p != patternMap.end(); p++) {
