@@ -4,7 +4,7 @@
 
 #include "Token.h"
 
-class Character : Token {
+class Character : public Token {
  public:
     Character(char ascii_lexeme, LineNumber line_number);
     Character(char ascii_lexeme, Tag tag, LineNumber line_number);
