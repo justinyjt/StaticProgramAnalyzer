@@ -4,9 +4,9 @@
 #include <cctype>
 #include <utility>
 
+#include "commons/lexer/exception/LexerException.h"
 #include "commons/token/Integer.h"
 #include "commons/util/ConversionUtil.h"
-#include "LexerException.h"
 
 Lexer::Lexer(Source source, const KeywordList &keyword_list, const CharacterList &character_list)
     : source_(std::move(source)), keyword_map_(), character_map_() {
