@@ -29,8 +29,8 @@ std::unique_ptr<ILexer> LexerFactory::CreateSimpleLexer(Source source) {
     CharacterList character_list{
         Character('(', Token::Tag::LParen),
         Character(')', Token::Tag::RParen),
-        Character('{', Token::Tag::LBraces),
-        Character('}', Token::Tag::RBraces),
+        Character('{', Token::Tag::LBrace),
+        Character('}', Token::Tag::RBrace),
         Character(';', Token::Tag::SemiColon),
         Character(',', Token::Tag::Comma),
         Character('+', Token::Tag::Plus),

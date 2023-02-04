@@ -8,5 +8,3 @@ TEST_CASE("1st Test") {
 
     RequireTrue(1 == 1);
 }
-
-

@@ -30,29 +30,32 @@ Token Lexer::Scan() {
     if (IsEOF()) {
         return Token(Token::Tag::EndOfFile, GetCurrentLineNumber());
     }
-    char character = PeekChar();
-    while (!IsEOF() && IsControlOrSpace(character)) {
-        character = ReadChar();
+    while (!IsEOF() && IsControlOrSpace(PeekChar())) {
+        SkipChar();
     }
 
     if (IsEOF()) {
         return Token(Token::Tag::EndOfFile, GetCurrentLineNumber());
     }
 
+    char character = ReadChar();
     if (include_operator_) {
         switch (character) {
             case '&':
                 if (ReadChar('&')) {
                     return Token("&&", Token::Tag::LogicalAnd, GetCurrentLineNumber());
                 }
+                break;
             case '|':
                 if (ReadChar('|')) {
                     return Token("||", Token::Tag::LogicalOr, GetCurrentLineNumber());
                 }
+                break;
             case '=':
                 if (ReadChar('=')) {
                     return Token("==", Token::Tag::Equivalence, GetCurrentLineNumber());
                 }
+                break;
             case '!':
                 if (ReadChar('=')) {
                     return Token("!=", Token::Tag::NotEqual, GetCurrentLineNumber());

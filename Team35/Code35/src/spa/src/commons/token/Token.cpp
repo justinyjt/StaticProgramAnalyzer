@@ -29,3 +29,8 @@ LineNumber Token::GetLineNumber() const {
 bool Token::operator==(const Token &rhs) const {
     return this->lexeme_ == rhs.lexeme_ && this->tag_ == rhs.tag_ && this->line_number_ == rhs.line_number_;
 }
+
+std::ostream &operator<<(std::ostream &output, const Token &token) {
+    output << "Token(" << token.lexeme_ << ", " << token.line_number_ << ")";
+    return output;
+}

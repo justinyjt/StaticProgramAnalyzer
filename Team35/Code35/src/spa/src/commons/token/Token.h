@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <iostream>
 #include <string>
 
 #include "commons/types.h"
@@ -60,8 +61,8 @@ class Token {
         // other symbols
         LParen,
         RParen,
-        LBraces,
-        RBraces,
+        LBrace,
+        RBrace,
         SemiColon,
         Underscore,
         DoubleQuotes,
@@ -88,6 +89,7 @@ class Token {
     LineNumber GetLineNumber() const;
 
     bool operator==(Token const &rhs) const;
+    friend std::ostream &operator<<(std::ostream &output, const Token &token);
 
  private:
     Lexeme lexeme_;
