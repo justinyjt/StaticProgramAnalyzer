@@ -25,3 +25,7 @@ Token::Tag Token::GetTag() const {
 LineNumber Token::GetLineNumber() const {
     return line_number_;
 }
+
+bool Token::operator==(const Token &rhs) const {
+    return this->lexeme_ == rhs.lexeme_ && this->tag_ == rhs.tag_ && this->line_number_ == rhs.line_number_;
+}

@@ -72,6 +72,8 @@ class Token {
     Tag GetTag() const;
     LineNumber GetLineNumber() const;
 
+    bool operator==(Token const &rhs) const;
+
  private:
     Lexeme lexeme_ = "";
     Tag tag_;
