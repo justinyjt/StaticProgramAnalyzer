@@ -8,6 +8,7 @@ typedef std::uint32_t LineNumber;
 
 class Token {
  public:
+    static const LineNumber null_line_number_ = 0;
     enum class Tag {
       // keywords
       Keyword,
@@ -60,14 +61,19 @@ class Token {
       NewLine,
       EndOfFile
     };
-    Token(Lexeme lexeme, Tag tag, LineNumber line_number);
+
+    explicit Token(Tag tag);
+    Token(Lexeme lexeme, Tag tag);
     Token(Tag tag, LineNumber line_number);
-    Lexeme GetLexeme();
-    Tag GetTag();
-    LineNumber GetLineNumber();
+    Token(Lexeme lexeme, Tag tag, LineNumber line_number);
+    Token(Token &token, LineNumber line_number);
+
+    Lexeme GetLexeme() const;
+    Tag GetTag() const;
+    LineNumber GetLineNumber() const;
 
  private:
     Lexeme lexeme_ = "";
     Tag tag_;
-    LineNumber line_number_;
+    LineNumber line_number_ = null_line_number_;
 };
