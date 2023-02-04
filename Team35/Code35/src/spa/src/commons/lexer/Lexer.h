@@ -17,16 +17,20 @@ typedef std::list<Character> CharacterList;
 
 class Lexer : public ILexer {
  public:
-    explicit Lexer(Source source, KeywordList keyword_list, CharacterList character_list);
+    explicit Lexer(Source source, const KeywordList &keyword_list, const CharacterList &character_list);
     Token Scan();
     ~Lexer() = default;
 
  protected:
+    LineNumber GetCurrentLineNumber() const;
     char ReadChar();
     bool ReadChar(char c);
     char PeekChar();
-    char PeekNextChar();
+    void UnreadChar();
     void SkipChar();
+    bool IsEOF() const;
+    void Reserve(const Keyword &keyword);
+    void Reserve(const Character &character);
 
  private:
     Source source_;
@@ -35,16 +39,15 @@ class Lexer : public ILexer {
     KeywordMap keyword_map_;
     CharacterMap character_map_;
 
-    Token ScanNextName(char first_char);
-    Token ScanNextInteger(char first_char);
+    Token ScanNextName();
+    Token ScanNextInteger();
     Token ScanNextString();
-    Token ScanNextCharacter(char first_char);
+    Token ScanNextCharacter();
 
-    bool IsNameStart(char c);
-    bool IsNamePart(char c);
-    bool IsDigit(char c);
-    bool IsDoubleQuotes(char c);
-    bool IsNewLine(char c);
-    bool IsControlOrSpace(char c);
-    bool IsEOF();
+    bool IsNameStart(char c) const;
+    bool IsNamePart(char c) const;
+    bool IsDigit(char c) const;
+    bool IsStringStartEnd(char c) const;
+    bool IsNewLine(char c) const;
+    bool IsControlOrSpace(char c) const;
 };

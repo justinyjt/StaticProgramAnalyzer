@@ -1,91 +1,101 @@
 #include "Lexer.h"
 
+#include <cassert>
 #include <cctype>
 #include <utility>
 
 #include "commons/token/Integer.h"
 #include "commons/util/ConversionUtil.h"
+#include "LexerException.h"
 
-Lexer::Lexer(Source source, KeywordList keyword_list, CharacterList character_list)
-    : source_(source), keyword_map_(), character_map_() {
-    for (auto keyword : keyword_list) {
-        keyword_map_.insert(std::make_pair(keyword.GetLexeme(), keyword));
+Lexer::Lexer(Source source, const KeywordList &keyword_list, const CharacterList &character_list)
+    : source_(std::move(source)), keyword_map_(), character_map_() {
+    for (const auto &keyword : keyword_list) {
+        Reserve(keyword);
     }
-    for (auto character : character_list) {
-        character_map_.insert(std::make_pair(character.GetCharacter(), character));
+    for (const auto &character : character_list) {
+        Reserve(character);
     }
 }
 
 Token Lexer::Scan() {
     if (IsEOF()) {
-        return Token(Token::Tag::EndOfFile, current_line_);
+        return Token(Token::Tag::EndOfFile, GetCurrentLineNumber());
     }
     char character = PeekChar();
-    while (true) {
-        if (IsEOF()) {
-            return Token(Token::Tag::EndOfFile, current_line_);
-        } else if (IsNewLine(character)) {
-            current_line_++;
-        } else if (IsControlOrSpace(character)) {
-            continue;
-        } else {
-            break;
-        }
+    while (!IsEOF() && IsControlOrSpace(character)) {
         character = ReadChar();
+    }
+
+    if (IsEOF()) {
+        return Token(Token::Tag::EndOfFile, GetCurrentLineNumber());
     }
 
     switch (character) {
         case '&':
             if (ReadChar('&')) {
-                return Token("&&", Token::Tag::LogicalAnd, current_line_);
+                return Token("&&", Token::Tag::LogicalAnd, GetCurrentLineNumber());
             }
         case '|':
             if (ReadChar('|')) {
-                return Token("||", Token::Tag::LogicalOr, current_line_);
+                return Token("||", Token::Tag::LogicalOr, GetCurrentLineNumber());
             }
         case '=':
             if (ReadChar('=')) {
-                return Token("==", Token::Tag::Equivalence, current_line_);
+                return Token("==", Token::Tag::Equivalence, GetCurrentLineNumber());
             }
         case '!':
             if (ReadChar('=')) {
-                return Token("!=", Token::Tag::NotEqual, current_line_);
+                return Token("!=", Token::Tag::NotEqual, GetCurrentLineNumber());
             }
         case '<':
             if (ReadChar('=')) {
-                return Token("<=", Token::Tag::LessThanEqualTo, current_line_);
+                return Token("<=", Token::Tag::LessThanEqualTo, GetCurrentLineNumber());
             } else {
-                return Token("<", Token::Tag::LessThan, current_line_);
+                return Token("<", Token::Tag::LessThan, GetCurrentLineNumber());
             }
         case '>':
             if (ReadChar('=')) {
-                return Token(">=", Token::Tag::GreaterThanEqualTo, current_line_);
+                return Token(">=", Token::Tag::GreaterThanEqualTo, GetCurrentLineNumber());
             } else {
-                return Token(">", Token::Tag::GreaterThan, current_line_);
+                return Token(">", Token::Tag::GreaterThan, GetCurrentLineNumber());
             }
         default:break;
     }
 
+    UnreadChar();
+    character = PeekChar();
+
     if (IsDigit(character)) {
-        return ScanNextInteger(character);
-    } else if (IsNameStart(character)) {
-        return ScanNextName(character);
-    } else if (IsDoubleQuotes(character)) {
-        return ScanNextString();
-    } else {
-        return ScanNextCharacter(character);
+        return ScanNextInteger();
     }
+
+    if (IsNameStart(character)) {
+        return ScanNextName();
+    }
+
+    if (IsStringStartEnd(character)) {
+        return ScanNextString();
+    }
+
+    return ScanNextCharacter();
+}
+
+LineNumber Lexer::GetCurrentLineNumber() const {
+    return current_line_;
 }
 
 char Lexer::ReadChar() {
-    return source_[current_position_++];
+    char c = PeekChar();
+    SkipChar();
+    return c;
 }
 
 bool Lexer::ReadChar(char c) {
     if (PeekChar() != c) {
         return false;
     }
-    current_position_++;
+    SkipChar();
     return true;
 }
 
@@ -93,80 +103,100 @@ char Lexer::PeekChar() {
     return source_[current_position_];
 }
 
-char Lexer::PeekNextChar() {
-    return source_[current_position_ + 1];
+void Lexer::UnreadChar() {
+    if (current_position_ == 0) {
+        return;
+    }
+    current_position_--;
+    if (IsNewLine(PeekChar())) {
+        current_line_--;
+    }
 }
 
 void Lexer::SkipChar() {
+    if (IsNewLine(PeekChar())) {
+        current_line_++;
+    }
     current_position_++;
 }
 
-Token Lexer::ScanNextName(char first_char) {
+void Lexer::Reserve(const Keyword &keyword) {
+    keyword_map_.insert(std::make_pair(keyword.GetLexeme(), keyword));
+}
+
+void Lexer::Reserve(const Character &character) {
+    character_map_.insert(std::make_pair(character.GetCharacter(), character));
+}
+
+bool Lexer::IsEOF() const {
+    return current_position_ >= source_.length();
+}
+
+Token Lexer::ScanNextName() {
+    assert(IsNameStart(PeekChar()));
     std::string lexeme;
-    lexeme += first_char;
+    lexeme += ReadChar();
     while (!IsEOF() && IsNamePart(PeekChar())) {
         lexeme += ReadChar();
     }
     if (keyword_map_.find(lexeme) != keyword_map_.end()) {
-        return Keyword(keyword_map_.at(lexeme), current_line_);
+        return Keyword(keyword_map_.at(lexeme), GetCurrentLineNumber());
     }
-    return Token(lexeme, Token::Tag::Name, current_line_);
+    return Token(lexeme, Token::Tag::Name, GetCurrentLineNumber());
 }
 
-Token Lexer::ScanNextInteger(char first_char) {
-    int number = 0 + ConvertCharToInt(first_char);
+Token Lexer::ScanNextInteger() {
+    assert(IsDigit(PeekChar()));
+    int number = 0;
     while (!IsEOF() && IsDigit(PeekChar())) {
         number *= 10;
         number += ConvertCharToInt(ReadChar());
     }
-    return Integer(number, current_line_);
+    return Integer(number, GetCurrentLineNumber());
 }
 
-Token Lexer::ScanNextCharacter(char first_char) {
-    char character = first_char;
+Token Lexer::ScanNextCharacter() {
+    char character = ReadChar();
     if (character_map_.find(character) == character_map_.end()) {
-        throw std::runtime_error("Invalid character");
+        throw LexerException("Invalid character", GetCurrentLineNumber());
     }
-    return Character(character_map_.at(character), current_line_);
+    return Character(character_map_.at(character), GetCurrentLineNumber());
 }
 
 Token Lexer::ScanNextString() {
+    assert(IsStringStartEnd(PeekChar()));
     SkipChar();
     std::string lexeme;
-    while (!IsEOF() && !IsDoubleQuotes(PeekChar())) {
+    while (!IsEOF() && !IsStringStartEnd(PeekChar())) {
         lexeme += ReadChar();
     }
     if (IsEOF()) {
-        throw std::runtime_error("Unterminated string");
+        throw LexerException("Unterminated string", GetCurrentLineNumber());
     }
     SkipChar();
-    return Token(lexeme, Token::Tag::String, current_line_);
+    return Token(lexeme, Token::Tag::String, GetCurrentLineNumber());
 }
 
-bool Lexer::IsNameStart(char c) {
+bool Lexer::IsNameStart(char c) const {
     return isalpha(c);
 }
 
-bool Lexer::IsNamePart(char c) {
+bool Lexer::IsNamePart(char c) const {
     return isalnum(c);
 }
 
-bool Lexer::IsDigit(char c) {
+bool Lexer::IsDigit(char c) const {
     return isdigit(c);
 }
 
-bool Lexer::IsDoubleQuotes(char c) {
+bool Lexer::IsStringStartEnd(char c) const {
     return c == '"';
 }
 
-bool Lexer::IsNewLine(char c) {
+bool Lexer::IsNewLine(char c) const {
     return c == '\n';
 }
 
-bool Lexer::IsControlOrSpace(char c) {
+bool Lexer::IsControlOrSpace(char c) const {
     return iscntrl(c) || isspace(c);
-}
-
-bool Lexer::IsEOF() {
-    return current_position_ >= source_.length();
 }
