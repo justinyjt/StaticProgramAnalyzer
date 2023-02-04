@@ -10,7 +10,7 @@ Relationship SuchThatClauseParser::parse(std::unique_ptr<Lexer> lexer, std::vect
         throw std::runtime_error("not modifies clause");
     }
 
-    if (lexer->Scan().GetTag() != Tag::LParen) {
+    if (lexer->Scan().GetTag() != Token::Tag::LParen) {
         throw std::runtime_error("missing left parenthesis");
     }
 
@@ -18,15 +18,15 @@ Relationship SuchThatClauseParser::parse(std::unique_ptr<Lexer> lexer, std::vect
 
     Term left = makeTerm(leftArg, synonyms);
 
-    if (lexer->Scan().GetTag() != Tag::Comma) {
+    if (lexer->Scan().GetTag() != Token::Tag::Comma) {
         throw std::runtime_error("missing comma");
     }
 
-    Token rightArg = lexer->Scan().GetTag();
+    Token::Token rightArg = lexer->Scan().GetTag();
 
     Term right = makeTerm(rightArg);
 
-    if (lexer->Scan().GetTag() != Tag::RParen) {
+    if (lexer->Scan().GetTag() != Token::Tag::RParen) {
         throw std::runtime_error("missing right parenthesis");
     }
 
@@ -35,10 +35,10 @@ Relationship SuchThatClauseParser::parse(std::unique_ptr<Lexer> lexer, std::vect
 }
 
 Term SuchThatClauseParser::makeTerm(Token token, std::vector<Synonym> synonyms) {
-    if (token == Tag::Integer) {
+    if (token == Token::Tag::Integer) {
         StatementNumber t(token.GetInteger());
         return t;
-    } else if (token == Tag::Name) {
+    } else if (token == Token::Tag::Name) {
         for (auto synonym : synonyms) {
             if (synonym.getDeclaration() == token.GetLexeme()) {
                 Synonym t(token.GetLexeme());

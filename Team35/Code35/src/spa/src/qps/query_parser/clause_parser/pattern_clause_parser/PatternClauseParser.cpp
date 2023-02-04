@@ -7,17 +7,17 @@
 Pattern PatternClauseParser::parse(std::unique_ptr<Lexer> lexer, std::vector<std::string> synonyms) {
     std::string pattern_type = lexer->Scan().GetLexeme();
 
-    if (lexer->Scan().GetTag() != Tag::LParen) {
+    if (lexer->Scan().GetTag() != Token::Tag::LParen) {
         throw std::runtime_error("missing left parenthesis");
     }
 
-    if (lexer->Scan().GetTag() != Tag::Underscore) {
+    if (lexer->Scan().GetTag() != Token::Tag::Underscore) {
         throw std::runtime_error("expected underscore");
     }
 
     Term left(Term::Tag::Wildcard);
 
-    if (lexer->Scan().GetTag() != Tag::Comma) {
+    if (lexer->Scan().GetTag() != Token::Tag::Comma) {
         throw std::runtime_error("missing comma");
     }
 
@@ -25,7 +25,7 @@ Pattern PatternClauseParser::parse(std::unique_ptr<Lexer> lexer, std::vector<std
     Term right = makeTerm(rightArg);
 
 
-    if (lexer.Scan().GetTag() != Tag::RParen) {
+    if (lexer.Scan().GetTag() != Token::Tag::RParen) {
         throw std::runtime_error("missing right parenthesis");
     }
 
@@ -34,7 +34,7 @@ Pattern PatternClauseParser::parse(std::unique_ptr<Lexer> lexer, std::vector<std
 }
 
 Term PatternClauseParser::makeTerm(Token token, std::vector<Synonym> synonyms) {
-    if (token == Tag::String) {
+    if (token == Token::Tag::String) {
         Expression e(token.GetLexeme());
         return e;
     } else {
