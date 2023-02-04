@@ -11,7 +11,7 @@ class Character : public Token {
     Character(char ascii_lexeme, LineNumber line_number);
     Character(const Character &character, LineNumber line_number);
     Character(char ascii_lexeme, Tag tag, LineNumber line_number);
-    char GetCharacter();
+    char GetCharacter() const;
 
  private:
     char ascii_lexeme_;
