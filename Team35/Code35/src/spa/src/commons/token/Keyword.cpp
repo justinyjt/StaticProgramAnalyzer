@@ -10,4 +10,4 @@ Keyword::Keyword(Lexeme lexeme, Token::Tag tag) : Token(std::move(lexeme), tag) 
 
 Keyword::Keyword(Lexeme lexeme) : Token(std::move(lexeme), Tag::Keyword) {}
 
-Keyword::Keyword(Keyword &keyword, LineNumber line_number) : Token(keyword, line_number) {}
+Keyword::Keyword(const Keyword &keyword, LineNumber line_number) : Token(keyword, line_number) {}

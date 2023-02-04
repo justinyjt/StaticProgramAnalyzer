@@ -66,7 +66,7 @@ class Token {
     Token(Lexeme lexeme, Tag tag);
     Token(Tag tag, LineNumber line_number);
     Token(Lexeme lexeme, Tag tag, LineNumber line_number);
-    Token(Token &token, LineNumber line_number);
+    Token(const Token &token, LineNumber line_number);
 
     Lexeme GetLexeme() const;
     Tag GetTag() const;

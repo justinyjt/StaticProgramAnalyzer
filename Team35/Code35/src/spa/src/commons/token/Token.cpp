@@ -11,7 +11,7 @@ Token::Token(Tag tag, LineNumber line_number) : tag_(tag), line_number_(line_num
 Token::Token(Lexeme lexeme, Tag tag, LineNumber line_number)
     : lexeme_(std::move(lexeme)), tag_(tag), line_number_(line_number) {}
 
-Token::Token(Token &token, LineNumber line_number)
+Token::Token(const Token &token, LineNumber line_number)
     : lexeme_(token.lexeme_), tag_(token.tag_), line_number_(line_number) {}
 
 Lexeme Token::GetLexeme() const {

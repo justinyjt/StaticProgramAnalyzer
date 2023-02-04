@@ -15,8 +15,8 @@ Character::Character(char ascii_lexeme, Tag tag, LineNumber line_number) : Token
                                                                                         line_number),
                                                                            ascii_lexeme_(ascii_lexeme) {}
 
-Character::Character(Character &character, LineNumber line_number) : Token(character, line_number),
-                                                                     ascii_lexeme_(character.ascii_lexeme_) {}
+Character::Character(const Character &character, LineNumber line_number) : Token(character, line_number),
+                                                                           ascii_lexeme_(character.ascii_lexeme_) {}
 
 char Character::GetCharacter() {
     return ascii_lexeme_;
