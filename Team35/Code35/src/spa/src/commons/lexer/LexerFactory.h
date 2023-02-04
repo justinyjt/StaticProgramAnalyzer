@@ -1,8 +1,21 @@
-//
-// Created by Ng Jun Kang on 4/2/23.
-//
+#pragma once
 
-#ifndef SPA_SRC_SPA_SRC_COMMONS_LEXER_LEXERFACTORY_H_
-#define SPA_SRC_SPA_SRC_COMMONS_LEXER_LEXERFACTORY_H_
+#include <memory>
 
-#endif //SPA_SRC_SPA_SRC_COMMONS_LEXER_LEXERFACTORY_H_
+#include "ILexer.h"
+#include "Lexer.h"
+
+class LexerFactory {
+ public:
+    enum class LexerType {
+        Simple,
+        Pql,
+        Expression,
+    };
+    static std::unique_ptr<ILexer> CreateLexer(Source source, LexerType lexer_type);
+
+ private:
+    static std::unique_ptr<ILexer> CreateSimpleLexer(Source source);
+    static std::unique_ptr<ILexer> CreatePqlLexer(Source source);
+    static std::unique_ptr<ILexer> CreateExpressionLexer(Source source);
+};

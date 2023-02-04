@@ -8,8 +8,16 @@
 #include "commons/token/Integer.h"
 #include "commons/util/ConversionUtil.h"
 
-Lexer::Lexer(Source source, const KeywordList &keyword_list, const CharacterList &character_list)
-    : source_(std::move(source)), keyword_map_(), character_map_() {
+Lexer::Lexer(Source source,
+             const KeywordList &keyword_list,
+             const CharacterList &character_list,
+             bool include_operator,
+             bool include_string)
+    : source_(std::move(source)),
+      keyword_map_(),
+      character_map_(),
+      include_operator_(include_operator),
+      include_string_(include_string) {
     for (const auto &keyword : keyword_list) {
         Reserve(keyword);
     }
@@ -31,35 +39,37 @@ Token Lexer::Scan() {
         return Token(Token::Tag::EndOfFile, GetCurrentLineNumber());
     }
 
-    switch (character) {
-        case '&':
-            if (ReadChar('&')) {
-                return Token("&&", Token::Tag::LogicalAnd, GetCurrentLineNumber());
-            }
-        case '|':
-            if (ReadChar('|')) {
-                return Token("||", Token::Tag::LogicalOr, GetCurrentLineNumber());
-            }
-        case '=':
-            if (ReadChar('=')) {
-                return Token("==", Token::Tag::Equivalence, GetCurrentLineNumber());
-            }
-        case '!':
-            if (ReadChar('=')) {
-                return Token("!=", Token::Tag::NotEqual, GetCurrentLineNumber());
-            }
-            return Character(character, Token::Tag::LogicalNot, GetCurrentLineNumber());
-        case '<':
-            if (ReadChar('=')) {
-                return Token("<=", Token::Tag::LessThanEqualTo, GetCurrentLineNumber());
-            }
-            return Token("<", Token::Tag::LessThan, GetCurrentLineNumber());
-        case '>':
-            if (ReadChar('=')) {
-                return Token(">=", Token::Tag::GreaterThanEqualTo, GetCurrentLineNumber());
-            }
-            return Token(">", Token::Tag::GreaterThan, GetCurrentLineNumber());
-        default:break;
+    if (include_operator_) {
+        switch (character) {
+            case '&':
+                if (ReadChar('&')) {
+                    return Token("&&", Token::Tag::LogicalAnd, GetCurrentLineNumber());
+                }
+            case '|':
+                if (ReadChar('|')) {
+                    return Token("||", Token::Tag::LogicalOr, GetCurrentLineNumber());
+                }
+            case '=':
+                if (ReadChar('=')) {
+                    return Token("==", Token::Tag::Equivalence, GetCurrentLineNumber());
+                }
+            case '!':
+                if (ReadChar('=')) {
+                    return Token("!=", Token::Tag::NotEqual, GetCurrentLineNumber());
+                }
+                return Character(character, Token::Tag::LogicalNot, GetCurrentLineNumber());
+            case '<':
+                if (ReadChar('=')) {
+                    return Token("<=", Token::Tag::LessThanEqualTo, GetCurrentLineNumber());
+                }
+                return Token("<", Token::Tag::LessThan, GetCurrentLineNumber());
+            case '>':
+                if (ReadChar('=')) {
+                    return Token(">=", Token::Tag::GreaterThanEqualTo, GetCurrentLineNumber());
+                }
+                return Token(">", Token::Tag::GreaterThan, GetCurrentLineNumber());
+            default:break;
+        }
     }
 
     UnreadChar();
@@ -73,7 +83,7 @@ Token Lexer::Scan() {
         return ScanNextName();
     }
 
-    if (IsStringStartEnd(character)) {
+    if (include_string_ && IsStringStartEnd(character)) {
         return ScanNextString();
     }
 

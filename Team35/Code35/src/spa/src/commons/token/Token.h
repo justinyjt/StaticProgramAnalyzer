@@ -11,56 +11,70 @@ class Token {
  public:
     static const LineNumber null_line_number_ = 0;
     enum class Tag {
-      // keywords
-      Keyword,
-      Name,
-      Read,
-      Print,
-      Call,
-      If,
-      While,
-      Procedure,
+        // keywords
+        Keyword,
+        Name,
+        Read,
+        Print,
+        Call,
+        If,
+        While,
+        Procedure,
+        Else,
+        Then,
+        Statement,
+        Variable,
+        Constant,
+        Assign,
+        Such,
+        That,
+        Select,
+        Follows,
+        Modifies,
+        Uses,
+        Parent,
+        Pattern,
 
-      // logical operators
-      LogicalAnd,
-      LogicalOr,
-      LogicalNot,
+        // logical operators
+        LogicalAnd,
+        LogicalOr,
+        LogicalNot,
 
-      // relational operators
-      Assignment,
-      Equivalence,
-      NotEqual,
-      LessThan,
-      LessThanEqualTo,
-      GreaterThan,
-      GreaterThanEqualTo,
+        // relational operators
+        Assignment,
+        Equivalence,
+        NotEqual,
+        LessThan,
+        LessThanEqualTo,
+        GreaterThan,
+        GreaterThanEqualTo,
 
-      // arithmetic operators
-      Plus,
-      Minus,
-      Divide,
-      Multiply,
-      Modulo,
-      Equal,
+        // arithmetic operators
+        Plus,
+        Minus,
+        Divide,
+        Multiply,
+        Modulo,
+        Equal,
 
-      // other symbols
-      LParen,
-      RParen,
-      LBraces,
-      RBraces,
-      SemiColon,
-      Underscore,
-      DoubleQuotes,
-      Comma,
+        // other symbols
+        LParen,
+        RParen,
+        LBraces,
+        RBraces,
+        SemiColon,
+        Underscore,
+        DoubleQuotes,
+        Comma,
 
-      // types
-      Ascii,
-      Integer,
-      String,
+        // types
+        Ascii,
+        Integer,
+        String,
 
-      // misc
-      NewLine,
-      EndOfFile
+        // misc
+        NewLine,
+        EndOfFile
     };
 
     explicit Token(Tag tag);

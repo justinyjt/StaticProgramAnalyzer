@@ -9,6 +9,7 @@
 #include "commons/token/Character.h"
 #include "commons/token/Keyword.h"
 
+typedef std::string Source;
 typedef std::unordered_map<std::string, Keyword> KeywordMap;
 typedef std::unordered_map<char, Character> CharacterMap;
 typedef std::list<Keyword> KeywordList;
@@ -16,7 +17,11 @@ typedef std::list<Character> CharacterList;
 
 class Lexer : public ILexer {
  public:
-    explicit Lexer(Source source, const KeywordList &keyword_list, const CharacterList &character_list);
+    explicit Lexer(Source source,
+                   const KeywordList &keyword_list,
+                   const CharacterList &character_list,
+                   bool include_operator = true,
+                   bool include_string = true);
     Token Scan();
     ~Lexer() = default;
 
@@ -37,6 +42,8 @@ class Lexer : public ILexer {
     uint32_t current_line_ = 1;
     KeywordMap keyword_map_;
     CharacterMap character_map_;
+    bool include_operator_;
+    bool include_string_;
 
     Token ScanNextName();
     Token ScanNextInteger();
