@@ -21,7 +21,7 @@ Token Lexer::Scan() {
         return Token(Token::Tag::EndOfFile, current_line_);
     }
     char character = PeekChar();
-    while (1) {
+    while (true) {
         if (IsEOF()) {
             return Token(Token::Tag::EndOfFile, current_line_);
         } else if (IsNewLine(character)) {
@@ -63,6 +63,7 @@ Token Lexer::Scan() {
             } else {
                 return Token(">", Token::Tag::GreaterThan, current_line_);
             }
+        default:break;
     }
 
     if (IsDigit(character)) {
@@ -70,7 +71,7 @@ Token Lexer::Scan() {
     } else if (IsNameStart(character)) {
         return ScanNextName(character);
     } else if (IsDoubleQuotes(character)) {
-        return ScanNextString(character);
+        return ScanNextString();
     } else {
         return ScanNextCharacter(character);
     }
@@ -107,7 +108,7 @@ Token Lexer::ScanNextName(char first_char) {
         lexeme += ReadChar();
     }
     if (keyword_map_.find(lexeme) != keyword_map_.end()) {
-        return keyword_map_.at(lexeme);
+        return Keyword(keyword_map_.at(lexeme), current_line_);
     }
     return Token(lexeme, Token::Tag::Name, current_line_);
 }
@@ -126,7 +127,7 @@ Token Lexer::ScanNextCharacter(char first_char) {
     if (character_map_.find(character) == character_map_.end()) {
         throw std::runtime_error("Invalid character");
     }
-    return character_map_.at(character);
+    return Character(character_map_.at(character), current_line_);
 }
 
 Token Lexer::ScanNextString() {
@@ -160,10 +161,6 @@ bool Lexer::IsDoubleQuotes(char c) {
 
 bool Lexer::IsNewLine(char c) {
     return c == '\n';
-}
-
-bool Lexer::IsSpecialSymbols(char c) {
-    return std::string("&|!=<>").find(c) != std::string::npos;
 }
 
 bool Lexer::IsControlOrSpace(char c) {
