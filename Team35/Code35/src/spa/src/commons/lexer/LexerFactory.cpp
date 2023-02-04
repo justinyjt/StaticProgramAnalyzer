@@ -38,7 +38,7 @@ std::unique_ptr<ILexer> LexerFactory::CreateSimpleLexer(Source source) {
         Character('*', Token::Tag::Multiply),
         Character('/', Token::Tag::Divide),
         Character('%', Token::Tag::Modulo),
-        Character('=', Token::Tag::Equal),
+        Character('=', Token::Tag::Assignment),
     };
     std::unique_ptr<ILexer> lexer = std::make_unique<Lexer>(Lexer(std::move(source), keyword_list, character_list));
     return std::move(lexer);
@@ -89,7 +89,7 @@ std::unique_ptr<ILexer> LexerFactory::CreateExpressionLexer(Source source) {
         Character('*', Token::Tag::Multiply),
         Character('/', Token::Tag::Divide),
         Character('%', Token::Tag::Modulo),
-        Character('=', Token::Tag::Equal),
+        Character('=', Token::Tag::Assignment),
     };
     std::unique_ptr<ILexer>
         lexer = std::make_unique<Lexer>(Lexer(std::move(source), keyword_list, character_list, false));
