@@ -9,7 +9,6 @@
 #include "commons/token/Character.h"
 #include "commons/token/Keyword.h"
 
-typedef std::string Source;
 typedef std::unordered_map<std::string, Keyword> KeywordMap;
 typedef std::unordered_map<char, Character> CharacterMap;
 typedef std::list<Keyword> KeywordList;
