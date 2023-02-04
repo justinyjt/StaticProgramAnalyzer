@@ -3,5 +3,5 @@
 
 class PatternClauseParser {
 public:
-    Pattern parse(Lexer &lexer, std::vector<std::string> synonyms);
+    Pattern parse(std::unique_ptr<Lexer> lexer, std::vector<std::string> synonyms);
 };

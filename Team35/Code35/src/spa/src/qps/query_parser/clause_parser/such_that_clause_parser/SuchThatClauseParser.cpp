@@ -1,49 +1,52 @@
 #include "SuchThatClauseParser.h"
 #include "qps/clauses/relationships/relationship_clauses/Modify.h"
+#include "qps/entities/StatementNumber.h"
 
-Relationship SuchThatClauseParser::parse(Lexer &lexer, std::vector<std::string> synonyms) {
-    int left;
-    std::string right;
+Relationship SuchThatClauseParser::parse(std::unique_ptr<Lexer> lexer, std::vector<Synonym> synonyms) {
 
-    std::string keyword = lexer.Scan().GetLexeme();
+    std::string keyword = lexer->Scan().GetLexeme();
 
-    if (lexer.Scan().GetTag() != Tag::LParen) {
+    if (keyword != "Modifies") {
+        throw std::runtime_error("not modifies clause");
+    }
+
+    if (lexer->Scan().GetTag() != Tag::LParen) {
         throw std::runtime_error("missing left parenthesis");
     }
 
-    Token left_arg = lexer.Scan().GetTag();
+    Token leftArg = lexer->Scan().GetTag();
 
-    if (left_arg != Tag::Integer) {
-        throw std::runtime_error("integer expected");
-    } else {
-        left = left_arg.GetInteger();
-    }
+    Term left = makeTerm(leftArg, synonyms);
 
-    if (lexer.Scan().GetTag() != Tag::Comma) {
+    if (lexer->Scan().GetTag() != Tag::Comma) {
         throw std::runtime_error("missing comma");
     }
 
-    Token right_arg = lexer.Scan().GetTag();
+    Token rightArg = lexer->Scan().GetTag();
 
-    if (right_arg != Tag::String) {
-        throw std::runtime_error("string expected");
-    } else {
-        if (std::count(synonyms.begin(), synonyms.end(), right_arg.GetLexeme())) {
-            return right_arg.GetLexeme();
-        } else {
-            throw std::runtime_error("synonym not declared!");
-        }
-        right = right_arg.GetLexeme();
-    }
+    Term right = makeTerm(rightArg);
 
-    if (lexer.Scan().GetTag() != Tag::RParen) {
+    if (lexer->Scan().GetTag() != Tag::RParen) {
         throw std::runtime_error("missing right parenthesis");
     }
 
-    if (keyword == "modifies") {
-        Modify m(left, right);
-        return m;
+    Modify m(left, right);
+    return m;
+}
+
+Term SuchThatClauseParser::makeTerm(Token token, std::vector<Synonym> synonyms) {
+    if (token == Tag::Integer) {
+        StatementNumber t(token.GetInteger());
+        return t;
+    } else if (token == Tag::Name) {
+        for (auto synonym : synonyms) {
+            if (synonym.getDeclaration() == token.GetLexeme()) {
+                Synonym t(token.GetLexeme());
+                return t;
+            }
+        }
+        throw std::runtime_error("synonym not declared!");
     } else {
-        throw std::runtime_error("not modifies clause");
+        throw std::runtime_error("invalid argument");
     }
 }

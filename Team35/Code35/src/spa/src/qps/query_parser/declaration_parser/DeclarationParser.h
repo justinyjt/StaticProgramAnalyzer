@@ -1,7 +1,8 @@
 #include <vector>
+#include "qps/entities/Synonym.h"
 
 class DeclarationParser {
 public:
-    std::vector<std::string> parse(Lexer &lexer);
+    std::vector<Synonym> parse(std::unique_ptr<Lexer> lexer);
 };
 

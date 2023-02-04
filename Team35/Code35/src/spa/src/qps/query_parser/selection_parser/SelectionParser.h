@@ -1,7 +1,8 @@
 #include <vector>
+#include "qps/entities/Synonym.h"
 
 class SelectionParser {
 public:
-    std::string parse(Lexer &lexer, std::vector<std::string> synonyms);
+    Synonym parse(std::unique_ptr<Lexer> lexer, std::vector<Synonym> synonyms);
 };
 

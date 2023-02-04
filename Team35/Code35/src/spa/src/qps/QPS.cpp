@@ -27,7 +27,7 @@ void QPS::executeQuery(std::string* queryString) {
     std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(*queryString, k, c);
 
     // Perform parsing
-    queryParser->setLexer(lexer);
+    queryParser->setLexer(std::move(lexer));
     std::pair<std::string, std::vector<Clause>> parseResult = queryParser->parse();
 
     // Perform evaluation

@@ -1,11 +1,12 @@
 #include <string>
 #include "SelectionParser.h"
 
-std::string SelectionParser::parse(Lexer &lexer, std::vector<std::string> synonyms) {
-    Token selectedToken = lexer.Scan();
-    if (std::count(synonyms.begin(), synonyms.end(), selectedToken.GetLexeme())) {
-        return selectedToken.GetLexeme();
-    } else {
-        throw std::runtime_error("synonym not declared!");
+Synonym SelectionParser::parse(std::unique_ptr<Lexer> lexer, std::vector<Synonym> synonyms) {
+    Token selectedToken = lexer->Scan();
+    for (auto synonym : synonyms) {
+        if (synonym.getDeclaration() == selectedToken.GetLexeme()) {
+            return synonym;
+        }
     }
+    throw std::runtime_error("synonym not declared!");
 }

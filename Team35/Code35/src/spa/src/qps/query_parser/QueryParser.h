@@ -1,11 +1,12 @@
 #include <vector>
 #include <string>
 #include "qps/clauses/Clause.h"
+#include "qps/entities/Synonym.h"
 
 class QueryParser {
 public:
-    void setLexer(Lexer& lexer);
-    std::pair<std::string , std::vector<Clause>> parse();
+    void setLexer(std::unique_ptr<Lexer> lexer);
+    std::pair<Synonym , std::vector<Clause>> parse();
 private:
-    Lexer lexer;
+    std::unique_ptr<Lexer> lexer_;
 };

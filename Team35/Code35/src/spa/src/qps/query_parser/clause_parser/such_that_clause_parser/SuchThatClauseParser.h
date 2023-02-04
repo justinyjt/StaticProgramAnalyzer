@@ -1,8 +1,9 @@
 #include <vector>
 #include "qps/clauses/relationships/relationship_clauses/Relationship.h"
+#include "qps/entities/Synonym.h"
 
 class SuchThatClauseParser {
 public:
-    Relationship parse(Lexer &lexer, std::vector<std::string> synonyms);
+    Relationship parse(std::unique_ptr<Lexer> lexer, std::vector<Synonym> synonyms);
 };
 
