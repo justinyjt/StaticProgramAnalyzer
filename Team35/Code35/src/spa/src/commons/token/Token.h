@@ -3,8 +3,9 @@
 #include <cstdint>
 #include <string>
 
+#include "commons/types.h"
+
 typedef std::string Lexeme;
-typedef std::uint32_t LineNumber;
 
 class Token {
  public:
@@ -75,7 +76,7 @@ class Token {
     bool operator==(Token const &rhs) const;
 
  private:
-    Lexeme lexeme_ = "";
+    Lexeme lexeme_;
     Tag tag_;
     LineNumber line_number_ = null_line_number_;
 };

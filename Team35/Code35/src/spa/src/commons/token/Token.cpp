@@ -2,9 +2,9 @@
 
 #include <utility>
 
-Token::Token(Token::Tag tag) : tag_(tag), line_number_(null_line_number_) {}
+Token::Token(Token::Tag tag) : tag_(tag) {}
 
-Token::Token(Lexeme lexeme, Token::Tag tag) : lexeme_(std::move(lexeme)), tag_(tag), line_number_(null_line_number_) {}
+Token::Token(Lexeme lexeme, Token::Tag tag) : lexeme_(std::move(lexeme)), tag_(tag) {}
 
 Token::Token(Tag tag, LineNumber line_number) : tag_(tag), line_number_(line_number) {}
 
