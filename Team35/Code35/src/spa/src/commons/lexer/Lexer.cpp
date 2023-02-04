@@ -48,18 +48,17 @@ Token Lexer::Scan() {
             if (ReadChar('=')) {
                 return Token("!=", Token::Tag::NotEqual, GetCurrentLineNumber());
             }
+            return Character(character, Token::Tag::LogicalNot, GetCurrentLineNumber());
         case '<':
             if (ReadChar('=')) {
                 return Token("<=", Token::Tag::LessThanEqualTo, GetCurrentLineNumber());
-            } else {
-                return Token("<", Token::Tag::LessThan, GetCurrentLineNumber());
             }
+            return Token("<", Token::Tag::LessThan, GetCurrentLineNumber());
         case '>':
             if (ReadChar('=')) {
                 return Token(">=", Token::Tag::GreaterThanEqualTo, GetCurrentLineNumber());
-            } else {
-                return Token(">", Token::Tag::GreaterThan, GetCurrentLineNumber());
             }
+            return Token(">", Token::Tag::GreaterThan, GetCurrentLineNumber());
         default:break;
     }
 
