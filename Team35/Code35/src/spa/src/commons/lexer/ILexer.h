@@ -5,4 +5,5 @@
 class ILexer {
  public:
     virtual Token Scan() = 0;
+    virtual ~ILexer() = default;
 };
