@@ -1,12 +1,14 @@
 #pragma once
 #include <string>
+#include <list>
+#include <vector>
 #include "commons/types.h"
 /*
 represents result of clause eval or query eval (multiple clause evals)
 */
 class Result {
   public:
-    virtual void output(std::list<std::string>&);
+    void output(std::list<std::string>&);
 };
 
 class StrResult : public Result {

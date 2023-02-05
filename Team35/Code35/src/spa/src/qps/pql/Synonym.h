@@ -13,6 +13,10 @@ public:
 
     Synonym(DesignEntity de, std::string ident) : de(de), ident(ident), Tok(SYNONYM) {};
 
+    bool operator==(const Synonym &rhs) const {
+        return this->de == rhs.de && this->ident == rhs.ident;
+    }
+
     const DesignEntity de;
     const std::string ident;
 };

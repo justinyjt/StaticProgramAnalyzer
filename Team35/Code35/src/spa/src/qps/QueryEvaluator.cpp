@@ -7,7 +7,7 @@ QueryEvaluator::QueryEvaluator(PKB& pkb) : pkb(pkb) {
 Result QueryEvaluator::evaluate(Synonym syn, std::vector<Clause> clauses) {
   std::vector<Result> results;
 
-  for (Clause& cl: clauses) {
+  for (Clause cl: clauses) {
     cl.evaluate(pkbReader);
   }
 
@@ -15,5 +15,7 @@ Result QueryEvaluator::evaluate(Synonym syn, std::vector<Clause> clauses) {
     return results.at(0);
   }
   // TODO join results for > 1 clauses
+  Result r;
+  return r;
 
 }

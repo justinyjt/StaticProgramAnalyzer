@@ -5,6 +5,6 @@
 class Pattern : public Clause {
     public:
         /* <SYNONYM | WILDCARD | IDENT_STR>, <EXPR_STR> */
-        Pattern(Tok& first, Tok& second);
-        Result& evaluate(PKBReader*);
+        Pattern(Tok first, Tok second);
+        Result evaluate(PKBReader*);
 };

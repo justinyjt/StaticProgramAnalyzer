@@ -1,4 +1,5 @@
 #include <string>
+#include <vector>
 #include "ClauseParser.h"
 
 std::vector<Clause> ClauseParser::parse(const std::unique_ptr<Lexer> &lexer, std::vector<Synonym> synonyms) {
