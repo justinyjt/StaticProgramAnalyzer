@@ -4,26 +4,26 @@
 #include <memory>
 #include "IParser.h"
 #include "commons/ASTNode.h"
-#include "commons/Token.h"
+#include "commons/token/Token.h"
 #include "DesignExtractor.h"
 
 using std::unique_ptr;
 
 class Parser : public IParser {
  public:
-    explicit Parser(const Lexer& lex, PROGRAM src, const DesignExtractor& de);
+    explicit Parser(PROGRAM src, const DesignExtractor& de);
     unique_ptr<ASTNode> Parse() override;
 
  private:
-    Lexer &lex_;
+    std::unique_ptr<Lexer>& lex_;
     PROGRAM src_;
     DesignExtractor &de_;
     Token cur_;
     bool isRead_;
 
-    int test(const std::string&);
-    int accept(const std::string&);
-    int expect(const std::string&);
+    int peek(Token::Tag);
+    int accept(Token::Tag);
+    int expect(Token::Tag);
 
     unique_ptr<ASTNode> parseProc();
     unique_ptr<ASTNode> parseStmtLst();

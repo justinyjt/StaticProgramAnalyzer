@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_set>
 #include <utility>
+#include "PairHash.h"
 
 typedef std::string ENT_NAME;
 typedef int STMT_NUM;

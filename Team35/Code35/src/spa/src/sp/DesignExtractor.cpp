@@ -7,12 +7,12 @@
 #include <string>
 #include <utility>
 #include <unordered_map>
-#include "pkb/PKB.h"
+#include "pkb/PKBWriter.h"
 #include "DesignExtractor.h"
 #include "commons/ASTNode.h"
 
-DesignExtractor::DesignExtractor(PKB& pkb, std::unique_ptr<ASTNode> root) :
-    pkb_(pkb), root_(std::move(root)), varNameSet_(), constSet_(),
+DesignExtractor::DesignExtractor(PKBWriter& pkbWriter, std::unique_ptr<ASTNode> root) :
+    pkbWriter_(pkbWriter), root_(std::move(root)), varNameSet_(), constSet_(),
     stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(), stmtCnt_(0), assignPat_() {}
 
 void DesignExtractor::extractProgram() {
@@ -20,6 +20,10 @@ void DesignExtractor::extractProgram() {
     for (const auto& child : root_->getChildren()) {
         extractProc(std::move(child));
     }
+    addVarNameSetToPKB();
+    addStmtUsesPairSetToPKB();
+    addStmtModifiesPairSetToPKB();
+    addPatternsToPKB();
 }
 
 void DesignExtractor::extractProc(const std::unique_ptr<ASTNode>& node) {
@@ -42,7 +46,7 @@ void DesignExtractor::extractAssign(const std::unique_ptr<ASTNode>& node) {
     assignPat_.clear();
     const auto& lAssign = node->getChildren().front();
     const auto& rAssign = node->getChildren().back();
-    assignPat_.append(extractLeftAssign(lAssign));
+
     assignPat_.append(extractRightAssign(rAssign));
     assignPatMap_.insert({stmtCnt_, assignPat_});
 }
@@ -51,7 +55,7 @@ std::string DesignExtractor::extractLeftAssign(const std::unique_ptr<ASTNode>& n
     assert(node->getSyntaxType() == ASTNode::SyntaxType::var);
     std::string varName = node->getLabel();
     varNameSet_.insert(varName);
-    stmtModPairSet_.insert(*new STMT_NAME_PAIR(stmtCnt_, varName));
+    stmtModPairSet_.insert(*new STMT_ENT(stmtCnt_, varName));
     return varName + "=";
 }
 
@@ -60,10 +64,10 @@ std::string DesignExtractor::extractRightAssign(const std::unique_ptr<ASTNode>& 
     switch (node->getSyntaxType()) {
         case ASTNode::SyntaxType::var:
             varNameSet_.insert(label);
-            stmtUsePairSet_.insert(*new STMT_NAME_PAIR(stmtCnt_, label));
+            stmtUsePairSet_.insert(*new STMT_ENT(stmtCnt_, label));
             return label;
         case ASTNode::SyntaxType::constVal:
-            constSet_.insert(stoi(label));
+            constSet_.insert(stmtCnt_);
             return label;
         default:
             // operators;
@@ -78,23 +82,19 @@ std::string DesignExtractor::extractRightAssign(const std::unique_ptr<ASTNode>& 
 }
 
 void DesignExtractor::addVarNameSetToPKB() {
-    return;
-}
-
-void DesignExtractor::addConstSetToPKB() {
-    return;
+    pkbWriter_.addEntities(Entity::Variable, varNameSet_);
 }
 
 void DesignExtractor::addStmtUsesPairSetToPKB() {
-    return;
+    pkbWriter_.addStmtEntityRelationships(StmtNameRelationship::Uses, stmtUsePairSet_);
 }
 
 void DesignExtractor::addStmtModifiesPairSetToPKB() {
-    return;
+    pkbWriter_.addStmtEntityRelationships(StmtNameRelationship::Modifies, stmtModPairSet_);
 }
 
 void DesignExtractor::addPatternsToPKB() {
-    return;
+    pkbWriter_.addPatterns(assignPatMap_);
 }
 
 std::unordered_map<STMT_NUM, std::string> DesignExtractor::getAssignPatMap() {

@@ -24,7 +24,8 @@ TEST_CASE("DE can extract assign pattern correctly", "[Design Extractor]") {
         root->addChild(std::move(proc));
 
         PKB pkb;
-        DesignExtractor de = DesignExtractor(pkb, std::move(root));
+        PKBWriter pkbWriter(pkb);
+        DesignExtractor de = DesignExtractor(pkbWriter, std::move(root));
         de.extractProgram();
 
         for (const auto& itr : de.getAssignPatMap()) {
@@ -59,7 +60,8 @@ TEST_CASE("DE can extract assign pattern correctly", "[Design Extractor]") {
         root->addChild(std::move(proc));
 
         PKB pkb;
-        DesignExtractor de = DesignExtractor(pkb, std::move(root));
+        PKBWriter pkbWriter(pkb);
+        DesignExtractor de = DesignExtractor(pkbWriter, std::move(root));
         de.extractProgram();
 
         for (auto itr : de.getAssignPatMap()) {
@@ -100,7 +102,8 @@ TEST_CASE("DE can extract assign pattern correctly", "[Design Extractor]") {
         root->addChild(std::move(proc));
 
         PKB pkb;
-        DesignExtractor de = DesignExtractor(pkb, std::move(root));
+        PKBWriter pkbWriter(pkb);
+        DesignExtractor de = DesignExtractor(pkbWriter, std::move(root));
         de.extractProgram();
 
         for (auto itr : de.getAssignPatMap()) {
