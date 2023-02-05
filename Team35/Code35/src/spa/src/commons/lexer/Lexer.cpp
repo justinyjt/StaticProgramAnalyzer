@@ -38,8 +38,8 @@ Token Lexer::scan() {
         return Token(Token::Tag::EndOfFile, getCurrentLineNumber());
     }
 
-    char character = readChar();
     if (include_operator_) {
+        char character = readChar();
         switch (character) {
             case '&':
                 if (readChar('&')) {
@@ -73,10 +73,10 @@ Token Lexer::scan() {
                 return Token(">", Token::Tag::GreaterThan, getCurrentLineNumber());
             default:break;
         }
+        unreadChar();
     }
 
-    unreadChar();
-    character = peekChar();
+    char character = peekChar();
 
     if (isDigit(character)) {
         return scanNextInteger();
