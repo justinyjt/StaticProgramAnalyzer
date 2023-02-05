@@ -11,3 +11,7 @@ Synonym::DesignEntity Synonym::getDesignEntity() {
 std::string Synonym::getDeclaration() {
     return declaration;
 }
+
+bool Synonym::operator==(const Synonym &rhs) const {
+    return this->synonym == rhs.synonym && this->declaration == rhs.declaration;
+}

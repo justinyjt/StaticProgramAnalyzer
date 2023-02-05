@@ -1,16 +1,16 @@
 #include <string>
 #include "ClauseParser.h"
 
-std::vector<Clause> ClauseParser::parse(std::unique_ptr<Lexer> lexer, std::vector<Synonym> synonyms) {
+std::vector<Clause> ClauseParser::parse(const std::unique_ptr<Lexer> &lexer, std::vector<Synonym> synonyms) {
     std::vector<Clause> result;
     while (1) {
-        Token nextToken = lexer->Scan();
-        if (nextToken.GetLexeme() == "such") {
-            lexer->Scan();
+        Token nextToken = lexer->scan();
+        if (nextToken.getLexeme() == "such") {
+            lexer->scan();
             result.push_back(suchThatClauseParser.parse(std::move(lexer), synonyms));
-        } else if (nextToken.GetLexeme() == "pattern") {
+        } else if (nextToken.getLexeme() == "pattern") {
             result.push_back(patternClauseParser.parse(std::move(lexer), synonyms));
-        } else if (nextToken.GetTag() == Token::Tag::EndOfFile) {
+        } else if (nextToken.getTag() == Token::Tag::EndOfFile) {
             break;
         }
     }

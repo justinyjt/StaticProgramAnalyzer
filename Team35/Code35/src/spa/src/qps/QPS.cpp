@@ -1,7 +1,11 @@
 #include "QPS.h"
+#include "commons/token/Token.h"
+#include "commons/token/Keyword.h"
+#include "commons/token/Character.h"
+#include "commons/lexer/Lexer.h"
 #include <memory>
 
-QPS::QPS(std::list<std::string>& results) : results(results), queryParser(new QueryParser()) {}
+QPS::QPS(std::list<std::string>& results) : results(results) {}
 
 void QPS::executeQuery(std::string* queryString) {
     // Create lexer for queryString
@@ -27,8 +31,8 @@ void QPS::executeQuery(std::string* queryString) {
     std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(*queryString, k, c);
 
     // Perform parsing
-    queryParser->setLexer(std::move(lexer));
-    std::pair<Synonym, std::vector<Clause>> parseResult = queryParser->parse();
+    QueryParser queryParser = QueryParser(lexer);
+    std::pair<Synonym, std::vector<Clause>> parseResult = queryParser.parse();
 
     // Perform evaluation
 }

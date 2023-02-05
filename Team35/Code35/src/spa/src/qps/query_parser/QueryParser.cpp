@@ -2,8 +2,11 @@
 #include "qps/query_parser/declaration_parser/DeclarationParser.h"
 #include "qps/query_parser/selection_parser/SelectionParser.h"
 #include "qps/query_parser/clause_parser/ClauseParser.h"
+#include "commons/lexer/Lexer.h"
 
-void QueryParser::setLexer(std::unique_ptr<Lexer> l) {
+QueryParser::QueryParser(const std::unique_ptr<Lexer> &l) : lexer_(l) {}
+
+void QueryParser::setLexer(const std::unique_ptr<Lexer> &l) {
     lexer_ = std::move(l);
 }
 

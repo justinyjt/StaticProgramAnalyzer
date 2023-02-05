@@ -1,22 +1,22 @@
 #include <string>
 #include "DeclarationParser.h"
 
-std::vector<Synonym> DeclarationParser::parse(std::unique_ptr<Lexer> lexer) {
+std::vector<Synonym> DeclarationParser::parse(const std::unique_ptr<Lexer> &lexer) {
     std::vector<Synonym> declarationList;
     while (1) {
-        Token checkSelect = lexer->Scan();
-        if (checkSelect.GetLexeme() == "Select") {
+        Token checkSelect = lexer->scan();
+        if (checkSelect.getLexeme() == "Select") {
             break;
-        } else if (checkSelect.GetLexeme() == "Variable") {
-            Token nextToken = lexer->Scan();
-            Synonym s(Synonym::DesignEntity::Variable, nextToken.GetLexeme());
+        } else if (checkSelect.getLexeme() == "Variable") {
+            Token nextToken = lexer->scan();
+            Synonym s(Synonym::DesignEntity::Variable, nextToken.getLexeme());
             declarationList.push_back(s);
-            lexer->Scan();
-        } else if (checkSelect.GetLexeme() == "Assign") {
-            Token nextToken = lexer->Scan();
-            Synonym s(Synonym::DesignEntity::Assign, nextToken.GetLexeme());
+            lexer->scan();
+        } else if (checkSelect.getLexeme() == "Assign") {
+            Token nextToken = lexer->scan();
+            Synonym s(Synonym::DesignEntity::Assign, nextToken.getLexeme());
             declarationList.push_back(s);
-            lexer->Scan();
+            lexer->scan();
         }
     }
     return declarationList;

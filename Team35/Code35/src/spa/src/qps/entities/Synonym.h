@@ -13,6 +13,7 @@ class Synonym : public Term {
 
     DesignEntity getDesignEntity();
     std::string getDeclaration();
+    bool operator==(Synonym const &rhs) const;
 
  private:
     DesignEntity synonym;
