@@ -6,7 +6,7 @@ Pattern::Pattern(EntRef& first, ExpressionSpec& second) : Clause(dynamic_cast<Ar
 // TODO SPRINT 1 
 // select a pattern a ( _ , "x + 1")
 
-Result Pattern::evaluate() {
+Result Pattern::evaluate(PKBReader* db) {
   // if first == "_" and second is string with no underscores
-  db.getStmtWithExactPatternMatch(second);
+  db->getStmtWithExactPatternMatch(second);
 }

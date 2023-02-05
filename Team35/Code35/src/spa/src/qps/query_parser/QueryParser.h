@@ -10,8 +10,5 @@
 
 class QueryParser {
  public:
-    QueryParser(const std::unique_ptr<Lexer> &lexer);
-    std::pair<Synonym, std::vector<Clause>> parse();
- private:
-    std::unique_ptr<Lexer> &lexer_;
+    std::pair<Synonym, std::vector<Clause>> parse(std:string&);
 };

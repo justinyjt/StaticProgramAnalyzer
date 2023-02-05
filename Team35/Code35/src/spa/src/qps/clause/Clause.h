@@ -10,9 +10,8 @@ class Clause {
   public:
     Arg& first;
     Arg& second;
-    static PKBReader db;
 
     Clause(Arg& first, Arg& second);
 
-    virtual Result evaluate();
+    virtual Result evaluate(PKBReader* db);
 };

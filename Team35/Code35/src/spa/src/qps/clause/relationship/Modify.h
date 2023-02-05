@@ -5,7 +5,7 @@
 class Modify : public Relationship {
 public:
     Modify(StmtRef& first, EntRef& second);
-    Result evaluate();
+    Result evaluate(PKBReader*);
 };
 
 class ModifyS : public Relationship {
