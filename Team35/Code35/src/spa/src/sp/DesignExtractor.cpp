@@ -3,6 +3,7 @@
  * Currently the line number is determined by the semicolomn (new semicolomn means new stat means new line)
  * need to change later
  */
+#include <cassert>
 #include <memory>
 #include <string>
 #include <utility>
