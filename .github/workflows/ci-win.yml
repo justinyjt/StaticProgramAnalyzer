@@ -59,4 +59,4 @@ jobs:
         working-directory: Team35/Code35/build
         run: |
           cmake --build . --target unit_testing --config $BUILD_TYPE
-          .\src\unit_testing\unit_testing
+          .\src\unit_testing\Release\unit_testing.exe
