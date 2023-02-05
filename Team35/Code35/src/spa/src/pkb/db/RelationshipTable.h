@@ -5,20 +5,7 @@
 #include <unordered_set>
 #include <utility>
 
-struct hash_pair {
-    template <class T1, class T2>
-    size_t operator()(const std::pair<T1, T2>& p) const {
-        auto hash1 = std::hash<T1>{}(p.first);
-        auto hash2 = std::hash<T2>{}(p.second);
-
-        if (hash1 != hash2) {
-            return hash1 ^ hash2;
-        }
-
-        // If hash1 == hash2, their XOR is zero.
-        return hash1;
-    }
-};
+#include "commons/PairHash.h"
 
 template<typename TKey, typename TValue>
 class RelationshipTable {
@@ -48,7 +35,7 @@ class RelationshipTable {
         return iterator->second;
     }
 
-    const std::unordered_set<std::pair<TKey, TValue>> &getKeyValuePairs() const {
+    const std::unordered_set<std::pair<TKey, TValue>, hash_pair> &getKeyValuePairs() const {
         return keyValuePairSet;
     }
 

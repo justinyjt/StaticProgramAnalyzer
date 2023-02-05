@@ -1,28 +1,16 @@
-/*
- * 2/1/2023
- * 2. Error Handling
- * 3. expr / term / factor repeating code
- * 4. CMake
- *
- * 2/4/2023
- * 1. Separate ASTNode or current
- * 2. peek() accept() expect() move to another interface
- * */
-
 #include <memory>
 #include <utility>
 
-#include "Parser.h"
+#include "MockParser.h"
 #include "commons/ASTNode.h"
 using std::unique_ptr;
 
-Parser::Parser(PROGRAM src, const DesignExtractor &de) :
-        lex_((unique_ptr<Lexer> &) std::move(
-                std::move(LexerFactory::createLexer(src, LexerFactory::LexerType::Simple)))),
+MockParser::MockParser(std::string src, const DesignExtractor &de, const MockLexer& lex) :
+        lex_(std::move(std::make_unique<MockLexer>(lex))),
         src_(std::move(src)), de_((DesignExtractor &) de),
         cur_(Token::Tag::EndOfFile), isRead_(false) {}
 
-int Parser::peek(Token::Tag tag) {
+int MockParser::peek(Token::Tag tag) {
     if (!isRead_) {
         cur_ = lex_->scan();
         isRead_ = true;
@@ -33,22 +21,21 @@ int Parser::peek(Token::Tag tag) {
     return (cur_.getTag() == tag) ? 1 : 0;
 }
 
-int Parser::accept(Token::Tag tag) {
+int MockParser::accept(Token::Tag tag) {
     if (!isRead_) {
         cur_ = lex_->scan();
         isRead_ = true;
     }
-    if (cur_.getTag() == Token::Tag::EndOfFile) {
-        std::runtime_error("Error: Token List running out!");
-    }
     if (cur_.getTag() == tag) {
-        cur_ = lex_->scan();
+        if (cur_.getTag() != Token::Tag::EndOfFile) {
+            cur_ = lex_->scan();
+        }
         return 1;
     }
     return 0;
 }
 
-int Parser::expect(Token::Tag tag) {
+int MockParser::expect(Token::Tag tag) {
     if (accept(tag) == 1) {
         return 1;
     }
@@ -56,7 +43,7 @@ int Parser::expect(Token::Tag tag) {
     return 0;
 }
 
-unique_ptr<ASTNode> Parser::Parse() {
+unique_ptr<ASTNode> MockParser::Parse() {
     unique_ptr<ASTNode> root = std::make_unique<ASTNode>
             (ASTNode::SyntaxType::program,
              std::nullopt);
@@ -64,13 +51,12 @@ unique_ptr<ASTNode> Parser::Parse() {
     while (accept(Token::Tag::Procedure)) {
         root->addChild(parseProc());
     }
-
     expect(Token::Tag::EndOfFile);
-    de_.extractProgram(std::move(root));
+    //  de_.extractProgram(std::move(root));
     return root;
 }
 
-unique_ptr<ASTNode> Parser::parseProc() {
+unique_ptr<ASTNode> MockParser::parseProc() {
     peek(Token::Tag::Name);
     unique_ptr<ASTNode> cur = std::make_unique<ASTNode>(
             ASTNode::SyntaxType::procedure,
@@ -80,7 +66,7 @@ unique_ptr<ASTNode> Parser::parseProc() {
     return cur;
 }
 
-unique_ptr<ASTNode> Parser::parseStmtLst() {
+unique_ptr<ASTNode> MockParser::parseStmtLst() {
     expect(Token::Tag::LBrace);
     unique_ptr<ASTNode> cur = std::make_unique<ASTNode> (
             ASTNode::SyntaxType::stmtLst,
@@ -91,7 +77,7 @@ unique_ptr<ASTNode> Parser::parseStmtLst() {
     return cur;
 }
 
-unique_ptr<ASTNode> Parser::parseStmt() {
+unique_ptr<ASTNode> MockParser::parseStmt() {
     unique_ptr<ASTNode> cur;
     if (peek(Token::Tag::Name)) {
         cur = parseAssign();
@@ -101,7 +87,7 @@ unique_ptr<ASTNode> Parser::parseStmt() {
     return cur;
 }
 
-unique_ptr<ASTNode> Parser::parseAssign() {
+unique_ptr<ASTNode> MockParser::parseAssign() {
     unique_ptr<ASTNode> cur = std::make_unique<ASTNode> (
             ASTNode::SyntaxType::assign,
             std::nullopt);
@@ -113,7 +99,7 @@ unique_ptr<ASTNode> Parser::parseAssign() {
     return cur;
 }
 
-unique_ptr<ASTNode> Parser::parseExpr() {
+unique_ptr<ASTNode> MockParser::parseExpr() {
     unique_ptr<ASTNode> firstOp = parseTerm();
     if (accept(Token::Tag::Plus)) {
         unique_ptr<ASTNode> op = std::make_unique<ASTNode> (
@@ -138,7 +124,7 @@ unique_ptr<ASTNode> Parser::parseExpr() {
     }
 }
 
-unique_ptr<ASTNode> Parser::parseTerm() {
+unique_ptr<ASTNode> MockParser::parseTerm() {
     unique_ptr<ASTNode> firstOp = parseFactor();
     if (accept(Token::Tag::Multiply)) {
         unique_ptr<ASTNode> op = std::make_unique<ASTNode> (
@@ -172,7 +158,7 @@ unique_ptr<ASTNode> Parser::parseTerm() {
     }
 }
 
-unique_ptr<ASTNode> Parser::parseFactor() {
+unique_ptr<ASTNode> MockParser::parseFactor() {
     unique_ptr<ASTNode> cur;
     if (peek(Token::Tag::Name)) {
         cur = parseName();
@@ -187,7 +173,7 @@ unique_ptr<ASTNode> Parser::parseFactor() {
     return cur;
 }
 
-unique_ptr<ASTNode> Parser::parseName() {
+unique_ptr<ASTNode> MockParser::parseName() {
     peek(Token::Tag::Name);
     unique_ptr<ASTNode> cur = std::make_unique<ASTNode> (
             ASTNode::SyntaxType::var,
@@ -196,7 +182,7 @@ unique_ptr<ASTNode> Parser::parseName() {
     return cur;
 }
 
-unique_ptr<ASTNode> Parser::parseInteger() {
+unique_ptr<ASTNode> MockParser::parseInteger() {
     peek(Token::Tag::Integer);
     unique_ptr<ASTNode> cur = std::make_unique<ASTNode> (
             ASTNode::SyntaxType::constVal,
@@ -204,6 +190,7 @@ unique_ptr<ASTNode> Parser::parseInteger() {
     accept(Token::Tag::Integer);
     return cur;
 }
+
 
 
 

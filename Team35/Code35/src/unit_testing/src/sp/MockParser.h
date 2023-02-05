@@ -2,20 +2,23 @@
 
 #include <string>
 #include <memory>
-#include "IParser.h"
+
+#include "../src/sp/IParser.h"
 #include "commons/ASTNode.h"
 #include "commons/token/Token.h"
-#include "DesignExtractor.h"
+#include "../src/sp/DesignExtractor.h"
+#include "MockLexer.h"
+
 
 using std::unique_ptr;
 
-class Parser : public IParser {
- public:
-    explicit Parser(PROGRAM src, const DesignExtractor& de);
+class MockParser : public IParser {
+public:
+    explicit MockParser(PROGRAM src, const DesignExtractor& de, const MockLexer& lex);
     unique_ptr<ASTNode> Parse() override;
 
- private:
-    std::unique_ptr<Lexer>& lex_;
+private:
+    std::unique_ptr<MockLexer> lex_;
     PROGRAM src_;
     DesignExtractor &de_;
     Token cur_;
