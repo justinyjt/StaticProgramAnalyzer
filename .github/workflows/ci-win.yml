@@ -56,7 +56,5 @@ jobs:
 
       - name: Run Unit Test
         shell: bash
-        working-directory: Team35/Code35/build
-        run: |
-          cmake --build . --target unit_testing --config $BUILD_TYPE
-          .\src\unit_testing\Release\unit_testing.exe
+        working-directory: Team35/Code35/build/src/unit_testing/Release
+        run: ./unit_testing.exe
