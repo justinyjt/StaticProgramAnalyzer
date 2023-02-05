@@ -58,5 +58,6 @@ jobs:
         shell: bash
         working-directory: Team35/Code35/build
         run: |
+          pwd
           ls -laR
           .\src\unit_testing\Release\unit_testing
