@@ -8,7 +8,6 @@ void QueryParser::setLexer(std::unique_ptr<Lexer> l) {
 }
 
 std::pair<Synonym, std::vector<Clause>> QueryParser::parse() {
-
     // pass tokenList and parse declaration
     DeclarationParser declarationParser;
     std::vector<Synonym> synonyms = declarationParser.parse(std::move(lexer_));
@@ -22,4 +21,4 @@ std::pair<Synonym, std::vector<Clause>> QueryParser::parse() {
     std::vector<Clause> clauses = clauseParser.parse(std::move(lexer_), synonyms);
 
     return std::make_pair(selectedSynonym, clauses);
-};
+}

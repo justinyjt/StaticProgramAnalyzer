@@ -1,13 +1,15 @@
+#pragma once
+
 class Term {
-public:
+ public:
     enum class Tag {
         Synonym, StatementNumber, Variable, Wildcard, Expression
     };
 
-    Term(Term::Tag tag);
+    explicit Term(Term::Tag tag);
 
     Tag getTag();
-private:
+ private:
     Tag tag;
 };
 

@@ -1,12 +1,13 @@
+#pragma once
+
 #include "qps/clauses/Clause.h"
 #include "commons/types.h"
 #include "qps/entities/Term.h"
 
 class Relationship : public Clause {
-public:
+ public:
     Relationship(Term first, Term second);
-private:
+ private:
     Term first;
     Term second;
 };
-

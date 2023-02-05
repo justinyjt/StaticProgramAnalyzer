@@ -1,12 +1,14 @@
+#pragma once
+
 #include <string>
 #include "Term.h"
 
 class Variable : public Term {
-public:
+ public:
     explicit Variable(std::string variableName);
 
     std::string getVariableName();
-private:
+ private:
     std::string variableName;
 };
 

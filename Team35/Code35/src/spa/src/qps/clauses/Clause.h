@@ -1,5 +1,6 @@
-class Clause {
-public:
+#pragma once
 
+class Clause {
+ public:
 };
 

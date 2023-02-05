@@ -1,11 +1,13 @@
+#pragma once
+
 #include <string>
 #include "Term.h"
 
 class Expression : public Term {
-public:
+ public:
     explicit Expression(std::string expression);
 
     std::string getExpression() const;
-private:
+ private:
     std::string expression;
 };

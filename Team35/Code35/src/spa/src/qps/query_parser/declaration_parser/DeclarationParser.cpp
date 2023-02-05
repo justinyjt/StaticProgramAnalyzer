@@ -2,9 +2,8 @@
 #include "DeclarationParser.h"
 
 std::vector<Synonym> DeclarationParser::parse(std::unique_ptr<Lexer> lexer) {
-
     std::vector<Synonym> declarationList;
-    while(1) {
+    while (1) {
         Token checkSelect = lexer->Scan();
         if (checkSelect.GetLexeme() == "Select") {
             break;

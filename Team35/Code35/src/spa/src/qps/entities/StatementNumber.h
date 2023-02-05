@@ -1,11 +1,12 @@
+#pragma once
+
 #include "Term.h"
 
 class StatementNumber : public Term {
-public:
+ public:
     explicit StatementNumber(int statementNumber);
 
     int getStatementNumber() const;
-private:
+ private:
     int statementNumber;
 };
-

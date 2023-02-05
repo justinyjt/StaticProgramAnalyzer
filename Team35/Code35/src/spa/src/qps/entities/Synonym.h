@@ -1,8 +1,10 @@
+#pragma once
+
 #include <string>
 #include "Term.h"
 
 class Synonym : public Term {
-public:
+ public:
     enum class DesignEntity {
         Variable, Assign,
     };
@@ -12,7 +14,7 @@ public:
     DesignEntity getDesignEntity();
     std::string getDeclaration();
 
-private:
+ private:
     DesignEntity synonym;
     std::string declaration;
 };

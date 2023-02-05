@@ -3,7 +3,7 @@
 
 std::vector<Clause> ClauseParser::parse(std::unique_ptr<Lexer> lexer, std::vector<Synonym> synonyms) {
     std::vector<Clause> result;
-    while(1) {
+    while (1) {
         Token nextToken = lexer->Scan();
         if (nextToken.GetLexeme() == "such") {
             lexer->Scan();

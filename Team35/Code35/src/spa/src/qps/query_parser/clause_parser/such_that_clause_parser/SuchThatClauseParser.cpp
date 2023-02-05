@@ -3,7 +3,6 @@
 #include "qps/entities/StatementNumber.h"
 
 Relationship SuchThatClauseParser::parse(std::unique_ptr<Lexer> lexer, std::vector<Synonym> synonyms) {
-
     std::string keyword = lexer->Scan().GetLexeme();
 
     if (keyword != "Modifies") {
@@ -36,7 +35,7 @@ Relationship SuchThatClauseParser::parse(std::unique_ptr<Lexer> lexer, std::vect
 
 Term SuchThatClauseParser::makeTerm(Token token, std::vector<Synonym> synonyms) {
     if (token == Token::Tag::Integer) {
-        StatementNumber t(token.GetInteger());
+        StatementNumber t(std::stoi(token.GetLexeme()));
         return t;
     } else if (token == Token::Tag::Name) {
         for (auto synonym : synonyms) {

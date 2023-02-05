@@ -1,6 +1,8 @@
+#pragma once
+
 #include "Relationship.h"
 
 class Modify : public Relationship {
-public:
+ public:
     Modify(Term first, Term second);
 };
