@@ -56,7 +56,7 @@ jobs:
         shell: bash
         run: cmake --build . --config $BUILD_TYPE
 
-      - name: Test Project
+      - name: Run Unit Test
         working-directory: ${{runner.workspace}}/build
         shell: bash
         run: ./src/unit_testing/unit_testing
