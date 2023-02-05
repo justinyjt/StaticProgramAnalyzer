@@ -5,7 +5,7 @@
 class Modify : public Relationship {
 public:
     /* <SYNONYM | STMT_NUM>, <SYNONYM | WILDCARD | IDENT_STR> */
-    Modify(Tok first, Tok second);
+    Modify(Tok& first, Tok& second);
     Result evaluate(PKBReader* );
 
     bool operator==(Modify const &rhs) const;

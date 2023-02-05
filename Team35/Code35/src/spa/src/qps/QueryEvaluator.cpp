@@ -5,7 +5,7 @@ QueryEvaluator::QueryEvaluator(PKBReader& pkbReader) : pkbReader(pkbReader) {};
 Result QueryEvaluator::evaluate(Synonym syn, std::vector<Clause> clauses) {
   std::vector<Result> results;
 
-  for (Clause cl: clauses) {
+  for (Clause& cl: clauses) {
     cl.evaluate(&pkbReader);
   }
 
