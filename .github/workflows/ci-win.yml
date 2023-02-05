@@ -44,8 +44,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build Project
         shell: bash
+        working-directory: Team35/Code35
         run: |
-          cd Team35/Code35
           mkdir build
           cd build
           cmake -A x64 ..
@@ -54,8 +54,7 @@ jobs:
           cmake --build . --target autotester --config $BUILD_TYPE
           cd ../..
 
-      - name: Test Project
+      - name: Run Unit Test
         shell: bash
-        run: |
-          cd Team35/Code35/build
-          ./src/unit_testing/unit_testing
+        working-directory: Team35/Code35/build
+        run: ./src/unit_testing/unit_testing
