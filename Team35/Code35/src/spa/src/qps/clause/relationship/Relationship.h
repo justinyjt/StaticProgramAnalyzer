@@ -1,3 +1,4 @@
+#pragma once
 #include "qps/clause/Clause.h"
 #include "commons/types.h"
 

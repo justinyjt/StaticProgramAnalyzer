@@ -1,3 +1,4 @@
+#pragma once
 #include "qps/result/Result.h"
 #include "pkb/PKBReader.h"
 #include "commons/types.h"

@@ -1,3 +1,4 @@
+#pragma once
 #include "Tok.h"
 
 class StatementNumber : public Tok {

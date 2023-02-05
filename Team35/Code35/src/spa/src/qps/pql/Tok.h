@@ -1,3 +1,4 @@
+#pragma once
 
 /*
 Base class for all PQL tokens

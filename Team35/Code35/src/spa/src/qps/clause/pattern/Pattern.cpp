@@ -9,8 +9,9 @@ Pattern::Pattern(Tok& first, Tok& second) : Clause(first, second) {}
 Result& Pattern::evaluate(PKBReader* db) {
   // if first == "_" and second is string with no underscores
   if (first.tag == Tok::WILDCARD && second.tag == Tok::EXPR) {
-    STMT_SET set = db->getStmtWithExactPatternMatch(static_cast<ExpressionStr&>(second).str);
+    std::string pattern = static_cast<ExpressionStr&>(second).str;
+    STMT_SET set = db->getStmtWithExactPatternMatch(pattern);
     IntResult result(set);
-    return result;
+    return dynamic_cast<Result&>(result);
   }
 }

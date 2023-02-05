@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include "commons/types.h"
 /*
@@ -8,34 +9,36 @@ class Result {
     virtual void output(std::list<std::string>&);
 };
 
-class StrResult {
+class StrResult : public Result {
   std::vector<std::string> results;
   
-  StrResult(std::unordered_set<std::string> set) {
-    for (auto& elem : set) {
-      results.push_back(elem);
+  public:
+    StrResult(std::unordered_set<std::string> set) {
+      for (auto& elem : set) {
+        results.push_back(elem);
+      }
     }
-  }
 
-  void output(std::list<std::string>& list) {
-    for (std::string& elem: results) {
-      list.push_back(elem);
+    void output(std::list<std::string>& list) {
+      for (std::string& elem: results) {
+        list.push_back(elem);
+      }
     }
-  }
 };
 
-class IntResult {
+class IntResult : public Result {
   std::vector<int> results;
 
-  IntResult(std::unordered_set<int> set) {
-    for (auto& elem : set) {
-      results.push_back(elem);
+  public:
+    IntResult(std::unordered_set<int> set) {
+      for (auto& elem : set) {
+        results.push_back(elem);
+      }
     }
-  }
 
-  void output(std::list<std::string>& list) {
-    for (int elem: results) {
-      list.push_back(std::to_string(elem));
+    void output(std::list<std::string>& list) {
+      for (int elem: results) {
+        list.push_back(std::to_string(elem));
+      }
     }
-  }
 };

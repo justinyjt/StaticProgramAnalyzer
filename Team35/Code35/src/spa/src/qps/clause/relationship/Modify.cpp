@@ -11,6 +11,6 @@ Result& Modify::evaluate(PKBReader* db) {
     ENT_SET set = db->getRelationship(StmtNameRelationship::Modifies, 
                         static_cast<StatementNumber&>(first).stmtNum);
     StrResult result(set);
-    return result;
+    return dynamic_cast<Result&>(result);
   }
 }

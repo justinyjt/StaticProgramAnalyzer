@@ -1,3 +1,4 @@
+#pragma once
 #include "Relationship.h"
 #include "qps/result/result.h"
 
