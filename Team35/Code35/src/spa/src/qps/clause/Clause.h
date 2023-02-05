@@ -12,7 +12,7 @@ class Clause {
     Tok first;
     Tok second;
 
-    Clause(Tok& first, Tok& second) : first(first), second(second) {};
+    Clause(Tok first, Tok second) : first(first), second(second) {};
 
 
     bool operator==(Clause &rhs) {
