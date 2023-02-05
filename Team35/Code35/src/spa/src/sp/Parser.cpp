@@ -19,7 +19,8 @@
 #include "commons/ASTNode.h"
 using std::unique_ptr;
 
-Parser::Parser(Lexer &lex, PROGRAM src, DesignExtractor &de) : lex_(lex), src_(std::move(src)), de_(de){}
+Parser::Parser(Lexer &lex, PROGRAM src, DesignExtractor &de) : lex_(lex), src_(std::move(src)), de_(de),
+                                                               cur_(), isRead_(false) {}
 
 int Parser::test(const std::string& type) {
     if (lex_.empty()) {

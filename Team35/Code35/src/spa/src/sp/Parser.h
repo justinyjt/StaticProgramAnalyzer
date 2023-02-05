@@ -17,6 +17,8 @@ private:
     Lexer &lex_;
     PROGRAM src_;
     DesignExtractor &de_;
+    Token cur_;
+    bool isRead_;
 
     int test(const std::string&);
     int accept(const std::string&);

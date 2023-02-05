@@ -1,3 +1,8 @@
+/**
+ * 2/5/2023
+ * Currently the line number is determined by the semicolomn (new semicolomn means new stat means new line)
+ * need to change later
+ */
 #include <vector>
 #include "pkb/PKB.h"
 #include "DesignExtractor.h"
@@ -16,11 +21,13 @@ void DesignExtractor::extractProgram() {
 
 void DesignExtractor::extractProc(const std::unique_ptr<ASTNode>& node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::procedure);
-    for (const auto& child : node->getChildren()) {
+    const std::unique_ptr<ASTNode>& nodeC = node->getChildren().front();
+    assert(nodeC->getSyntaxType() == ASTNode::SyntaxType::stmtLst);
+    for (const auto& child : nodeC->getChildren()) {
         stmtCnt_++;
         switch(child->getSyntaxType()){
             case ASTNode::SyntaxType::assign:
-                extractAssign(node);
+                extractAssign(child);
             default:
                 break;
         }
@@ -34,6 +41,7 @@ void DesignExtractor::extractAssign(const std::unique_ptr<ASTNode>& node) {
     const auto& rAssign = node->getChildren().back();
     assignPat_.append(extractLeftAssign(lAssign));
     assignPat_.append(extractRightAssign(rAssign));
+    assignPatMap_.insert({stmtCnt_, assignPat_});
 }
 
 std::string DesignExtractor::extractLeftAssign(const std::unique_ptr<ASTNode>& node) {
@@ -84,5 +92,9 @@ void DesignExtractor::addStmtModifiesPairSetToPKB() {
 
 void DesignExtractor::addPatternsToPKB() {
     return;
+}
+
+std::unordered_map<STMT_NUM, std::string> DesignExtractor::getAssignPatMap() {
+    return this->assignPatMap_;
 }
 

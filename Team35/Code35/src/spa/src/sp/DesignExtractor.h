@@ -15,6 +15,8 @@ public:
     void addStmtModifiesPairSetToPKB();
     void addPatternsToPKB();
 
+    std::unordered_map<STMT_NUM, std::string> getAssignPatMap();
+
 private:
     NAME_SET varNameSet_;
     INTEGER_SET constSet_;
