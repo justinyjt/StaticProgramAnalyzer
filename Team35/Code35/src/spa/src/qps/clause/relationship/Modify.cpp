@@ -18,6 +18,5 @@ Result Modify::evaluate(PKBReader* db) {
 }
 
 bool Modify::operator==(const Modify &rhs) const {
-    std::cout << "hi";
     return this->first.tag == rhs.first.tag && this->second.tag == rhs.second.tag;
 }

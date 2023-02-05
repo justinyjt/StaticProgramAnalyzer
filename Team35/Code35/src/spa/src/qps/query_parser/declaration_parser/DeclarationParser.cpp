@@ -7,7 +7,6 @@ std::vector<Synonym> DeclarationParser::parse(const std::unique_ptr<Lexer> &lexe
         Token checkSelect = lexer->scan();
         if (checkSelect.getLexeme() == "Select") {
             std::string s = checkSelect.getLexeme();
-            std::cout << s;
             break;
         } else if (checkSelect.getLexeme() == "variable") {
             Token nextToken = lexer->scan();
