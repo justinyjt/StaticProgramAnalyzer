@@ -16,13 +16,19 @@ class PKBReaderStub : public PKBReader {
     public:
     PKBReaderStub() : PKBReader(testPKB) {};
 
+    // x = x + 1
+    // Select v such that Modifies(1, v)
     ENT_SET getRelationship(StmtNameRelationship tableType, STMT_NUM stmt) const {
         std::unordered_set<std::string> s;
+        s.insert("x");
         return s;
     };
 
+    // x = x + 1
+    // Select a pattern a("_", "x + 1")
     STMT_SET getStmtWithExactPatternMatch(std::string &pattern) const {
         std::unordered_set<int> s;
+        s.insert(1);
         return s;
     };
 };
