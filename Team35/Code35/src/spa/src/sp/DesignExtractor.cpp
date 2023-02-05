@@ -3,14 +3,17 @@
  * Currently the line number is determined by the semicolomn (new semicolomn means new stat means new line)
  * need to change later
  */
-#include <vector>
+#include <memory>
+#include <string>
+#include <utility>
+#include <unordered_map>
 #include "pkb/PKB.h"
 #include "DesignExtractor.h"
 #include "commons/ASTNode.h"
 
-DesignExtractor::DesignExtractor(PKB& pkb, std::unique_ptr<ASTNode> root) : pkb_(pkb), root_(std::move(root)),
-                                                                            varNameSet_(), constSet_(), stmtUsePairSet_(),stmtModPairSet_(),
-                                                                            assignPatMap_(), stmtCnt_(0), assignPat_() {}
+DesignExtractor::DesignExtractor(PKB& pkb, std::unique_ptr<ASTNode> root) :
+    pkb_(pkb), root_(std::move(root)), varNameSet_(), constSet_(),
+    stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(), stmtCnt_(0), assignPat_() {}
 
 void DesignExtractor::extractProgram() {
     assert(root_->getSyntaxType() == ASTNode::SyntaxType::program);
@@ -25,7 +28,7 @@ void DesignExtractor::extractProc(const std::unique_ptr<ASTNode>& node) {
     assert(nodeC->getSyntaxType() == ASTNode::SyntaxType::stmtLst);
     for (const auto& child : nodeC->getChildren()) {
         stmtCnt_++;
-        switch(child->getSyntaxType()){
+        switch (child->getSyntaxType()) {
             case ASTNode::SyntaxType::assign:
                 extractAssign(child);
             default:
@@ -54,7 +57,7 @@ std::string DesignExtractor::extractLeftAssign(const std::unique_ptr<ASTNode>& n
 
 std::string DesignExtractor::extractRightAssign(const std::unique_ptr<ASTNode>& node) {
     std::string label = node->getLabel();
-    switch(node->getSyntaxType()) {
+    switch (node->getSyntaxType()) {
         case ASTNode::SyntaxType::var:
             varNameSet_.insert(label);
             stmtUsePairSet_.insert(*new STMT_NAME_PAIR(stmtCnt_, label));
@@ -63,9 +66,9 @@ std::string DesignExtractor::extractRightAssign(const std::unique_ptr<ASTNode>& 
             constSet_.insert(stoi(label));
             return label;
         default:
-            //operators;
-            //This is based on the assumption that brackets are useless in pattern matching
-            //Only if we can safely ignore all brackets, this works
+            // operators;
+            // This is based on the assumption that brackets are useless in pattern matching
+            // Only if we can safely ignore all brackets, this works
             assert(node->getChildren().size() == 2);
             const auto& lChild = node->getChildren().front();
             const auto& rChild = node->getChildren().back();

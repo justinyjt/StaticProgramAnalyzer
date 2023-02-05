@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 #include "IParser.h"
 #include "commons/ASTNode.h"
 #include "commons/Token.h"
@@ -9,11 +10,11 @@
 using std::unique_ptr;
 
 class Parser : public IParser {
-public:
-    explicit Parser(Lexer& lex, PROGRAM src, DesignExtractor& de);
+ public:
+    explicit Parser(const Lexer& lex, PROGRAM src, const DesignExtractor& de);
     unique_ptr<ASTNode> Parse() override;
 
-private:
+ private:
     Lexer &lex_;
     PROGRAM src_;
     DesignExtractor &de_;

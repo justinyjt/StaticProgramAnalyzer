@@ -1,15 +1,17 @@
-#ifndef SPA_TOKEN_H
-#define SPA_TOKEN_H
+#ifndef TEAM35_CODE35_SRC_SPA_SRC_COMMONS_TOKEN_H_
+#define TEAM35_CODE35_SRC_SPA_SRC_COMMONS_TOKEN_H_
 
 #include <string>
 
 class Token {
-public:
+ public:
     std::string getTokenType();
     std::string getStringValue();
 
-private:
+ private:
     std::string tokenType;
     std::string value;
 };
-#endif //SPA_TOKEN_H
+
+
+#endif  // TEAM35_CODE35_SRC_SPA_SRC_COMMONS_TOKEN_H_

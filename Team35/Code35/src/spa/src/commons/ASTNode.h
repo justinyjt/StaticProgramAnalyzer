@@ -1,13 +1,12 @@
-#ifndef SPA_ASTNODE_H
-#define SPA_ASTNODE_H
-
+#ifndef TEAM35_CODE35_SRC_SPA_SRC_COMMONS_ASTNODE_H_
+#define TEAM35_CODE35_SRC_SPA_SRC_COMMONS_ASTNODE_H_
 #include <string>
 #include <vector>
 #include <optional>
+#include <memory>
 
 class ASTNode {
-
-public:
+ public:
     enum class SyntaxType {
         program,
         procedure,
@@ -30,10 +29,11 @@ public:
 
     void addChild(std::unique_ptr<ASTNode>);
 
-private:
+ private:
     std::optional<std::string> label_;
     SyntaxType type_;
     std::vector< std::unique_ptr<ASTNode> > children_;
 };
 
-#endif //SPA_ASTNODE_H
+
+#endif  // TEAM35_CODE35_SRC_SPA_SRC_COMMONS_ASTNODE_H_

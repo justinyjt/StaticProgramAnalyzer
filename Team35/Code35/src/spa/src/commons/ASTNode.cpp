@@ -1,5 +1,6 @@
 #include "ASTNode.h"
 
+#include <memory>
 #include <utility>
 
 ASTNode::ASTNode(SyntaxType syntaxType, std::optional<std::string> label) {

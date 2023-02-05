@@ -1,7 +1,7 @@
 #include "Lexer.h"
 
 void Lexer::tokenize(std::string src) {
-    return ;
+    return;
 }
 
 bool Lexer::match(Token token) {
@@ -13,7 +13,7 @@ Token Lexer::peek() {
 }
 
 void Lexer::move() {
-
+    return;
 }
 
 bool Lexer::empty() {
