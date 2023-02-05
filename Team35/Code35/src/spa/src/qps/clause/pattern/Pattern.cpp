@@ -1,12 +1,16 @@
 #include "Pattern.h"
+#include "qps/pql/ExpressionStr.h"
 
-Pattern::Pattern(EntRef& first, ExpressionSpec& second) : Clause(dynamic_cast<Arg&>(first), 
-                                                              dynamic_cast<Arg&>(second)) {}
+Pattern::Pattern(Tok& first, Tok& second) : Clause(first, second) {}
 
 // TODO SPRINT 1 
 // select a pattern a ( _ , "x + 1")
 
-Result Pattern::evaluate(PKBReader* db) {
+Result& Pattern::evaluate(PKBReader* db) {
   // if first == "_" and second is string with no underscores
-  db->getStmtWithExactPatternMatch(second);
+  if (first.tag == Tok::WILDCARD && second.tag == Tok::EXPR) {
+    STMT_SET set = db->getStmtWithExactPatternMatch(static_cast<ExpressionStr&>(second).str);
+    IntResult result(set);
+    return result;
+  }
 }

@@ -15,8 +15,9 @@ void QPS::executeQuery(std::string& query, std::list<std::string>& result) {
     std::pair<Synonym, std::vector<Clause>> parseResult = queryParser->parse(query);
 
     // Perform evaluation
-    Result result = queryEvaluator->evaluate(parseResult.first, parseResult.second);
+    Result res = queryEvaluator->evaluate(parseResult.first, parseResult.second);
 
     // store in result list
+    res.output(result);
 
 };

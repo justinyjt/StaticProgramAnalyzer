@@ -1,8 +1,7 @@
 #include "Tok.h"
-#include "Arg.h"
 
-class StatementNumber : public Tok, public StmtRef {
+class StatementNumber : public Tok {
 public:
-    StatementNumber(int stmtNum) : stmtNum(stmtNum) {};
+    StatementNumber(int stmtNum) : stmtNum(stmtNum), Tok(STMT_NUM) {};
     const int stmtNum;
 };

@@ -1,14 +1,15 @@
 #include "Relationship.h"
-#include "qps/clause/Arg.h"
 #include "qps/result/result.h"
 
 class Modify : public Relationship {
 public:
-    Modify(StmtRef& first, EntRef& second);
-    Result evaluate(PKBReader*);
+    /* <SYNONYM | STMT_NUM>, <SYNONYM | WILDCARD | IDENT_STR> */
+    Modify(Tok& first, Tok& second);
+    Result& evaluate(PKBReader* );
 };
 
 class ModifyS : public Relationship {
 public:
-    ModifyS(EntRef& first, EntRef& second);
+    /* <SYNONYM | IDENT_STR>, <SYNONYM | WILDCARD | IDENT_STR> */
+    ModifyS(Tok& first, Tok& second);
 };

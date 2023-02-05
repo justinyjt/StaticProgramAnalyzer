@@ -1,11 +1,10 @@
 #include <string>
 #include "Tok.h"
-#include "Arg.h"
 
 /*
 represents string identifier
 */
-class IdentStr : public Tok, public StmtRef {
+class IdentStr : public Tok {
   std::string s;
-  IdentStr(std::string s) : s(s) {};
+  IdentStr(std::string s) : s(s), Tok(IDENT) {};
 };

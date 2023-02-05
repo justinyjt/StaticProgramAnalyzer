@@ -1,5 +1,4 @@
 #include "qps/clause/Clause.h"
-#include "qps/clause/Arg.h"
 #include "commons/types.h"
 
 /*
@@ -8,5 +7,5 @@ Follows | FollowsT | Parent | ParentT | UsesS | UsesP | ModifiesS | ModifiesP
 */
 class Relationship : public Clause {
     public:
-        Relationship(Arg&, Arg&);
+        Relationship(Tok& first, Tok& second) : Clause(first, second) {};
 };

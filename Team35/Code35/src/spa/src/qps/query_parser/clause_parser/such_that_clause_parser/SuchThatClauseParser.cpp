@@ -15,7 +15,7 @@ Clause& SuchThatClauseParser::parse(const std::unique_ptr<Lexer> &lexer, std::ve
 
     Token leftArg = lexer->scan();
 
-    Arg& left = makeArg(leftArg, synonyms);
+    Tok left = makeArg(leftArg, synonyms);
 
     if (lexer->scan().getTag() != Token::Tag::Comma) {
         throw std::runtime_error("missing comma");
@@ -23,17 +23,17 @@ Clause& SuchThatClauseParser::parse(const std::unique_ptr<Lexer> &lexer, std::ve
 
     Token rightArg = lexer->scan();
 
-    Arg& right = makeArg(rightArg, synonyms);
+    Tok right = makeArg(rightArg, synonyms);
 
     if (lexer->scan().getTag() != Token::Tag::RParen) {
         throw std::runtime_error("missing right parenthesis");
     }
 
-    Modify m(static_cast<StmtRef&>(left), static_cast<StmtRef&>(right)); // sus..
+    Modify m(left, right);
     return m;
 }
 
-Arg SuchThatClauseParser::makeArg(Token token, std::vector<Synonym> synonyms) {
+Tok SuchThatClauseParser::makeArg(Token token, std::vector<Synonym> synonyms) {
     if (token.getTag() == Token::Tag::Integer) {
         StatementNumber t(std::stoi(token.getLexeme()));
         return t;

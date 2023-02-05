@@ -2,7 +2,8 @@
 #include "PatternClauseParser.h"
 #include "qps/clause/pattern/Pattern.h"
 #include "qps/pql/Synonym.h"
-#include "qps/clause/Arg.h"
+#include "qps/pql/Wildcard.h"
+#include "qps/pql/ExpressionStr.h"
 
 Clause& PatternClauseParser::parse(const std::unique_ptr<Lexer> &lexer, std::vector<Synonym> synonyms) {
     std::string pattern_type = lexer->scan().getLexeme();
@@ -27,7 +28,7 @@ Clause& PatternClauseParser::parse(const std::unique_ptr<Lexer> &lexer, std::vec
         throw std::runtime_error("string expected");
     }
 
-    ExpressionSpec right = ExpressionSpec(rightArg.getLexeme());
+    ExpressionStr right = ExpressionStr(rightArg.getLexeme());
 
     if (lexer->scan().getTag() != Token::Tag::RParen) {
         throw std::runtime_error("missing right parenthesis");

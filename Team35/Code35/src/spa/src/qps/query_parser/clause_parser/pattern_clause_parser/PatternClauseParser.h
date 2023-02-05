@@ -4,7 +4,6 @@
 #include <memory>
 #include <vector>
 #include "qps/clause/pattern/Pattern.h"
-#include "qps/clause/Arg.h"
 #include "qps/pql/Synonym.h"
 #include "qps/pql/Wildcard.h"
 #include "commons/token/Token.h"
