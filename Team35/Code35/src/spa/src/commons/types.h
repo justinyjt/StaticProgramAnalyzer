@@ -8,8 +8,9 @@
 
 #include "PairHash.h"
 
-typedef  std::string ENT_NAME;
+typedef std::string ENT_NAME;
 typedef int STMT_NUM;
+typedef std::uint32_t LineNumber;
 typedef std::pair<STMT_NUM, ENT_NAME> STMT_ENT;
 typedef std::pair<ENT_NAME , ENT_NAME> ENT_ENT;
 

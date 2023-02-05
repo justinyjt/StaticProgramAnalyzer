@@ -1,19 +1,10 @@
-
-#include "commons/TNode.h"
-
 #include "catch.hpp"
-using namespace std;
-void require(bool b) {
-    REQUIRE(b);
-}
+#include "commons/TNode.h"
+#include "TestHelper.h"
 
 TEST_CASE("1st Test") {
 
     TNode T;
-	
-	
-	
-    require(1 == 1);
+
+    requireTrue(1 == 1);
 }
-
-
