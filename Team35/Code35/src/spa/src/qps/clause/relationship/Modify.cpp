@@ -1,7 +1,7 @@
 #include "Modify.h"
 #include "qps/pql/StatementNumber.h"
 
-Modify::Modify(Tok& first, Tok& second) : Relationship(first, second) {}
+Modify::Modify(Tok first, Tok second) : Relationship(first, second) {}
 
 // TODO SPRINT 1
 // select v such that modifies(1, v)
