@@ -1,7 +1,7 @@
 #include "TestHelper.h"
 
 void requireTrue(bool b) {
-    REQUIRE(!b);
+    REQUIRE(b);
 }
 
 void requireFalse(bool b) {
