@@ -4,10 +4,10 @@
 #include <string>
 #include <unordered_set>
 
-typedef  std::string ENT_NAME;
+typedef std::string ENT_NAME;
 typedef int STMT_NUM;
 typedef std::unordered_set<STMT_NUM> STMT_SET;
-
+typedef std::uint32_t LineNumber;
 
 enum class StmtNameRelationship {
     Modifies, Uses, Calls, Reads, Prints, None
