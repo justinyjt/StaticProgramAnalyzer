@@ -1,14 +1,12 @@
 #include "qps/QueryEvaluator.h"
 
-QueryEvaluator::QueryEvaluator(PKB& pkb) : pkb(pkb) {
-  pkbReader = new PKBReader(pkb);
-}
+QueryEvaluator::QueryEvaluator(PKBReader& pkbReader) : pkbReader(pkbReader) {};
 
 Result QueryEvaluator::evaluate(Synonym syn, std::vector<Clause> clauses) {
   std::vector<Result> results;
 
   for (Clause cl: clauses) {
-    cl.evaluate(pkbReader);
+    cl.evaluate(&pkbReader);
   }
 
   if (clauses.size() == 1) {
