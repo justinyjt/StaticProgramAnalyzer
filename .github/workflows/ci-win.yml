@@ -58,6 +58,5 @@ jobs:
         shell: bash
         working-directory: Team35/Code35/build
         run: |
-          pwd
-          ls -laR
-          .\src\unit_testing\Release\unit_testing
+          cmake --build . --target unit_testing --config $BUILD_TYPE
+          .\src\unit_testing\unit_testing
