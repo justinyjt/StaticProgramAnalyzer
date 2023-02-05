@@ -5,33 +5,13 @@
 #include "../../TestHelper.h"
 
 TEST_CASE("1. Query parser") {
-    KeywordList k {
-            Keyword("Select"),
-            Keyword("such"),
-            Keyword("that"),
-            Keyword("Modifies"),
-            Keyword("pattern"),
-            Keyword("variable"),
-            Keyword("assign"),
-    };
 
-    CharacterList c {
-            Character('(', Token::Tag::LParen),
-            Character(')', Token::Tag::RParen),
-            Character(',', Token::Tag::Comma),
-            Character('\"', Token::Tag::DoubleQuotes),
-            Character('_', Token::Tag::Underscore),
-            Character(';', Token::Tag::SemiColon),
-    };
-
-    std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>("variable v; assign a;\nSelect s such that Modifies(1, v)\n Select a pattern a ( _ , \"x + 1\")", k, c);
-
-    QueryParser queryParser = QueryParser();
+    std::string query = "variable v; assign a; \nSelect s such that Modifies(1, v)\n Select a pattern a(_, \"x + 1\")";
+    QueryParser queryParser;
 
     // Perform parsing
-    queryParser.setLexer(std::move(lexer));
-    std::pair<Synonym, std::vector<Clause>> parseResult = queryParser.parse();
+    std::pair<Synonym, std::vector<Clause>> parseResult = queryParser.parse(query);
 
-    Synonym synonym = Synonym(Synonym::DesignEntity::Variable, "s");
-    requireEqual(Synonym(Synonym::DesignEntity::Variable, "s"), parseResult.first);
+    Synonym synonym = Synonym(Synonym::DesignEntity::VARIABLE, "s");
+    requireEqual(Synonym(Synonym::DesignEntity::VARIABLE, "s"), parseResult.first);
 }
