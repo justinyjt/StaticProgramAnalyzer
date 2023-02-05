@@ -9,4 +9,8 @@ class Tok {
 
     Tok(Tag tag) : tag(tag) {};
     const Tag tag;
+
+    bool operator==(const Tok &rhs) const {
+        return this->tag == rhs.tag;
+    }
 };
