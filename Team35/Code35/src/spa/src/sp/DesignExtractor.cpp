@@ -12,11 +12,12 @@
 #include "DesignExtractor.h"
 #include "commons/ASTNode.h"
 
-DesignExtractor::DesignExtractor(PKBWriter& pkbWriter, std::unique_ptr<ASTNode> root) :
-    pkbWriter_(pkbWriter), root_(std::move(root)), varNameSet_(), constSet_(),
+DesignExtractor::DesignExtractor(PKBWriter& pkbWriter) :
+    pkbWriter_(pkbWriter), varNameSet_(), constSet_(),
     stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(), stmtCnt_(0), assignPat_() {}
 
-void DesignExtractor::extractProgram() {
+void DesignExtractor::extractProgram(std::unique_ptr<ASTNode> root) {
+    root_ = std::move(root);
     assert(root_->getSyntaxType() == ASTNode::SyntaxType::program);
     for (const auto& child : root_->getChildren()) {
         extractProc(std::move(child));

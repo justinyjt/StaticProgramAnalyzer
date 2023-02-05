@@ -9,9 +9,9 @@
 
 class DesignExtractor {
  public:
-    explicit DesignExtractor(PKBWriter&, std::unique_ptr<ASTNode>);
+    explicit DesignExtractor(PKBWriter&);
 
-    void extractProgram();
+    void extractProgram(std::unique_ptr<ASTNode>);
 
     void addVarNameSetToPKB();
     void addStmtUsesPairSetToPKB();
