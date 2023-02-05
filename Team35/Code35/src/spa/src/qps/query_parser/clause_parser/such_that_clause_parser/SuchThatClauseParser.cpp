@@ -1,8 +1,8 @@
 #include "SuchThatClauseParser.h"
-#include "qps/clauses/relationships/relationship_clauses/Modify.h"
-#include "qps/entities/StatementNumber.h"
+#include "qps/clause/relationship/Modify.h"
+#include "qps/pql/StatementNumber.h"
 
-Relationship SuchThatClauseParser::parse(const std::unique_ptr<Lexer> &lexer, std::vector<Synonym> synonyms) {
+Clause& SuchThatClauseParser::parse(const std::unique_ptr<Lexer> &lexer, std::vector<Synonym> synonyms) {
     std::string keyword = lexer->scan().getLexeme();
 
     if (keyword != "Modifies") {
@@ -15,7 +15,7 @@ Relationship SuchThatClauseParser::parse(const std::unique_ptr<Lexer> &lexer, st
 
     Token leftArg = lexer->scan();
 
-    Term left = makeTerm(leftArg, synonyms);
+    Arg& left = makeArg(leftArg, synonyms);
 
     if (lexer->scan().getTag() != Token::Tag::Comma) {
         throw std::runtime_error("missing comma");
@@ -23,24 +23,24 @@ Relationship SuchThatClauseParser::parse(const std::unique_ptr<Lexer> &lexer, st
 
     Token rightArg = lexer->scan();
 
-    Term right = makeTerm(rightArg, synonyms);
+    Arg& right = makeArg(rightArg, synonyms);
 
     if (lexer->scan().getTag() != Token::Tag::RParen) {
         throw std::runtime_error("missing right parenthesis");
     }
 
-    Modify m(left, right);
+    Modify m(static_cast<StmtRef&>(left), static_cast<StmtRef&>(right)); // sus..
     return m;
 }
 
-Term SuchThatClauseParser::makeTerm(Token token, std::vector<Synonym> synonyms) {
+Arg SuchThatClauseParser::makeArg(Token token, std::vector<Synonym> synonyms) {
     if (token.getTag() == Token::Tag::Integer) {
         StatementNumber t(std::stoi(token.getLexeme()));
         return t;
     } else if (token.getTag() == Token::Tag::Name) {
         for (auto synonym : synonyms) {
-            if (synonym.getDeclaration() == token.getLexeme()) {
-                Synonym s(synonym.getDesignEntity(), token.getLexeme());
+            if (synonym.ident == token.getLexeme()) {
+                Synonym s(synonym.de, token.getLexeme());
                 return s;
             }
         }

@@ -1,10 +1,10 @@
 #include <string>
 #include "PatternClauseParser.h"
-#include "qps/clauses/patterns/pattern_clauses/AssignPattern.h"
-#include "qps/entities/Synonym.h"
-#include "qps/entities/Expression.h"
+#include "qps/clause/pattern/Pattern.h"
+#include "qps/pql/Synonym.h"
+#include "qps/clause/Arg.h"
 
-Pattern PatternClauseParser::parse(const std::unique_ptr<Lexer> &lexer, std::vector<Synonym> synonyms) {
+Clause& PatternClauseParser::parse(const std::unique_ptr<Lexer> &lexer, std::vector<Synonym> synonyms) {
     std::string pattern_type = lexer->scan().getLexeme();
 
     if (lexer->scan().getTag() != Token::Tag::LParen) {
@@ -15,29 +15,24 @@ Pattern PatternClauseParser::parse(const std::unique_ptr<Lexer> &lexer, std::vec
         throw std::runtime_error("expected underscore");
     }
 
-    Term left(Term::Tag::Wildcard);
+    Wildcard left;
 
     if (lexer->scan().getTag() != Token::Tag::Comma) {
         throw std::runtime_error("missing comma");
     }
 
     Token rightArg = lexer->scan();
-    Term right = makeTerm(rightArg, synonyms);
 
+    if (rightArg.getTag() != Token::Tag::String) {
+        throw std::runtime_error("string expected");
+    }
+
+    ExpressionSpec right = ExpressionSpec(rightArg.getLexeme());
 
     if (lexer->scan().getTag() != Token::Tag::RParen) {
         throw std::runtime_error("missing right parenthesis");
     }
 
-    AssignPattern a(left, right);
+    Pattern a(left, right);
     return a;
-}
-
-Term PatternClauseParser::makeTerm(Token token, std::vector<Synonym> synonyms) {
-    if (token.getTag() == Token::Tag::String) {
-        Expression e(token.getLexeme());
-        return e;
-    } else {
-        throw std::runtime_error("string expected");
-    }
 }

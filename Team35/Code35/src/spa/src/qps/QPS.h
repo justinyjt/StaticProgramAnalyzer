@@ -5,7 +5,7 @@
 #include <vector>
 #include <utility>
 #include "qps/query_parser/QueryParser.h"
-#include "qps/clauses/Clause.h"
+#include "qps/clause/Clause.h"
 
 class QPS {
  private:

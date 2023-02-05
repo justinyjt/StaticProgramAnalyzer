@@ -3,14 +3,14 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "qps/clauses/relationships/relationship_clauses/Relationship.h"
-#include "qps/entities/Synonym.h"
+#include "qps/clause/relationship/Relationship.h"
+#include "qps/clause/Arg.h"
+#include "qps/pql/Synonym.h"
 #include "commons/token/Token.h"
 #include "commons/lexer/Lexer.h"
 
 class SuchThatClauseParser {
  public:
-    Relationship parse(const std::unique_ptr<Lexer> &lexer, std::vector<Synonym> synonyms);
-    Term makeTerm(Token token, std::vector<Synonym> synonyms);
+    Clause& parse(const std::unique_ptr<Lexer> &lexer, std::vector<Synonym> synonyms);
+    Arg makeArg(Token token, std::vector<Synonym> synonyms);
 };
-
