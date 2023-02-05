@@ -59,4 +59,4 @@ jobs:
       - name: Test Project
         working-directory: ${{runner.workspace}}/build
         shell: bash
-        run: $GITHUB_WORKSPACE/Team35/Code35/src/unit_testing/unit_testing
+        run: $GITHUB_WORKSPACE/Team35/Code35/cmake-build-debug/src/unit_testing/unit_testing -r xml -d yes --order lex
