@@ -14,15 +14,15 @@ Token::Token(Lexeme lexeme, Tag tag, LineNumber line_number)
 Token::Token(const Token &token, LineNumber line_number)
     : lexeme_(token.lexeme_), tag_(token.tag_), line_number_(line_number) {}
 
-Lexeme Token::GetLexeme() const {
+Lexeme Token::getLexeme() const {
     return lexeme_;
 }
 
-Token::Tag Token::GetTag() const {
+Token::Tag Token::getTag() const {
     return tag_;
 }
 
-LineNumber Token::GetLineNumber() const {
+LineNumber Token::getLineNumber() const {
     return line_number_;
 }
 

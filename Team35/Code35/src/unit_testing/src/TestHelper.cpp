@@ -1,17 +1,17 @@
 #include "TestHelper.h"
 
-void RequireTrue(bool b) {
+void requireTrue(bool b) {
     REQUIRE(b);
 }
 
-void RequireFalse(bool b) {
+void requireFalse(bool b) {
     REQUIRE(!b);
 }
 
-void RequireNotThrow(const std::function<void()> &f) {
+void requireNotThrow(const std::function<void()> &f) {
     REQUIRE_NOTHROW(f());
 }
 
-void RequireThrow(const std::function<void()> &f) {
+void requireThrow(const std::function<void()> &f) {
     REQUIRE_THROWS(f());
 }

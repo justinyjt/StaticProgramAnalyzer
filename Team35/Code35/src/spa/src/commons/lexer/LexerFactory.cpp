@@ -6,16 +6,16 @@
 
 #include "Lexer.h"
 
-std::unique_ptr<ILexer> LexerFactory::CreateLexer(Source source, LexerFactory::LexerType lexer_type) {
+std::unique_ptr<ILexer> LexerFactory::createLexer(Source source, LexerFactory::LexerType lexer_type) {
     switch (lexer_type) {
-        case LexerFactory::LexerType::Simple:return std::move(CreateSimpleLexer(source));
-        case LexerFactory::LexerType::Pql:return std::move(CreatePqlLexer(source));
-        case LexerFactory::LexerType::Expression:return std::move(CreateExpressionLexer(source));
+        case LexerFactory::LexerType::Simple:return std::move(createSimpleLexer(source));
+        case LexerFactory::LexerType::Pql:return std::move(createPqlLexer(source));
+        case LexerFactory::LexerType::Expression:return std::move(createExpressionLexer(source));
         default:assert(false);
     }
 }
 
-std::unique_ptr<ILexer> LexerFactory::CreateSimpleLexer(Source source) {
+std::unique_ptr<ILexer> LexerFactory::createSimpleLexer(Source source) {
     KeywordList keyword_list{
         Keyword("procedure", Token::Tag::Procedure),
         Keyword("while", Token::Tag::While),
@@ -44,7 +44,7 @@ std::unique_ptr<ILexer> LexerFactory::CreateSimpleLexer(Source source) {
     return std::move(lexer);
 }
 
-std::unique_ptr<ILexer> LexerFactory::CreatePqlLexer(Source source) {
+std::unique_ptr<ILexer> LexerFactory::createPqlLexer(Source source) {
     KeywordList keyword_list{
         Keyword("procedure", Token::Tag::Procedure),
         Keyword("call", Token::Tag::Call),
@@ -79,7 +79,7 @@ std::unique_ptr<ILexer> LexerFactory::CreatePqlLexer(Source source) {
     return std::move(lexer);
 }
 
-std::unique_ptr<ILexer> LexerFactory::CreateExpressionLexer(Source source) {
+std::unique_ptr<ILexer> LexerFactory::createExpressionLexer(Source source) {
     KeywordList keyword_list{};
     CharacterList character_list{
         Character('(', Token::Tag::LParen),

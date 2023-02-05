@@ -84,9 +84,9 @@ class Token {
     Token(Lexeme lexeme, Tag tag, LineNumber line_number);
     Token(const Token &token, LineNumber line_number);
 
-    Lexeme GetLexeme() const;
-    Tag GetTag() const;
-    LineNumber GetLineNumber() const;
+    Lexeme getLexeme() const;
+    Tag getTag() const;
+    LineNumber getLineNumber() const;
 
     bool operator==(Token const &rhs) const;
     friend std::ostream &operator<<(std::ostream &output, const Token &token);

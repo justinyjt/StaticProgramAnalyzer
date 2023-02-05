@@ -22,19 +22,19 @@ class Lexer : public ILexer {
                    const CharacterList &character_list,
                    bool include_operator = true,
                    bool include_string = true);
-    Token Scan();
+    Token scan();
     ~Lexer() = default;
 
  protected:
-    LineNumber GetCurrentLineNumber() const;
-    char ReadChar();
-    bool ReadChar(char c);
-    char PeekChar();
-    void UnreadChar();
-    void SkipChar();
-    bool IsEOF() const;
-    void Reserve(const Keyword &keyword);
-    void Reserve(const Character &character);
+    LineNumber getCurrentLineNumber() const;
+    char readChar();
+    bool readChar(char c);
+    char peekChar();
+    void unreadChar();
+    void skipChar();
+    bool isEof() const;
+    void reserve(const Keyword &keyword);
+    void reserve(const Character &character);
 
  private:
     Source source_;
@@ -45,15 +45,15 @@ class Lexer : public ILexer {
     bool include_operator_;
     bool include_string_;
 
-    Token ScanNextName();
-    Token ScanNextInteger();
-    Token ScanNextString();
-    Token ScanNextCharacter();
+    Token scanNextName();
+    Token scanNextInteger();
+    Token scanNextString();
+    Token scanNextCharacter();
 
-    bool IsNameStart(char c) const;
-    bool IsNamePart(char c) const;
-    bool IsDigit(char c) const;
-    bool IsStringStartEnd(char c) const;
-    bool IsNewLine(char c) const;
-    bool IsControlOrSpace(char c) const;
+    bool isNameStart(char c) const;
+    bool isNamePart(char c) const;
+    bool isDigit(char c) const;
+    bool isStringStartEnd(char c) const;
+    bool isNewLine(char c) const;
+    bool isControlOrSpace(char c) const;
 };

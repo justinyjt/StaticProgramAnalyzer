@@ -6,5 +6,5 @@ TEST_CASE("1st Test") {
 
     TNode T;
 
-    RequireTrue(1 == 1);
+    requireTrue(1 == 1);
 }

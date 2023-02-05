@@ -4,17 +4,17 @@
 
 #include "catch.hpp"
 
-void RequireTrue(bool b);
-void RequireFalse(bool b);
-void RequireNotThrow(const std::function<void()> &f);
-void RequireThrow(const std::function<void()> &f);
+void requireTrue(bool b);
+void requireFalse(bool b);
+void requireNotThrow(const std::function<void()> &f);
+void requireThrow(const std::function<void()> &f);
 
 template<typename T>
-void RequireEqual(T a, T b) {
+void requireEqual(T a, T b) {
     REQUIRE(a == b);
 }
 
 template<typename T>
-void RequireNotEqual(T a, T b) {
+void requireNotEqual(T a, T b) {
     REQUIRE(a != b);
 }

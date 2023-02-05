@@ -10,7 +10,7 @@ class Integer : public Token {
     Integer(int integer_lexeme, Token::Tag tag);
     Integer(int integer_lexeme, LineNumber line_number);
     Integer(int integer_lexeme, Token::Tag tag, LineNumber line_number);
-    int GetInteger() const;
+    int getInteger() const;
 
  private:
     int integer_lexeme_;

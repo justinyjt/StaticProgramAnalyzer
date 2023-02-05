@@ -17,6 +17,6 @@ Integer::Integer(int integer_lexeme, Token::Tag tag, LineNumber line_number) : T
                                                                                             line_number),
                                                                                integer_lexeme_(integer_lexeme) {}
 
-int Integer::GetInteger() const {
+int Integer::getInteger() const {
     return integer_lexeme_;
 }
