@@ -26,13 +26,14 @@ public:
 
     [[nodiscard]] SyntaxType getSyntaxType() const;
     [[nodiscard]] std::string getLabel() const;
+    [[nodiscard]] const std::vector<std::unique_ptr<ASTNode>> & getChildren() const;
 
-    void addChild(const std::shared_ptr<ASTNode> &newChild);
+    void addChild(std::unique_ptr<ASTNode>);
 
 private:
-    std::optional<std::string> label;
-    SyntaxType type;
-    std::vector< std::shared_ptr<ASTNode> > children;
+    std::optional<std::string> label_;
+    SyntaxType type_;
+    std::vector< std::unique_ptr<ASTNode> > children_;
 };
 
 #endif //SPA_ASTNODE_H

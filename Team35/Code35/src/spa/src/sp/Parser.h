@@ -4,26 +4,32 @@
 #include "IParser.h"
 #include "commons/ASTNode.h"
 #include "commons/Token.h"
-using std::shared_ptr;
+#include "DesignExtractor.h"
+
+using std::unique_ptr;
 
 class Parser : public IParser {
 public:
-    explicit Parser();
-    shared_ptr<ASTNode> Parse(PROGRAM src) override;
+    explicit Parser(Lexer& lex, PROGRAM src, DesignExtractor& de);
+    unique_ptr<ASTNode> Parse() override;
 
 private:
-    static int test(const std::string&, std::list<Token>*);
-    static int accept(const std::string&, std::list<Token>*);
-    static int expect(const std::string&, std::list<Token>*);
+    Lexer &lex_;
+    PROGRAM src_;
+    DesignExtractor &de_;
 
-    shared_ptr<ASTNode> parseProc(std::list<Token>* tokenLst);
-    shared_ptr<ASTNode> parseStmtLst(std::list<Token>* tokenLst);
-    shared_ptr<ASTNode> parseStmt(std::list<Token>* tokenLst);
-    shared_ptr<ASTNode> parseAssign(std::list<Token>* tokenLst);
-    shared_ptr<ASTNode> parseExpr(std::list<Token>* tokenLst);
-    shared_ptr<ASTNode> parseTerm(std::list<Token>* tokenLst);
-    shared_ptr<ASTNode> parseFactor(std::list<Token>* tokenLst);
+    int test(const std::string&);
+    int accept(const std::string&);
+    int expect(const std::string&);
 
-    shared_ptr<ASTNode> parseName(std::list<Token>* tokenLst);
-    shared_ptr<ASTNode> parseInteger(std::list<Token>* tokenLst);
+    unique_ptr<ASTNode> parseProc();
+    unique_ptr<ASTNode> parseStmtLst();
+    unique_ptr<ASTNode> parseStmt();
+    unique_ptr<ASTNode> parseAssign();
+    unique_ptr<ASTNode> parseExpr();
+    unique_ptr<ASTNode> parseTerm();
+    unique_ptr<ASTNode> parseFactor();
+
+    unique_ptr<ASTNode> parseName();
+    unique_ptr<ASTNode> parseInteger();
 };
