@@ -3,7 +3,6 @@
 
 #include <string>
 #include <unordered_set>
-#include <unordered_map>
 #include <utility>
 
 #include "PairHash.h"
@@ -18,6 +17,7 @@ typedef std::unordered_set<STMT_NUM> STMT_SET;
 typedef std::unordered_set<ENT_NAME> ENT_SET;
 typedef std::unordered_set<STMT_ENT, hash_pair> STMT_ENT_SET;
 typedef std::unordered_set<ENT_ENT, hash_pair> ENT_ENT_SET;
+
 
 enum class StmtNameRelationship {
     Modifies, Uses, Calls, Reads, Prints, None
