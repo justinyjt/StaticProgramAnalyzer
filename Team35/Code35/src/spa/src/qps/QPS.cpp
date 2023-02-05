@@ -16,19 +16,19 @@ void QPS::executeQuery(std::string* queryString) {
     };
 
     CharacterList c {
-            Character("(", Tag::Lparen),
-            Character(")", Tag::RParen),
-            Character(",", Tag::Comma),
-            Character("\"", Tag::DoubleQuotes),
-            Character("_", Tag::Underscore),
-            Character(";", Tag::SemiColon),
+            Character('(', Token::Tag::LParen),
+            Character(')', Token::Tag::RParen),
+            Character(',', Token::Tag::Comma),
+            Character('\"', Token::Tag::DoubleQuotes),
+            Character('_', Token::Tag::Underscore),
+            Character(';', Token::Tag::SemiColon),
     };
 
     std::unique_ptr<Lexer> lexer = std::make_unique<Lexer>(*queryString, k, c);
 
     // Perform parsing
     queryParser->setLexer(std::move(lexer));
-    std::pair<std::string, std::vector<Clause>> parseResult = queryParser->parse();
+    std::pair<Synonym, std::vector<Clause>> parseResult = queryParser->parse();
 
     // Perform evaluation
 }

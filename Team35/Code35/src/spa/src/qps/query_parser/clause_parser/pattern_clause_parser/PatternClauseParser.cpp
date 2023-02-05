@@ -22,7 +22,7 @@ Pattern PatternClauseParser::parse(std::unique_ptr<Lexer> lexer, std::vector<std
     }
 
     Token rightArg = lexer->Scan().GetTag();
-    Term right = makeTerm(rightArg);
+    Term right = makeTerm(rightArg, synonyms);
 
 
     if (lexer.Scan().GetTag() != Token::Tag::RParen) {

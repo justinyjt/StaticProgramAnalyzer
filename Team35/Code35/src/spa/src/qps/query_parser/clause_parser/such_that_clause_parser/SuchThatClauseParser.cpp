@@ -14,7 +14,7 @@ Relationship SuchThatClauseParser::parse(std::unique_ptr<Lexer> lexer, std::vect
         throw std::runtime_error("missing left parenthesis");
     }
 
-    Token leftArg = lexer->Scan().GetTag();
+    Token leftArg = lexer->Scan();
 
     Term left = makeTerm(leftArg, synonyms);
 
@@ -22,9 +22,9 @@ Relationship SuchThatClauseParser::parse(std::unique_ptr<Lexer> lexer, std::vect
         throw std::runtime_error("missing comma");
     }
 
-    Token::Token rightArg = lexer->Scan().GetTag();
+    Token::Token rightArg = lexer->Scan();
 
-    Term right = makeTerm(rightArg);
+    Term right = makeTerm(rightArg, synonyms);
 
     if (lexer->Scan().GetTag() != Token::Tag::RParen) {
         throw std::runtime_error("missing right parenthesis");

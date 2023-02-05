@@ -6,7 +6,7 @@
 class QueryParser {
 public:
     void setLexer(std::unique_ptr<Lexer> lexer);
-    std::pair<Synonym , std::vector<Clause>> parse();
+    std::pair<Synonym, std::vector<Clause>> parse();
 private:
     std::unique_ptr<Lexer> lexer_;
 };

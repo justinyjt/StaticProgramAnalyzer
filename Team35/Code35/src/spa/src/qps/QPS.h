@@ -11,6 +11,6 @@ private:
 public:
     QPS(std::list<std::string>& results);
     void executeQuery(std::string* queryString);
-    std::pair<std::string, std::vector<Clause>> parseResult = queryParser->parse();
+    std::pair<Synonym, std::vector<Clause>> parseResult = queryParser->parse();
 };
 
