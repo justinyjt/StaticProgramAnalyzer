@@ -1,13 +1,12 @@
 /*
  * Probably a tokenGenerator can help this part.
  */
-
 #include "catch.hpp"
 #include "MockParser.h"
 #include "ASTPrinter.h"
 
 TEST_CASE("Parser can parse tokens correctly", "[Parser]") {
-    SECTION("Parse can parse blank program") {
+    SECTION("Parser can parse blank program") {
         Token EoF (Token::Tag::EndOfFile);
         std::vector<Token> tokens = {EoF};
         MockLexer lex(tokens);
@@ -24,7 +23,7 @@ TEST_CASE("Parser can parse tokens correctly", "[Parser]") {
         REQUIRE(printer.printAST(root).empty());
     }
 
-    SECTION("Parse can parse one empty procedure") {
+    SECTION("Parser can parse one empty procedure") {
         Token EoF (Token::Tag::EndOfFile);
         Token Proc (Token::Tag::Procedure);
         Token ProcName ("main", Token::Tag::Name);
@@ -46,7 +45,7 @@ TEST_CASE("Parser can parse tokens correctly", "[Parser]") {
         REQUIRE(printer.printAST(root) == "procedure main {\n}\n");
     }
 
-    SECTION("Parse can parse one procedure with x = 1;") {
+    SECTION("Parser can parse one procedure with x = 1;") {
         Token EoF (Token::Tag::EndOfFile);
         Token Proc (Token::Tag::Procedure);
         Token ProcName ("main", Token::Tag::Name);
@@ -72,7 +71,7 @@ TEST_CASE("Parser can parse tokens correctly", "[Parser]") {
         REQUIRE(printer.printAST(root) == "procedure main {\nx=1;\n}\n");
     }
 
-    SECTION("Parse can parse one procedure with x = 1 + y * 22;") {
+    SECTION("Parser can parse one procedure with x = 1 + y * 22;") {
         Token EoF (Token::Tag::EndOfFile);
         Token Proc (Token::Tag::Procedure);
         Token ProcName ("main", Token::Tag::Name);
@@ -102,7 +101,7 @@ TEST_CASE("Parser can parse tokens correctly", "[Parser]") {
         //  std::cout << printer.printAST(root) << std::endl;
         REQUIRE(printer.printAST(root) == "procedure main {\nx=1+y*22;\n}\n");
     }
-    SECTION("Parse can parse one procedure with x = (y % 123) / 456;") {
+    SECTION("Parser can parse one procedure with x = (y % 123) / 456;") {
         Token EoF (Token::Tag::EndOfFile);
         Token Proc (Token::Tag::Procedure);
         Token ProcName ("main", Token::Tag::Name);
@@ -134,7 +133,7 @@ TEST_CASE("Parser can parse tokens correctly", "[Parser]") {
         //  std::cout << printer.printAST(root) << std::endl;
         REQUIRE(printer.printAST(root) == "procedure main {\nx=y%123/456;\n}\n");
     }
-    SECTION("Parse can parse one procedure with K0koM0 = ((14 * (1926 % 817)) / (zZz + r4t));") {
+    SECTION("Parser can parse one procedure with K0koM0 = ((14 * (1926 % 817)) / (zZz + r4t));") {
         Token EoF (Token::Tag::EndOfFile);
         Token Proc (Token::Tag::Procedure);
         Token ProcName ("main", Token::Tag::Name);
@@ -171,7 +170,7 @@ TEST_CASE("Parser can parse tokens correctly", "[Parser]") {
         //  std::cout << printer.printAST(root) << std::endl;
         REQUIRE(printer.printAST(root) == "procedure main {\nK0koM0=14*1926%817/zZz+r4t;\n}\n");
     }
-    SECTION("Parse can parse one procedure with x = (y % 123) / 456; y = 456;") {
+    SECTION("Parser can parse one procedure with x = (y % 123) / 456; y = 456;") {
         Token EoF (Token::Tag::EndOfFile);
         Token Proc (Token::Tag::Procedure);
         Token ProcName ("main", Token::Tag::Name);

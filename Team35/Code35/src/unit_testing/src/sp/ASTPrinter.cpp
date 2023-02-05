@@ -1,4 +1,3 @@
-
 #include "ASTPrinter.h"
 
 ASTPrinter::ASTPrinter() : res_() {}

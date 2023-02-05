@@ -1,4 +1,3 @@
-#include <utility>
 #include "MockLexer.h"
 
 MockLexer::MockLexer(const std::vector<Token>& tokens) : tokenLst_(tokens) {}

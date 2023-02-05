@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+
 #include "commons/token/Token.h"
 
 class MockLexer {

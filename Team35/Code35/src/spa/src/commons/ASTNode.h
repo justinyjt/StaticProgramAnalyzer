@@ -1,5 +1,6 @@
 #ifndef TEAM35_CODE35_SRC_SPA_SRC_COMMONS_ASTNODE_H_
 #define TEAM35_CODE35_SRC_SPA_SRC_COMMONS_ASTNODE_H_
+
 #include <string>
 #include <vector>
 #include <optional>
