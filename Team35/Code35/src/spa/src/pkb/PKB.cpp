@@ -59,7 +59,6 @@ RelationshipTable<ENT_NAME, ENT_NAME> &PKB::getNameNameRelationshipTable(NameNam
     return const_cast<RelationshipTable<ENT_NAME , ENT_NAME> &>(pkbPtr->getNameNameRelationshipTable(tableType));
 }
 
-
 const PatternTable &PKB::getPatternTable() const {
     return patternTable;
 }

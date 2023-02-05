@@ -34,38 +34,6 @@ TEST_CASE("PKB can get all named entities", "[PKB]") {
         REQUIRE(actualResult == expectedResult);
     }
 }
-//
-//TEST_CASE("PKB can get all statements") {
-//    PKB pkb;
-//    PKBWriter pkbWriter(pkb);
-//    PKBReader pkbReader(pkb);
-//    PKBWriter *pkbWriterPtr = &pkbWriter;
-//    PKBReader *pkbReaderPtr = &pkbReader;
-//    STMT_SET setA = {1, 2, 4, 5};
-//    STMT_SET setB = {3};
-////    pkbWriterPtr->addStatements(StatementType::Assign, setA);
-////    pkbWriterPtr->addStatements(StatementType::Read, setB);
-//
-//
-//
-//    SECTION("PKB can get all assign statements") {
-//        STMT_SET expectedResult = {1, 2, 4, 5};
-//        STMT_SET actualResult = pkbReaderPtr->getStatements(StatementType::Assign);
-//        REQUIRE(actualResult == expectedResult);
-//    }
-//
-//    SECTION("PKB can get all read statements") {
-//        STMT_SET expectedResult = {3};
-//        STMT_SET actualResult = pkbReaderPtr->getStatements(StatementType::Read);
-//        REQUIRE(actualResult == expectedResult);
-//    }
-//
-//    SECTION("PKB can get all print statements") {
-//        STMT_SET expectedResult = {};
-//        STMT_SET actualResult = pkbReaderPtr->getStatements(StatementType::Print);
-//        REQUIRE(actualResult == expectedResult);
-//    }
-//}
 
 TEST_CASE("PKB can get all relationships in a Statement-Name table", "[PKB]") {
     PKB pkb;
@@ -295,39 +263,3 @@ TEST_CASE("PKB can get keyNames in a Name-Name StmtNameRelation") {
         REQUIRE(actualResult == expectedResult);
     }
 }
-
-//TEST_CASE("Test getRelationshipByValStmt method") {
-//    PKB pkb;
-//    PKBWriter pkbWriter(pkb);
-//    PKBReader pkbReader(pkb);
-//    PKBWriter *pkbWriterPtr = &pkbWriter;
-//    PKBReader *pkbReaderPtr = &pkbReader;
-//    STMT_STMT_SET followsSet = {std::make_pair(1, 2),  std::make_pair(2, 3), std::make_pair(4, 5)};
-//    STMT_STMT_SET parentsSet = {std::make_pair(3, 4),  std::make_pair(3, 5)};
-//    pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationshipType::Follows, followsSet);
-//    pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationshipType::Parent, parentsSet);
-//
-//    SECTION("PKB can get keyStmt from a valid valStmt for Follows") {
-//        STMT_SET expected = {2};
-//        STMT_SET actual = pkbReaderPtr->getRelationshipByVal(StmtStmtRelationshipType::Follows, 3);
-//        REQUIRE(actual == expected);
-//    }
-//
-//    SECTION("PKB can get keyStmt from a valid valStmt for parent") {
-//        STMT_SET expected = {};
-//        STMT_SET actual = pkbReaderPtr->getRelationshipByVal(StmtStmtRelationshipType::Parent, 1);
-//        REQUIRE(actual == expected);
-//    }
-//
-//    SECTION("PKB can get keyStmt from valStmt that doesn't exist for Follows") {
-//        STMT_SET expected = {};
-//        STMT_SET actual = pkbReaderPtr->getRelationshipByVal(StmtStmtRelationshipType::Follows, 8);
-//        REQUIRE(actual == expected);
-//    }
-//
-//    SECTION("PKB can get keyStmt from valStmt that doesn't exist for parent") {
-//        STMT_SET expected = {};
-//        STMT_SET actual = pkbReaderPtr->getRelationshipByVal(StmtStmtRelationshipType::Parent, 8);
-//        REQUIRE(actual == expected);
-//    }
-//}

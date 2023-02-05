@@ -44,8 +44,3 @@ bool PKBReader::isRelationshipExists(NameNameRelationship tableType, ENT_NAME ke
 STMT_SET PKBReader::getStmtWithExactPatternMatch(std::string &pattern) const {
     return pkb.getPatternTable().getExactPatternMatch(pattern);
 }
-
-
-
-
-
