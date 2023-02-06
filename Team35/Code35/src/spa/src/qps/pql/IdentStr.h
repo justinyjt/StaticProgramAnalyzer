@@ -6,5 +6,5 @@
 represents string identifier
 */
 class IdentStr : public Tok {
-    IdentStr(std::string s) : Tok::Tok(s,  IDENT) {};
+    explicit IdentStr(std::string s);
 };

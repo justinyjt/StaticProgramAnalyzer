@@ -1,10 +1,8 @@
 #include "Pattern.h"
 #include "qps/pql/ExpressionStr.h"
-#include <iostream>
 
 Pattern::Pattern(Tok first, Tok second) : Clause(first, second) {}
 
-// TODO SPRINT 1 
 // select a pattern a ( _ , "x + 1")
 
 Result* Pattern::evaluate(PKBReader* db) {

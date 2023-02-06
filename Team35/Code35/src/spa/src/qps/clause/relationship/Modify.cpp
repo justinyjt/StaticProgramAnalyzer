@@ -1,10 +1,8 @@
 #include "Modify.h"
 #include "qps/pql/StatementNumber.h"
-#include <iostream>
 
 Modify::Modify(Tok first, Tok second) : Relationship(first, second) {}
 
-// TODO SPRINT 1
 // select v such that modifies(1, v)
 
 Result* Modify::evaluate(PKBReader* db) {
@@ -16,7 +14,7 @@ Result* Modify::evaluate(PKBReader* db) {
     StrResult* result = new StrResult(set);
     return dynamic_cast<Result*>(result);
   }
-  
+
   throw std::runtime_error("");
 }
 

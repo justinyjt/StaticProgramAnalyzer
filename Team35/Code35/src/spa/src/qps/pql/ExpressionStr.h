@@ -6,6 +6,6 @@
 "<expr>, _<expr>_, _"
 */ 
 class ExpressionStr : public Tok {
-public:
-    ExpressionStr(std::string str) : Tok::Tok(str,  EXPR) {};
+ public:
+    explicit ExpressionStr(std::string str);
 };
