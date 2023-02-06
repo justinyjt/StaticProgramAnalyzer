@@ -1,8 +1,9 @@
 #pragma once
 
+#include <string>
+
 #include "DesignExtractor.h"
 #include "IParser.h"
-#include <string>
 
 class SourceProcessor {
  public:

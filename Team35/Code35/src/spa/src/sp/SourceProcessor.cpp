@@ -1,7 +1,9 @@
 #include "SourceProcessor.h"
-#include "Parser.h"
-#include <string>
+
 #include <memory>
+#include <string>
+
+#include "Parser.h"
 
 SourceProcessor::SourceProcessor(DesignExtractor &de) : design_extractor_(de) {}
 
