@@ -5,7 +5,7 @@
 #include "MockParser.h"
 #include "ASTPrinter.h"
 
-TEST_CASE("Parser can parse tokens correctly", "[Parser]") {
+TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
     SECTION("Parser can parse blank program") {
         Token EoF (Token::Tag::EndOfFile);
         std::vector<Token> tokens = {EoF};
@@ -202,5 +202,59 @@ TEST_CASE("Parser can parse tokens correctly", "[Parser]") {
         ASTPrinter printer;
         //  std::cout << printer.printAST(root) << std::endl;
         REQUIRE(printer.printAST(root) == "procedure main {\nx=y%123/456;\ny=456;\n}\n");
+    }
+}
+
+TEST_CASE("Parser can parse read correctly", "[Parser]") {
+    SECTION("Parser can parse one read stmt: read x;") {
+        Token EoF (Token::Tag::EndOfFile);
+        Token Proc (Token::Tag::Procedure);
+        Token ProcName ("main", Token::Tag::Name);
+        Token LBrace (Token::Tag::LBrace);
+        Token RBrace (Token::Tag::RBrace);
+        Token Semi (Token::Tag::SemiColon);
+        Token ReadStmt (Token::Tag::Read);
+        Token VarName ("x", Token::Tag::Name);
+
+        std::vector<Token> tokens = {EoF, RBrace, Semi, VarName, ReadStmt, LBrace, ProcName, Proc};
+        MockLexer lex(tokens);
+        PKB pkb;
+        PKBWriter pkbWriter(pkb);
+
+        DesignExtractor de = DesignExtractor(pkbWriter);
+        MockParser parser = MockParser("Hello World", de, lex);
+
+        std::unique_ptr<ASTNode> root = std::move(parser.Parse());
+
+        ASTPrinter printer;
+        //  std::cout << printer.printAST(root) << std::endl;
+        REQUIRE(printer.printAST(root) == "procedure main {\nread x;\n}\n");
+    }
+}
+
+TEST_CASE("Parser can parse print correctly", "[Parser]") {
+    SECTION("Parser can parse one print stmt: print x;") {
+        Token EoF (Token::Tag::EndOfFile);
+        Token Proc (Token::Tag::Procedure);
+        Token ProcName ("main", Token::Tag::Name);
+        Token LBrace (Token::Tag::LBrace);
+        Token RBrace (Token::Tag::RBrace);
+        Token Semi (Token::Tag::SemiColon);
+        Token PrintStmt (Token::Tag::Print);
+        Token VarName ("x", Token::Tag::Name);
+
+        std::vector<Token> tokens = {EoF, RBrace, Semi, VarName, PrintStmt, LBrace, ProcName, Proc};
+        MockLexer lex(tokens);
+        PKB pkb;
+        PKBWriter pkbWriter(pkb);
+
+        DesignExtractor de = DesignExtractor(pkbWriter);
+        MockParser parser = MockParser("Hello World", de, lex);
+
+        std::unique_ptr<ASTNode> root = std::move(parser.Parse());
+
+        ASTPrinter printer;
+        //  std::cout << printer.printAST(root) << std::endl;
+        REQUIRE(printer.printAST(root) == "procedure main {\nprint x;\n}\n");
     }
 }
