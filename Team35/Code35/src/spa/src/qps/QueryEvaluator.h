@@ -1,7 +1,13 @@
-#ifndef TEAM35_CODE35_SRC_SPA_SRC_QPS_QUERYEVALUATOR_H_
-#define TEAM35_CODE35_SRC_SPA_SRC_QPS_QUERYEVALUATOR_H_
+#pragma once
 
-class dummy {
+#include <vector>
+#include "qps/clause/Clause.h"
+#include "qps/pql/Synonym.h"
+#include "pkb/PKBReader.h"
+
+class QueryEvaluator {
+ public:
+    PKBReader* pkbReader;
+    explicit QueryEvaluator(PKBReader* pkbReader);
+    Result* evaluate(Synonym, std::vector<Clause*>);
 };
-
-#endif  // TEAM35_CODE35_SRC_SPA_SRC_QPS_QUERYEVALUATOR_H_
