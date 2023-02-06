@@ -1,5 +1,3 @@
-#pragma once
-
 #include "Tok.h"
 #include "Wildcard.h"
 

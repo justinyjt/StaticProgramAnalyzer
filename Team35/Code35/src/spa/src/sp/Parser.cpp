@@ -17,8 +17,7 @@
 using std::unique_ptr;
 
 Parser::Parser(PROGRAM src, const DesignExtractor &de) :
-        lex_((unique_ptr<Lexer> &) std::move(
-                std::move(LexerFactory::createLexer(src, LexerFactory::LexerType::Simple)))),
+        lex_(std::move(LexerFactory::createLexer(src, LexerFactory::LexerType::Simple))),
         src_(std::move(src)), de_((DesignExtractor &) de),
         cur_(Token::Tag::EndOfFile), isRead_(false) {}
 
