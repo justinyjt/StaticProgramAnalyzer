@@ -49,7 +49,7 @@ void DesignExtractor::extractAssign(const std::unique_ptr<ASTNode>& node) {
     assignPat_.clear();
     const auto& lAssign = node->getChildren().front();
     const auto& rAssign = node->getChildren().back();
-
+    extractLeftAssign(lAssign);
     assignPat_.append(extractRightAssign(rAssign));
     assignPatMap_.insert({stmtCnt_, assignPat_});
 }

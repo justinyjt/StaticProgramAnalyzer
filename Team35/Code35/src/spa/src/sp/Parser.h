@@ -15,7 +15,7 @@ class Parser : public IParser {
     unique_ptr<ASTNode> Parse() override;
 
  private:
-    std::unique_ptr<Lexer>& lex_;
+    std::unique_ptr<ILexer> lex_;
     PROGRAM src_;
     DesignExtractor &de_;
     Token cur_;
