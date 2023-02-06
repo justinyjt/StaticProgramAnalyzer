@@ -25,10 +25,16 @@ std::string ASTPrinter::printAST(const std::unique_ptr<ASTNode>& node) {
         res.append(printAST(lAssign));
         res.append("=");
         res.append(printAST(rAssign));
+    } else if (node->getSyntaxType() == ASTNode::SyntaxType::read) {
+        const auto& child = node->getChildren().front();
+        res.append("read " + printAST(child));
+    } else if (node->getSyntaxType() == ASTNode::SyntaxType::print) {
+        const auto& child = node->getChildren().front();
+        res.append("print " + printAST(child));
     } else if (node->getSyntaxType() == ASTNode::SyntaxType::var
         || node->getSyntaxType() == ASTNode::SyntaxType::constVal) {
         return node->getLabel();
-    } else {
+    } else { //binary operations
         const auto& lAssign = node->getChildren().front();
         const auto& rAssign = node->getChildren().back();
         res.append(printAST(lAssign));

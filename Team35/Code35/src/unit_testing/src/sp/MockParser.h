@@ -32,6 +32,8 @@ private:
     unique_ptr<ASTNode> parseStmtLst();
     unique_ptr<ASTNode> parseStmt();
     unique_ptr<ASTNode> parseAssign();
+    unique_ptr<ASTNode> parseRead();
+    unique_ptr<ASTNode> parsePrint();
     unique_ptr<ASTNode> parseExpr();
     unique_ptr<ASTNode> parseTerm();
     unique_ptr<ASTNode> parseFactor();

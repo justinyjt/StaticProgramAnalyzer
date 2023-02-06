@@ -13,6 +13,8 @@ class ASTNode {
         procedure,
         stmtLst,
         assign,
+        read,
+        print,
         var,
         constVal,
         plus,

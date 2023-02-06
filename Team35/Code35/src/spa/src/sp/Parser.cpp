@@ -94,6 +94,10 @@ unique_ptr<ASTNode> Parser::parseStmt() {
     unique_ptr<ASTNode> cur;
     if (peek(Token::Tag::Name)) {
         cur = parseAssign();
+    } else if (peek(Token::Tag::Read)) {
+        cur = parseRead();
+    } else if (peek(Token::Tag::Print)) {
+        cur = parsePrint();
     } else {
         std::runtime_error("Unidentified Token");
     }
@@ -108,6 +112,28 @@ unique_ptr<ASTNode> Parser::parseAssign() {
     cur->addChild(parseName());
     expect(Token::Tag::Assignment);
     cur->addChild(parseExpr());
+    expect(Token::Tag::SemiColon);
+    return cur;
+}
+
+unique_ptr<ASTNode> Parser::parseRead() {
+    accept(Token::Tag::Read);
+    unique_ptr<ASTNode> cur = std::make_unique<ASTNode> (
+            ASTNode::SyntaxType::read,
+            std::nullopt);
+
+    cur->addChild(parseName());
+    expect(Token::Tag::SemiColon);
+    return cur;
+}
+
+unique_ptr<ASTNode> Parser::parsePrint() {
+    accept(Token::Tag::Print);
+    unique_ptr<ASTNode> cur = std::make_unique<ASTNode> (
+            ASTNode::SyntaxType::print,
+            std::nullopt);
+
+    cur->addChild(parseName());
     expect(Token::Tag::SemiColon);
     return cur;
 }

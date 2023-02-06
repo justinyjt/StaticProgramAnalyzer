@@ -36,6 +36,8 @@ class DesignExtractor {
 
     void extractProc(const std::unique_ptr<ASTNode>&);
     void extractAssign(const std::unique_ptr<ASTNode>&);
+    void extractRead(const std::unique_ptr<ASTNode>&);
+    void extractPrint(const std::unique_ptr<ASTNode>&);
     std::string extractLeftAssign(const std::unique_ptr<ASTNode>&);
     std::string extractRightAssign(const std::unique_ptr<ASTNode>&);
 };

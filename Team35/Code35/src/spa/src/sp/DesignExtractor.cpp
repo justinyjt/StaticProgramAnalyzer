@@ -38,6 +38,13 @@ void DesignExtractor::extractProc(const std::unique_ptr<ASTNode>& node) {
         switch (child->getSyntaxType()) {
             case ASTNode::SyntaxType::assign:
                 extractAssign(child);
+                break;
+            case ASTNode::SyntaxType::read:
+                extractRead(child);
+                break;
+            case ASTNode::SyntaxType::print:
+                extractPrint(child);
+                break;
             default:
                 break;
         }
@@ -82,6 +89,24 @@ std::string DesignExtractor::extractRightAssign(const std::unique_ptr<ASTNode>& 
             return extractRightAssign(lChild) + label + extractRightAssign(rChild);
             break;
     }
+}
+
+void DesignExtractor::extractRead(const std::unique_ptr<ASTNode>& node) {
+    assert(node->getSyntaxType() == ASTNode::SyntaxType::read);
+    const auto& child = node->getChildren().front();
+    assert(child->getSyntaxType() == ASTNode::SyntaxType::var);
+    std::string varName = child->getLabel();
+    varNameSet_.insert(varName);
+    stmtModPairSet_.insert(*new STMT_ENT(stmtCnt_, varName));
+}
+
+void DesignExtractor::extractPrint(const std::unique_ptr<ASTNode>& node) {
+    assert(node->getSyntaxType() == ASTNode::SyntaxType::print);
+    const auto& child = node->getChildren().front();
+    assert(child->getSyntaxType() == ASTNode::SyntaxType::var);
+    std::string varName = child->getLabel();
+    varNameSet_.insert(varName);
+    stmtUsePairSet_.insert(*new STMT_ENT(stmtCnt_, varName));
 }
 
 void DesignExtractor::addVarNameSetToPKB() {
