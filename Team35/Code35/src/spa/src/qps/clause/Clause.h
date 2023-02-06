@@ -18,6 +18,6 @@ class Clause {
     bool operator==(Clause &rhs) {
         return true;
     }
-    Result evaluate(PKBReader* db);
+    virtual Result* evaluate(PKBReader* db) = 0;
 
 };

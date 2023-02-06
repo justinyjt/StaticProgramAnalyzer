@@ -9,8 +9,5 @@ Follows | FollowsT | Parent | ParentT | UsesS | UsesP | ModifiesS | ModifiesP
 class Relationship : public Clause {
     public:
         Relationship(Tok first, Tok second) : Clause(first, second) {};
-        Result evaluate(PKBReader *db) {
-            Result r;
-            return r;
-        }
+        virtual Result* evaluate(PKBReader* db) = 0;
 };

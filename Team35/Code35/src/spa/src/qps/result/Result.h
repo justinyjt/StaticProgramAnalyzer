@@ -8,7 +8,7 @@ represents result of clause eval or query eval (multiple clause evals)
 */
 class Result {
   public:
-    void output(std::list<std::string>&);
+    virtual void output(std::list<std::string>&) = 0;
 };
 
 class StrResult : public Result {

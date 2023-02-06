@@ -15,20 +15,20 @@ TEST_CASE("1. Query parser") {
     QueryParser queryParser;
 
     // Perform parsing
-    std::pair<Synonym, std::vector<Clause>> parseResult = queryParser.parse(query);
+    std::pair<Synonym, std::vector<Clause*>> parseResult = queryParser.parse(query);
 
     Synonym synonym = Synonym(Synonym::DesignEntity::VARIABLE, "v");
     requireEqual(Synonym(Synonym::DesignEntity::VARIABLE, "v"), parseResult.first);
 
-    std::vector<Clause> clauses = parseResult.second;
+    std::vector<Clause*> clauses = parseResult.second;
     Modify m(StatementNumber(1), Synonym(Synonym::DesignEntity::VARIABLE, "v"));
     Pattern a(Wildcard(), ExpressionStr("x+1"));
 
-    Clause c1 = clauses.front();
-    requireTrue(c1.first==m.first);
-    requireTrue(c1.second==m.second);
+    Clause* c1 = clauses.front();
+    requireTrue(c1->first==m.first);
+    requireTrue(c1->second==m.second);
 
-    Clause c2 = clauses.back();
-    requireTrue(c2.first==a.first);
-    requireTrue(c2.second==a.second);
+    Clause* c2 = clauses.back();
+    requireTrue(c2->first==a.first);
+    requireTrue(c2->second==a.second);
 }

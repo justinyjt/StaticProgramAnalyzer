@@ -2,7 +2,7 @@
 #include "qps/clause/relationship/Modify.h"
 #include "qps/pql/StatementNumber.h"
 
-Clause SuchThatClauseParser::parse(const std::unique_ptr<Lexer> &lexer, std::vector<Synonym> synonyms) {
+Clause* SuchThatClauseParser::parse(const std::unique_ptr<Lexer> &lexer, std::vector<Synonym> synonyms) {
     std::string keyword = lexer->scan().getLexeme();
 
     if (keyword != "Modifies") {
@@ -29,7 +29,7 @@ Clause SuchThatClauseParser::parse(const std::unique_ptr<Lexer> &lexer, std::vec
         throw std::runtime_error("missing right parenthesis");
     }
 
-    Modify m(left, right);
+    Modify* m = new Modify(left, right);
     return m;
 }
 

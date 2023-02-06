@@ -4,7 +4,7 @@
 #include "qps/query_parser/clause_parser/ClauseParser.h"
 #include "commons/lexer/Lexer.h"
 
-std::pair<Synonym, std::vector<Clause>> QueryParser::parse(std::string& query) {
+std::pair<Synonym, std::vector<Clause*>> QueryParser::parse(std::string& query) {
     // Create lexer for queryString
     KeywordList k {
         Keyword("Select"),
@@ -37,7 +37,7 @@ std::pair<Synonym, std::vector<Clause>> QueryParser::parse(std::string& query) {
 
     // parse clauses
     ClauseParser clauseParser;
-    std::vector<Clause> clauses = clauseParser.parse(std::move(lexer), synonyms);
+    std::vector<Clause*> clauses = clauseParser.parse(std::move(lexer), synonyms);
 
     return std::make_pair(selectedSynonym, clauses);
 }

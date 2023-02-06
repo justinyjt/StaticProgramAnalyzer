@@ -44,10 +44,10 @@ TEST_CASE("Query Evaluator Modifies") {
 
     // Perform evaluation
     Synonym syn(Synonym::DesignEntity::VARIABLE, "v");
-    std::vector<Clause> clauses;
-    clauses.emplace_back(Modify(StatementNumber(1), syn));
-    Result evalResult = qe.evaluate(syn, clauses);
-    evalResult.output(resultList);
+    std::vector<Clause*> clauses;
+    clauses.push_back(new Modify(StatementNumber(1), syn));
+    Result* evalResult = qe.evaluate(syn, clauses);
+    evalResult->output(resultList);
     std::cout << resultList.front();
     requireEqual(resultList.front(), std::string("x"));
 }
@@ -64,9 +64,9 @@ TEST_CASE("Query Evaluator Pattern") {
 
     // Perform evaluation
     Synonym syn(Synonym::DesignEntity::ASSIGN, "a");
-    std::vector<Clause> clauses;
-    clauses.push_back(Pattern(Wildcard(), ExpressionStr("x + 1")));
-    Result evalResult = qe.evaluate(syn, clauses);
-    evalResult.output(resultList);
+    std::vector<Clause*> clauses;
+    clauses.push_back(new Pattern(Wildcard(), ExpressionStr("x + 1")));
+    Result* evalResult = qe.evaluate(syn, clauses);
+    evalResult->output(resultList);
     requireEqual(resultList.front(), std::string("1"));
 }

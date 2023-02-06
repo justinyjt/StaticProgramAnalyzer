@@ -10,5 +10,5 @@
 
 class QueryParser {
  public:
-    std::pair<Synonym, std::vector<Clause>> parse(std::string&);
+    std::pair<Synonym, std::vector<Clause*>> parse(std::string&);
 };

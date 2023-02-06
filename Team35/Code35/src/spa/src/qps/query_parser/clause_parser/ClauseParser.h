@@ -10,7 +10,7 @@
 
 class ClauseParser {
  public:
-    std::vector<Clause> parse(const std::unique_ptr<Lexer> &lexer, std::vector<Synonym> synonyms);
+    std::vector<Clause*> parse(const std::unique_ptr<Lexer> &lexer, std::vector<Synonym> synonyms);
  private:
     PatternClauseParser patternClauseParser;
     SuchThatClauseParser suchThatClauseParser;
