@@ -17,11 +17,10 @@ TEST_CASE("1. Query parser") {
     // Perform parsing
     std::pair<Synonym, std::vector<Clause*>> parseResult = queryParser.parse(query);
 
-    Synonym synonym = Synonym(Synonym::DesignEntity::VARIABLE, "v");
     requireEqual(Synonym(Synonym::DesignEntity::VARIABLE, "v"), parseResult.first);
 
     std::vector<Clause*> clauses = parseResult.second;
-    Modify m(StatementNumber(1), Synonym(Synonym::DesignEntity::VARIABLE, "v"));
+    Modify m(StatementNumber("1"), Synonym(Synonym::DesignEntity::VARIABLE, "v"));
     Pattern a(Wildcard(), ExpressionStr("x+1"));
 
     Clause* c1 = clauses.front();

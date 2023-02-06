@@ -6,5 +6,5 @@
 */
 class Wildcard : public Tok {
   public:
-    Wildcard() : Tok(WILDCARD) {};
+    Wildcard() : Tok::Tok("_",  WILDCARD) {};
 };

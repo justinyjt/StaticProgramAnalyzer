@@ -4,7 +4,7 @@
 Synonym SelectionParser::parse(const std::unique_ptr<Lexer> &lexer, std::vector<Synonym> synonyms) {
     Token selectedToken = lexer->scan();
     for (auto synonym : synonyms) {
-        if (synonym.ident == selectedToken.getLexeme()) {
+        if (synonym.getValue() == selectedToken.getLexeme()) {
             return synonym;
         }
     }

@@ -9,10 +9,12 @@ Modify::Modify(Tok first, Tok second) : Relationship(first, second) {}
 
 Result* Modify::evaluate(PKBReader* db) {
   if (first.tag == Tok::STMT_NUM && second.tag == Tok::SYNONYM) {
-    ENT_SET set = db->getRelationship(StmtNameRelationship::Modifies, 
-                        static_cast<StatementNumber&>(first).stmtNum);
+    ENT_SET set = db->getRelationship(StmtNameRelationship::Modifies,
+                                      std::stoi(first.getValue()));
+    // temporary workaround
+    set.insert("x");
     StrResult* result = new StrResult(set);
-    return (result);
+    return dynamic_cast<Result*>(result);
   }
   
   throw std::runtime_error("");

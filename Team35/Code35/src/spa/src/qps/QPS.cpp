@@ -5,7 +5,7 @@
 #include "commons/lexer/Lexer.h"
 #include <memory>
 
-QPS::QPS(PKBReader& pkbReader) {
+QPS::QPS(PKBReader* pkbReader) {
     queryEvaluator = new QueryEvaluator(pkbReader);
     queryParser = new QueryParser();
 };

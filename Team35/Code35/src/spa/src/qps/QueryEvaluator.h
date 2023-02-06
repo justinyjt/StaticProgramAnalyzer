@@ -4,7 +4,7 @@
 
 class QueryEvaluator {
   public:
-    PKBReader& pkbReader;
-    QueryEvaluator(PKBReader& pkbReader);
+    PKBReader* pkbReader;
+    QueryEvaluator(PKBReader* pkbReader);
     Result* evaluate(Synonym, std::vector<Clause*>);
 };

@@ -35,11 +35,11 @@ Clause* SuchThatClauseParser::parse(const std::unique_ptr<Lexer> &lexer, std::ve
 
 Tok SuchThatClauseParser::makeArg(Token token, std::vector<Synonym> synonyms) {
     if (token.getTag() == Token::Tag::Integer) {
-        StatementNumber t(std::stoi(token.getLexeme()));
+        StatementNumber t(token.getLexeme());
         return t;
     } else if (token.getTag() == Token::Tag::Name) {
         for (auto synonym : synonyms) {
-            if (synonym.ident == token.getLexeme()) {
+            if (synonym.getValue() == token.getLexeme()) {
                 Synonym s(synonym.de, token.getLexeme());
                 return s;
             }

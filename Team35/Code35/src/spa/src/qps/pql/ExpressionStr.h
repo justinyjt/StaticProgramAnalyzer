@@ -7,6 +7,5 @@
 */ 
 class ExpressionStr : public Tok {
 public:
-    ExpressionStr(std::string str) : str(str), Tok(EXPR) {};
-    const std::string str;
+    ExpressionStr(std::string str) : Tok::Tok(str,  EXPR) {};
 };

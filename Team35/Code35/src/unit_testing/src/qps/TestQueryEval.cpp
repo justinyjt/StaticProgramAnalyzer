@@ -38,17 +38,16 @@ class PKBReaderStub : public PKBReader {
 TEST_CASE("Query Evaluator Modifies") {
 
 
-    PKBReaderStub db;
+    PKBReaderStub* db = new PKBReaderStub();
     QueryEvaluator qe(db);
     std::list<std::string> resultList;
 
     // Perform evaluation
     Synonym syn(Synonym::DesignEntity::VARIABLE, "v");
     std::vector<Clause*> clauses;
-    clauses.push_back(new Modify(StatementNumber(1), syn));
+    clauses.push_back(new Modify(StatementNumber("1"), syn));
     Result* evalResult = qe.evaluate(syn, clauses);
     evalResult->output(resultList);
-    std::cout << resultList.front();
     requireEqual(resultList.front(), std::string("x"));
 }
 
@@ -58,8 +57,8 @@ TEST_CASE("Query Evaluator Pattern") {
 
     std::string query = "";
 
-    PKBReaderStub db;
-    QueryEvaluator qe(db);
+    PKBReaderStub* db = new PKBReaderStub();
+    QueryEvaluator qe(dynamic_cast<PKBReader*>(db));
     std::list<std::string> resultList;
 
     // Perform evaluation

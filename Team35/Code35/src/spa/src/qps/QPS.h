@@ -13,6 +13,6 @@ class QPS {
     QueryEvaluator* queryEvaluator;
 
  public:
-    QPS(PKBReader& pkbReader);
+    QPS(PKBReader* pkbReader);
     void executeQuery(std::string& query, std::list<std::string>& result);
 };
