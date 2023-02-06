@@ -2,6 +2,7 @@
 
 #include "DesignExtractor.h"
 #include "IParser.h"
+#include <string>
 
 class SourceProcessor {
  public:
