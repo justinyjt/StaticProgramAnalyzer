@@ -1,7 +1,7 @@
 #include <string>
 #include "DeclarationParser.h"
 
-std::vector<Synonym> DeclarationParser::parse(const std::unique_ptr<Lexer> &lexer) {
+std::vector<Synonym> DeclarationParser::parse(const std::unique_ptr<ILexer> &lexer) {
     std::vector<Synonym> declarationList;
     while (1) {
         Token checkSelect = lexer->scan();

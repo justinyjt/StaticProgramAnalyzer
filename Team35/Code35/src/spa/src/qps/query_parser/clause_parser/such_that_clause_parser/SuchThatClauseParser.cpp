@@ -2,7 +2,7 @@
 #include "qps/clause/relationship/Modify.h"
 #include "qps/pql/StatementNumber.h"
 
-Clause* SuchThatClauseParser::parse(const std::unique_ptr<Lexer> &lexer, std::vector<Synonym> synonyms) {
+Clause* SuchThatClauseParser::parse(const std::unique_ptr<ILexer> &lexer, std::vector<Synonym> synonyms) {
     std::string keyword = lexer->scan().getLexeme();
 
     if (keyword != "Modifies") {

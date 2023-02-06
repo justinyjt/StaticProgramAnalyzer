@@ -7,5 +7,5 @@
 
 class DeclarationParser {
  public:
-    std::vector<Synonym> parse(const std::unique_ptr<Lexer> &lexer);
+    std::vector<Synonym> parse(const std::unique_ptr<ILexer> &lexer);
 };

@@ -7,5 +7,5 @@
 
 class SelectionParser {
  public:
-    Synonym parse(const std::unique_ptr<Lexer> &lexer, std::vector<Synonym> synonyms);
+    Synonym parse(const std::unique_ptr<ILexer> &lexer, std::vector<Synonym> synonyms);
 };

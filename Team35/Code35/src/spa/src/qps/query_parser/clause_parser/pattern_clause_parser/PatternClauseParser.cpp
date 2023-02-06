@@ -5,7 +5,7 @@
 #include "qps/pql/Wildcard.h"
 #include "qps/pql/ExpressionStr.h"
 
-Clause* PatternClauseParser::parse(const std::unique_ptr<Lexer> &lexer, std::vector<Synonym> synonyms) {
+Clause* PatternClauseParser::parse(const std::unique_ptr<ILexer> &lexer, std::vector<Synonym> synonyms) {
     std::string pattern_type = lexer->scan().getLexeme();
 
     if (lexer->scan().getTag() != Token::Tag::LParen) {

@@ -1,7 +1,7 @@
 #include <string>
 #include "SelectionParser.h"
 
-Synonym SelectionParser::parse(const std::unique_ptr<Lexer> &lexer, std::vector<Synonym> synonyms) {
+Synonym SelectionParser::parse(const std::unique_ptr<ILexer> &lexer, std::vector<Synonym> synonyms) {
     Token selectedToken = lexer->scan();
     for (auto synonym : synonyms) {
         if (synonym.getValue() == selectedToken.getLexeme()) {
