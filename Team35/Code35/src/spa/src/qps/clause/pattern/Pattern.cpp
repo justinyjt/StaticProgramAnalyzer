@@ -11,7 +11,6 @@ Result* Pattern::evaluate(PKBReader* db) {
     std::string pattern = second.getValue();
     STMT_SET set = db->getStmtWithExactPatternMatch(pattern);
     // temporary workaround
-    set.insert(1);
     IntResult* result = new IntResult(set);
     return dynamic_cast<Result*>(result);
   }

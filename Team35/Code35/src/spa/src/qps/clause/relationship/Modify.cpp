@@ -10,7 +10,6 @@ Result* Modify::evaluate(PKBReader* db) {
     ENT_SET set = db->getRelationship(StmtNameRelationship::Modifies,
                                       std::stoi(first.getValue()));
     // temporary workaround
-    set.insert("x");
     StrResult* result = new StrResult(set);
     return dynamic_cast<Result*>(result);
   }
