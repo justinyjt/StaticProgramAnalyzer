@@ -21,20 +21,20 @@ class TestWrapper : public AbstractWrapper {
     PKBReader pkbReader;
     DesignExtractor designExtractor;
     SourceProcessor sourceProcessor;
-  // default constructor
-  TestWrapper();
-  
-  // destructor
-  ~TestWrapper();
-  
-  // method for parsing the SIMPLE source
-  virtual void parse(std::string filename);
-  
-  // method for evaluating a query
-  virtual void evaluate(std::string query, std::list<std::string>& results);
+    // default constructor
+    TestWrapper();
 
-  //populate source code from txt files to test
-  std::string readFile(std::string filename);
+    // destructor
+    ~TestWrapper();
+
+    // method for parsing the SIMPLE source
+    virtual void parse(std::string filename);
+
+    // method for evaluating a query
+    virtual void evaluate(std::string query, std::list<std::string> &results);
+
+    //populate source code from txt files to test
+    std::string readFile(std::string filename);
 };
 
 #endif
