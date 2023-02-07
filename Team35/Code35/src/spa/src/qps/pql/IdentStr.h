@@ -7,4 +7,6 @@ represents string identifier
 */
 class IdentStr : public Tok {
     explicit IdentStr(std::string s);
+    const std::string s;
+    std::string str() const;
 };

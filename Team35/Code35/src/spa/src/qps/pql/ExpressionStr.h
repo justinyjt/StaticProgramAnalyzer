@@ -8,4 +8,6 @@
 class ExpressionStr : public Tok {
  public:
     explicit ExpressionStr(std::string str);
+    const std::string s;
+    std::string str() const; 
 };

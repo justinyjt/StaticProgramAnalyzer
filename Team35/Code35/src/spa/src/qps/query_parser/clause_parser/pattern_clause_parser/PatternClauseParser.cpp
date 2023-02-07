@@ -16,7 +16,7 @@ Clause* PatternClauseParser::parse(const std::unique_ptr<ILexer> &lexer, std::ve
         throw std::runtime_error("expected underscore");
     }
 
-    Wildcard left;
+    Wildcard* left = new Wildcard();
 
     if (lexer->scan().getTag() != Token::Tag::Comma) {
         throw std::runtime_error("missing comma");
@@ -31,7 +31,7 @@ Clause* PatternClauseParser::parse(const std::unique_ptr<ILexer> &lexer, std::ve
     std::string exp = rightArg.getLexeme();
     exp.erase(remove(exp.begin(), exp.end(), ' '), exp.end());
 
-    ExpressionStr right = ExpressionStr(exp);
+    ExpressionStr* right = new ExpressionStr(exp);
 
     if (lexer->scan().getTag() != Token::Tag::RParen) {
         throw std::runtime_error("missing right parenthesis");

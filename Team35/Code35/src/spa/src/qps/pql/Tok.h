@@ -9,11 +9,9 @@ class Tok {
  public:
     enum Tag { IDENT, STMT_NUM, SYNONYM, WILDCARD, EXPR };
 
-    Tok(std::string value, Tag tag);
+    Tok(Tag tag);
     const Tag tag;
-    const std::string value;
 
     bool operator==(const Tok &rhs) const;
 
-    std::string getValue();
-};
+    virtual std::string str() const = 0; };

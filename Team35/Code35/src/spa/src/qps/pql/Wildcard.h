@@ -7,4 +7,5 @@
 class Wildcard : public Tok {
  public:
     Wildcard();
+    std::string str() const;
 };

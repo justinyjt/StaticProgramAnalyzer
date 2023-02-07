@@ -1,14 +1,14 @@
 #include "Modify.h"
 #include "qps/pql/StatementNumber.h"
 
-Modify::Modify(Tok first, Tok second) : Relationship(first, second) {}
+Modify::Modify(Tok* first, Tok* second) : Relationship(first, second) {}
 
 // select v such that modifies(1, v)
 
-Result *Modify::evaluate(PKBReader *db) {
-    if (first.tag == Tok::STMT_NUM && second.tag == Tok::SYNONYM) {
+Result* Modify::evaluate(PKBReader *db) {
+    if (first->tag == Tok::STMT_NUM && second->tag == Tok::SYNONYM) {
         ENT_SET set = db->getRelationship(StmtNameRelationship::Modifies,
-                                          std::stoi(first.getValue()));
+                                          (dynamic_cast<const StatementNumber*>(first))->n);
 
         StrResult *result = new StrResult(set);
         return dynamic_cast<Result *>(result);
@@ -18,5 +18,5 @@ Result *Modify::evaluate(PKBReader *db) {
 }
 
 bool Modify::operator==(const Modify &rhs) const {
-    return this->first.tag == rhs.first.tag && this->second.tag == rhs.second.tag;
+    return first->tag == rhs.first->tag && second->tag == rhs.second->tag;
 }

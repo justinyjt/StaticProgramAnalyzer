@@ -14,6 +14,8 @@ class Synonym : public Tok {
     Synonym(DesignEntity de, std::string ident);
 
     bool operator==(const Synonym &rhs) const;
+    std::string str() const;
 
     const DesignEntity de;
+    const std::string ident;
 };

@@ -20,8 +20,14 @@ TEST_CASE("1. Query parser") {
     requireEqual(Synonym(Synonym::DesignEntity::VARIABLE, "v"), parseResult.first);
 
     std::vector<Clause *> clauses = parseResult.second;
-    Modify m(StatementNumber("1"), Synonym(Synonym::DesignEntity::VARIABLE, "v"));
-    Pattern a(Wildcard(), ExpressionStr("x+1"));
+
+    StatementNumber* st = new StatementNumber(1);
+    Synonym* syn = new Synonym(Synonym::DesignEntity::VARIABLE, "v");
+    Modify m(st, syn);
+
+    Wildcard* w = new Wildcard();
+    ExpressionStr* expr = new ExpressionStr("x+1");
+    Pattern a(w, expr);
 
     Clause *c1 = clauses.front();
     requireTrue(c1->first == m.first);

@@ -1,3 +1,7 @@
 #include "StatementNumber.h"
 
-StatementNumber::StatementNumber(std::string value) : Tok::Tok(value,  STMT_NUM) {}
+StatementNumber::StatementNumber(int n) : Tok::Tok(STMT_NUM), n(n) {}
+
+std::string StatementNumber::str() const {
+    return std::to_string(n);
+}
