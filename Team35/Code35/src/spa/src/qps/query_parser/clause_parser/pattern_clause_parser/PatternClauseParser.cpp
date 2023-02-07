@@ -28,7 +28,10 @@ Clause* PatternClauseParser::parse(const std::unique_ptr<ILexer> &lexer, std::ve
         throw std::runtime_error("string expected");
     }
 
-    ExpressionStr right = ExpressionStr(rightArg.getLexeme());
+    std::string exp = rightArg.getLexeme();
+    exp.erase(remove(exp.begin(), exp.end(), ' '), exp.end());
+
+    ExpressionStr right = ExpressionStr(exp);
 
     if (lexer->scan().getTag() != Token::Tag::RParen) {
         throw std::runtime_error("missing right parenthesis");
