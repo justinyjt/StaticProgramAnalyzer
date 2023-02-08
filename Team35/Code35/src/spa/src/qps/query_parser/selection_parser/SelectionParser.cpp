@@ -1,8 +1,9 @@
 #include <string>
 #include "SelectionParser.h"
+#include "qps/query_parser/clause_parser/TokenValidator.h"
 
-Synonym SelectionParser::parse(const std::unique_ptr<ILexer> &lexer, std::vector<Synonym> synonyms) {
-    std::unique_ptr<Token> selectedToken = lexer->scan();
+Synonym SelectionParser::parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms) {
+    std::unique_ptr<Token> selectedToken = tokenValidator.getNextToken();;
     for (auto synonym : synonyms) {
         if (synonym.getValue() == selectedToken->getLexeme()) {
             return synonym;

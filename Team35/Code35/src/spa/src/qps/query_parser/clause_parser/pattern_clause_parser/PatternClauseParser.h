@@ -8,8 +8,9 @@
 #include "qps/pql/Wildcard.h"
 #include "commons/token/Token.h"
 #include "commons/lexer/Lexer.h"
+#include "qps/query_parser/clause_parser/TokenValidator.h"
 
 class PatternClauseParser {
  public:
-    Clause* parse(const std::unique_ptr<ILexer> &lexer, std::vector<Synonym> synonyms);
+    Clause* parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms);
 };

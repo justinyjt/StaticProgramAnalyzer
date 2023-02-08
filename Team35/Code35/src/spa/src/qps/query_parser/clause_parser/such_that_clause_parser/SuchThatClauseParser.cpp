@@ -5,30 +5,30 @@
 #include "qps/clause/relationship/Modify.h"
 #include "qps/pql/StatementNumber.h"
 
-Clause *SuchThatClauseParser::parse(const std::unique_ptr<ILexer> &lexer, std::vector<Synonym> synonyms) {
-    std::string keyword = lexer->scan()->getLexeme();
+Clause *SuchThatClauseParser::parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms) {
+    std::string keyword = tokenValidator.getNextToken()->getLexeme();
 
     if (keyword != "Modifies") {
         throw std::runtime_error("not modifies clause");
     }
 
-    if (lexer->scan()->getTag() != Token::Tag::LParen) {
+    if (tokenValidator.getNextToken()->getTag() != Token::Tag::LParen) {
         throw std::runtime_error("missing left parenthesis");
     }
 
-    std::unique_ptr<Token> leftArg = lexer->scan();
+    std::unique_ptr<Token> leftArg = tokenValidator.getNextToken();
 
     Tok left = makeArg(std::move(leftArg), synonyms);
 
-    if (lexer->scan()->getTag() != Token::Tag::Comma) {
+    if (tokenValidator.getNextToken()->getTag() != Token::Tag::Comma) {
         throw std::runtime_error("missing comma");
     }
 
-    std::unique_ptr<Token> rightArg = lexer->scan();
+    std::unique_ptr<Token> rightArg = tokenValidator.getNextToken();
 
     Tok right = makeArg(std::move(rightArg), synonyms);
 
-    if (lexer->scan()->getTag() != Token::Tag::RParen) {
+    if (tokenValidator.getNextToken()->getTag() != Token::Tag::RParen) {
         throw std::runtime_error("missing right parenthesis");
     }
 

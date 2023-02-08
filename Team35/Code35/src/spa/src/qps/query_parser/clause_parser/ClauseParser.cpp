@@ -5,15 +5,18 @@
 
 #include "commons/token/Token.h"
 
-std::vector<Clause *> ClauseParser::parse(const std::unique_ptr<ILexer> &lexer, std::vector<Synonym> synonyms) {
+
+std::vector<Clause *> ClauseParser::parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms) {
     std::vector<Clause *> result;
     while (1) {
-        std::unique_ptr<Token> nextToken = lexer->scan();
+        std::unique_ptr<Token> nextToken = tokenValidator.getNextToken();;
         if (nextToken->getLexeme() == "such") {
-            lexer->scan();
-            result.push_back(suchThatClauseParser.parse(std::move(lexer), synonyms));
+            tokenValidator.getNextToken();
+            SuchThatClauseParser stcp;
+            result.push_back(stcp.parse(tokenValidator, synonyms));
         } else if (nextToken->getLexeme() == "pattern") {
-            result.push_back(patternClauseParser.parse(std::move(lexer), synonyms));
+            PatternClauseParser pcp;
+            result.push_back(pcp.parse(tokenValidator, synonyms));
         } else if (nextToken->getTag() == Token::Tag::EndOfFile) {
             break;
         }
