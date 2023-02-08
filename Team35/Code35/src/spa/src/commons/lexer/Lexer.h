@@ -3,6 +3,7 @@
 #include "ILexer.h"
 
 #include <list>
+#include <memory>
 #include <string>
 #include <unordered_map>
 
@@ -22,7 +23,7 @@ class Lexer : public ILexer {
                    const CharacterList &character_list,
                    bool include_operator = true,
                    bool include_string = true);
-    Token scan();
+    std::unique_ptr<Token> scan();
     ~Lexer() = default;
 
  protected:
@@ -45,10 +46,10 @@ class Lexer : public ILexer {
     bool include_operator_;
     bool include_string_;
 
-    Token scanNextName();
-    Token scanNextInteger();
-    Token scanNextString();
-    Token scanNextCharacter();
+    std::unique_ptr<Token> scanNextName();
+    std::unique_ptr<Token> scanNextInteger();
+    std::unique_ptr<Token> scanNextString();
+    std::unique_ptr<Token> scanNextCharacter();
 
     bool isNameStart(char c) const;
     bool isNamePart(char c) const;
