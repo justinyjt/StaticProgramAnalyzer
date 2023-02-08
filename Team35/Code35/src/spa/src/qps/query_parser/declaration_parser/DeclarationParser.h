@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+
 #include "qps/pql/Synonym.h"
 #include "commons/lexer/Lexer.h"
 

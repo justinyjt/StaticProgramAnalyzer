@@ -26,16 +26,16 @@ Lexer::Lexer(Source source,
     }
 }
 
-Token Lexer::scan() {
+std::unique_ptr<Token> Lexer::scan() {
     if (isEof()) {
-        return Token(Token::Tag::EndOfFile, getCurrentLineNumber());
+        return std::make_unique<Token>(Token::Tag::EndOfFile, getCurrentLineNumber());
     }
     while (!isEof() && isControlOrSpace(peekChar())) {
         skipChar();
     }
 
     if (isEof()) {
-        return Token(Token::Tag::EndOfFile, getCurrentLineNumber());
+        return std::make_unique<Token>(Token::Tag::EndOfFile, getCurrentLineNumber());
     }
 
     if (include_operator_) {
@@ -43,34 +43,34 @@ Token Lexer::scan() {
         switch (character) {
             case '&':
                 if (readChar('&')) {
-                    return Token("&&", Token::Tag::LogicalAnd, getCurrentLineNumber());
+                    return std::make_unique<Token>("&&", Token::Tag::LogicalAnd, getCurrentLineNumber());
                 }
                 break;
             case '|':
                 if (readChar('|')) {
-                    return Token("||", Token::Tag::LogicalOr, getCurrentLineNumber());
+                    return std::make_unique<Token>("||", Token::Tag::LogicalOr, getCurrentLineNumber());
                 }
                 break;
             case '=':
                 if (readChar('=')) {
-                    return Token("==", Token::Tag::Equivalence, getCurrentLineNumber());
+                    return std::make_unique<Token>("==", Token::Tag::Equivalence, getCurrentLineNumber());
                 }
                 break;
             case '!':
                 if (readChar('=')) {
-                    return Token("!=", Token::Tag::NotEqual, getCurrentLineNumber());
+                    return std::make_unique<Token>("!=", Token::Tag::NotEqual, getCurrentLineNumber());
                 }
-                return Character(character, Token::Tag::LogicalNot, getCurrentLineNumber());
+                return std::make_unique<Character>(character, Token::Tag::LogicalNot, getCurrentLineNumber());
             case '<':
                 if (readChar('=')) {
-                    return Token("<=", Token::Tag::LessThanEqualTo, getCurrentLineNumber());
+                    return std::make_unique<Token>("<=", Token::Tag::LessThanEqualTo, getCurrentLineNumber());
                 }
-                return Token("<", Token::Tag::LessThan, getCurrentLineNumber());
+                return std::make_unique<Character>('<', Token::Tag::LessThan, getCurrentLineNumber());
             case '>':
                 if (readChar('=')) {
-                    return Token(">=", Token::Tag::GreaterThanEqualTo, getCurrentLineNumber());
+                    return std::make_unique<Token>(">=", Token::Tag::GreaterThanEqualTo, getCurrentLineNumber());
                 }
-                return Token(">", Token::Tag::GreaterThan, getCurrentLineNumber());
+                return std::make_unique<Character>('>', Token::Tag::GreaterThan, getCurrentLineNumber());
             default:break;
         }
         unreadChar();
@@ -144,7 +144,7 @@ bool Lexer::isEof() const {
     return current_position_ >= source_.length();
 }
 
-Token Lexer::scanNextName() {
+std::unique_ptr<Token> Lexer::scanNextName() {
     assert(isNameStart(peekChar()));
     std::string lexeme;
     lexeme += readChar();
@@ -152,30 +152,30 @@ Token Lexer::scanNextName() {
         lexeme += readChar();
     }
     if (keyword_map_.find(lexeme) != keyword_map_.end()) {
-        return Keyword(keyword_map_.at(lexeme), getCurrentLineNumber());
+        return std::make_unique<Keyword>(keyword_map_.at(lexeme), getCurrentLineNumber());
     }
-    return Token(lexeme, Token::Tag::Name, getCurrentLineNumber());
+    return std::make_unique<Token>(lexeme, Token::Tag::Name, getCurrentLineNumber());
 }
 
-Token Lexer::scanNextInteger() {
+std::unique_ptr<Token> Lexer::scanNextInteger() {
     assert(isDigit(peekChar()));
     int number = 0;
     while (!isEof() && isDigit(peekChar())) {
         number *= 10;
         number += ConvertCharToInt(readChar());
     }
-    return Integer(number, getCurrentLineNumber());
+    return std::make_unique<Integer>(number, getCurrentLineNumber());
 }
 
-Token Lexer::scanNextCharacter() {
+std::unique_ptr<Token> Lexer::scanNextCharacter() {
     char character = readChar();
     if (character_map_.find(character) == character_map_.end()) {
         throw LexerException("Invalid character", getCurrentLineNumber());
     }
-    return Character(character_map_.at(character), getCurrentLineNumber());
+    return std::make_unique<Character>(character_map_.at(character), getCurrentLineNumber());
 }
 
-Token Lexer::scanNextString() {
+std::unique_ptr<Token> Lexer::scanNextString() {
     assert(isStringStartEnd(peekChar()));
     skipChar();
     std::string lexeme;
@@ -186,7 +186,7 @@ Token Lexer::scanNextString() {
         throw LexerException("Unterminated string", getCurrentLineNumber());
     }
     skipChar();
-    return Token(lexeme, Token::Tag::String, getCurrentLineNumber());
+    return std::make_unique<Token>(lexeme, Token::Tag::String, getCurrentLineNumber());
 }
 
 bool Lexer::isNameStart(char c) const {
