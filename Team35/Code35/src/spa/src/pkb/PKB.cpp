@@ -54,6 +54,26 @@ const RelationshipTable<ENT_NAME, ENT_NAME> &PKB::getNameNameRelationshipTable(N
     }
 }
 
+RelationshipTable<STMT_NUM, STMT_NUM> &PKB::getStmtStmtRelationshipTable(StmtStmtRelationship tableType) {
+    const PKB* pkbPtr = const_cast<const PKB *>(this);
+    return const_cast<RelationshipTable<STMT_NUM , STMT_NUM> &>(pkbPtr->getStmtStmtRelationshipTable(tableType));
+}
+
+const RelationshipTable<STMT_NUM, STMT_NUM> &PKB::getStmtStmtRelationshipTable(StmtStmtRelationship tableType) const {
+    switch (tableType) {
+        case (StmtStmtRelationship::Parent):
+            return parentTable;
+        case (StmtStmtRelationship::ParentStar):
+            return parentStarTable;
+        case (StmtStmtRelationship::Follows):
+            return followsTable;
+        case (StmtStmtRelationship::FollowsStar):
+            return followsStarTable;
+        default:
+            assert(false);
+    }
+}
+
 RelationshipTable<ENT_NAME, ENT_NAME> &PKB::getNameNameRelationshipTable(NameNameRelationship tableType) {
     const PKB* pkbPtr = const_cast<const PKB *>(this);
     return const_cast<RelationshipTable<ENT_NAME , ENT_NAME> &>(pkbPtr->getNameNameRelationshipTable(tableType));
@@ -82,6 +102,53 @@ bool PKB::addRelationshipToTable(NameNameRelationship tableType, ENT_ENT entEnt)
 }
 bool PKB::addPattern(STMT_NUM stmtNum, std::string pattern) {
     return patternTable.addPattern(stmtNum, pattern);
+}
+
+ENT_SET PKB::getEntByStmtKey(StmtNameRelationship tableType, STMT_NUM stmt) const {
+    return getStmtNameRelationshipTable(tableType).getValues(stmt);
+}
+
+STMT_SET PKB::getStmtByEntVal(StmtNameRelationship tableType, ENT_NAME name) const {
+    return getStmtNameRelationshipTable(tableType).getKeys(name);
+}
+
+STMT_ENT_SET PKB::getStmtEntSet(StmtNameRelationship tableType) const {
+    return getStmtNameRelationshipTable(tableType).getKeyValuePairs();
+}
+
+bool PKB::isStmtEntPairExists(StmtNameRelationship tableType, STMT_NUM stmt, ENT_NAME name) const {
+    return getStmtNameRelationshipTable(tableType).containsPair(stmt, name);
+}
+
+ENT_SET PKB::getEntByEntKey(NameNameRelationship tableType, ENT_NAME name) const {
+    return getNameNameRelationshipTable(tableType).getValues(name);
+}
+
+ENT_SET PKB::getEntByEntVal(NameNameRelationship tableType, ENT_NAME name) const {
+    return getNameNameRelationshipTable(tableType).getKeys(name);
+}
+
+ENT_ENT_SET PKB::getEntEntSet(NameNameRelationship tableType) const {
+    return getNameNameRelationshipTable(tableType).getKeyValuePairs();
+}
+
+bool PKB::isEntEntPairExists(NameNameRelationship tableType, ENT_NAME key, ENT_NAME val) const {
+    return getNameNameRelationshipTable(tableType).containsPair(key, val);
+}
+
+STMT_SET PKB::getStmtByStmtKey(StmtStmtRelationship tableType, STMT_NUM stmt) const {
+    return getStmtStmtRelationshipTable(tableType).getValues(stmt);
+}
+
+STMT_SET PKB::getStmtByStmtVal(StmtStmtRelationship tableType, STMT_NUM stmt) const {
+    return getStmtStmtRelationshipTable(tableType).getKeys(stmt);
+}
+STMT_STMT_SET PKB::getStmtStmtSet(StmtStmtRelationship tableType) const {
+    return getStmtStmtRelationshipTable(tableType).getKeyValuePairs();
+}
+
+bool PKB::isStmtStmtPairExists(StmtStmtRelationship tableType, STMT_NUM key, STMT_NUM val) const {
+    return getStmtStmtRelationshipTable(tableType).containsPair(key, val);
 }
 
 
