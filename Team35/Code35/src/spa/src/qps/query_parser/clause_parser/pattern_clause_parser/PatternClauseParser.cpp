@@ -5,38 +5,38 @@
 #include "qps/pql/Wildcard.h"
 #include "qps/pql/ExpressionStr.h"
 
-Clause* PatternClauseParser::parse(const std::unique_ptr<ILexer> &lexer, std::vector<Synonym> synonyms) {
-    std::string pattern_type = lexer->scan().getLexeme();
+Clause *PatternClauseParser::parse(const std::unique_ptr<ILexer> &lexer, std::vector<Synonym> synonyms) {
+    std::string pattern_type = lexer->scan()->getLexeme();
 
-    if (lexer->scan().getTag() != Token::Tag::LParen) {
+    if (lexer->scan()->getTag() != Token::Tag::LParen) {
         throw std::runtime_error("missing left parenthesis");
     }
 
-    if (lexer->scan().getTag() != Token::Tag::Underscore) {
+    if (lexer->scan()->getTag() != Token::Tag::Underscore) {
         throw std::runtime_error("expected underscore");
     }
 
     Wildcard left;
 
-    if (lexer->scan().getTag() != Token::Tag::Comma) {
+    if (lexer->scan()->getTag() != Token::Tag::Comma) {
         throw std::runtime_error("missing comma");
     }
 
-    Token rightArg = lexer->scan();
+    std::unique_ptr<Token> rightArg = lexer->scan();
 
-    if (rightArg.getTag() != Token::Tag::String) {
+    if (rightArg->getTag() != Token::Tag::String) {
         throw std::runtime_error("string expected");
     }
 
-    std::string exp = rightArg.getLexeme();
+    std::string exp = rightArg->getLexeme();
     exp.erase(remove(exp.begin(), exp.end(), ' '), exp.end());
 
     ExpressionStr right = ExpressionStr(exp);
 
-    if (lexer->scan().getTag() != Token::Tag::RParen) {
+    if (lexer->scan()->getTag() != Token::Tag::RParen) {
         throw std::runtime_error("missing right parenthesis");
     }
 
-    Pattern* p = new Pattern(left, right);
+    Pattern *p = new Pattern(left, right);
     return p;
 }
