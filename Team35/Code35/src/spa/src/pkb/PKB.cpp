@@ -128,6 +128,11 @@ bool PKB::addRelationshipToTable(NameNameRelationship tableType, ENT_ENT entEnt)
     RelationshipTable<ENT_NAME , ENT_NAME> &table = this->getNameNameRelationshipTable(tableType);
     return table.insertPair(entEnt.first, entEnt.second);
 }
+
+bool PKB::addRelationshipToTable(StmtStmtRelationship tableType, STMT_STMT stmtStmt) {
+    RelationshipTable<STMT_NUM , STMT_NUM> &table = this->getStmtStmtRelationshipTable(tableType);
+    return table.insertPair(stmtStmt.first, stmtStmt.second);
+}
 bool PKB::addPattern(STMT_NUM stmtNum, std::string pattern) {
     return patternTable.addPattern(stmtNum, pattern);
 }

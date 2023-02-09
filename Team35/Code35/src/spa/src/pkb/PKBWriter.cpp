@@ -37,6 +37,15 @@ bool PKBWriter::addEntityEntityRelationships(NameNameRelationship tableType, ENT
     return true;
 }
 
+bool PKBWriter::addStmtStmtRelationships(StmtStmtRelationship tableType, STMT_STMT_SET stmtSet) {
+    for (auto stmtStmt :stmtSet) {
+        if (!pkb.addRelationshipToTable(tableType, stmtStmt)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 
 bool PKBWriter::addPatterns(std::unordered_map<STMT_NUM, std::string> patternMap) {
     std::unordered_map<STMT_NUM , std::string>:: iterator p;

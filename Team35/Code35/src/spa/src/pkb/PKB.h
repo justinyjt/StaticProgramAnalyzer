@@ -34,6 +34,7 @@ class PKB {
     bool addStatementToTable(StmtType stmtType, STMT_NUM stmt);
     bool addRelationshipToTable(StmtNameRelationship tableType, STMT_ENT stmtEnt);
     bool addRelationshipToTable(NameNameRelationship tableType, ENT_ENT entEnt);
+    bool addRelationshipToTable(StmtStmtRelationship tableType, STMT_STMT stmtStmt);
     bool addPattern(STMT_NUM stmtNum, std::string pattern);
 
     ENT_SET getEntByStmtKey(StmtNameRelationship tableType, STMT_NUM stmt) const;
