@@ -31,11 +31,25 @@ class PKB {
     bool addPattern(STMT_NUM stmtNum, std::string pattern);
 
  private:
+    // Entity related tables
+    EntityTable<ENT_NAME> variableTable;
+    EntityTable<ENT_NAME> constantTable;
+    EntityTable<STMT_NUM> assignStatementTable;
+    EntityTable<STMT_NUM> ifStatementTable;
+    EntityTable<STMT_NUM> whileStatementTable;
+    EntityTable<STMT_NUM> printStatementTable;
+    EntityTable<STMT_NUM> readStatementTable;
+
+    //Relationship related tables
     RelationshipTable<STMT_NUM, ENT_NAME> modifiesStmtNameTable;
     RelationshipTable<STMT_NUM, ENT_NAME> usesStmtNameTable;
     RelationshipTable<ENT_NAME , ENT_NAME> modifiesNameNameTable;
     RelationshipTable<ENT_NAME , ENT_NAME> usesNameNameTable;
-    EntityTable<ENT_NAME> variableTable;
-    EntityTable<ENT_NAME> constantTable;
+
+    RelationshipTable<STMT_NUM, STMT_NUM> followsTable;
+    RelationshipTable<STMT_NUM, STMT_NUM> followsStarTable;
+    RelationshipTable<STMT_NUM, STMT_NUM> parentTable;
+    RelationshipTable<STMT_NUM, STMT_NUM> parentStarTable;
+
     PatternTable patternTable;
 };
