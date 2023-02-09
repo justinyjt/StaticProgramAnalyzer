@@ -10,6 +10,14 @@ bool PKBWriter::addEntities(Entity entity, ENT_SET entitySet) {
     }
     return true;
 }
+bool PKBWriter::addStatementEntities(StmtType tableType, STMT_SET stmtSet) {
+    for (auto stmt : stmtSet) {
+        if (!pkb.addStatementToTable(tableType, stmt)) {
+            return false;
+        }
+    }
+    return true;
+}
 
 bool PKBWriter::addStmtEntityRelationships(StmtNameRelationship tableType, STMT_ENT_SET set) {
     for (auto stmtEnt : set) {

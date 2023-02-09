@@ -17,6 +17,7 @@ class TNode;
 class PKB {
  public:
     const EntityTable<ENT_NAME> &getEntityTable(Entity entityType) const;
+    const EntityTable<STMT_NUM> &getStatementTable(StmtType stmtType) const;
     const RelationshipTable<STMT_NUM, ENT_NAME> &getStmtNameRelationshipTable(StmtNameRelationship tableType) const;
     const RelationshipTable<ENT_NAME, ENT_NAME> &getNameNameRelationshipTable(NameNameRelationship tableType) const;
     const RelationshipTable<STMT_NUM, STMT_NUM> &getStmtStmtRelationshipTable(StmtStmtRelationship tableType) const;
@@ -26,8 +27,11 @@ class PKB {
     RelationshipTable<ENT_NAME, ENT_NAME> &getNameNameRelationshipTable(NameNameRelationship tableType);
     RelationshipTable<STMT_NUM, STMT_NUM> &getStmtStmtRelationshipTable(StmtStmtRelationship tableType);
     EntityTable<ENT_NAME> &getEntityTable(Entity entityType);
+    EntityTable<STMT_NUM> &getStatementTable(StmtType stmtType);
     PatternTable &getPatternTable();
+
     bool addEntityToTable(Entity entityType, ENT_NAME entity);
+    bool addStatementToTable(StmtType stmtType, STMT_NUM stmt);
     bool addRelationshipToTable(StmtNameRelationship tableType, STMT_ENT stmtEnt);
     bool addRelationshipToTable(NameNameRelationship tableType, ENT_ENT entEnt);
     bool addPattern(STMT_NUM stmtNum, std::string pattern);
