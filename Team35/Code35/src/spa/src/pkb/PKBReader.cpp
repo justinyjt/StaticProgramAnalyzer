@@ -8,37 +8,53 @@ ENT_SET PKBReader::getEntities(Entity entityType) const {
 }
 
 ENT_SET PKBReader::getRelationship(StmtNameRelationship tableType, STMT_NUM stmt) const {
-    return pkb.getStmtNameRelationshipTable(tableType).getValues(stmt);
+    return pkb.getEntByStmtKey(tableType, stmt);
 }
 
 STMT_SET PKBReader::getRelationship(StmtNameRelationship tableType, ENT_NAME name) const {
-    return pkb.getStmtNameRelationshipTable(tableType).getKeys(name);
+    return pkb.getStmtByEntVal(tableType, name);
 }
 
 STMT_ENT_SET PKBReader::getAllRelationships(StmtNameRelationship tableType) const {
-    return pkb.getStmtNameRelationshipTable(tableType).getKeyValuePairs();
+    return pkb.getStmtEntSet(tableType);
 }
 
 bool PKBReader::isRelationshipExists(StmtNameRelationship tableType, STMT_NUM stmt, ENT_NAME name) const {
-    return pkb.getStmtNameRelationshipTable(tableType).containsPair(stmt, name);
+    return pkb.isStmtEntPairExists(tableType, stmt, name);
 }
 
 
 // Entity-Entity Relationship
 ENT_SET PKBReader::getRelationshipByKey(NameNameRelationship tableType, ENT_NAME keyName) const {
-    return pkb.getNameNameRelationshipTable(tableType).getValues(keyName);
+    return pkb.getEntByEntKey(tableType, keyName);
 }
 
 ENT_SET PKBReader::getRelationshipByVal(NameNameRelationship tableType, ENT_NAME valName) const {
-    return pkb.getNameNameRelationshipTable(tableType).getKeys(valName);
+    return pkb.getEntByEntVal(tableType, valName);
 }
 
 ENT_ENT_SET PKBReader::getAllRelationships(NameNameRelationship tableType) const {
-    return pkb.getNameNameRelationshipTable(tableType).getKeyValuePairs();
+    return pkb.getEntEntSet(tableType);
 }
 
 bool PKBReader::isRelationshipExists(NameNameRelationship tableType, ENT_NAME keyName, ENT_NAME valName) const {
-    return pkb.getNameNameRelationshipTable(tableType).containsPair(keyName, valName);
+    return pkb.isEntEntPairExists(tableType, keyName, valName);
+}
+
+STMT_SET PKBReader::getRelationshipByKey(StmtStmtRelationship tableType, STMT_NUM keyName) const {
+    return pkb.getStmtByStmtKey(tableType, keyName);
+}
+
+STMT_SET PKBReader::getRelationshipByVal(StmtStmtRelationship tableType, STMT_NUM valName) const {
+    return pkb.getStmtByStmtVal(tableType, valName);
+}
+
+STMT_STMT_SET PKBReader::getAllRelationships(StmtStmtRelationship tableType) const {
+    return pkb.getStmtStmtSet(tableType);
+}
+
+bool PKBReader::isRelationshipExists(StmtStmtRelationship tableType, STMT_NUM keyName, STMT_NUM valName) const {
+    return pkb.isStmtStmtPairExists(tableType, keyName, valName);
 }
 
 STMT_SET PKBReader::getStmtWithExactPatternMatch(std::string &pattern) const {
