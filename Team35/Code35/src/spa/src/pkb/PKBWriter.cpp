@@ -38,7 +38,7 @@ bool PKBWriter::addEntityEntityRelationships(NameNameRelationship tableType, ENT
 }
 
 bool PKBWriter::addStmtStmtRelationships(StmtStmtRelationship tableType, STMT_STMT_SET stmtSet) {
-    for (auto stmtStmt :stmtSet) {
+    for (auto stmtStmt : stmtSet) {
         if (!pkb.addRelationshipToTable(tableType, stmtStmt)) {
             return false;
         }
