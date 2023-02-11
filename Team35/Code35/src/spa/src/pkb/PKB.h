@@ -19,10 +19,12 @@ class PKB {
     const EntityTable<ENT_NAME> &getEntityTable(Entity entityType) const;
     const RelationshipTable<STMT_NUM, ENT_NAME> &getStmtNameRelationshipTable(StmtNameRelationship tableType) const;
     const RelationshipTable<ENT_NAME, ENT_NAME> &getNameNameRelationshipTable(NameNameRelationship tableType) const;
+    const RelationshipTable<STMT_NUM, STMT_NUM> &getStmtStmtRelationshipTable(StmtStmtRelationship tableType) const;
     const PatternTable &getPatternTable() const;
 
     RelationshipTable<STMT_NUM, ENT_NAME> &getStmtNameRelationshipTable(StmtNameRelationship tableType);
     RelationshipTable<ENT_NAME, ENT_NAME> &getNameNameRelationshipTable(NameNameRelationship tableType);
+    RelationshipTable<STMT_NUM, STMT_NUM> &getStmtStmtRelationshipTable(StmtStmtRelationship tableType);
     EntityTable<ENT_NAME> &getEntityTable(Entity entityType);
     PatternTable &getPatternTable();
     bool addEntityToTable(Entity entityType, ENT_NAME entity);
@@ -30,11 +32,33 @@ class PKB {
     bool addRelationshipToTable(NameNameRelationship tableType, ENT_ENT entEnt);
     bool addPattern(STMT_NUM stmtNum, std::string pattern);
 
+    ENT_SET getEntByStmtKey(StmtNameRelationship tableType, STMT_NUM stmt) const;
+    STMT_SET getStmtByEntVal(StmtNameRelationship tableType, ENT_NAME name) const;
+    STMT_ENT_SET getStmtEntSet(StmtNameRelationship tableType) const;
+    bool isStmtEntPairExists(StmtNameRelationship tableType, STMT_NUM stmt, ENT_NAME name) const;
+
+    ENT_SET getEntByEntKey(NameNameRelationship tableType, ENT_NAME name) const;
+    ENT_SET getEntByEntVal(NameNameRelationship tableType, ENT_NAME name) const;
+    ENT_ENT_SET getEntEntSet(NameNameRelationship tableType) const;
+    bool isEntEntPairExists(NameNameRelationship tableType, ENT_NAME key, ENT_NAME val) const;
+
+    STMT_SET getStmtByStmtKey(StmtStmtRelationship tableType, STMT_NUM stmt) const;
+    STMT_SET getStmtByStmtVal(StmtStmtRelationship tableType, STMT_NUM stmt) const;
+    STMT_STMT_SET getStmtStmtSet(StmtStmtRelationship tableType) const;
+    bool isStmtStmtPairExists(StmtStmtRelationship tableType, STMT_NUM key, STMT_NUM val) const;
+
+
  private:
     RelationshipTable<STMT_NUM, ENT_NAME> modifiesStmtNameTable;
     RelationshipTable<STMT_NUM, ENT_NAME> usesStmtNameTable;
     RelationshipTable<ENT_NAME , ENT_NAME> modifiesNameNameTable;
     RelationshipTable<ENT_NAME , ENT_NAME> usesNameNameTable;
+
+    RelationshipTable<STMT_NUM, STMT_NUM> followsTable;
+    RelationshipTable<STMT_NUM, STMT_NUM> followsStarTable;
+    RelationshipTable<STMT_NUM, STMT_NUM> parentTable;
+    RelationshipTable<STMT_NUM, STMT_NUM> parentStarTable;
+
     EntityTable<ENT_NAME> variableTable;
     EntityTable<ENT_NAME> constantTable;
     PatternTable patternTable;

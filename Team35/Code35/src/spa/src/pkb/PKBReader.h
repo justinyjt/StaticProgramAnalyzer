@@ -21,6 +21,11 @@ class PKBReader {
     ENT_ENT_SET getAllRelationships(NameNameRelationship tableType) const;
     bool isRelationshipExists(NameNameRelationship tableType, ENT_NAME keyName, ENT_NAME valName) const;
 
+    STMT_SET getRelationshipByKey(StmtStmtRelationship tableType, STMT_NUM keyName) const;
+    STMT_SET getRelationshipByVal(StmtStmtRelationship tableType, STMT_NUM valName) const;
+    STMT_STMT_SET getAllRelationships(StmtStmtRelationship tableType) const;
+    bool isRelationshipExists(StmtStmtRelationship tableType, STMT_NUM keyName, STMT_NUM valName) const;
+
     STMT_SET getStmtWithExactPatternMatch(std::string &pattern) const;
 //    bool isExactPatternMatch(STMT_NUM stmtNo, std::string &pattern) const;
 
