@@ -13,4 +13,7 @@
 class ClauseParser {
  public:
     std::vector<Clause *> parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms);
+ private:
+    PatternClauseParser patternClauseParser;
+    SuchThatClauseParser suchThatClauseParser;
 };

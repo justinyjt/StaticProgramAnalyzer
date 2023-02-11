@@ -3,6 +3,8 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <utility>
+
 #include "qps/clause/pattern/Pattern.h"
 #include "qps/pql/Synonym.h"
 #include "qps/pql/Wildcard.h"
@@ -13,4 +15,6 @@
 class PatternClauseParser {
  public:
     Clause* parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms);
+    Tok makeArg(std::unique_ptr<Token> token, std::vector<Synonym> synonyms);
+    bool isValidPatternSynonym(std::string synonym, std::vector<Synonym> synonyms);
 };

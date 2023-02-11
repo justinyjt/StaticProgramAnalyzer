@@ -1,24 +1,21 @@
 #include "ClauseParser.h"
-
-#include <string>
 #include <vector>
 
 #include "commons/token/Token.h"
+#include "qps/query_exceptions/SyntaxException.h"
 
 
 std::vector<Clause *> ClauseParser::parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms) {
     std::vector<Clause *> result;
-    while (1) {
-        std::unique_ptr<Token> nextToken = tokenValidator.getNextToken();;
-        if (nextToken->getLexeme() == "such") {
-            tokenValidator.getNextToken();
-            SuchThatClauseParser stcp;
-            result.push_back(stcp.parse(tokenValidator, synonyms));
-        } else if (nextToken->getLexeme() == "pattern") {
-            PatternClauseParser pcp;
-            result.push_back(pcp.parse(tokenValidator, synonyms));
-        } else if (nextToken->getTag() == Token::Tag::EndOfFile) {
+    while (true) {
+        if (tokenValidator.isNextTokenType(Token::Tag::EndOfFile)) {
             break;
+        } else if (tokenValidator.isNextTokenType(Token::Tag::Such)) {
+            result.push_back(suchThatClauseParser.parse(tokenValidator, synonyms));
+        } else if (tokenValidator.isNextTokenType(Token::Tag::Pattern)) {
+            result.push_back(patternClauseParser.parse(tokenValidator, synonyms));
+        } else {
+            throw SyntaxException();
         }
     }
     return result;
