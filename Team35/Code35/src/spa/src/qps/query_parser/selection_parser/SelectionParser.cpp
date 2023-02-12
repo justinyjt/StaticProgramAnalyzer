@@ -1,12 +1,15 @@
 #include <string>
 #include "SelectionParser.h"
+#include "qps/query_parser/clause_parser/TokenValidator.h"
+#include "qps/query_exceptions/SyntaxException.h"
 
-Synonym SelectionParser::parse(const std::unique_ptr<ILexer> &lexer, std::vector<Synonym> synonyms) {
-    std::unique_ptr<Token> selectedToken = lexer->scan();
+Synonym SelectionParser::parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms) {
+    tokenValidator.validateAndConsumeTokenType(Token::Tag::Select);
+    std::unique_ptr<Token> selectedSynonym = tokenValidator.validateAndConsumeSynonymToken();
     for (auto synonym : synonyms) {
-        if (synonym.getValue() == selectedToken->getLexeme()) {
+        if (selectedSynonym->getLexeme() == synonym.getValue()) {
             return synonym;
         }
     }
-    throw std::runtime_error("synonym not declared!");
+    throw SyntaxException();
 }

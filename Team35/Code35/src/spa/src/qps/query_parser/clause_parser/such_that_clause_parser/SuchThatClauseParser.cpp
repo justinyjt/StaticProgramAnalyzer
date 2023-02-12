@@ -4,33 +4,27 @@
 
 #include "qps/clause/relationship/Modify.h"
 #include "qps/pql/StatementNumber.h"
+#include "qps/query_exceptions/SyntaxException.h"
 
-Clause *SuchThatClauseParser::parse(const std::unique_ptr<ILexer> &lexer, std::vector<Synonym> synonyms) {
-    std::string keyword = lexer->scan()->getLexeme();
+Clause *SuchThatClauseParser::parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms) {
+    tokenValidator.validateAndConsumeTokenType(Token::Tag::Such);
+    tokenValidator.validateAndConsumeTokenType(Token::Tag::That);
 
-    if (keyword != "Modifies") {
-        throw std::runtime_error("not modifies clause");
-    }
+    std::unique_ptr<Token> relationship = tokenValidator.validateAndConsumeRelationship();
 
-    if (lexer->scan()->getTag() != Token::Tag::LParen) {
-        throw std::runtime_error("missing left parenthesis");
-    }
+    tokenValidator.validateAndConsumeTokenType(Token::Tag::LParen);
 
-    std::unique_ptr<Token> leftArg = lexer->scan();
+    std::unique_ptr<Token> leftArg = tokenValidator.validateAndConsumeRelationshipArg();
 
     Tok left = makeArg(std::move(leftArg), synonyms);
 
-    if (lexer->scan()->getTag() != Token::Tag::Comma) {
-        throw std::runtime_error("missing comma");
-    }
+    tokenValidator.validateAndConsumeTokenType(Token::Tag::Comma);
 
-    std::unique_ptr<Token> rightArg = lexer->scan();
+    std::unique_ptr<Token> rightArg = tokenValidator.validateAndConsumeRelationshipArg();
 
     Tok right = makeArg(std::move(rightArg), synonyms);
 
-    if (lexer->scan()->getTag() != Token::Tag::RParen) {
-        throw std::runtime_error("missing right parenthesis");
-    }
+    tokenValidator.validateAndConsumeTokenType(Token::Tag::RParen);
 
     Modify *m = new Modify(left, right);
     return m;
@@ -47,8 +41,8 @@ Tok SuchThatClauseParser::makeArg(std::unique_ptr<Token> token, std::vector<Syno
                 return s;
             }
         }
-        throw std::runtime_error("synonym not declared!");
+        throw SyntaxException();
     } else {
-        throw std::runtime_error("invalid argument");
+        throw SyntaxException();
     }
 }

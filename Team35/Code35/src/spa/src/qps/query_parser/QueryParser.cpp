@@ -4,20 +4,22 @@
 #include "qps/query_parser/clause_parser/ClauseParser.h"
 #include "commons/lexer/LexerFactory.h"
 #include "commons/lexer/ILexer.h"
+#include "qps/query_parser/clause_parser/TokenValidator.h"
 
 std::pair<Synonym, std::vector<Clause*>> QueryParser::parse(std::string& query) {
     std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    TokenValidator tokenValidator(lexer);
     // pass tokenList and parse declaration
     DeclarationParser declarationParser;
-    std::vector<Synonym> synonyms = declarationParser.parse(lexer);
+    std::vector<Synonym> synonyms = declarationParser.parse(tokenValidator);
 
     // parse select using list of found synonyms
     SelectionParser selectionParser;
-    Synonym selectedSynonym = selectionParser.parse(std::move(lexer), synonyms);
+    Synonym selectedSynonym = selectionParser.parse(tokenValidator, synonyms);
 
     // parse clauses
     ClauseParser clauseParser;
-    std::vector<Clause*> clauses = clauseParser.parse(lexer, synonyms);
+    std::vector<Clause*> clauses = clauseParser.parse(tokenValidator, synonyms);
 
     return std::make_pair(selectedSynonym, clauses);
 }

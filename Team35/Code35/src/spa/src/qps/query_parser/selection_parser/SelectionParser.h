@@ -4,8 +4,9 @@
 #include <vector>
 #include "qps/pql/Synonym.h"
 #include "commons/lexer/Lexer.h"
+#include "qps/query_parser/clause_parser/TokenValidator.h"
 
 class SelectionParser {
  public:
-    Synonym parse(const std::unique_ptr<ILexer> &lexer, std::vector<Synonym> synonyms);
+    Synonym parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms);
 };
