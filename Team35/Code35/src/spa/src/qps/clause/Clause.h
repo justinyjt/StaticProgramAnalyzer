@@ -13,6 +13,8 @@ class Clause {
     const Tok* second;
 
     Clause(Tok* first, Tok* second);
-    bool operator==(Clause const &rhs) const;
+    virtual bool operator==(const Clause &rhs) const = 0;
     virtual Result* evaluate(PKBReader* db) = 0;
+ protected:
+    bool equal(const Clause& rhs) const;
 };

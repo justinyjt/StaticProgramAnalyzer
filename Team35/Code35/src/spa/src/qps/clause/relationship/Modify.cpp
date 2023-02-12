@@ -6,7 +6,7 @@ Modify::Modify(Tok* first, Tok* second) : Relationship(first, second) {}
 // select v such that modifies(1, v)
 
 Result* Modify::evaluate(PKBReader *db) {
-    if (first->tag == Tok::STMT_NUM && second->tag == Tok::SYNONYM) {
+    if (first->tag == Tok::Tag::STMT_NUM && second->tag == Tok::Tag::SYNONYM) {
         ENT_SET set = db->getRelationship(StmtNameRelationship::Modifies,
                                           (dynamic_cast<const StatementNumber*>(first))->n);
 
@@ -17,6 +17,7 @@ Result* Modify::evaluate(PKBReader *db) {
     throw std::runtime_error("");
 }
 
-bool Modify::operator==(const Modify &rhs) const {
-    return first->tag == rhs.first->tag && second->tag == rhs.second->tag;
+
+bool Modify::operator==(const Clause& rhs) const {
+    return (dynamic_cast<const Modify*>(&rhs) != NULL) && Clause::equal(rhs);
 }

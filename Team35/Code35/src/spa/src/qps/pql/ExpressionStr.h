@@ -9,5 +9,6 @@ class ExpressionStr : public Tok {
  public:
     explicit ExpressionStr(std::string str);
     const std::string s;
-    std::string str() const; 
+    std::string str() const;
+    bool operator==(const Tok& rhs) const;
 };

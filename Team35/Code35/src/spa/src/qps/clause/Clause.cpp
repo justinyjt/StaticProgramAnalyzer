@@ -3,6 +3,6 @@
 
 Clause::Clause(Tok* first, Tok* second) : first(first), second(second) {}
 
-bool Clause::operator==(const Clause &rhs) const {
-    return true;
+bool Clause::equal(const Clause &rhs) const {
+    return *first == *(rhs.first) && *second == *(rhs.second);
 }

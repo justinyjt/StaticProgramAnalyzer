@@ -5,9 +5,9 @@ Pattern::Pattern(Tok* first, Tok* second) : Clause(first, second) {}
 
 // select a pattern a ( _ , "x + 1")
 
-Result *Pattern::evaluate(PKBReader *db) {
+Result* Pattern::evaluate(PKBReader *db) {
     // if first == "_" and second is string with no underscores
-    if (first->tag == Tok::WILDCARD && second->tag == Tok::EXPR) {
+    if (first->tag == Tok::Tag::WILDCARD && second->tag == Tok::Tag::EXPR) {
         std::string pattern = second->str();
         STMT_SET set = db->getStmtWithExactPatternMatch(pattern);
 
@@ -15,4 +15,8 @@ Result *Pattern::evaluate(PKBReader *db) {
         return dynamic_cast<Result *>(result);
     }
     throw std::runtime_error("");
+}
+
+bool Pattern::operator==(const Clause& rhs) const {
+    return (dynamic_cast<const Pattern*>(&rhs) != NULL) && Clause::equal(rhs);
 }

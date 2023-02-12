@@ -8,4 +8,5 @@ class StatementNumber : public Tok {
     explicit StatementNumber(int n);
     int n;
     std::string str() const;
+    bool operator==(const Tok& rhs) const;
 };

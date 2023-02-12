@@ -9,4 +9,5 @@ class Pattern : public Clause {
     /* <SYNONYM | WILDCARD | IDENT_STR>, <EXPR_STR> */
     Pattern(Tok* first, Tok* second);
     Result* evaluate(PKBReader*);
+    bool operator==(const Clause& rhs) const;
 };
