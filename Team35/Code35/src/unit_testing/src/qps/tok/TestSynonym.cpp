@@ -4,15 +4,15 @@
 #include "qps/pql/Tok.h"
 
 TEST_CASE("Synonym") {
-    Synonym* st1 = new Synonym(Synonym::DesignEntity::STMT, "s");
-    Synonym* st2 = new Synonym(Synonym::DesignEntity::STMT, "t");
-    Tok* st1_ = new Synonym(Synonym::DesignEntity::STMT, "s");
+    Synonym* x = new Synonym(Synonym::DesignEntity::VARIABLE, "x");
+    Synonym* y = new Synonym(Synonym::DesignEntity::VARIABLE, "y");
+    Tok* x_ = new Synonym(Synonym::DesignEntity::VARIABLE, "x");
 
-    requireTrue(*st1 == *st1_);
-    requireTrue(*st1 != *st2);
+    requireTrue(*x == *x_);
+    requireTrue(*x != *y);
 
-    requireEqual(st1->tag, Tok::Tag::STMT_NUM);
-    requireEqual(st1->de, Synonym::DesignEntity::STMT);
-    requireEqual(st1->ident, std::string("s"));
-    requireEqual(st1->str(), std::string("s"));
+    requireEqual(x->tag, Tok::Tag::SYNONYM);
+    requireEqual(x->de, Synonym::DesignEntity::VARIABLE);
+    requireEqual(x->ident, std::string("x"));
+    requireEqual(x->str(), std::string("x"));
 }

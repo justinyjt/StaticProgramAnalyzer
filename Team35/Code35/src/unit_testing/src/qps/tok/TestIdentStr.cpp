@@ -3,7 +3,7 @@
 #include "qps/pql/IdentStr.h"
 #include "qps/pql/Tok.h"
 
-TEST_CASE("StatementNumber") {
+TEST_CASE("IdentStr") {
     IdentStr* hi = new IdentStr("hi");
     IdentStr* bye = new IdentStr("bye");
     Tok* hi_ = new IdentStr("hi");

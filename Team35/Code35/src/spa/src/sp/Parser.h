@@ -11,15 +11,14 @@ using std::unique_ptr;
 
 class Parser : public IParser {
  public:
-    explicit Parser(PROGRAM src, const DesignExtractor& de);
+    explicit Parser(PROGRAM src, const DesignExtractor &de);
     unique_ptr<ASTNode> Parse() override;
 
  private:
     std::unique_ptr<ILexer> lex_;
     PROGRAM src_;
     DesignExtractor &de_;
-    Token cur_;
-    bool isRead_;
+    std::unique_ptr<Token> cur_;
 
     int peek(Token::Tag);
     int accept(Token::Tag);
