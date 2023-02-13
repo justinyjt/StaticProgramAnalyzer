@@ -18,6 +18,7 @@ class TokenValidator {
     void validateAndConsumeTokenType(Token::Tag tag);
     bool isNextTokenType(Token::Tag tag);
     void consumeNextToken();
+    bool isEof();
 
  private:
     std::unique_ptr<ILexer> &lexer;

@@ -2,6 +2,7 @@
 #include "SelectionParser.h"
 #include "qps/query_parser/clause_parser/TokenValidator.h"
 #include "qps/query_exceptions/SyntaxException.h"
+#include "qps/query_exceptions/SemanticException.h"
 
 Synonym SelectionParser::parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms) {
     tokenValidator.validateAndConsumeTokenType(Token::Tag::Select);
@@ -11,5 +12,5 @@ Synonym SelectionParser::parse(TokenValidator &tokenValidator, std::vector<Synon
             return synonym;
         }
     }
-    throw SyntaxException();
+    throw SemanticException();
 }

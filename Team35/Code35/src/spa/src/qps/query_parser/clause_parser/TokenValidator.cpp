@@ -111,3 +111,7 @@ void TokenValidator::validateAndConsumeTokenType(Token::Tag tag) {
         throw SyntaxException();
     }
 }
+
+bool TokenValidator::isEof() {
+    return cur_->getTag() == Token::Tag::EndOfFile;
+}

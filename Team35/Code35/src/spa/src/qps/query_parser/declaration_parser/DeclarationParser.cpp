@@ -5,13 +5,14 @@
 #include "commons/token/Token.h"
 #include "qps/query_parser/clause_parser/TokenValidator.h"
 #include "qps/query_exceptions/SyntaxException.h"
+#include "qps/query_exceptions/SemanticException.h"
 
 std::vector<Synonym> DeclarationParser::parse(TokenValidator &tokenValidator) {
     std::vector<Synonym> declarationList;
 
     // check for next declaration
     while (true) {
-        if (tokenValidator.isNextTokenType(Token::Tag::Select)) {
+        if (tokenValidator.isNextTokenType(Token::Tag::Select) || tokenValidator.isEof()) {
             break;
         }
 
@@ -24,7 +25,7 @@ std::vector<Synonym> DeclarationParser::parse(TokenValidator &tokenValidator) {
             if (!isDeclared(synonym->getLexeme(), declarationList)) {
                 declarationList.push_back(Synonym(de, synonym->getLexeme()));
             } else {
-                throw SyntaxException();
+                throw SemanticException();
             }
 
             if (tokenValidator.isNextTokenType(Token::Tag::SemiColon)) {
