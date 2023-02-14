@@ -6,7 +6,7 @@
 represents string identifier
 */
 class IdentStrWithWildcard : public Tok {
-public:
+ public:
     explicit IdentStrWithWildcard(std::string s);
     const std::string s;
     std::string str() const;

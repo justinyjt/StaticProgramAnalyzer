@@ -3,7 +3,6 @@
 Parent::Parent(Tok* first, Tok* second) : Relationship(first, second) {}
 
 Result* Parent::evaluate(PKBReader *db) {
-
     throw std::runtime_error("");
 }
 
@@ -15,7 +14,6 @@ bool Parent::operator==(const Clause& rhs) const {
 ParentT::ParentT(Tok* first, Tok* second) : Relationship(first, second) {}
 
 Result* ParentT::evaluate(PKBReader *db) {
-
     throw std::runtime_error("");
 }
 

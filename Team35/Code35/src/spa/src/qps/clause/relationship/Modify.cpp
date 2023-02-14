@@ -27,7 +27,6 @@ ModifiesP::ModifiesP(Tok* first, Tok* second) : Relationship(first, second) {}
 // select v such that modifies(1, v)
 
 Result* ModifiesP::evaluate(PKBReader *db) {
-
     throw std::runtime_error("");
 }
 

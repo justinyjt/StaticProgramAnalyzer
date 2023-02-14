@@ -3,7 +3,6 @@
 UsesS::UsesS(Tok* first, Tok* second) : Relationship(first, second) {}
 
 Result* UsesS::evaluate(PKBReader *db) {
-
     throw std::runtime_error("");
 }
 
@@ -15,7 +14,6 @@ bool UsesS::operator==(const Clause& rhs) const {
 UsesP::UsesP(Tok* first, Tok* second) : Relationship(first, second) {}
 
 Result* UsesP::evaluate(PKBReader *db) {
-
     throw std::runtime_error("");
 }
 

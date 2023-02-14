@@ -207,7 +207,7 @@ TEST_CASE("SuchThatClauseParser parse(); ParentT") {
     requireTrue(*clause == p);
 }
 
-TEST_CASE("SuchThatClauseParser parse(); Pattern, (wildcard, wildcard)") {
+TEST_CASE("PatternClauseParser parse(); Pattern, (wildcard, wildcard)") {
     std::string query = "pattern a(_,_)";
     std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator(lexer);
@@ -223,7 +223,7 @@ TEST_CASE("SuchThatClauseParser parse(); Pattern, (wildcard, wildcard)") {
     requireTrue(*clause == a);
 }
 
-TEST_CASE("SuchThatClauseParser parse(); Pattern, (wildcard, exact match)") {
+TEST_CASE("PatternClauseParser parse(); Pattern, (wildcard, exact match)") {
     std::string query = "pattern a(_,\"x\")";
     std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator(lexer);
@@ -239,7 +239,7 @@ TEST_CASE("SuchThatClauseParser parse(); Pattern, (wildcard, exact match)") {
     requireTrue(*clause == a);
 }
 
-TEST_CASE("SuchThatClauseParser parse(); Pattern, (wildcard, partial match)") {
+TEST_CASE("PatternClauseParser parse(); Pattern, (wildcard, partial match)") {
     std::string query = "pattern a(_,_\"x\"_)";
     std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator(lexer);

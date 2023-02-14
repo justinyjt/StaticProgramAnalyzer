@@ -28,7 +28,8 @@ Clause *SuchThatClauseParser::parse(TokenValidator &tokenValidator, std::vector<
 
     tokenValidator.validateAndConsumeTokenType(Token::Tag::RParen);
 
-    Clause* clause = createClause(std::move(leftArg), std::move(rightArg), relationship, synonyms);
+    Clause* clause = createClause(std::move(leftArg),
+                                  std::move(rightArg), relationship, synonyms);
 
     return clause;
 }

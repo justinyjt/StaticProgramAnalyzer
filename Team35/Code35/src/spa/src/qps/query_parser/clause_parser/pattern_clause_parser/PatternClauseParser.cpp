@@ -62,7 +62,6 @@ Tok* PatternClauseParser::createRightArg(std::vector<std::unique_ptr<Token>> &to
 
 Clause* PatternClauseParser::createClause(std::unique_ptr<Token> token1, std::vector<std::unique_ptr<Token>> token2,
                                           std::vector<Synonym> synonyms) {
-
     // stmtRef - stmt, read, print, assign, call, while, if synonyms, _ , integer
     // _ , exact match, partial match
 
@@ -70,7 +69,6 @@ Clause* PatternClauseParser::createClause(std::unique_ptr<Token> token1, std::ve
     Tok* second = createRightArg(token2);
     Pattern *a = new Pattern(first, second);
     return a;
-
 }
 
 bool PatternClauseParser::isValidPatternSynonym(const std::string& next, std::vector<Synonym> synonyms) {

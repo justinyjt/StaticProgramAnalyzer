@@ -3,6 +3,6 @@
 #include <exception>
 
 class SemanticException : public std::exception {
-public:
+ public:
     [[nodiscard]] const char* what() const noexcept override;
 };

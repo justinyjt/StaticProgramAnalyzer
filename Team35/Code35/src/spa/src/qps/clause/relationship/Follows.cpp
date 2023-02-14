@@ -3,7 +3,6 @@
 Follows::Follows(Tok* first, Tok* second) : Relationship(first, second) {}
 
 Result* Follows::evaluate(PKBReader *db) {
-
     throw std::runtime_error("");
 }
 
@@ -15,7 +14,6 @@ bool Follows::operator==(const Clause& rhs) const {
 FollowsT::FollowsT(Tok* first, Tok* second) : Relationship(first, second) {}
 
 Result* FollowsT::evaluate(PKBReader *db) {
-
     throw std::runtime_error("");
 }
 

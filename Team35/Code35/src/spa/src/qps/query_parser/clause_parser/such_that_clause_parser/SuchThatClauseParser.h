@@ -14,7 +14,8 @@ class SuchThatClauseParser {
  public:
     Clause *parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms);
     Tok* createArg(std::unique_ptr<Token>& token, std::vector<Synonym> synonyms);
-    Clause* createClause(std::unique_ptr<Token> token1, std::unique_ptr<Token> token2, std::string relationship, std::vector<Synonym> synonyms);
+    Clause* createClause(std::unique_ptr<Token> token1, std::unique_ptr<Token> token2,
+                         std::string relationship, std::vector<Synonym> synonyms);
     bool isStmtRef(Tok &tok);
     bool isEntRef(Tok &tok);
 };
