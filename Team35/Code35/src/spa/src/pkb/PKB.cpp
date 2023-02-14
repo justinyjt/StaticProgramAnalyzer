@@ -22,9 +22,31 @@ const EntityTable<ENT_NAME> &PKB::getEntityTable(Entity entityType) const {
     }
 }
 
+const EntityTable<STMT_NUM> &PKB::getStatementTable(StmtType stmtType) const {
+    switch (stmtType) {
+        case (StmtType::Assign):
+            return assignStatementTable;
+        case (StmtType::Print):
+            return printStatementTable;
+        case (StmtType::Read):
+            return readStatementTable;
+        case (StmtType::If):
+            return ifStatementTable;
+        case (StmtType::While)   :
+            return whileStatementTable;
+        default:
+            assert(false);
+    }
+}
+
 EntityTable<ENT_NAME> &PKB::getEntityTable(Entity entityType) {
     const PKB* pkbPtr = const_cast<const PKB *>(this);
     return const_cast<EntityTable<ENT_NAME> &>(pkbPtr->getEntityTable(entityType));
+}
+
+EntityTable<STMT_NUM> &PKB::getStatementTable(StmtType stmtType) {
+    const PKB* pkbPtr = const_cast<const PKB *>(this);
+    return const_cast<EntityTable<STMT_NUM> &>(pkbPtr->getStatementTable(stmtType));
 }
 
 const RelationshipTable<STMT_NUM, ENT_NAME> &PKB::getStmtNameRelationshipTable(StmtNameRelationship tableType) const {
@@ -92,6 +114,12 @@ bool PKB::addEntityToTable(Entity entityType, ENT_NAME entity) {
     EntityTable<ENT_NAME> &table = this->getEntityTable(entityType);
     return table.addEntity(entity);
 }
+
+bool PKB::addStatementToTable(StmtType stmtType, STMT_NUM stmtNum) {
+    EntityTable<STMT_NUM> &table = this->getStatementTable(stmtType);
+    return table.addEntity(stmtNum);
+}
+
 bool PKB::addRelationshipToTable(StmtNameRelationship tableType, STMT_ENT stmtEnt) {
     RelationshipTable<STMT_NUM, ENT_NAME> &table = this->getStmtNameRelationshipTable(tableType);
     return table.insertPair(stmtEnt.first, stmtEnt.second);
@@ -99,6 +127,11 @@ bool PKB::addRelationshipToTable(StmtNameRelationship tableType, STMT_ENT stmtEn
 bool PKB::addRelationshipToTable(NameNameRelationship tableType, ENT_ENT entEnt) {
     RelationshipTable<ENT_NAME , ENT_NAME> &table = this->getNameNameRelationshipTable(tableType);
     return table.insertPair(entEnt.first, entEnt.second);
+}
+
+bool PKB::addRelationshipToTable(StmtStmtRelationship tableType, STMT_STMT stmtStmt) {
+    RelationshipTable<STMT_NUM , STMT_NUM> &table = this->getStmtStmtRelationshipTable(tableType);
+    return table.insertPair(stmtStmt.first, stmtStmt.second);
 }
 bool PKB::addPattern(STMT_NUM stmtNum, std::string pattern) {
     return patternTable.addPattern(stmtNum, pattern);

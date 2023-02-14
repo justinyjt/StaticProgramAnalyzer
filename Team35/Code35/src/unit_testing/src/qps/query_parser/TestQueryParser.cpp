@@ -1,28 +1,33 @@
 #include "catch.hpp"
-#include "qps/query_parser/QueryParser.h"
 #include "../../TestHelper.h"
 #include "qps/query_parser/declaration_parser/DeclarationParser.h"
-#include "qps/clause/relationship/Modify.h"
 #include "qps/clause/Clause.h"
+#include "qps/clause/relationship/Modify.h"
 #include "qps/pql/StatementNumber.h"
-#include "qps/clause/pattern/Pattern.h"
-#include "qps/pql/Wildcard.h"
 #include "qps/pql/ExpressionStr.h"
+#include "commons/lexer/LexerFactory.h"
+#include "qps/query_parser/selection_parser/SelectionParser.h"
+#include "qps/query_parser/clause_parser/ClauseParser.h"
 
 TEST_CASE("1. Query parser") {
+    std::string query = "variable v, x; assign a, b, c; read y; Select c such that Modifies(2,v) pattern a ( _ , \"x\")";
+    DeclarationParser dp;
+    SelectionParser sp;
+    ClauseParser cp;
+    std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    TokenValidator tokenValidator(lexer);
+    std::vector<Synonym> declarationList = dp.parse(tokenValidator);
+    requireEqual(declarationList.front(), Synonym(Synonym::DesignEntity::VARIABLE, "v"));
 
-    std::string query = "variable v; assign a;Select v such that Modifies(1,v) pattern a ( _ , \"x + 1\")";
-    QueryParser queryParser;
+    Synonym selectedSynonym = sp.parse(tokenValidator, declarationList);
+    requireEqual(selectedSynonym, Synonym(Synonym::DesignEntity::ASSIGN, "c"));
 
     // Perform parsing
-    std::pair<Synonym, std::vector<Clause *>> parseResult = queryParser.parse(query);
+    std::vector<Clause *> clauses = cp.parse(tokenValidator, declarationList);
 
-    requireEqual(Synonym(Synonym::DesignEntity::VARIABLE, "v"), parseResult.first);
-
-    std::vector<Clause *> clauses = parseResult.second;
     requireTrue(clauses.size() == 2);
 
-    StatementNumber* st = new StatementNumber(1);
+    StatementNumber* st = new StatementNumber(2);
     Synonym* syn = new Synonym(Synonym::DesignEntity::VARIABLE, "v");
     Modify m(st, syn);
 
@@ -30,7 +35,7 @@ TEST_CASE("1. Query parser") {
     requireTrue(*c1 == m);
 
     Wildcard* w = new Wildcard();
-    ExpressionStr* expr = new ExpressionStr("x+1");
+    ExpressionStr* expr = new ExpressionStr("x");
     Pattern a(w, expr);
 
     Clause *c2 = clauses.back();
