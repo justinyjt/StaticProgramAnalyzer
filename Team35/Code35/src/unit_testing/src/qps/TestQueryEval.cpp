@@ -1,7 +1,7 @@
 //#include "catch.hpp"
 //#include "../TestHelper.h"
 //#include "qps/QueryEvaluator.h"
-//#include "qps/clause/relationship/ModifiesS.h"
+//#include "qps/clause/relationship/Modifies.h"
 //#include "qps/clause/pattern/Pattern.h"
 //#include "qps/clause/Clause.h"
 //#include "qps/pql/StatementNumber.h"
