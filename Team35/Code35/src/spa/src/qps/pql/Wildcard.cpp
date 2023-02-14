@@ -1,13 +1,13 @@
-#include "Tok.h"
+#include "PQLToken.h"
 #include "Wildcard.h"
 
-Wildcard::Wildcard() : Tok(Tag::WILDCARD) {}
+Wildcard::Wildcard() : PQLToken(Tag::WILDCARD) {}
 
 std::string Wildcard::str() const {
   return "_";
 }
 
-bool Wildcard::operator==(const Tok& rhs) const {
+bool Wildcard::operator==(const PQLToken& rhs) const {
   const Wildcard* p_rhs = dynamic_cast<const Wildcard*>(&rhs);
-  return p_rhs != NULL && Tok::equal(rhs);
+  return p_rhs != NULL && PQLToken::equal(rhs);
 }

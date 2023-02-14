@@ -1,4 +1,4 @@
 #include "Relationship.h"
-#include "qps/pql/Tok.h"
+#include "qps/pql/PQLToken.h"
 
-Relationship::Relationship(Tok* first, Tok* second) : Clause(first, second) {}
+Relationship::Relationship(PQLToken* first, PQLToken* second) : Clause(first, second) {}

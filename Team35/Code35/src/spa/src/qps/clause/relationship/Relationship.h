@@ -8,6 +8,6 @@ Follows | FollowsT | Parent | ParentT | UsesS | UsesP | ModifiesS | ModifiesP
 */
 class Relationship : public Clause {
  public:
-        Relationship(Tok* first, Tok* second);
+        Relationship(PQLToken* first, PQLToken* second);
         virtual Result* evaluate(PKBReader* db) = 0;
 };

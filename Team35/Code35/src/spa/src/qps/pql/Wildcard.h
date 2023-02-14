@@ -1,13 +1,13 @@
 #pragma once
-#include "Tok.h"
+#include "PQLToken.h"
 #include <string>
 
 /*
  represented by "_"
 */
-class Wildcard : public Tok {
+class Wildcard : public PQLToken {
  public:
     Wildcard();
     std::string str() const;
-    bool operator==(const Tok& rhs) const;
+    bool operator==(const PQLToken& rhs) const;
 };

@@ -16,13 +16,13 @@ Clause *SuchThatClauseParser::parse(TokenValidator &tokenValidator, std::vector<
 
     std::unique_ptr<Token> leftArg = tokenValidator.validateAndConsumeRelationshipArg();
 
-    Tok* left = makeArg(std::move(leftArg), synonyms);
+    PQLToken* left = makeArg(std::move(leftArg), synonyms);
 
     tokenValidator.validateAndConsumeTokenType(Token::Tag::Comma);
 
     std::unique_ptr<Token> rightArg = tokenValidator.validateAndConsumeRelationshipArg();
 
-    Tok* right = makeArg(std::move(rightArg), synonyms);
+    PQLToken* right = makeArg(std::move(rightArg), synonyms);
 
     tokenValidator.validateAndConsumeTokenType(Token::Tag::RParen);
 
@@ -30,7 +30,7 @@ Clause *SuchThatClauseParser::parse(TokenValidator &tokenValidator, std::vector<
     return m;
 }
 
-Tok* SuchThatClauseParser::makeArg(std::unique_ptr<Token> token, std::vector<Synonym> synonyms) {
+PQLToken* SuchThatClauseParser::makeArg(std::unique_ptr<Token> token, std::vector<Synonym> synonyms) {
     if (token->getTag() == Token::Tag::Integer) {
         StatementNumber* t = new StatementNumber(stoi(token->getLexeme()));
         return t;

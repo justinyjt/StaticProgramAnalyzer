@@ -17,13 +17,13 @@ Clause *PatternClauseParser::parse(TokenValidator &tokenValidator, std::vector<S
 
     std::unique_ptr<Token> leftArg = tokenValidator.validateAndConsumePatternFirstArg();
 
-    Tok* left = makeArg(std::move(leftArg), synonyms);
+    PQLToken* left = makeArg(std::move(leftArg), synonyms);
 
     tokenValidator.validateAndConsumeTokenType(Token::Tag::Comma);
 
     std::unique_ptr<Token> rightArg = tokenValidator.validateAndConsumePatternSecondArg();
 
-    Tok* right = makeArg(std::move(rightArg), synonyms);
+    PQLToken* right = makeArg(std::move(rightArg), synonyms);
 
     tokenValidator.validateAndConsumeTokenType(Token::Tag::RParen);
 
@@ -31,7 +31,7 @@ Clause *PatternClauseParser::parse(TokenValidator &tokenValidator, std::vector<S
     return p;
 }
 
-Tok* PatternClauseParser::makeArg(std::unique_ptr<Token> token, std::vector<Synonym> synonyms) {
+PQLToken* PatternClauseParser::makeArg(std::unique_ptr<Token> token, std::vector<Synonym> synonyms) {
     if (token->getTag() == Token::Tag::Name) {
         IdentStr* i = new IdentStr(token->getLexeme());
         return i;
