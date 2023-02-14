@@ -1,11 +1,11 @@
-#include "Modify.h"
+#include "Modifies.h"
 #include "qps/pql/StatementNumber.h"
 
-Modify::Modify(Tok* first, Tok* second) : Relationship(first, second) {}
+ModifiesS::ModifiesS(Tok* first, Tok* second) : Relationship(first, second) {}
 
 // select v such that modifies(1, v)
 
-Result* Modify::evaluate(PKBReader *db) {
+Result* ModifiesS::evaluate(PKBReader *db) {
     if (first->tag == Tok::Tag::STMT_NUM && second->tag == Tok::Tag::SYNONYM) {
         ENT_SET set = db->getRelationship(StmtNameRelationship::Modifies,
                                           (dynamic_cast<const StatementNumber*>(first))->n);
@@ -18,6 +18,6 @@ Result* Modify::evaluate(PKBReader *db) {
 }
 
 
-bool Modify::operator==(const Clause& rhs) const {
-    return (dynamic_cast<const Modify*>(&rhs) != NULL) && Clause::equal(rhs);
+bool ModifiesS::operator==(const Clause& rhs) const {
+    return (dynamic_cast<const ModifiesS*>(&rhs) != NULL) && Clause::equal(rhs);
 }

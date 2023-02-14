@@ -2,7 +2,7 @@
 #include "../../TestHelper.h"
 #include "qps/query_parser/declaration_parser/DeclarationParser.h"
 #include "qps/clause/Clause.h"
-#include "qps/clause/relationship/Modify.h"
+#include "qps/clause/relationship/ModifiesS.h"
 #include "qps/pql/StatementNumber.h"
 #include "qps/pql/ExpressionStr.h"
 #include "commons/lexer/LexerFactory.h"
@@ -29,7 +29,7 @@ TEST_CASE("1. Query parser") {
 
     StatementNumber* st = new StatementNumber(2);
     Synonym* syn = new Synonym(Synonym::DesignEntity::VARIABLE, "v");
-    Modify m(st, syn);
+    ModifiesS m(st, syn);
 
     Clause *c1 = clauses.front();
     requireTrue(*c1 == m);

@@ -2,7 +2,7 @@
 
 #include <utility>
 
-#include "qps/clause/relationship/Modify.h"
+#include "qps/clause/relationship/ModifiesS.h"
 #include "qps/pql/StatementNumber.h"
 #include "qps/query_exceptions/SyntaxException.h"
 
@@ -26,7 +26,7 @@ Clause *SuchThatClauseParser::parse(TokenValidator &tokenValidator, std::vector<
 
     tokenValidator.validateAndConsumeTokenType(Token::Tag::RParen);
 
-    Modify *m = new Modify(left, right);
+    ModifiesS *m = new ModifiesS(left, right);
     return m;
 }
 
