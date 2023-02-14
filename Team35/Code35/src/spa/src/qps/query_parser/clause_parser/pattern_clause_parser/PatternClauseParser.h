@@ -15,6 +15,6 @@
 class PatternClauseParser {
  public:
     Clause* parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms);
-    Tok* makeArg(std::unique_ptr<Token> token, std::vector<Synonym> synonyms);
+    Tok* createArg(std::unique_ptr<Token> token, std::vector<Synonym> synonyms);
     bool isValidPatternSynonym(std::string synonym, std::vector<Synonym> synonyms);
 };

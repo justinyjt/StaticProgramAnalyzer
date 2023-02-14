@@ -35,14 +35,22 @@ std::unique_ptr<Token> TokenValidator::validateAndConsumeSynonymToken() {
     }
 }
 
-std::unique_ptr<Token> TokenValidator::validateAndConsumeRelationship() {
+std::string TokenValidator::validateAndConsumeRelationship() {
+    std::string relationship;
     if (cur_->getTag() == Token::Tag::Modifies ||
-            cur_->getTag() == Token::Tag::Parent ||
-            cur_->getTag() == Token::Tag::Follows ||
             cur_->getTag() == Token::Tag::Uses) {
-        std::unique_ptr<Token> res = std::move(cur_);
+        relationship += cur_->getLexeme();
         cur_ = lexer->scan();
-        return res;
+        return relationship;
+    } else if (cur_->getTag() == Token::Tag::Parent ||
+               cur_->getTag() == Token::Tag::Follows) {
+        relationship += cur_->getLexeme();
+        cur_ = lexer->scan();
+        if (cur_->getTag() == Token::Tag::Multiply) {
+            relationship += cur_->getLexeme();
+            cur_ = lexer->scan();
+        }
+        return relationship;
     } else {
         throw SyntaxException();
     }

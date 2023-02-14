@@ -11,7 +11,7 @@ class TokenValidator {
     explicit TokenValidator(std::unique_ptr<ILexer> &lexer);
     std::unique_ptr<Token> validateAndConsumeDesignEntityToken();
     std::unique_ptr<Token> validateAndConsumeSynonymToken();
-    std::unique_ptr<Token> validateAndConsumeRelationship();
+    std::string validateAndConsumeRelationship();
     std::unique_ptr<Token> validateAndConsumeRelationshipArg();
     std::unique_ptr<Token> validateAndConsumePatternFirstArg();
     std::unique_ptr<Token> validateAndConsumePatternSecondArg();
