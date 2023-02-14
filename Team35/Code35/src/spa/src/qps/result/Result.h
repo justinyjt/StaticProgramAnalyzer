@@ -47,3 +47,14 @@ class IntResult : public Result {
       }
     }
 };
+
+class BoolResult : public Result {
+  bool b;
+
+ public:
+    explicit BoolResult(bool b) : b(b) { }
+
+    void output(std::list<std::string>& list) override {
+      list.push_back(b ? "true" : "false");
+    }
+};

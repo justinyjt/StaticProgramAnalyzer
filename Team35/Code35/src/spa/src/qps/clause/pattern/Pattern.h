@@ -6,7 +6,7 @@
 
 class Pattern : public Clause {
  public:
-    /* <SYNONYM | WILDCARD | IDENT_STR>, <EXPR_STR> */
+    /* <SYNONYM | _ | IDENT>, <EXPR> */
     Pattern(PQLToken* first, PQLToken* second);
     Result* evaluate(PKBReader*);
     bool operator==(const Clause& rhs) const;

@@ -2,18 +2,18 @@
 #include "Relationship.h"
 #include "qps/result/Result.h"
 
-class ModifiesS : public Relationship {
+class UsesS : public Relationship {
  public:
     /* <SYNONYM | STMT_NUM>, <SYNONYM | _ | IDENT> */
-    ModifiesS(PQLToken* first, PQLToken* second);
+    UsesS(PQLToken* first, PQLToken* second);
     Result* evaluate(PKBReader*);
     bool operator==(const Clause& rhs) const;
 };
 
-class ModifiesP : public Relationship {
+class UsesP : public Relationship {
  public:
     /* <SYNONYM | IDENT>, <SYNONYM | _ | IDENT> */
-    ModifiesP(PQLToken first, PQLToken second);
+    UsesP(PQLToken first, PQLToken second);
     Result* evaluate(PKBReader*);
     bool operator==(const Clause& rhs) const;
 };
