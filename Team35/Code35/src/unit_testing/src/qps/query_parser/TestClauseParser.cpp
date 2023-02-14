@@ -9,6 +9,7 @@
 #include "qps/clause/relationship/Uses.h"
 #include "qps/clause/relationship/Follows.h"
 #include "qps/clause/relationship/Parent.h"
+#include "qps/pql/IdentStrWithWildcard.h"
 
 TEST_CASE("SuchThatClauseParser parse(); ModifiesS, (integer, entRef-variable)") {
     std::string query = "such that Modifies(1,v)";
@@ -204,4 +205,52 @@ TEST_CASE("SuchThatClauseParser parse(); ParentT") {
     Synonym* syn2 = new Synonym(Synonym::DesignEntity::STMT, "v");
     ParentT p(syn1, syn2);
     requireTrue(*clause == p);
+}
+
+TEST_CASE("SuchThatClauseParser parse(); Pattern, (wildcard, wildcard)") {
+    std::string query = "pattern a(_,_)";
+    std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    TokenValidator tokenValidator(lexer);
+
+    PatternClauseParser pcp;
+    std::vector<Synonym> declarationList;
+    declarationList.push_back(Synonym(Synonym::DesignEntity::ASSIGN, "a"));
+    Clause *clause = pcp.parse(tokenValidator, declarationList);
+
+    Wildcard* w1 = new Wildcard();
+    Wildcard* w2 = new Wildcard();
+    Pattern a(w1, w2);
+    requireTrue(*clause == a);
+}
+
+TEST_CASE("SuchThatClauseParser parse(); Pattern, (wildcard, exact match)") {
+    std::string query = "pattern a(_,\"x\")";
+    std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    TokenValidator tokenValidator(lexer);
+
+    PatternClauseParser pcp;
+    std::vector<Synonym> declarationList;
+    declarationList.push_back(Synonym(Synonym::DesignEntity::ASSIGN, "a"));
+    Clause *clause = pcp.parse(tokenValidator, declarationList);
+
+    Wildcard* w1 = new Wildcard();
+    IdentStr* w2 = new IdentStr("x");
+    Pattern a(w1, w2);
+    requireTrue(*clause == a);
+}
+
+TEST_CASE("SuchThatClauseParser parse(); Pattern, (wildcard, partial match)") {
+    std::string query = "pattern a(_,_\"x\"_)";
+    std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    TokenValidator tokenValidator(lexer);
+
+    PatternClauseParser pcp;
+    std::vector<Synonym> declarationList;
+    declarationList.push_back(Synonym(Synonym::DesignEntity::ASSIGN, "a"));
+    Clause *clause = pcp.parse(tokenValidator, declarationList);
+
+    Wildcard* w1 = new Wildcard();
+    IdentStrWithWildcard* w2 = new IdentStrWithWildcard("x");
+    Pattern a(w1, w2);
+    requireTrue(*clause == a);
 }

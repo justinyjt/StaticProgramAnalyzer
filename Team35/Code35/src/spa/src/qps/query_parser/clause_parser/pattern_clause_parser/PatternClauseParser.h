@@ -15,6 +15,10 @@
 class PatternClauseParser {
  public:
     Clause* parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms);
-    Tok* createArg(std::unique_ptr<Token> token, std::vector<Synonym> synonyms);
-    bool isValidPatternSynonym(std::string synonym, std::vector<Synonym> synonyms);
+    Tok* createLeftArg(std::unique_ptr<Token> &token, std::vector<Synonym> synonyms);
+    Tok* createRightArg(std::vector<std::unique_ptr<Token>> &tokenList);
+    Clause* createClause(std::unique_ptr<Token> token1, std::vector<std::unique_ptr<Token>> token2,
+                                              std::vector<Synonym> synonyms);
+    bool isValidPatternSynonym(const std::string& synonym, std::vector<Synonym> synonyms);
+    bool isEntRef(Tok &tok);
 };

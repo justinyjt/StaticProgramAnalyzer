@@ -1,3 +1,4 @@
+#include <vector>
 #include "TokenValidator.h"
 #include "qps/query_exceptions/SyntaxException.h"
 
@@ -81,12 +82,21 @@ std::unique_ptr<Token> TokenValidator::validateAndConsumePatternFirstArg() {
     }
 }
 
-std::unique_ptr<Token> TokenValidator::validateAndConsumePatternSecondArg() {
-    if (cur_->getTag() == Token::Tag::Underscore ||
-            cur_->getTag() == Token::Tag::String) {
-        std::unique_ptr<Token> res = std::move(cur_);
+std::vector<std::unique_ptr<Token>> TokenValidator::validateAndConsumePatternSecondArg() {
+    std::vector<std::unique_ptr<Token>> tokenList;
+    if (cur_->getTag() == Token::Tag::String) {
+        tokenList.push_back(std::move(cur_));
         cur_ = lexer->scan();
-        return res;
+        return tokenList;
+    } else if (cur_->getTag() == Token::Tag::Underscore) {
+        tokenList.push_back(std::move(cur_));
+        cur_ = lexer->scan();
+        if (cur_->getTag() == Token::Tag::String) {
+            tokenList.push_back(std::move(cur_));
+            cur_ = lexer->scan();
+            validateAndConsumeTokenType(Token::Tag::Underscore);
+        }
+        return tokenList;
     } else {
         throw SyntaxException();
     }

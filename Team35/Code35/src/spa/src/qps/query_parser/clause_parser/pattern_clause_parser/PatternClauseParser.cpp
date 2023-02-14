@@ -3,10 +3,10 @@
 #include "qps/clause/pattern/Pattern.h"
 #include "qps/pql/Synonym.h"
 #include "qps/pql/Wildcard.h"
-#include "qps/pql/ExpressionStr.h"
-#include "qps/pql/StatementNumber.h"
 #include "qps/pql/IdentStr.h"
 #include "qps/query_exceptions/SyntaxException.h"
+#include "qps/query_exceptions/SemanticException.h"
+#include "qps/pql/IdentStrWithWildcard.h"
 
 Clause *PatternClauseParser::parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms) {
     tokenValidator.validateAndConsumeTokenType(Token::Tag::Pattern);
@@ -17,40 +17,75 @@ Clause *PatternClauseParser::parse(TokenValidator &tokenValidator, std::vector<S
 
     std::unique_ptr<Token> leftArg = tokenValidator.validateAndConsumePatternFirstArg();
 
-    Tok* left = createArg(std::move(leftArg), synonyms);
-
     tokenValidator.validateAndConsumeTokenType(Token::Tag::Comma);
 
-    std::unique_ptr<Token> rightArg = tokenValidator.validateAndConsumePatternSecondArg();
-
-    Tok* right = createArg(std::move(rightArg), synonyms);
+    std::vector<std::unique_ptr<Token>> rightArg = tokenValidator.validateAndConsumePatternSecondArg();
 
     tokenValidator.validateAndConsumeTokenType(Token::Tag::RParen);
 
-    Pattern *p = new Pattern(left, right);
-    return p;
+    Clause* clause = createClause(std::move(leftArg), std::move(rightArg), synonyms);
+    return clause;
 }
 
-Tok* PatternClauseParser::createArg(std::unique_ptr<Token> token, std::vector<Synonym> synonyms) {
+Tok* PatternClauseParser::createLeftArg(std::unique_ptr<Token> &token, std::vector<Synonym> synonyms) {
     if (token->getTag() == Token::Tag::Name) {
-        IdentStr* i = new IdentStr(token->getLexeme());
-        return i;
+        for (auto synonym : synonyms) {
+            if (synonym.str() == token->getLexeme()) {
+                Synonym* s = new Synonym(synonym.de, token->getLexeme());
+                return s;
+            }
+        }
+        throw SemanticException();
     } else if (token->getTag() == Token::Tag::Underscore) {
-        Wildcard* w = new Wildcard();
+        auto* w = new Wildcard();
         return w;
     } else if (token->getTag() == Token::Tag::String) {
-        ExpressionStr* e = new ExpressionStr(token->getLexeme());
-        return e;
+        auto* i = new IdentStr(token->getLexeme());
+        return i;
     } else {
         throw SyntaxException();
     }
 }
 
-bool PatternClauseParser::isValidPatternSynonym(std::string next, std::vector<Synonym> synonyms) {
+Tok* PatternClauseParser::createRightArg(std::vector<std::unique_ptr<Token>> &tokenList) {
+    if (tokenList.size() > 1) {
+        auto* i = new IdentStrWithWildcard(tokenList.at(1)->getLexeme());
+        return i;
+    } else if (tokenList.at(0)->getTag() == Token::Tag::String) {
+        auto* i = new IdentStr(tokenList.at(0)->getLexeme());
+        return i;
+    } else {
+        auto* w = new Wildcard();
+        return w;
+    }
+}
+
+Clause* PatternClauseParser::createClause(std::unique_ptr<Token> token1, std::vector<std::unique_ptr<Token>> token2,
+                                          std::vector<Synonym> synonyms) {
+
+    // stmtRef - stmt, read, print, assign, call, while, if synonyms, _ , integer
+    // _ , exact match, partial match
+
+    Tok* first = createLeftArg(token1, synonyms);
+    Tok* second = createRightArg(token2);
+    Pattern *a = new Pattern(first, second);
+    return a;
+
+}
+
+bool PatternClauseParser::isValidPatternSynonym(const std::string& next, std::vector<Synonym> synonyms) {
     for (auto synonym : synonyms) {
         if (next == synonym.str() && synonym.de == Synonym::DesignEntity::ASSIGN) {
             return true;
         }
     }
     throw SyntaxException();
+}
+
+bool PatternClauseParser::isEntRef(Tok &tok) {
+    const Synonym* synonym = dynamic_cast<const Synonym*>(&tok);
+    return tok.tag == Tok::Tag::IDENT ||
+           tok.tag == Tok::Tag::WILDCARD ||
+           synonym != NULL && (synonym->de == Synonym::DesignEntity::VARIABLE ||
+                               synonym->de == Synonym::DesignEntity::CONSTANT);
 }
