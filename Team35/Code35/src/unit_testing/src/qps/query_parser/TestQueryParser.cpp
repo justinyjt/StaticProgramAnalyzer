@@ -2,7 +2,9 @@
 #include "../../TestHelper.h"
 #include "qps/query_parser/declaration_parser/DeclarationParser.h"
 #include "qps/clause/Clause.h"
+#include "qps/clause/relationship/Modify.h"
 #include "qps/pql/StatementNumber.h"
+#include "qps/pql/ExpressionStr.h"
 #include "commons/lexer/LexerFactory.h"
 #include "qps/query_parser/selection_parser/SelectionParser.h"
 #include "qps/query_parser/clause_parser/ClauseParser.h"
@@ -20,13 +22,22 @@ TEST_CASE("1. Query parser") {
     Synonym selectedSynonym = sp.parse(tokenValidator, declarationList);
     requireEqual(selectedSynonym, Synonym(Synonym::DesignEntity::ASSIGN, "c"));
 
+    // Perform parsing
     std::vector<Clause *> clauses = cp.parse(tokenValidator, declarationList);
 
+    requireTrue(clauses.size() == 2);
+
+    StatementNumber* st = new StatementNumber(2);
+    Synonym* syn = new Synonym(Synonym::DesignEntity::VARIABLE, "v");
+    Modify m(st, syn);
+
     Clause *c1 = clauses.front();
-    requireTrue((c1->first).getValue() == "2");
-    requireTrue((c1->second).getValue() == "v");
+    requireTrue(*c1 == m);
+
+    Wildcard* w = new Wildcard();
+    ExpressionStr* expr = new ExpressionStr("x");
+    Pattern a(w, expr);
 
     Clause *c2 = clauses.back();
-    requireTrue((c2->first).getValue() == "_");
-    requireTrue((c2->second).getValue() == "x");
+    requireTrue(*c2 == a);
 }

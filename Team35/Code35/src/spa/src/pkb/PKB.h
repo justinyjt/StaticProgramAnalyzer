@@ -17,6 +17,7 @@ class TNode;
 class PKB {
  public:
     const EntityTable<ENT_NAME> &getEntityTable(Entity entityType) const;
+    const EntityTable<STMT_NUM> &getStatementTable(StmtType stmtType) const;
     const RelationshipTable<STMT_NUM, ENT_NAME> &getStmtNameRelationshipTable(StmtNameRelationship tableType) const;
     const RelationshipTable<ENT_NAME, ENT_NAME> &getNameNameRelationshipTable(NameNameRelationship tableType) const;
     const RelationshipTable<STMT_NUM, STMT_NUM> &getStmtStmtRelationshipTable(StmtStmtRelationship tableType) const;
@@ -26,10 +27,14 @@ class PKB {
     RelationshipTable<ENT_NAME, ENT_NAME> &getNameNameRelationshipTable(NameNameRelationship tableType);
     RelationshipTable<STMT_NUM, STMT_NUM> &getStmtStmtRelationshipTable(StmtStmtRelationship tableType);
     EntityTable<ENT_NAME> &getEntityTable(Entity entityType);
+    EntityTable<STMT_NUM> &getStatementTable(StmtType stmtType);
     PatternTable &getPatternTable();
+
     bool addEntityToTable(Entity entityType, ENT_NAME entity);
+    bool addStatementToTable(StmtType stmtType, STMT_NUM stmt);
     bool addRelationshipToTable(StmtNameRelationship tableType, STMT_ENT stmtEnt);
     bool addRelationshipToTable(NameNameRelationship tableType, ENT_ENT entEnt);
+    bool addRelationshipToTable(StmtStmtRelationship tableType, STMT_STMT stmtStmt);
     bool addPattern(STMT_NUM stmtNum, std::string pattern);
 
     ENT_SET getEntByStmtKey(StmtNameRelationship tableType, STMT_NUM stmt) const;
@@ -49,6 +54,16 @@ class PKB {
 
 
  private:
+    // Entity related tables
+    EntityTable<ENT_NAME> variableTable;
+    EntityTable<ENT_NAME> constantTable;
+    EntityTable<STMT_NUM> assignStatementTable;
+    EntityTable<STMT_NUM> ifStatementTable;
+    EntityTable<STMT_NUM> whileStatementTable;
+    EntityTable<STMT_NUM> printStatementTable;
+    EntityTable<STMT_NUM> readStatementTable;
+
+    // Relationship related tables
     RelationshipTable<STMT_NUM, ENT_NAME> modifiesStmtNameTable;
     RelationshipTable<STMT_NUM, ENT_NAME> usesStmtNameTable;
     RelationshipTable<ENT_NAME , ENT_NAME> modifiesNameNameTable;
@@ -59,7 +74,5 @@ class PKB {
     RelationshipTable<STMT_NUM, STMT_NUM> parentTable;
     RelationshipTable<STMT_NUM, STMT_NUM> parentStarTable;
 
-    EntityTable<ENT_NAME> variableTable;
-    EntityTable<ENT_NAME> constantTable;
     PatternTable patternTable;
 };

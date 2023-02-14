@@ -16,13 +16,13 @@ Clause *SuchThatClauseParser::parse(TokenValidator &tokenValidator, std::vector<
 
     std::unique_ptr<Token> leftArg = tokenValidator.validateAndConsumeRelationshipArg();
 
-    Tok left = makeArg(std::move(leftArg), synonyms);
+    Tok* left = makeArg(std::move(leftArg), synonyms);
 
     tokenValidator.validateAndConsumeTokenType(Token::Tag::Comma);
 
     std::unique_ptr<Token> rightArg = tokenValidator.validateAndConsumeRelationshipArg();
 
-    Tok right = makeArg(std::move(rightArg), synonyms);
+    Tok* right = makeArg(std::move(rightArg), synonyms);
 
     tokenValidator.validateAndConsumeTokenType(Token::Tag::RParen);
 
@@ -30,14 +30,14 @@ Clause *SuchThatClauseParser::parse(TokenValidator &tokenValidator, std::vector<
     return m;
 }
 
-Tok SuchThatClauseParser::makeArg(std::unique_ptr<Token> token, std::vector<Synonym> synonyms) {
+Tok* SuchThatClauseParser::makeArg(std::unique_ptr<Token> token, std::vector<Synonym> synonyms) {
     if (token->getTag() == Token::Tag::Integer) {
-        StatementNumber t(token->getLexeme());
+        StatementNumber* t = new StatementNumber(stoi(token->getLexeme()));
         return t;
     } else if (token->getTag() == Token::Tag::Name) {
         for (auto synonym : synonyms) {
-            if (synonym.getValue() == token->getLexeme()) {
-                Synonym s(synonym.de, token->getLexeme());
+            if (synonym.str() == token->getLexeme()) {
+                Synonym* s = new Synonym(synonym.de, token->getLexeme());
                 return s;
             }
         }

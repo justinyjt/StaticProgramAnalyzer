@@ -10,6 +10,14 @@ bool PKBWriter::addEntities(Entity entity, ENT_SET entitySet) {
     }
     return true;
 }
+bool PKBWriter::addStatementEntities(StmtType tableType, STMT_SET stmtSet) {
+    for (auto stmt : stmtSet) {
+        if (!pkb.addStatementToTable(tableType, stmt)) {
+            return false;
+        }
+    }
+    return true;
+}
 
 bool PKBWriter::addStmtEntityRelationships(StmtNameRelationship tableType, STMT_ENT_SET set) {
     for (auto stmtEnt : set) {
@@ -23,6 +31,15 @@ bool PKBWriter::addStmtEntityRelationships(StmtNameRelationship tableType, STMT_
 bool PKBWriter::addEntityEntityRelationships(NameNameRelationship tableType, ENT_ENT_SET set) {
     for (auto entEnt : set) {
         if (!pkb.addRelationshipToTable(tableType, entEnt)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool PKBWriter::addStmtStmtRelationships(StmtStmtRelationship tableType, STMT_STMT_SET stmtSet) {
+    for (auto stmtStmt : stmtSet) {
+        if (!pkb.addRelationshipToTable(tableType, stmtStmt)) {
             return false;
         }
     }

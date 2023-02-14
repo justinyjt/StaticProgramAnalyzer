@@ -62,7 +62,6 @@ TEST_CASE("Test Pkb adding a statement, error with repeated stmtNo", "[pkb][stat
     }
 }
 
-
 TEST_CASE("Test Pkb adding Statement-Name relationship", "[pkb][relationship]") {
     PKB p;
     PKBWriter pkbWriter(p);
@@ -97,6 +96,31 @@ TEST_CASE("Test Pkb adding Entity-Entity relationship", "[pkb][relationship]") {
         entEntSet.insert(std::make_pair("divide", "y"));
         REQUIRE(pkbWriterPtr->addEntityEntityRelationships(NameNameRelationship::Modifies, entEntSet));
     }
+
+    SECTION("Test Pkb adding Statement-Statement Follows relationship") {
+        STMT_STMT_SET stmtStmtSet;
+        stmtStmtSet.insert(std::make_pair(1, 2));
+        REQUIRE(pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationship::Follows, stmtStmtSet));
+    }
+
+    SECTION("Test Pkb adding Statement-Statement FollowsStar relationship") {
+        STMT_STMT_SET stmtStmtSet;
+        stmtStmtSet.insert(std::make_pair(1, 2));
+        REQUIRE(pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationship::FollowsStar, stmtStmtSet));
+    }
+
+    SECTION("Test Pkb adding Statement-Statement Parent relationship") {
+        STMT_STMT_SET stmtStmtSet;
+        stmtStmtSet.insert(std::make_pair(1, 2));
+        REQUIRE(pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationship::Parent, stmtStmtSet));
+    }
+
+    SECTION("Test Pkb adding Statement-Statement ParentStar relationship") {
+        STMT_STMT_SET stmtStmtSet;
+        stmtStmtSet.insert(std::make_pair(1, 2));
+        REQUIRE(pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationship::ParentStar, stmtStmtSet));
+    }
+
 }
 
 TEST_CASE("Test Pkb adding multiple Statement-Entity relationships", "[pkb][relationship][multiple]") {

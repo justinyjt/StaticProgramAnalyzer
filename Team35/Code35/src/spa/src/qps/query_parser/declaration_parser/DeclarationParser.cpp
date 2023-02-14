@@ -69,7 +69,7 @@ Synonym::DesignEntity DeclarationParser::processDesignEntity(std::unique_ptr<Tok
 bool DeclarationParser::isDeclared(std::string value, std::vector<Synonym> declarationList) {
     bool isDeclared = false;
     for (Synonym s : declarationList) {
-        if (value == s.getValue()) {
+        if (value == s.str()) {
             isDeclared = true;
         }
     }

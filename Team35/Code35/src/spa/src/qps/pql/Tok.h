@@ -7,13 +7,16 @@ Base class for all PQL tokens
 */
 class Tok {
  public:
-    enum Tag { IDENT, STMT_NUM, SYNONYM, WILDCARD, EXPR };
+    enum class Tag { IDENT, STMT_NUM, SYNONYM, WILDCARD, EXPR };
 
-    Tok(std::string value, Tag tag);
+    explicit Tok(Tag tag);
     const Tag tag;
-    const std::string value;
 
-    bool operator==(const Tok &rhs) const;
+    virtual bool operator==(const Tok &rhs) const = 0;
+    bool operator!=(const Tok &rhs) const;
 
-    std::string getValue();
+    virtual std::string str() const = 0;
+
+ protected:
+    bool equal(const Tok &rhs) const;
 };

@@ -9,10 +9,14 @@ Base class for select clause in PQL (suchthat-cl, pattern-cl)
 */
 class Clause {
  public:
-    Tok first;
-    Tok second;
+    const Tok* first;
+    const Tok* second;
 
-    Clause(Tok first, Tok second);
-    bool operator==(Clause const &rhs) const;
+    Clause(Tok* first, Tok* second);
+    virtual bool operator==(const Clause &rhs) const = 0;
+    bool operator!=(const Clause &rhs) const;
+
     virtual Result* evaluate(PKBReader* db) = 0;
+ protected:
+    bool equal(const Clause& rhs) const;
 };

@@ -5,5 +5,8 @@
 
 class StatementNumber : public Tok {
  public:
-    explicit StatementNumber(std::string value);
+    explicit StatementNumber(int n);
+    int n;
+    std::string str() const;
+    bool operator==(const Tok& rhs) const;
 };
