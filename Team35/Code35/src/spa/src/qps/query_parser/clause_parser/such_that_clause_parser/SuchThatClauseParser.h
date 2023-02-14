@@ -13,5 +13,5 @@
 class SuchThatClauseParser {
  public:
     Clause *parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms);
-    Tok makeArg(std::unique_ptr<Token> token, std::vector<Synonym> synonyms);
+    Tok* makeArg(std::unique_ptr<Token> token, std::vector<Synonym> synonyms);
 };

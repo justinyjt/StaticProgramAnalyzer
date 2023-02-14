@@ -7,6 +7,7 @@
 class Pattern : public Clause {
  public:
     /* <SYNONYM | WILDCARD | IDENT_STR>, <EXPR_STR> */
-    Pattern(Tok first, Tok second);
+    Pattern(Tok* first, Tok* second);
     Result* evaluate(PKBReader*);
+    bool operator==(const Clause& rhs) const;
 };
