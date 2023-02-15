@@ -59,52 +59,49 @@ Tok* SuchThatClauseParser::createArg(std::unique_ptr<Token>& token, std::vector<
 
 Clause* SuchThatClauseParser::createClause(std::unique_ptr<Token> token1, std::unique_ptr<Token> token2,
                                            std::string relationship, std::vector<Synonym> synonyms) {
-    // Follows, Modifies, Uses, Parent
-    // stmtRef - stmt, read, print, assign, call, while, if synonyms, _ , integer
-    // entRef - variable, constant, procedure synonyms, _ , "IDENT"
 
     Tok* first = createArg(token1, synonyms);
     Tok* second = createArg(token2, synonyms);
-    if (relationship == "Modifies") {
-        if (isStmtRef(*first) && isEntRef(*second)) {
-            ModifiesS *m = new ModifiesS(first, second);
-            return m;
-        } else {
-            ModifiesP *m = new ModifiesP(first, second);
-            return m;
-        }
-    } else if (relationship == "Uses") {
-        if (isStmtRef(*first) && isEntRef(*second)) {
-            UsesS *u = new UsesS(first, second);
-            return u;
-        } else {
-            UsesP *u = new UsesP(first, second);
-            return u;
-        }
-    } else if (relationship == "Follows") {
-        if (isStmtRef(*first) && isStmtRef(*second)) {
-            Follows *f = new Follows(first, second);
-            return f;
-        }
-        throw SyntaxException();
-    } else if (relationship == "Follows*") {
-        if (isStmtRef(*first) && isStmtRef(*second)) {
-            FollowsT *f = new FollowsT(first, second);
-            return f;
-        }
-        throw SyntaxException();
-    } else if (relationship == "Parent") {
-        if (isStmtRef(*first) && isStmtRef(*second)) {
-            Parent *p = new Parent(first, second);
-            return p;
-        }
-        throw SyntaxException();
-    } else if (relationship == "Parent*") {
-        if (isStmtRef(*first) && isStmtRef(*second)) {
-            ParentT *p = new ParentT(first, second);
-            return p;
-        }
-        throw SyntaxException();
+
+    switch(hash(relationship)) {
+        case MODIFIES:
+            if (isStmtRef(*first) && isEntRef(*second)) {
+                ModifiesS *m = new ModifiesS(first, second);
+                return m;
+            }
+            throw SyntaxException();
+        case USES:
+            if (isStmtRef(*first) && isEntRef(*second)) {
+                UsesS *u = new UsesS(first, second);
+                return u;
+            }
+            throw SyntaxException();
+        case FOLLOWS:
+            if (isStmtRef(*first) && isStmtRef(*second)) {
+                Follows *f = new Follows(first, second);
+                return f;
+            }
+            throw SyntaxException();
+        case FOLLOWS_T:
+            if (isStmtRef(*first) && isStmtRef(*second)) {
+                FollowsT *f = new FollowsT(first, second);
+                return f;
+            }
+            throw SyntaxException();
+        case PARENT:
+            if (isStmtRef(*first) && isStmtRef(*second)) {
+                Parent *p = new Parent(first, second);
+                return p;
+            }
+            throw SyntaxException();
+        case PARENT_T:
+            if (isStmtRef(*first) && isStmtRef(*second)) {
+                ParentT *p = new ParentT(first, second);
+                return p;
+            }
+            throw SyntaxException();
+        default:
+            break;
     }
 }
 
@@ -126,5 +123,15 @@ bool SuchThatClauseParser::isEntRef(Tok &tok) {
     return tok.tag == Tok::Tag::IDENT ||
            tok.tag == Tok::Tag::WILDCARD ||
            synonym != NULL && (synonym->de == Synonym::DesignEntity::VARIABLE ||
-                               synonym->de == Synonym::DesignEntity::CONSTANT);
+                               synonym->de == Synonym::DesignEntity::CONSTANT ||
+                                synonym->de == Synonym::DesignEntity::PROCEDURE);
+}
+
+SuchThatClauseParser::relationship SuchThatClauseParser::hash(std::string const& string) {
+    if (string == "Modifies") return MODIFIES;
+    if (string == "Uses") return USES;
+    if (string == "Follows") return FOLLOWS;
+    if (string == "Follows*") return FOLLOWS_T;
+    if (string == "Parent") return PARENT;
+    if (string == "Parent*") return PARENT_T;
 }

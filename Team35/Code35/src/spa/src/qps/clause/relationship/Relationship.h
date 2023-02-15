@@ -10,4 +10,5 @@ class Relationship : public Clause {
  public:
         Relationship(Tok* first, Tok* second);
         virtual Result* evaluate(PKBReader* db) = 0;
+        virtual void validateArgs(Tok* first, Tok* second) = 0;
 };

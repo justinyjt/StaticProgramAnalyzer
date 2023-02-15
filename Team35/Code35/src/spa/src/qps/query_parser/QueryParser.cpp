@@ -5,21 +5,27 @@
 #include "commons/lexer/LexerFactory.h"
 #include "commons/lexer/ILexer.h"
 #include "qps/query_parser/clause_parser/TokenValidator.h"
+#include "commons/lexer/exception/LexerException.h"
+#include "qps/query_exceptions/SyntaxException.h"
 
 std::pair<Synonym, std::vector<Clause*>> QueryParser::parse(std::string& query) {
     std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator(lexer);
-    // pass tokenList and parse declaration
-    DeclarationParser declarationParser;
-    std::vector<Synonym> synonyms = declarationParser.parse(tokenValidator);
+    try {
+        // pass tokenList and parse declaration
+        DeclarationParser declarationParser;
+        std::vector<Synonym> synonyms = declarationParser.parse(tokenValidator);
 
-    // parse select using list of found synonyms
-    SelectionParser selectionParser;
-    Synonym selectedSynonym = selectionParser.parse(tokenValidator, synonyms);
+        // parse select using list of found synonyms
+        SelectionParser selectionParser;
+        Synonym selectedSynonym = selectionParser.parse(tokenValidator, synonyms);
 
-    // parse clauses
-    ClauseParser clauseParser;
-    std::vector<Clause*> clauses = clauseParser.parse(tokenValidator, synonyms);
+        // parse clauses
+        ClauseParser clauseParser;
+        std::vector<Clause*> clauses = clauseParser.parse(tokenValidator, synonyms);
 
-    return std::make_pair(selectedSynonym, clauses);
+        return std::make_pair(selectedSynonym, clauses);
+    } catch (const LexerException& e) {
+        throw SyntaxException();
+    }
 }

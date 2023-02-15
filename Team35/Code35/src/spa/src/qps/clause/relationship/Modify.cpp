@@ -1,7 +1,25 @@
 #include "Modify.h"
 #include "qps/pql/StatementNumber.h"
+#include "qps/pql/Wildcard.h"
+#include "qps/query_exceptions/SemanticException.h"
+#include "qps/pql/Synonym.h"
 
-ModifiesS::ModifiesS(Tok* first, Tok* second) : Relationship(first, second) {}
+ModifiesS::ModifiesS(Tok* first, Tok* second) : Relationship(first, second) {
+    validateArgs(first, second);
+}
+
+
+// false if invalid
+void ModifiesS::validateArgs(Tok* first, Tok* second) {
+    const Wildcard* wildcard = dynamic_cast<const Wildcard*>(first);
+    const Synonym* synonym1 = dynamic_cast<const Synonym*>(first);
+    const Synonym* synonym2 = dynamic_cast<const Synonym*>(second);
+    if (synonym1 != NULL && (synonym1->de == Synonym::DesignEntity::PRINT) ||
+        wildcard != NULL ||
+        (synonym2 != NULL && synonym2->de != Synonym::DesignEntity::VARIABLE)) {
+        throw SemanticException();
+    }
+}
 
 // select v such that modifies(1, v)
 
@@ -20,17 +38,4 @@ Result* ModifiesS::evaluate(PKBReader *db) {
 
 bool ModifiesS::operator==(const Clause& rhs) const {
     return (dynamic_cast<const ModifiesS*>(&rhs) != NULL) && Clause::equal(rhs);
-}
-
-ModifiesP::ModifiesP(Tok* first, Tok* second) : Relationship(first, second) {}
-
-// select v such that modifies(1, v)
-
-Result* ModifiesP::evaluate(PKBReader *db) {
-    throw std::runtime_error("");
-}
-
-
-bool ModifiesP::operator==(const Clause& rhs) const {
-    return (dynamic_cast<const ModifiesP*>(&rhs) != NULL) && Clause::equal(rhs);
 }

@@ -30,12 +30,12 @@ Clause *PatternClauseParser::parse(TokenValidator &tokenValidator, std::vector<S
 Tok* PatternClauseParser::createLeftArg(std::unique_ptr<Token> &token, std::vector<Synonym> synonyms) {
     if (token->getTag() == Token::Tag::Name) {
         for (auto synonym : synonyms) {
-            if (synonym.str() == token->getLexeme()) {
+            if (synonym.str() == token->getLexeme() && synonym.de == Synonym::DesignEntity::VARIABLE) {
                 Synonym* s = new Synonym(synonym.de, token->getLexeme());
                 return s;
             }
         }
-        throw SemanticException();
+        throw SyntaxException();
     } else if (token->getTag() == Token::Tag::Underscore) {
         auto* w = new Wildcard();
         return w;
@@ -62,7 +62,7 @@ Tok* PatternClauseParser::createRightArg(std::vector<std::unique_ptr<Token>> &to
 
 Clause* PatternClauseParser::createClause(std::unique_ptr<Token> token1, std::vector<std::unique_ptr<Token>> token2,
                                           std::vector<Synonym> synonyms) {
-    // stmtRef - stmt, read, print, assign, call, while, if synonyms, _ , integer
+    // entRef - variable synonyms, _ , string
     // _ , exact match, partial match
 
     Tok* first = createLeftArg(token1, synonyms);

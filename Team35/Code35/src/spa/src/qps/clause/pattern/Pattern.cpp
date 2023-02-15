@@ -1,9 +1,13 @@
 #include "Pattern.h"
 #include "qps/pql/ExpressionStr.h"
 
-Pattern::Pattern(Tok* first, Tok* second) : Clause(first, second) {}
+Pattern::Pattern(Tok* first, Tok* second) : Clause(first, second) {
+    validateArgs(first, second);
+}
 
 // select a pattern a ( _ , "x + 1")
+
+// LHS - variable synonyms
 
 Result* Pattern::evaluate(PKBReader *db) {
     // if first == "_" and second is string with no underscores
@@ -15,6 +19,9 @@ Result* Pattern::evaluate(PKBReader *db) {
         return dynamic_cast<Result *>(result);
     }
     throw std::runtime_error("");
+}
+
+void Pattern::validateArgs(Tok* first, Tok* second) {
 }
 
 bool Pattern::operator==(const Clause& rhs) const {

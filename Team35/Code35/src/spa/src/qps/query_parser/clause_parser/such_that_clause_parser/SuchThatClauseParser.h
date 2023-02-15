@@ -12,6 +12,9 @@
 
 class SuchThatClauseParser {
  public:
+    enum relationship { MODIFIES, USES, FOLLOWS, FOLLOWS_T, PARENT, PARENT_T };
+
+    relationship hash(std::string const& string);
     Clause *parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms);
     Tok* createArg(std::unique_ptr<Token>& token, std::vector<Synonym> synonyms);
     Clause* createClause(std::unique_ptr<Token> token1, std::unique_ptr<Token> token2,

@@ -17,6 +17,7 @@ class Clause {
     bool operator!=(const Clause &rhs) const;
 
     virtual Result* evaluate(PKBReader* db) = 0;
+    virtual void validateArgs(Tok* first, Tok* second) = 0;
  protected:
     bool equal(const Clause& rhs) const;
 };

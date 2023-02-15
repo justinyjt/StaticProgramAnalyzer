@@ -7,13 +7,6 @@ class ModifiesS : public Relationship {
     /* <SYNONYM | STMT_NUM>, <SYNONYM | WILDCARD | IDENT_STR> */
     ModifiesS(Tok* first, Tok* second);
     Result* evaluate(PKBReader*);
-    bool operator==(const Clause& rhs) const;
-};
-
-class ModifiesP : public Relationship {
- public:
-    /* <SYNONYM | IDENT_STR>, <SYNONYM | WILDCARD | IDENT_STR> */
-    ModifiesP(Tok* first, Tok* second);
-    Result* evaluate(PKBReader*);
+    void validateArgs(Tok* first, Tok* second);
     bool operator==(const Clause& rhs) const;
 };

@@ -9,5 +9,6 @@ class Pattern : public Clause {
     /* <SYNONYM | WILDCARD | IDENT_STR>, <EXPR_STR> */
     Pattern(Tok* first, Tok* second);
     Result* evaluate(PKBReader*);
+    void validateArgs(Tok* first, Tok* second);
     bool operator==(const Clause& rhs) const;
 };

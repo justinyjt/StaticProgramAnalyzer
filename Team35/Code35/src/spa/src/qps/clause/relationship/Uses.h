@@ -9,12 +9,6 @@ class UsesS : public Relationship {
  public:
     UsesS(Tok* first, Tok* second);
     Result* evaluate(PKBReader*);
-    bool operator==(const Clause& rhs) const;
-};
-
-class UsesP : public Relationship {
- public:
-    UsesP(Tok* first, Tok* second);
-    Result* evaluate(PKBReader*);
+    void validateArgs(Tok* first, Tok* second);
     bool operator==(const Clause& rhs) const;
 };
