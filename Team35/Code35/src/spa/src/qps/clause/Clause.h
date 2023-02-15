@@ -19,4 +19,8 @@ class Clause {
     virtual Result* evaluate(PKBReader* db) = 0;
  protected:
     bool equal(const Clause& rhs) const;
+    int caseValue() const;
+    static constexpr int c(PQLToken::Tag t1, PQLToken::Tag t2) {
+      return 10 * static_cast<int>(t1) + static_cast<int>(t2);
+    }
 };

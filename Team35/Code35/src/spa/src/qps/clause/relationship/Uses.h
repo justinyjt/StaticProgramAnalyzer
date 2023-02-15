@@ -1,5 +1,8 @@
 #pragma once
 #include "Relationship.h"
+#include <string>
+#include <vector>
+#include <utility>
 #include "qps/result/Result.h"
 
 class UsesS : public Relationship {

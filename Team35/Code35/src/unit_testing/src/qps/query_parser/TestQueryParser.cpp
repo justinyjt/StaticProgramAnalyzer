@@ -36,7 +36,7 @@ TEST_CASE("1. Query parser") {
 
     Wildcard* w = new Wildcard();
     Expression* expr = new Expression("x");
-    Pattern a(w, expr);
+    Pattern a(w, expr, "a");
 
     Clause *c2 = clauses.back();
     requireTrue(*c2 == a);

@@ -27,7 +27,7 @@ Clause *PatternClauseParser::parse(TokenValidator &tokenValidator, std::vector<S
 
     tokenValidator.validateAndConsumeTokenType(Token::Tag::RParen);
 
-    Pattern *p = new Pattern(left, right);
+    Pattern *p = new Pattern(left, right, "");
     return p;
 }
 
