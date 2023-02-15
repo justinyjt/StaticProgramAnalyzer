@@ -2,11 +2,15 @@
 
 PKBReader::PKBReader(PKB &pkb) : pkb(pkb) {}
 
-// Statement-Entity Relationship
 ENT_SET PKBReader::getEntities(Entity entityType) const {
     return pkb.getEntityTable(entityType).getTable();
 }
 
+STMT_SET PKBReader::getStatements(StmtType stmtType) const {
+    return pkb.getStatementTable(stmtType).getTable();
+}
+
+// Statement-Entity Relationship
 ENT_SET PKBReader::getRelationship(StmtNameRelationship tableType, STMT_NUM stmt) const {
     return pkb.getEntByStmtKey(tableType, stmt);
 }
@@ -41,6 +45,7 @@ bool PKBReader::isRelationshipExists(NameNameRelationship tableType, ENT_NAME ke
     return pkb.isEntEntPairExists(tableType, keyName, valName);
 }
 
+// Statement-Statement Relationship
 STMT_SET PKBReader::getRelationshipByKey(StmtStmtRelationship tableType, STMT_NUM keyName) const {
     return pkb.getStmtByStmtKey(tableType, keyName);
 }
@@ -60,3 +65,8 @@ bool PKBReader::isRelationshipExists(StmtStmtRelationship tableType, STMT_NUM ke
 STMT_SET PKBReader::getStmtWithExactPatternMatch(std::string &pattern) const {
     return pkb.getPatternTable().getExactPatternMatch(pattern);
 }
+
+STMT_SET PKBReader::getStmtWithPartialPatternMatch(std::string &pattern) const {
+    return pkb.getPatternTable().getPartialPatternMatch(pattern);
+}
+

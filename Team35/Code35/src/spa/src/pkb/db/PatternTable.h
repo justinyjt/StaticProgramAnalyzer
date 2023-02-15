@@ -10,6 +10,7 @@ class PatternTable {
  public:
     bool addPattern(STMT_NUM stmt, std::string pattern);
     STMT_SET getExactPatternMatch(std::string pattern) const;
+    STMT_SET getPartialPatternMatch(std::string pattern) const;
 };
 
 #endif  // TEAM35_CODE35_SRC_SPA_SRC_PKB_DB_PATTERNTABLE_H_
