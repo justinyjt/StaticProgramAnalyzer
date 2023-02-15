@@ -9,9 +9,9 @@
 
 class DesignExtractor {
  public:
-    explicit DesignExtractor(PKBWriter&);
+    explicit DesignExtractor(std::unique_ptr<PKBWriter>);
 
-    void extractProgram(std::unique_ptr<ASTNode>);
+    std::unique_ptr<ASTNode> extractProgram(std::unique_ptr<ASTNode>);
 
     void addVarNameSetToPKB();
     void addStmtUsesPairSetToPKB();
@@ -29,7 +29,7 @@ class DesignExtractor {
 
     std::unordered_map<STMT_NUM, std::string> assignPatMap_;
 
-    PKBWriter pkbWriter_;
+    std::unique_ptr<PKBWriter> pkbWriter_;
     std::unique_ptr<ASTNode> root_;
     STMT_NUM stmtCnt_;
     std::string assignPat_;

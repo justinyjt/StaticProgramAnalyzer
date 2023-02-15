@@ -24,13 +24,15 @@ TEST_CASE("DE can extract assign pattern correctly", "[Design Extractor]") {
         root->addChild(std::move(proc));
 
         PKB pkb;
-        PKBWriter pkbWriter(pkb);
-        DesignExtractor de = DesignExtractor(pkbWriter);
+        DesignExtractor de = DesignExtractor(std::make_unique<PKBWriter>(pkb));
         de.extractProgram(std::move(root));
 
+        std::string ans;
         for (const auto& itr : de.getAssignPatMap()) {
-            std::cout << itr.first << '\t' << itr.second << '\n';
+            ans.append(std::to_string(itr.first) + "\t" + itr.second + "\n");
         }
+
+        REQUIRE(ans == "1\t3\n");
     }
 
     SECTION("DE can extract correct pattern: x =  y * 3") {
@@ -60,13 +62,15 @@ TEST_CASE("DE can extract assign pattern correctly", "[Design Extractor]") {
         root->addChild(std::move(proc));
 
         PKB pkb;
-        PKBWriter pkbWriter(pkb);
-        DesignExtractor de = DesignExtractor(pkbWriter);
+        DesignExtractor de = DesignExtractor(std::make_unique<PKBWriter>(pkb));
         de.extractProgram(std::move(root));
 
+        std::string ans;
         for (auto itr : de.getAssignPatMap()) {
-            std::cout << itr.first << '\t' << itr.second << '\n';
+            ans.append(std::to_string(itr.first) + "\t" + itr.second + "\n");
         }
+
+        REQUIRE(ans == "1\ty*3\n");
     }
 
     SECTION("DE can extract correct pattern: x =  1 + y * 3") {
@@ -102,12 +106,13 @@ TEST_CASE("DE can extract assign pattern correctly", "[Design Extractor]") {
         root->addChild(std::move(proc));
 
         PKB pkb;
-        PKBWriter pkbWriter(pkb);
-        DesignExtractor de = DesignExtractor(pkbWriter);
+        DesignExtractor de = DesignExtractor(std::make_unique<PKBWriter>(pkb));
         de.extractProgram(std::move(root));
 
+        std::string ans;
         for (auto itr : de.getAssignPatMap()) {
-            std::cout << itr.first << '\t' << itr.second << '\n';
+            ans.append(std::to_string(itr.first) + "\t" + itr.second + "\n");
         }
+        REQUIRE(ans == "1\t1+y*3\n");
     }
 }

@@ -1,9 +1,9 @@
 #include "pkb/PKBReader.h"
 #include "pkb/PKBWriter.h"
 #include "catch.hpp"
+#include "../TestHelper.h"
 
-
-TEST_CASE("PKB can get all named entities", "[PKB]") {
+TEST_CASE("1. Test PKB Read Entities", "[PKB][PKBReader][Entity]") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
@@ -16,114 +16,115 @@ TEST_CASE("PKB can get all named entities", "[PKB]") {
 
 
 
-    SECTION("PKB can get all variables") {
+    SECTION("Read all variables") {
         ENT_SET expectedResult = {"x", "y"};
         ENT_SET actualResult = pkbReaderPtr->getEntities(Entity::Variable);
-        REQUIRE(actualResult == expectedResult);
+        requireTrue(actualResult == expectedResult);
     }
 
-//    SECTION("PKB can get all procedures") {
-//        ENT_SET expectedResult = {"main"};
-//        ENT_SET actualResult = pkbReaderPtr->getEntities(Entity::Procedure);
-//        REQUIRE(actualResult == expectedResult);
-//    }
-
-    SECTION("PKB can get all constants") {
+    SECTION("Read all constants") {
         ENT_SET expectedResult = {};
         ENT_SET actualResult = pkbReaderPtr->getEntities(Entity::Constant);
-        REQUIRE(actualResult == expectedResult);
+        requireTrue(actualResult == expectedResult);
     }
 }
 
-TEST_CASE("PKB can get all relationships in a Statement-Name table", "[PKB]") {
+TEST_CASE("2. Read StmtName Relationship table", "[PKB][PKBReader][Relationship]") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
     PKBWriter *pkbWriterPtr = &pkbWriter;
     PKBReader *pkbReaderPtr = &pkbReader;
-    STMT_ENT_SET usesSet = {std::make_pair(4, "x"),  std::make_pair(4, "y"), std::make_pair(5, "y")};
+    STMT_ENT_SET usesSet = {std::make_pair(2, "a"),  std::make_pair(1, "b"), std::make_pair(2, "b")};
     STMT_ENT_SET modifiesSet = {};
     pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Uses, usesSet);
     pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Modifies, modifiesSet);
 
-    SECTION("PKB can get all uses") {
-        STMT_ENT_SET expectedResult = {std::make_pair(4, "x"), std::make_pair(4, "y"), std::make_pair(5, "y")};
+    SECTION("Read all Uses table") {
+        STMT_ENT_SET expectedResult = {std::make_pair(2, "a"),  std::make_pair(1, "b"), std::make_pair(2, "b")};
         STMT_ENT_SET actualResult = pkbReaderPtr->getAllRelationships(StmtNameRelationship::Uses);
-        REQUIRE(actualResult == expectedResult);
+        requireTrue(actualResult == expectedResult);
     }
 
-    SECTION("PKB can get all modifies") {
+    SECTION("Read all Modifies Table") {
         STMT_ENT_SET expectedResult = {};
         STMT_ENT_SET actualResult = pkbReaderPtr->getAllRelationships(StmtNameRelationship::Modifies);
-        REQUIRE(actualResult == expectedResult);
+        requireTrue(actualResult == expectedResult);
     }
 }
 
-TEST_CASE("PKB can get statements in a Statement-Name StmtNameRelation") {
+TEST_CASE("3. Read statements from StmtNameRelationship table", "[PKB][PKBReader][Relationship]") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
     PKBWriter *pkbWriterPtr = &pkbWriter;
     PKBReader *pkbReaderPtr = &pkbReader;
-    STMT_ENT_SET usesSet = {std::make_pair(4, "x"),  std::make_pair(4, "y"), std::make_pair(5, "y")};
+    STMT_ENT_SET usesSet = {std::make_pair(2, "a"),  std::make_pair(1, "b"), std::make_pair(2, "b")};
     STMT_ENT_SET modifiesSet = {};
     pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Uses, usesSet);
     pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Modifies, modifiesSet);
-    SECTION("PKB can get statements that use a given variable which exists") {
-        STMT_SET expectedResult = {4, 5};
-        STMT_SET actualResult = pkbReaderPtr->getRelationship(StmtNameRelationship::Uses, "y");
-        REQUIRE(actualResult == expectedResult);
+
+    SECTION("Return empty set for non-existent variable in uses table") {
+        STMT_SET expectedResult = {};
+        STMT_SET actualResult = pkbReaderPtr->getRelationship(StmtNameRelationship::Uses, "non-existent");
+        requireTrue(actualResult == expectedResult);
+    }
+    
+    SECTION("Read statement given variable in uses table") {
+        STMT_SET expectedResult = {1, 2};
+        STMT_SET actualResult = pkbReaderPtr->getRelationship(StmtNameRelationship::Uses, "b");
+        requireTrue(actualResult == expectedResult);
     }
 
-    SECTION("PKB can get statements that uses a variable that does not exist") {
+    SECTION("Return empty set for non-existent variable in modifies table") {
         STMT_SET expectedResult = {};
-        STMT_SET actualResult = pkbReaderPtr->getRelationship(StmtNameRelationship::Uses, "blah");
-        REQUIRE(actualResult == expectedResult);
+        STMT_SET actualResult = pkbReaderPtr->getRelationship(StmtNameRelationship::Modifies, "non-existent");
+        requireTrue(actualResult == expectedResult);
     }
 
-    SECTION("PKB can get statements that modifies a variable that exists") {
+    SECTION("Read statement given variable in modifies table") {
         STMT_SET expectedResult = {};
-        STMT_SET actualResult = pkbReaderPtr->getRelationship(StmtNameRelationship::Modifies, "x");
-        REQUIRE(actualResult == expectedResult);
+        STMT_SET actualResult = pkbReaderPtr->getRelationship(StmtNameRelationship::Modifies, "a");
+        requireTrue(actualResult == expectedResult);
     }
 }
 
-TEST_CASE("PKB can get variables in a Statement-Name StmtNameRelation") {
+TEST_CASE("4. Read variables from StmtNameRelationship table", "[PKB][PKBReader][Relationship]") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
     PKBWriter *pkbWriterPtr = &pkbWriter;
     PKBReader *pkbReaderPtr = &pkbReader;
-    STMT_ENT_SET usesSet = {std::make_pair(4, "x"),  std::make_pair(4, "y"), std::make_pair(5, "y")};
+    STMT_ENT_SET usesSet = {std::make_pair(2, "a"),  std::make_pair(1, "b"), std::make_pair(2, "b")};
     STMT_ENT_SET modifiesSet = {};
     pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Uses, usesSet);
     pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Modifies, modifiesSet);
 
 
-    SECTION("PKB can get variables that are used/modified by a statement that exists") {
-        ENT_SET expectedResultForUses = {"x", "y"};
+    SECTION("Read variable given statement in modifies/uses table") {
+        ENT_SET expectedResultForUses = {"a", "b"};
         ENT_SET expectedResultForModifies = {};
-        ENT_SET actualResultForUses = pkbReaderPtr->getRelationship(StmtNameRelationship::Uses, 4);
-        ENT_SET actualResultForModifies = pkbReaderPtr->getRelationship(StmtNameRelationship::Modifies, 3);
-        REQUIRE(actualResultForUses == expectedResultForUses);
-        REQUIRE(actualResultForModifies == actualResultForModifies);
+        ENT_SET actualResultForUses = pkbReaderPtr->getRelationship(StmtNameRelationship::Uses, 2);
+        ENT_SET actualResultForModifies = pkbReaderPtr->getRelationship(StmtNameRelationship::Modifies, 1);
+        requireTrue(actualResultForUses == expectedResultForUses);
+        requireTrue(actualResultForModifies == actualResultForModifies);
     }
 
-    SECTION("PKB can return empty set for a statement that does not use any variable") {
+    SECTION("Return empty set for non-existent statement in uses table") {
         ENT_SET expectedResult = {};
-        ENT_SET actualResult = pkbReaderPtr->getRelationship(StmtNameRelationship::Uses, 1);
-        REQUIRE(actualResult == expectedResult);
+        ENT_SET actualResult = pkbReaderPtr->getRelationship(StmtNameRelationship::Uses, 5);
+        requireTrue(actualResult == expectedResult);
     }
 }
 
 
-TEST_CASE("PKB can check if a relationship exists in a table") {
+TEST_CASE("5. Test isRelationshipExists") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
     PKBWriter *pkbWriterPtr = &pkbWriter;
     PKBReader *pkbReaderPtr = &pkbReader;
-    STMT_ENT_SET usesSet = {std::make_pair(4, "x"),  std::make_pair(4, "y"), std::make_pair(5, "y")};
+    STMT_ENT_SET usesSet = {std::make_pair(2, "a"),  std::make_pair(1, "b"), std::make_pair(2, "b")};
     STMT_ENT_SET modifiesSet = {};
     ENT_ENT_SET usesSet1 = {std::make_pair("main", "x"), std::make_pair("main", "y")};
     ENT_ENT_SET modifiesSet1 = {};
@@ -132,134 +133,194 @@ TEST_CASE("PKB can check if a relationship exists in a table") {
     pkbWriterPtr->addEntityEntityRelationships(NameNameRelationship::Uses, usesSet1);
     pkbWriterPtr->addEntityEntityRelationships(NameNameRelationship::Modifies, modifiesSet1);
 
-    SECTION("PKB can check if a relationship exists in a Stmt-Name Table with valid params") {
-        REQUIRE(pkbReaderPtr->isRelationshipExists(StmtNameRelationship::Uses, 4, "x"));
-        REQUIRE(pkbReaderPtr->isRelationshipExists(StmtNameRelationship::Uses, 5, "x") == false);
+    SECTION("Check if relationship exists given valid arguments in StmtName Table") {
+        requireTrue(pkbReaderPtr->isRelationshipExists(StmtNameRelationship::Uses, 1, "b"));
+        requireTrue(pkbReaderPtr->isRelationshipExists(StmtNameRelationship::Uses, 1, "a") == false);
     }
 
-    SECTION("PKB can return false if Stmt-Name Table is empty") {
-        REQUIRE(pkbReaderPtr->isRelationshipExists(StmtNameRelationship::Modifies, 3, "x") == false);
+    SECTION("Returns false for empty tables") {
+        requireTrue(pkbReaderPtr->isRelationshipExists(StmtNameRelationship::Modifies, 4, "a") == false);
     }
 
-    SECTION("PKB can return false if statement number does not exist in Stmt-Name Table") {
-        REQUIRE(pkbReaderPtr->isRelationshipExists(StmtNameRelationship::Modifies, 10, "y") == false);
+    SECTION("Return false for non-existent statement number") {
+        requireTrue(pkbReaderPtr->isRelationshipExists(StmtNameRelationship::Modifies, 5, "b") == false);
     }
 
-    SECTION("PKB can return false if variable name does not exist in Stmt-Name Table") {
-        REQUIRE(pkbReaderPtr->isRelationshipExists(StmtNameRelationship::Modifies, 2, "a") == false);
+    SECTION("Return false for non-existent variable") {
+        requireTrue(pkbReaderPtr->isRelationshipExists(StmtNameRelationship::Modifies, 2, "a") == false);
     }
 
-    SECTION("PKB can check if a relationship exists in a Name-Name Table with valid params") {
-        REQUIRE(pkbReaderPtr->isRelationshipExists(NameNameRelationship::Uses, "main", "x"));
-    }SECTION("PKB can return false if Name-Name Table is empty") {
-        REQUIRE(pkbReaderPtr->isRelationshipExists(NameNameRelationship::Modifies, "main", "x") == false);
+    SECTION("Check if relationship exists given valid arguments in NameName Table") {
+        requireTrue(pkbReaderPtr->isRelationshipExists(NameNameRelationship::Uses, "main", "x"));
     }
 
-    SECTION("PKB can return false if procedure does not exist") {
-        REQUIRE(pkbReaderPtr->isRelationshipExists(NameNameRelationship::Modifies,
+    SECTION("Return false for empty tables") {
+        requireTrue(pkbReaderPtr->isRelationshipExists(NameNameRelationship::Modifies, "main", "x") == false);
+    }
+
+    SECTION("Return false for non-existent variable") {
+        requireTrue(pkbReaderPtr->isRelationshipExists(NameNameRelationship::Modifies,
                                                    "notHere", "y") == false);
     }
 
-    SECTION("PKB can return false if variable name does not exist") {
-        REQUIRE(pkbReaderPtr->isRelationshipExists(NameNameRelationship::Modifies,
+    SECTION("Return false for non-existent variable") {
+        requireTrue(pkbReaderPtr->isRelationshipExists(NameNameRelationship::Modifies,
                                                    "main", "a") == false);
     }
 }
 
-TEST_CASE("PKB can get all relationships in a Name-Name table", "[PKB]") {
+TEST_CASE("6. Read relationships in NameName table", "[PKB]") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
     PKBWriter *pkbWriterPtr = &pkbWriter;
     PKBReader *pkbReaderPtr = &pkbReader;
-    STMT_ENT_SET usesSet = {std::make_pair(4, "x"),  std::make_pair(4, "y"), std::make_pair(5, "y")};
-    STMT_ENT_SET modifiesSet = {};
-    ENT_ENT_SET usesSet1 = {std::make_pair("main", "x"), std::make_pair("main", "y")};
-    ENT_ENT_SET modifiesSet1 = {};
-    pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Uses, usesSet);
-    pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Modifies, modifiesSet);
-    pkbWriterPtr->addEntityEntityRelationships(NameNameRelationship::Uses, usesSet1);
-    pkbWriterPtr->addEntityEntityRelationships(NameNameRelationship::Modifies, modifiesSet1);
+    ENT_ENT_SET usesSet = {std::make_pair("main", "x"), std::make_pair("main", "y")};
+    ENT_ENT_SET modifiesSet = {};
+    pkbWriterPtr->addEntityEntityRelationships(NameNameRelationship::Uses, usesSet);
+    pkbWriterPtr->addEntityEntityRelationships(NameNameRelationship::Modifies, modifiesSet);
 
 
-    SECTION("PKB can get all uses") {
+    SECTION("Read all uses relationship") {
         ENT_ENT_SET expectedResult = {std::make_pair("main", "x"), std::make_pair("main", "y")};
         ENT_ENT_SET actualResult = pkbReaderPtr->getAllRelationships(NameNameRelationship::Uses);
-        REQUIRE(actualResult == expectedResult);
+        requireTrue(actualResult == expectedResult);
     }
 
-    SECTION("PKB can get all modifies") {
+    SECTION("Read all modifies relationship") {
         ENT_ENT_SET expectedResult = {};
         ENT_ENT_SET actualResult = pkbReaderPtr->getAllRelationships(NameNameRelationship::Modifies);
-        REQUIRE(actualResult == expectedResult);
+        requireTrue(actualResult == expectedResult);
     }
 }
 
-TEST_CASE("PKB can get keyNames in a Name-Name StmtNameRelation") {
+TEST_CASE("7. Read keys in a NameName Relationship table") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
     PKBWriter *pkbWriterPtr = &pkbWriter;
     PKBReader *pkbReaderPtr = &pkbReader;
-    STMT_ENT_SET usesSet = {std::make_pair(4, "x"),  std::make_pair(4, "y"), std::make_pair(5, "y")};
-    STMT_ENT_SET modifiesSet = {};
-    ENT_ENT_SET usesSet1 = {std::make_pair("main", "x"), std::make_pair("main", "y")};
-    ENT_ENT_SET modifiesSet1 = {};
-    pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Uses, usesSet);
-    pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Modifies, modifiesSet);
-    pkbWriterPtr->addEntityEntityRelationships(NameNameRelationship::Uses, usesSet1);
-    pkbWriterPtr->addEntityEntityRelationships(NameNameRelationship::Modifies, modifiesSet1);
+    ENT_ENT_SET usesSet = {std::make_pair("main", "x"), std::make_pair("main", "y")};
+    ENT_ENT_SET modifiesSet = {};
+    pkbWriterPtr->addEntityEntityRelationships(NameNameRelationship::Uses, usesSet);
+    pkbWriterPtr->addEntityEntityRelationships(NameNameRelationship::Modifies, modifiesSet);
 
 
 
-    SECTION("PKB can get keyNames that use a given variable which exists") {
+    SECTION("Read key given variable which exists in uses table") {
         ENT_SET expectedResult = {"main"};
         ENT_SET actualResult = pkbReaderPtr->getRelationshipByVal(NameNameRelationship::Uses, "y");
-        REQUIRE(actualResult == expectedResult);
+        requireTrue(actualResult == expectedResult);
     }
 
-    SECTION("PKB can get keyNames that uses a variable that does not exist") {
+    SECTION("Read key given a non-existent variable that does not exist in uses table") {
         ENT_SET expectedResult = {};
         ENT_SET actualResult = pkbReaderPtr->getRelationshipByVal(NameNameRelationship::Uses, "a");
-        REQUIRE(actualResult == expectedResult);
+        requireTrue(actualResult == expectedResult);
     }
 
-    SECTION("PKB can get keyNames that modifies a variable that exists") {
+    SECTION("Read key given variable which exists in modifies table") {
         ENT_SET expectedResult = {};
         ENT_SET actualResult = pkbReaderPtr->getRelationshipByVal(NameNameRelationship::Modifies, "x");
-        REQUIRE(actualResult == expectedResult);
+        requireTrue(actualResult == expectedResult);
     }
-}TEST_CASE("PKB can get valueName in a Name-Name StmtNameRelation") {
+}TEST_CASE("8. Read values in a NameName Relationship table") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
     PKBWriter *pkbWriterPtr = &pkbWriter;
     PKBReader *pkbReaderPtr = &pkbReader;
-    STMT_ENT_SET usesSet = {std::make_pair(4, "x"),  std::make_pair(4, "y"), std::make_pair(5, "y")};
-    STMT_ENT_SET modifiesSet = {};
-    ENT_ENT_SET usesSet1 = {std::make_pair("main", "x"), std::make_pair("main", "y")};
-    ENT_ENT_SET modifiesSet1 = {};
-    pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Uses, usesSet);
-    pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Modifies, modifiesSet);
-    pkbWriterPtr->addEntityEntityRelationships(NameNameRelationship::Uses, usesSet1);
-    pkbWriterPtr->addEntityEntityRelationships(NameNameRelationship::Modifies, modifiesSet1);
+    ENT_ENT_SET usesSet = {std::make_pair("main", "x"), std::make_pair("main", "y")};
+    ENT_ENT_SET modifiesSet = {};
+    pkbWriterPtr->addEntityEntityRelationships(NameNameRelationship::Uses, usesSet);
+    pkbWriterPtr->addEntityEntityRelationships(NameNameRelationship::Modifies, modifiesSet);
 
-
-
-    SECTION("PKB can get valueNames that are used/modified by a keyName that exists") {
+    SECTION("Read value using valid key") {
         ENT_SET expectedResultForUses = {"x", "y"};
         ENT_SET expectedResultForModifies = {};
         ENT_SET actualResultForUses = pkbReaderPtr->getRelationshipByKey(NameNameRelationship::Uses,
                                                                          "main");
         ENT_SET actualResultForModifies = pkbReaderPtr->getRelationshipByKey(NameNameRelationship::Modifies,
                                                                              "main");
-        REQUIRE(actualResultForUses == expectedResultForUses);
-        REQUIRE(actualResultForModifies == actualResultForModifies);
+        requireTrue(actualResultForUses == expectedResultForUses);
+        requireTrue(actualResultForModifies == actualResultForModifies);
     }
 
-    SECTION("PKB can return empty set for an non-existent keyName") {
+    SECTION("Return empty set for invalid key") {
         ENT_SET expectedResult = {};
-        ENT_SET actualResult = pkbReaderPtr->getRelationshipByKey(NameNameRelationship::Uses, "fake");
-        REQUIRE(actualResult == expectedResult);
+        ENT_SET actualResult = pkbReaderPtr->getRelationshipByKey(NameNameRelationship::Uses, "non-existent");
+        requireTrue(actualResult == expectedResult);
+    }
+}
+
+TEST_CASE("9. Test getRelationshipByVal for statements") {
+    PKB pkb;
+    PKBWriter pkbWriter(pkb);
+    PKBReader pkbReader(pkb);
+    PKBWriter *pkbWriterPtr = &pkbWriter;
+    PKBReader *pkbReaderPtr = &pkbReader;
+    STMT_STMT_SET followsSet = {std::make_pair(2, 3),  std::make_pair(3, 4), std::make_pair(5, 6)};
+    STMT_STMT_SET parentsSet = {std::make_pair(4, 5),  std::make_pair(4, 6)};
+    pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationship::Follows, followsSet);
+    pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationship::Parent, parentsSet);
+
+    SECTION("Read key from a valid value for Follows") {
+        STMT_SET expected = {3};
+        STMT_SET actual = pkbReaderPtr->getRelationshipByVal(StmtStmtRelationship::Follows, 4);
+        requireTrue(actual == expected);
+    }
+
+    SECTION("Read key from a valid value for Parent") {
+        STMT_SET expected = {};
+        STMT_SET actual = pkbReaderPtr->getRelationshipByVal(StmtStmtRelationship::Parent, 2);
+        requireTrue(actual == expected);
+    }
+
+    SECTION("Read key from an invalid value for Follows") {
+        STMT_SET expected = {};
+        STMT_SET actual = pkbReaderPtr->getRelationshipByVal(StmtStmtRelationship::Follows, 9);
+        requireTrue(actual == expected);
+    }
+
+    SECTION("Read key from an invalid value for Parent") {
+        STMT_SET expected = {};
+        STMT_SET actual = pkbReaderPtr->getRelationshipByVal(StmtStmtRelationship::Parent, 9);
+        requireTrue(actual == expected);
+    }
+}
+
+TEST_CASE("10. Test getRelationshipByKey for statements") {
+    PKB pkb;
+    PKBWriter pkbWriter(pkb);
+    PKBReader pkbReader(pkb);
+    PKBWriter *pkbWriterPtr = &pkbWriter;
+    PKBReader *pkbReaderPtr = &pkbReader;
+    STMT_STMT_SET followsSet = {std::make_pair(2, 3),  std::make_pair(3, 4), std::make_pair(5, 6)};
+    STMT_STMT_SET parentsSet = {std::make_pair(4, 5),  std::make_pair(4, 6)};
+    pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationship::Follows, followsSet);
+    pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationship::Parent, parentsSet);
+
+    SECTION("Read value from a key value for Follows") {
+        STMT_SET expected = {6};
+        STMT_SET actual = pkbReaderPtr->getRelationshipByKey(StmtStmtRelationship::Follows, 5);
+        requireTrue(actual == expected);
+    }
+
+    SECTION("Read value from a key value for Follows") {
+        STMT_SET expected = {5, 6};
+        STMT_SET actual = pkbReaderPtr->getRelationshipByKey(StmtStmtRelationship::Parent, 4);
+        requireTrue(actual == expected);
+    }
+
+    SECTION("Read value from an invalid key for Follows") {
+        STMT_SET expected = {};
+        STMT_SET actual = pkbReaderPtr->getRelationshipByKey(StmtStmtRelationship::Follows, 9);
+        requireTrue(actual == expected);
+    }
+
+    SECTION("Read value from an invalid key for Parent") {
+        STMT_SET expected = {};
+        STMT_SET actual = pkbReaderPtr->getRelationshipByKey(StmtStmtRelationship::Parent, 9);
+        requireTrue(actual == expected);
     }
 }

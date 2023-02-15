@@ -10,6 +10,7 @@ class PKBReader {
     explicit PKBReader(PKB &);
 
     ENT_SET getEntities(Entity entityType) const;
+    STMT_SET getStatements(StmtType stmtType) const;
 
     ENT_SET getRelationship(StmtNameRelationship tableType, STMT_NUM stmt) const;
     STMT_SET getRelationship(StmtNameRelationship tableType, ENT_NAME name) const;
@@ -28,6 +29,8 @@ class PKBReader {
 
     STMT_SET getStmtWithExactPatternMatch(std::string &pattern) const;
 //    bool isExactPatternMatch(STMT_NUM stmtNo, std::string &pattern) const;
+
+    STMT_SET getStmtWithPartialPatternMatch(std::string &pattern) const;
 
  private:
     PKB &pkb;

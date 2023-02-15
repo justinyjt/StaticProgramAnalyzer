@@ -1,4 +1,5 @@
 #include <fstream>
+#include <utility>
 
 #include "TestWrapper.h"
 #include "qps/QPS.h"
@@ -15,8 +16,7 @@ volatile bool AbstractWrapper::GlobalStop = false;
 // a default constructor
 TestWrapper::TestWrapper() : pkbWriter(PKBWriter(pkb)),
                              pkbReader(PKBReader(pkb)),
-                             designExtractor(DesignExtractor(pkbWriter)),
-                             sourceProcessor(SourceProcessor(designExtractor)) {
+                             sourceProcessor(SourceProcessor(std::make_unique<PKBWriter>(pkb))) {
     // create any objects here as instance variables of this class
     // as well as any initialization required for your spa program
 }
