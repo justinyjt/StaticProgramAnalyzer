@@ -2,6 +2,8 @@
 
 #include <string>
 #include <memory>
+#include <deque>
+
 #include "IParser.h"
 #include "commons/ASTNode.h"
 #include "commons/token/Token.h"
@@ -11,18 +13,23 @@ using std::unique_ptr;
 
 class Parser : public IParser {
  public:
-    explicit Parser(PROGRAM src, const DesignExtractor &de);
+    explicit Parser(
+        PROGRAM src, std::unique_ptr<PKBWriter> pkb,
+        std::deque<std::unique_ptr<Token>> tokenLst);
+    explicit Parser(
+        PROGRAM src, std::unique_ptr<PKBWriter> pkb,
+        std::deque<std::unique_ptr<Token>> tokenLst, bool flagExtract);
     unique_ptr<ASTNode> Parse() override;
 
  private:
-    std::unique_ptr<ILexer> lex_;
+    std::deque<std::unique_ptr<Token>> tokenLst_;
     PROGRAM src_;
-    DesignExtractor &de_;
-    std::unique_ptr<Token> cur_;
+    std::unique_ptr<DesignExtractor> de_;
+    bool flagExtract_;
 
     int peek(Token::Tag);
+    Lexeme peekLexeme();
     int accept(Token::Tag);
-    int expect(Token::Tag);
 
     unique_ptr<ASTNode> parseProc();
     unique_ptr<ASTNode> parseStmtLst();
