@@ -3,9 +3,9 @@
 #include "qps/clause/pattern/Pattern.h"
 #include "qps/pql/Synonym.h"
 #include "qps/pql/Wildcard.h"
-#include "qps/pql/ExpressionStr.h"
+#include "qps/pql/Expression.h"
 #include "qps/pql/StatementNumber.h"
-#include "qps/pql/IdentStr.h"
+#include "qps/pql/Ident.h"
 #include "qps/query_exceptions/SyntaxException.h"
 
 Clause *PatternClauseParser::parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms) {
@@ -33,13 +33,13 @@ Clause *PatternClauseParser::parse(TokenValidator &tokenValidator, std::vector<S
 
 PQLToken* PatternClauseParser::makeArg(std::unique_ptr<Token> token, std::vector<Synonym> synonyms) {
     if (token->getTag() == Token::Tag::Name) {
-        IdentStr* i = new IdentStr(token->getLexeme());
+        Ident* i = new Ident(token->getLexeme());
         return i;
     } else if (token->getTag() == Token::Tag::Underscore) {
         Wildcard* w = new Wildcard();
         return w;
     } else if (token->getTag() == Token::Tag::String) {
-        ExpressionStr* e = new ExpressionStr(token->getLexeme());
+        Expression* e = new Expression(token->getLexeme());
         return e;
     } else {
         throw SyntaxException();

@@ -1,12 +1,12 @@
 #include "Pattern.h"
-#include "qps/pql/ExpressionStr.h"
+#include "qps/pql/Expression.h"
 
 Pattern::Pattern(PQLToken* first, PQLToken* second) : Clause(first, second) {}
 
-// select a pattern a ( _ , "x + 1")
-
 Result* Pattern::evaluate(PKBReader *db) {
-    // if first == "_" and second is string with no underscores
+    /* <var synonym | ident | _ , expression | partial expression | _> */
+
+    // case: <_, expr>
     if (first->tag == PQLToken::Tag::WILDCARD && second->tag == PQLToken::Tag::EXPR) {
         std::string pattern = second->str();
         STMT_SET set = db->getStmtWithExactPatternMatch(pattern);

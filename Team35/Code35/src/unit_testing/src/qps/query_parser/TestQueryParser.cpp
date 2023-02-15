@@ -4,7 +4,7 @@
 #include "qps/clause/Clause.h"
 #include "qps/clause/relationship/Modifies.h"
 #include "qps/pql/StatementNumber.h"
-#include "qps/pql/ExpressionStr.h"
+#include "qps/pql/Expression.h"
 #include "commons/lexer/LexerFactory.h"
 #include "qps/query_parser/selection_parser/SelectionParser.h"
 #include "qps/query_parser/clause_parser/ClauseParser.h"
@@ -35,7 +35,7 @@ TEST_CASE("1. Query parser") {
     requireTrue(*c1 == m);
 
     Wildcard* w = new Wildcard();
-    ExpressionStr* expr = new ExpressionStr("x");
+    Expression* expr = new Expression("x");
     Pattern a(w, expr);
 
     Clause *c2 = clauses.back();

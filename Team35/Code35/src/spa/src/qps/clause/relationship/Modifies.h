@@ -13,7 +13,7 @@ class ModifiesS : public Relationship {
 class ModifiesP : public Relationship {
  public:
     /* <SYNONYM | IDENT>, <SYNONYM | _ | IDENT> */
-    ModifiesP(PQLToken first, PQLToken second);
+    ModifiesP(PQLToken* first, PQLToken* second);
     Result* evaluate(PKBReader*);
     bool operator==(const Clause& rhs) const;
 };

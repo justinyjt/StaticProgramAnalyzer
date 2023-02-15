@@ -1,12 +1,12 @@
 #include "catch.hpp"
 #include "../../TestHelper.h"
-#include "qps/pql/IdentStr.h"
+#include "qps/pql/Ident.h"
 #include "qps/pql/PQLToken.h"
 
-TEST_CASE("IdentStr") {
-    IdentStr* hi = new IdentStr("hi");
-    IdentStr* bye = new IdentStr("bye");
-    PQLToken* hi_ = new IdentStr("hi");
+TEST_CASE("Ident") {
+    Ident* hi = new Ident("hi");
+    Ident* bye = new Ident("bye");
+    PQLToken* hi_ = new Ident("hi");
 
     requireTrue(*hi == *hi_);
     requireTrue(*hi != *bye);

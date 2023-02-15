@@ -5,9 +5,9 @@
 /*
 represents string identifier
 */
-class IdentStr : public PQLToken {
+class Ident : public PQLToken {
  public:
-        explicit IdentStr(std::string s);
+        explicit Ident(std::string s);
         const std::string s;
         std::string str() const;
         bool operator==(const PQLToken& rhs) const;

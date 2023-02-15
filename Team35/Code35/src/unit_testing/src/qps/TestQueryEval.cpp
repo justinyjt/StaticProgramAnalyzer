@@ -5,7 +5,7 @@
 //#include "qps/clause/pattern/Pattern.h"
 //#include "qps/clause/Clause.h"
 //#include "qps/pql/StatementNumber.h"
-//#include "qps/pql/ExpressionStr.h"
+//#include "qps/pql/Expression.h"
 //#include "qps/pql/Wildcard.h"
 //#include "pkb/PKBReader.h"
 //#include "pkb/PKB.h"
@@ -64,7 +64,7 @@
 //    // Perform evaluation
 //    Synonym syn(Synonym::DesignEntity::ASSIGN, "a");
 //    std::vector<Clause*> clauses;
-//    clauses.push_back(new Pattern(Wildcard(), ExpressionStr("x + 1")));
+//    clauses.push_back(new Pattern(Wildcard(), Expression("x + 1")));
 //    Result* evalResult = qe.evaluate(syn, clauses);
 //    evalResult->output(resultList);
 //    requireEqual(resultList.front(), std::string("1"));
