@@ -15,3 +15,15 @@ STMT_SET PatternTable::getExactPatternMatch(std::string pattern) const {
     }
     return result;
 }
+
+STMT_SET PatternTable::getPartialPatternMatch(std::string pattern) const {
+    STMT_SET  result;
+
+    for (auto storedPattern : stmtPatternMap) {
+        if (storedPattern.second.find(pattern) != std::string::npos) {
+            result.emplace(storedPattern.first);
+        }
+    }
+
+    return result;
+}
