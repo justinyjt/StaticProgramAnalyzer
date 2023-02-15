@@ -4,7 +4,7 @@
 
 class ModifiesS : public Relationship {
  public:
-    /* <SYNONYM | STMT_NUM>, <SYNONYM | _ | IDENT> */
+    /* <stmt synonym | stmt_num>, <var synonym | ident | _ > */
     ModifiesS(PQLToken* first, PQLToken* second);
     Result* evaluate(PKBReader*);
     bool operator==(const Clause& rhs) const;
@@ -12,7 +12,7 @@ class ModifiesS : public Relationship {
 
 class ModifiesP : public Relationship {
  public:
-    /* <SYNONYM | IDENT>, <SYNONYM | _ | IDENT> */
+    /* <proc synonym | proc ident>, <synonym | ident | _ > */
     ModifiesP(PQLToken* first, PQLToken* second);
     Result* evaluate(PKBReader*);
     bool operator==(const Clause& rhs) const;
