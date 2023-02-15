@@ -29,12 +29,12 @@ Clause *SuchThatClauseParser::parse(TokenValidator &tokenValidator, std::vector<
     tokenValidator.validateAndConsumeTokenType(Token::Tag::RParen);
 
     Clause* clause = createClause(std::move(leftArg),
-                                  std::move(rightArg), relationship, synonyms);
+                                  std::move(rightArg), relationship, std::move(synonyms));
 
     return clause;
 }
 
-Tok* SuchThatClauseParser::createArg(std::unique_ptr<Token>& token, std::vector<Synonym> synonyms) {
+Tok* SuchThatClauseParser::createArg(std::unique_ptr<Token>& token, const std::vector<Synonym>& synonyms) {
     if (token->getTag() == Token::Tag::Integer) {
         StatementNumber* t = new StatementNumber(stoi(token->getLexeme()));
         return t;
@@ -59,11 +59,10 @@ Tok* SuchThatClauseParser::createArg(std::unique_ptr<Token>& token, std::vector<
 
 Clause* SuchThatClauseParser::createClause(std::unique_ptr<Token> token1, std::unique_ptr<Token> token2,
                                            std::string relationship, std::vector<Synonym> synonyms) {
-
     Tok* first = createArg(token1, synonyms);
     Tok* second = createArg(token2, synonyms);
 
-    switch(hash(relationship)) {
+    switch (hash(relationship)) {
         case MODIFIES:
             if (isStmtRef(*first) && isEntRef(*second)) {
                 ModifiesS *m = new ModifiesS(first, second);

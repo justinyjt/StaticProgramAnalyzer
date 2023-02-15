@@ -30,7 +30,7 @@ Clause *PatternClauseParser::parse(TokenValidator &tokenValidator, std::vector<S
 Tok* PatternClauseParser::createLeftArg(std::unique_ptr<Token> &token, std::vector<Synonym> synonyms) {
     if (token->getTag() == Token::Tag::Name) {
         for (auto synonym : synonyms) {
-            if (synonym.str() == token->getLexeme() && synonym.de == Synonym::DesignEntity::VARIABLE) {
+            if (synonym.str() == token->getLexeme()) {
                 Synonym* s = new Synonym(synonym.de, token->getLexeme());
                 return s;
             }
@@ -51,9 +51,6 @@ Tok* PatternClauseParser::createRightArg(std::vector<std::unique_ptr<Token>> &to
     if (tokenList.size() > 1) {
         auto* i = new IdentStrWithWildcard(tokenList.at(1)->getLexeme());
         return i;
-    } else if (tokenList.at(0)->getTag() == Token::Tag::String) {
-        auto* i = new IdentStr(tokenList.at(0)->getLexeme());
-        return i;
     } else {
         auto* w = new Wildcard();
         return w;
@@ -67,8 +64,11 @@ Clause* PatternClauseParser::createClause(std::unique_ptr<Token> token1, std::ve
 
     Tok* first = createLeftArg(token1, synonyms);
     Tok* second = createRightArg(token2);
-    Pattern *a = new Pattern(first, second);
-    return a;
+    if (isEntRef(*first)) {
+        Pattern *a = new Pattern(first, second);
+        return a;
+    }
+    throw SyntaxException();
 }
 
 bool PatternClauseParser::isValidPatternSynonym(const std::string& next, std::vector<Synonym> synonyms) {

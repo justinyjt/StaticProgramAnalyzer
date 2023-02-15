@@ -12,7 +12,6 @@ Result* Follows::evaluate(PKBReader *db) {
 }
 
 void Follows::validateArgs(Tok* first, Tok* second) {
-
 }
 
 bool Follows::operator==(const Clause& rhs) const {

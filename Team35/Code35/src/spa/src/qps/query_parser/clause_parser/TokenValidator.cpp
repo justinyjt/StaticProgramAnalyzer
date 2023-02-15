@@ -84,11 +84,7 @@ std::unique_ptr<Token> TokenValidator::validateAndConsumePatternFirstArg() {
 
 std::vector<std::unique_ptr<Token>> TokenValidator::validateAndConsumePatternSecondArg() {
     std::vector<std::unique_ptr<Token>> tokenList;
-    if (cur_->getTag() == Token::Tag::String) {
-        tokenList.push_back(std::move(cur_));
-        cur_ = lexer->scan();
-        return tokenList;
-    } else if (cur_->getTag() == Token::Tag::Underscore) {
+    if (cur_->getTag() == Token::Tag::Underscore) {
         tokenList.push_back(std::move(cur_));
         cur_ = lexer->scan();
         if (cur_->getTag() == Token::Tag::String) {

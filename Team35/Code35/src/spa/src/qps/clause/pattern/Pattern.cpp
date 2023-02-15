@@ -1,5 +1,7 @@
 #include "Pattern.h"
 #include "qps/pql/ExpressionStr.h"
+#include "qps/pql/Synonym.h"
+#include "qps/query_exceptions/SemanticException.h"
 
 Pattern::Pattern(Tok* first, Tok* second) : Clause(first, second) {
     validateArgs(first, second);
@@ -22,6 +24,10 @@ Result* Pattern::evaluate(PKBReader *db) {
 }
 
 void Pattern::validateArgs(Tok* first, Tok* second) {
+    const Synonym* synonym1 = dynamic_cast<const Synonym*>(first);
+    if (synonym1 != NULL && synonym1->de != Synonym::DesignEntity::VARIABLE) {
+        throw SemanticException();
+    }
 }
 
 bool Pattern::operator==(const Clause& rhs) const {

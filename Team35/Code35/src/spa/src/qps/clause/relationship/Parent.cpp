@@ -24,7 +24,6 @@ Result* ParentT::evaluate(PKBReader *db) {
 }
 
 void ParentT::validateArgs(Tok* first, Tok* second) {
-
 }
 
 bool ParentT::operator==(const Clause& rhs) const {

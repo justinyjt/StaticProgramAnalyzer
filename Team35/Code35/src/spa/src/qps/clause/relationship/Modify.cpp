@@ -8,8 +8,6 @@ ModifiesS::ModifiesS(Tok* first, Tok* second) : Relationship(first, second) {
     validateArgs(first, second);
 }
 
-
-// false if invalid
 void ModifiesS::validateArgs(Tok* first, Tok* second) {
     const Wildcard* wildcard = dynamic_cast<const Wildcard*>(first);
     const Synonym* synonym1 = dynamic_cast<const Synonym*>(first);
