@@ -1,11 +1,11 @@
 //#include "catch.hpp"
 //#include "../TestHelper.h"
 //#include "qps/QueryEvaluator.h"
-//#include "qps/clause/relationship/Modify.h"
-//#include "qps/clause/pattern/Pattern.h"
+//#include "qps/clause/Modifies.h"
+//#include "qps/clause/Pattern.h"
 //#include "qps/clause/Clause.h"
 //#include "qps/pql/StatementNumber.h"
-//#include "qps/pql/ExpressionStr.h"
+//#include "qps/pql/Expression.h"
 //#include "qps/pql/Wildcard.h"
 //#include "pkb/PKBReader.h"
 //#include "pkb/PKB.h"
@@ -45,7 +45,7 @@
 //    // Perform evaluation
 //    Synonym syn(Synonym::DesignEntity::VARIABLE, "v");
 //    std::vector<Clause*> clauses;
-//    clauses.push_back(new Modify(StatementNumber("1"), syn));
+//    clauses.push_back(new ModifiesS(StatementNumber("1"), syn));
 //    Result* evalResult = qe.evaluate(syn, clauses);
 //    evalResult->output(resultList);
 //    requireEqual(resultList.front(), std::string("x"));
@@ -64,7 +64,7 @@
 //    // Perform evaluation
 //    Synonym syn(Synonym::DesignEntity::ASSIGN, "a");
 //    std::vector<Clause*> clauses;
-//    clauses.push_back(new Pattern(Wildcard(), ExpressionStr("x + 1")));
+//    clauses.push_back(new Pattern(Wildcard(), Expression("x + 1")));
 //    Result* evalResult = qe.evaluate(syn, clauses);
 //    evalResult->output(resultList);
 //    requireEqual(resultList.front(), std::string("1"));

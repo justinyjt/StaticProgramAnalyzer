@@ -5,18 +5,18 @@
 /*
 Base class for all PQL tokens
 */
-class Tok {
+class PQLToken {
  public:
     enum class Tag { IDENT, STMT_NUM, SYNONYM, WILDCARD, EXPR, IDENT_WILDCARD };
 
-    explicit Tok(Tag tag);
+    explicit PQLToken(Tag tag);
     const Tag tag;
 
-    virtual bool operator==(const Tok &rhs) const = 0;
-    bool operator!=(const Tok &rhs) const;
+    virtual bool operator==(const PQLToken &rhs) const = 0;
+    bool operator!=(const PQLToken &rhs) const;
 
     virtual std::string str() const = 0;
 
  protected:
-    bool equal(const Tok &rhs) const;
+    bool equal(const PQLToken &rhs) const;
 };

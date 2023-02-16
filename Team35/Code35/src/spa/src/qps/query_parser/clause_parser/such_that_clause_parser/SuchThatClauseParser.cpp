@@ -2,15 +2,15 @@
 
 #include <utility>
 
-#include "qps/clause/relationship/Modify.h"
+#include "qps/clause/Modifies.h"
 #include "qps/pql/StatementNumber.h"
 #include "qps/query_exceptions/SyntaxException.h"
 #include "qps/pql/Wildcard.h"
-#include "qps/pql/IdentStr.h"
-#include "qps/clause/relationship/Uses.h"
-#include "qps/clause/relationship/Follows.h"
-#include "qps/clause/relationship/Parent.h"
+#include "qps/clause/Uses.h"
+#include "qps/clause/Follows.h"
+#include "qps/clause/Parent.h"
 #include "qps/query_exceptions/SemanticException.h"
+#include "qps/pql/Ident.h"
 
 Clause *SuchThatClauseParser::parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms) {
     tokenValidator.validateAndConsumeTokenType(Token::Tag::Such);
@@ -34,12 +34,12 @@ Clause *SuchThatClauseParser::parse(TokenValidator &tokenValidator, std::vector<
     return clause;
 }
 
-Tok* SuchThatClauseParser::createArg(std::unique_ptr<Token>& token, const std::vector<Synonym>& synonyms) {
+PQLToken* SuchThatClauseParser::createArg(std::unique_ptr<Token>& token, const std::vector<Synonym>& synonyms) {
     if (token->getTag() == Token::Tag::Integer) {
         StatementNumber* t = new StatementNumber(stoi(token->getLexeme()));
         return t;
     } else if (token->getTag() == Token::Tag::String) {
-        IdentStr* i = new IdentStr(token->getLexeme());
+        Ident* i = new Ident(token->getLexeme());
         return i;
     } else if (token->getTag() == Token::Tag::Underscore) {
         Wildcard* w = new Wildcard();
@@ -59,8 +59,8 @@ Tok* SuchThatClauseParser::createArg(std::unique_ptr<Token>& token, const std::v
 
 Clause* SuchThatClauseParser::createClause(std::unique_ptr<Token> token1, std::unique_ptr<Token> token2,
                                            std::string relationship, std::vector<Synonym> synonyms) {
-    Tok* first = createArg(token1, synonyms);
-    Tok* second = createArg(token2, synonyms);
+    PQLToken* first = createArg(token1, synonyms);
+    PQLToken* second = createArg(token2, synonyms);
 
     switch (hash(relationship)) {
         case MODIFIES:
@@ -77,25 +77,25 @@ Clause* SuchThatClauseParser::createClause(std::unique_ptr<Token> token1, std::u
             throw SyntaxException();
         case FOLLOWS:
             if (isStmtRef(*first) && isStmtRef(*second)) {
-                Follows *f = new Follows(first, second);
+                Follows *f = new Follows(first, second, false);
                 return f;
             }
             throw SyntaxException();
         case FOLLOWS_T:
             if (isStmtRef(*first) && isStmtRef(*second)) {
-                FollowsT *f = new FollowsT(first, second);
+                Follows *f = new Follows(first, second, true);
                 return f;
             }
             throw SyntaxException();
         case PARENT:
             if (isStmtRef(*first) && isStmtRef(*second)) {
-                Parent *p = new Parent(first, second);
+                Parent *p = new Parent(first, second, false);
                 return p;
             }
             throw SyntaxException();
         case PARENT_T:
             if (isStmtRef(*first) && isStmtRef(*second)) {
-                ParentT *p = new ParentT(first, second);
+                Parent *p = new Parent(first, second, true);
                 return p;
             }
             throw SyntaxException();
@@ -104,10 +104,10 @@ Clause* SuchThatClauseParser::createClause(std::unique_ptr<Token> token1, std::u
     }
 }
 
-bool SuchThatClauseParser::isStmtRef(Tok &tok) {
+bool SuchThatClauseParser::isStmtRef(PQLToken &tok) {
     const Synonym* synonym = dynamic_cast<const Synonym*>(&tok);
-    return tok.tag == Tok::Tag::STMT_NUM ||
-            tok.tag == Tok::Tag::WILDCARD ||
+    return tok.tag == PQLToken::Tag::STMT_NUM ||
+            tok.tag == PQLToken::Tag::WILDCARD ||
             synonym != NULL && (synonym->de == Synonym::DesignEntity::STMT ||
                     synonym->de == Synonym::DesignEntity::READ ||
                     synonym->de == Synonym::DesignEntity::PRINT ||
@@ -117,10 +117,10 @@ bool SuchThatClauseParser::isStmtRef(Tok &tok) {
                     synonym->de == Synonym::DesignEntity::IF);
 }
 
-bool SuchThatClauseParser::isEntRef(Tok &tok) {
+bool SuchThatClauseParser::isEntRef(PQLToken &tok) {
     const Synonym* synonym = dynamic_cast<const Synonym*>(&tok);
-    return tok.tag == Tok::Tag::IDENT ||
-           tok.tag == Tok::Tag::WILDCARD ||
+    return tok.tag == PQLToken::Tag::IDENT ||
+           tok.tag == PQLToken::Tag::WILDCARD ||
            synonym != NULL && (synonym->de == Synonym::DesignEntity::VARIABLE ||
                                synonym->de == Synonym::DesignEntity::CONSTANT ||
                                 synonym->de == Synonym::DesignEntity::PROCEDURE);
