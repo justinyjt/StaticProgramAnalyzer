@@ -32,8 +32,10 @@ const EntityTable<STMT_NUM> &PKB::getStatementTable(StmtType stmtType) const {
             return readStatementTable;
         case (StmtType::If):
             return ifStatementTable;
-        case (StmtType::While)   :
+        case (StmtType::While):
             return whileStatementTable;
+        case (StmtType::None):
+            return statementTable;
         default:
             assert(false);
     }

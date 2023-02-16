@@ -1,6 +1,6 @@
 /**
  * 2/5/2023
- * Currently the line number is determined by the semicolomn (new semicolomn means new stat means new line)
+ * Currently the line number is determined by the semicolon (new semicolon means new stat means new line)
  * need to change later
  */
 #include <cassert>
@@ -15,6 +15,7 @@
 
 DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
     pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(),
+    stmtSet_(), readSet_(), printSet_(), assignSet_(),
     stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(), stmtCnt_(0), assignPat_() {}
 
 std::unique_ptr<ASTNode> DesignExtractor::extractProgram(std::unique_ptr<ASTNode> root) {
@@ -27,6 +28,7 @@ std::unique_ptr<ASTNode> DesignExtractor::extractProgram(std::unique_ptr<ASTNode
     addStmtUsesPairSetToPKB();
     addStmtModifiesPairSetToPKB();
     addPatternsToPKB();
+    addStmtTypesToPKB();
     return std::move(root_);
 }
 
@@ -63,6 +65,7 @@ std::string DesignExtractor::extractLeftAssign(const std::unique_ptr<ASTNode> &n
     std::string varName = node->getLabel();
     varNameSet_.insert(varName);
     stmtModPairSet_.insert(STMT_ENT(stmtCnt_, varName));
+    assignSet_.insert(stmtCnt_);
     return varName + "=";
 }
 
@@ -93,6 +96,7 @@ void DesignExtractor::extractRead(const std::unique_ptr<ASTNode> &node) {
     std::string varName = child->getLabel();
     varNameSet_.insert(varName);
     stmtModPairSet_.insert(STMT_ENT(stmtCnt_, varName));
+    readSet_.insert(stmtCnt_);
 }
 
 void DesignExtractor::extractPrint(const std::unique_ptr<ASTNode> &node) {
@@ -102,6 +106,13 @@ void DesignExtractor::extractPrint(const std::unique_ptr<ASTNode> &node) {
     std::string varName = child->getLabel();
     varNameSet_.insert(varName);
     stmtUsePairSet_.insert(STMT_ENT(stmtCnt_, varName));
+    printSet_.insert(stmtCnt_);
+}
+
+void DesignExtractor::extractStmt() {
+    for (int i = 1; i <= stmtCnt_; ++i) {
+        stmtSet_.insert(i);
+    }
 }
 
 void DesignExtractor::addVarNameSetToPKB() {
@@ -118,6 +129,14 @@ void DesignExtractor::addStmtModifiesPairSetToPKB() {
 
 void DesignExtractor::addPatternsToPKB() {
     pkbWriter_->addPatterns(assignPatMap_);
+}
+
+void DesignExtractor::addStmtTypesToPKB() {
+    extractStmt();
+    pkbWriter_->addStatements(StmtType::Assign, assignSet_);
+    pkbWriter_->addStatements(StmtType::Read, readSet_);
+    pkbWriter_->addStatements(StmtType::Print, printSet_);
+    pkbWriter_->addStatements(StmtType::None, stmtSet_);
 }
 
 std::unordered_map<STMT_NUM, std::string> DesignExtractor::getAssignPatMap() {

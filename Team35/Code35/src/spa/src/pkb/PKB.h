@@ -62,6 +62,7 @@ class PKB {
     EntityTable<STMT_NUM> whileStatementTable;
     EntityTable<STMT_NUM> printStatementTable;
     EntityTable<STMT_NUM> readStatementTable;
+    EntityTable<STMT_NUM> statementTable;
 
     // Relationship related tables
     RelationshipTable<STMT_NUM, ENT_NAME> modifiesStmtNameTable;
