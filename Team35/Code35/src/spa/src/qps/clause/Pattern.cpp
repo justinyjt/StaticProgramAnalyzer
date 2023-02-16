@@ -22,20 +22,17 @@ Result* Pattern::evaluate(PKBReader *db) {
             Result *result = new TableResult(this->ident, stmtSet2);
             return result;
         }
-        case c(PQLToken::Tag::WILDCARD, PQLToken::Tag::WILDCARD):  // (_, _) -> int[]
+        case c(PQLToken::Tag::WILDCARD, PQLToken::Tag::WILDCARD):  // a(_, _) -> int[]
         {
-            STMT_ENT_SET stmtEntSet = db->getAllRelationships(StmtNameRelationship::Modifies);
-            STMT_SET stmtSetResult;
-            for (auto& p : stmtEntSet)
-                stmtSetResult.insert(p.first);
-            Result *result = new TableResult(this->ident, stmtSetResult);
+            STMT_SET stmtSet = db->getStatements(StmtType::Assign);
+            Result *result = new TableResult(this->ident, stmtSet);
             return result;
         }
         case c(PQLToken::Tag::SYNONYM, PQLToken::Tag::EXPR):  // a(v, "_x_") -> pair<int, str>[]
         {
             std::string synonymIdent = (dynamic_cast<const Synonym*>(first))->ident;
             std::vector<std::list<std::string>> vec;
-            for (STMT_NUM s : stmtSet2) {  // for each statement, find e that is modified
+            for (STMT_NUM s : stmtSet2) {  // for each statement, find entity that is modified
                 ENT_SET entSet = db->getRelationship(StmtNameRelationship::Modifies, s);
                 for (const std::string& ent : entSet)
                     vec.push_back({std::to_string(s), ent});

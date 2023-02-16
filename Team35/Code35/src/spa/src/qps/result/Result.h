@@ -40,8 +40,8 @@ class BoolResult : public Result {
 
 // n-col result
 class TableResult : public Result {
-    std::list<std::string> idents;
-    std::vector<std::list<std::string>> rows;
+    std::list<std::string> idents;  // s1, s2
+    std::vector<std::list<std::string>> rows;  // vec<list<1,2>, list<2,3>, ...>
 
  public:
     // general for n-cols
