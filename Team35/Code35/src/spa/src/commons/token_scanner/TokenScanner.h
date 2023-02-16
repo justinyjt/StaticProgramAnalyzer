@@ -11,6 +11,7 @@ typedef std::deque<std::unique_ptr<Token>> TokenLst;
 class TokenScanner {
  public:
     explicit TokenScanner(std::unique_ptr<ILexer> lex);
+    explicit TokenScanner(TokenLst token_lst);
     void next();
     int peek(Token::Tag tag) const;
     int match(Token::Tag tag);
@@ -18,7 +19,7 @@ class TokenScanner {
     Lexeme peekLexeme() const;
     int isOffsetValid(uint32_t offset) const;
     void reset();
-    [[nodiscard]] TokenLst getTokenLst() const;
+    [[nodiscard]] TokenLst getTokenLst();
 
  private:
     std::unique_ptr<ILexer> lex_;
