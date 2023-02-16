@@ -17,12 +17,17 @@ class DesignExtractor {
     void addStmtUsesPairSetToPKB();
     void addStmtModifiesPairSetToPKB();
     void addPatternsToPKB();
+    void addStmtTypesToPKB();
 
     std::unordered_map<STMT_NUM, std::string> getAssignPatMap();
 
  private:
     ENT_SET varNameSet_;
     STMT_SET constSet_;
+    STMT_SET stmtSet_;
+    STMT_SET assignSet_;
+    STMT_SET printSet_;
+    STMT_SET readSet_;
 
     STMT_ENT_SET stmtUsePairSet_;
     STMT_ENT_SET stmtModPairSet_;
@@ -38,6 +43,7 @@ class DesignExtractor {
     void extractAssign(const std::unique_ptr<ASTNode>&);
     void extractRead(const std::unique_ptr<ASTNode>&);
     void extractPrint(const std::unique_ptr<ASTNode>&);
+    void extractStmt();
     std::string extractLeftAssign(const std::unique_ptr<ASTNode>&);
     std::string extractRightAssign(const std::unique_ptr<ASTNode>&);
 };
