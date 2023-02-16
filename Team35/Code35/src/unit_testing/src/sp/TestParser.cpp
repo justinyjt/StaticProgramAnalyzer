@@ -7,6 +7,11 @@ std::unique_ptr<Token> transform(const Token &token) {
     return std::make_unique<Token>(token);
 }
 
+void convertDequeReverse(const std::deque<Token> &va, std::deque<unique_ptr<Token>> &vb) {
+    vb.clear();
+    std::transform(va.begin(), va.end(), std::front_inserter(vb), transform);
+}
+
 void convertDeque(const std::deque<Token> &va, std::deque<unique_ptr<Token>> &vb) {
     vb.clear();
     std::transform(va.begin(), va.end(), std::back_inserter(vb), transform);
@@ -14,11 +19,11 @@ void convertDeque(const std::deque<Token> &va, std::deque<unique_ptr<Token>> &vb
 
 TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
     SECTION("Parser can parse blank program") {
-        Token eof = Token(Token::Tag::EndOfFile);
+        Token eof(Token::Tag::EndOfFile);
         std::deque<Token> tokens = {eof};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDeque(tokens, tokenLst);
+        convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
         std::unique_ptr<ASTNode> root = parser->Parse();
@@ -37,7 +42,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         std::deque<Token> tokens = {EoF, RBrace, LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDeque(tokens, tokenLst);
+        convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
         std::unique_ptr<ASTNode> root = parser->Parse();
@@ -60,7 +65,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         std::deque<Token> tokens = {EoF, RBrace, Semi, ConstVal, Assignment, VarName, LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDeque(tokens, tokenLst);
+        convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
         std::unique_ptr<ASTNode> root = parser->Parse();
@@ -88,7 +93,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
                                     Assignment, VarName1, LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDeque(tokens, tokenLst);
+        convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
         std::unique_ptr<ASTNode> root = parser->Parse();
@@ -118,7 +123,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
                                     LParen, Assignment, VarName1, LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDeque(tokens, tokenLst);
+        convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
         std::unique_ptr<ASTNode> root = parser->Parse();
@@ -153,7 +158,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
                                     LParen, Assignment, VarName1, LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDeque(tokens, tokenLst);
+        convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
         std::unique_ptr<ASTNode> root = parser->Parse();
@@ -184,7 +189,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
                                     LParen, Assignment, VarName1, LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDeque(tokens, tokenLst);
+        convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
         std::unique_ptr<ASTNode> root = parser->Parse();
@@ -207,7 +212,7 @@ TEST_CASE("Parser can parse read correctly", "[Parser]") {
         std::deque<Token> tokens = {EoF, RBrace, Semi, VarName, ReadStmt, LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDeque(tokens, tokenLst);
+        convertDequeReverse(tokens, tokenLst);
         tokens.clear();
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
@@ -231,7 +236,7 @@ TEST_CASE("Parser can parse print correctly", "[Parser]") {
         std::deque<Token> tokens = {EoF, RBrace, Semi, VarName, PrintStmt, LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDeque(tokens, tokenLst);
+        convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
         std::unique_ptr<ASTNode> root = parser->Parse();
