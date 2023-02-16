@@ -1,5 +1,8 @@
 #include "SimpleTokenScanner.h"
 
+#include <memory>
+#include <utility>
+
 SimpleTokenScanner::SimpleTokenScanner(std::unique_ptr<ILexer> lex) : TokenScanner(std::move(lex)) {}
 
 SimpleTokenScanner::SimpleTokenScanner(TokenLst token_lst) : TokenScanner(std::move(token_lst)) {}

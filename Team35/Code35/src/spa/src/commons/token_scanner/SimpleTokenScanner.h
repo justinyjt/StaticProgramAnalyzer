@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "TokenScanner.h"
 
 class SimpleTokenScanner : public TokenScanner {
