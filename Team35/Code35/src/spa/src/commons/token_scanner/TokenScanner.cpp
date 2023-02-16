@@ -4,6 +4,11 @@
 
 TokenScanner::TokenScanner(std::unique_ptr<ILexer> lex) : lex_(std::move(lex)), token_lst_() {
     initialise();
+    token_lst_ = getTokenLst();
+}
+
+TokenScanner::TokenScanner(TokenLst token_lst) : lex_(nullptr), token_lst_(std::move(token_lst)) {
+    initialise();
 }
 
 void TokenScanner::next() {
@@ -43,7 +48,16 @@ void TokenScanner::reset() {
     cur_idx_ = 0;
 }
 
-TokenLst TokenScanner::getTokenLst() const {
+/**
+ * If the TokenScanner is constructed with a TokenLst, this method can only be called once.
+ * @return the TokenLst.
+ */
+TokenLst TokenScanner::getTokenLst() {
+    if (lex_ == nullptr) {
+        TokenLst token_lst = std::move(token_lst_);
+        token_lst_ = TokenLst();
+        return std::move(token_lst);
+    }
     lex_->reset();
     TokenLst token_lst;
     std::unique_ptr<Token> cur = lex_->scan();
@@ -57,5 +71,4 @@ TokenLst TokenScanner::getTokenLst() const {
 
 void TokenScanner::initialise() {
     cur_idx_ = 0;
-    token_lst_ = getTokenLst();
 }
