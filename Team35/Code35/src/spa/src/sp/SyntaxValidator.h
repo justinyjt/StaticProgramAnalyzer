@@ -14,8 +14,10 @@ class SyntaxValidator {
 
  private:
     std::unique_ptr<ILexer> lex_;
-    std::unique_ptr<Token> cur_;
-    std::deque<std::unique_ptr<Token>> tokenLst_;
+    std::deque<std::unique_ptr<Token>> token_lst_;
+    uint32_t cur_idx_ = 0;
+
+    void initialise();
 
     int peek(Token::Tag);
     int match(Token::Tag);
