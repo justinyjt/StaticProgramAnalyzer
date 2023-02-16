@@ -1,16 +1,17 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 #include "DesignExtractor.h"
 #include "IParser.h"
 
 class SourceProcessor {
  public:
-    explicit SourceProcessor(DesignExtractor &designExtractor);
+    explicit SourceProcessor(std::unique_ptr<PKBWriter> pkb);
     void process(std::string source);
  private:
-    DesignExtractor &design_extractor_;
+    std::unique_ptr<PKBWriter> pkb_;
 };
 
 

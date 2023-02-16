@@ -3,11 +3,12 @@
 #include <vector>
 
 #include "commons/token/Token.h"
+#include "commons/lexer/ILexer.h"
 
-class MockLexer {
+class MockLexer : public ILexer {
  public:
     explicit MockLexer(const std::vector<Token>& tokens);
-    Token scan();
+    std::unique_ptr<Token> scan() override;
 private:
     std::vector<Token> tokenLst_;
 };

@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <list>
+#include <memory>
 
 // include your other headers here
 #include "AbstractWrapper.h"
@@ -19,7 +20,6 @@ class TestWrapper : public AbstractWrapper {
     PKB pkb;
     PKBWriter pkbWriter;
     PKBReader pkbReader;
-    DesignExtractor designExtractor;
     SourceProcessor sourceProcessor;
     // default constructor
     TestWrapper();

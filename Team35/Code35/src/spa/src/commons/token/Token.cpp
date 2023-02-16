@@ -2,7 +2,7 @@
 
 #include <utility>
 
-Token::Token(Token::Tag tag) : tag_(tag) {}
+Token::Token(Token::Tag tag) : tag_(tag), lexeme_() {}
 
 Token::Token(Lexeme lexeme, Token::Tag tag) : lexeme_(std::move(lexeme)), tag_(tag) {}
 

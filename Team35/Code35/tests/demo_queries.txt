@@ -1,0 +1,5 @@
+1 - select statement that modifies
+variable v;
+Select v such that Modifies(1, v)
+x
+5000

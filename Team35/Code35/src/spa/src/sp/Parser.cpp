@@ -1,50 +1,34 @@
-/*
- * 2/1/2023
- * 2. Error Handling
- * 3. expr / term / factor repeating code
- * 4. CMake
- *
- * 2/4/2023
- * 1. Separate ASTNode or current
- * 2. peek() accept() expect() move to another interface
- * */
-
 #include <memory>
 #include <utility>
+#include <cassert>
+#include <deque>
 
 #include "Parser.h"
 #include "commons/ASTNode.h"
 using std::unique_ptr;
 
-Parser::Parser(PROGRAM src, const DesignExtractor &de) :
-    lex_(std::move(LexerFactory::createLexer(src, LexerFactory::LexerType::Simple))),
-    src_(std::move(src)), de_((DesignExtractor &) de) {
-    cur_ = lex_->scan();
-}
+Parser::Parser(PROGRAM src, std::unique_ptr<PKBWriter> pkb, std::deque<std::unique_ptr<Token>> tokenLst) :
+    tokenLst_(std::move(tokenLst)), flagExtract_(true),
+    src_(std::move(src)), de_(std::make_unique<DesignExtractor>(DesignExtractor(std::move(pkb)))) {}
+
+Parser::Parser(IParser::PROGRAM src, std::unique_ptr<PKBWriter> pkb, std::deque<std::unique_ptr<Token>> tokenLst,
+               bool flagExtract) :
+    tokenLst_(std::move(tokenLst)), flagExtract_(flagExtract),
+    src_(std::move(src)), de_(std::make_unique<DesignExtractor>(DesignExtractor(std::move(pkb)))) {}
 
 int Parser::peek(Token::Tag tag) {
-    if (cur_->getTag() == Token::Tag::EndOfFile) {
-        std::runtime_error("Error: Token List running out!");
-    }
-    return (cur_->getTag() == tag) ? 1 : 0;
+    return tokenLst_.back()->getTag() == tag ? 1 : 0;
+}
+
+Lexeme Parser::peekLexeme() {
+    return tokenLst_.back()->getLexeme();
 }
 
 int Parser::accept(Token::Tag tag) {
-    if (cur_->getTag() == Token::Tag::EndOfFile) {
-        std::runtime_error("Error: Token List running out!");
-    }
-    if (cur_->getTag() == tag) {
-        cur_ = lex_->scan();
+    if (tokenLst_.back()->getTag() == tag) {
+        tokenLst_.pop_back();
         return 1;
     }
-    return 0;
-}
-
-int Parser::expect(Token::Tag tag) {
-    if (accept(tag) == 1) {
-        return 1;
-    }
-    std::runtime_error give_me_a_name("Error: unexpected token");
     return 0;
 }
 
@@ -57,44 +41,48 @@ unique_ptr<ASTNode> Parser::Parse() {
         root->addChild(parseProc());
     }
 
-    expect(Token::Tag::EndOfFile);
-    de_.extractProgram(std::move(root));
-    return root;
+    accept(Token::Tag::EndOfFile);
+    return flagExtract_ ? de_->extractProgram(std::move(root)) : std::move(root);
 }
 
 unique_ptr<ASTNode> Parser::parseProc() {
-    peek(Token::Tag::Name);
+    assert(peek(Token::Tag::Name) == 1);
     unique_ptr<ASTNode> cur = std::make_unique<ASTNode>(
         ASTNode::SyntaxType::procedure,
-        cur_->getLexeme());
+        peekLexeme());
+
     accept(Token::Tag::Name);
     cur->addChild(parseStmtLst());
-    return cur;
+    return std::move(cur);
 }
 
 unique_ptr<ASTNode> Parser::parseStmtLst() {
-    expect(Token::Tag::LBrace);
     unique_ptr<ASTNode> cur = std::make_unique<ASTNode>(
         ASTNode::SyntaxType::stmtLst,
         std::nullopt);
+    // Assuming no recursion procedure
+
+    accept(Token::Tag::LBrace);
     while (accept(Token::Tag::RBrace) != 1) {
         cur->addChild(parseStmt());
     }
-    return cur;
+    return std::move(cur);
 }
 
 unique_ptr<ASTNode> Parser::parseStmt() {
-    unique_ptr<ASTNode> cur;
+    unique_ptr<ASTNode> cur = std::make_unique<ASTNode>(
+            ASTNode::SyntaxType::program,
+            std::nullopt);
     if (peek(Token::Tag::Name)) {
-        cur = parseAssign();
+        return std::move(parseAssign());
     } else if (peek(Token::Tag::Read)) {
-        cur = parseRead();
+        return std::move(parseRead());
     } else if (peek(Token::Tag::Print)) {
-        cur = parsePrint();
+        return std::move(parsePrint());
     } else {
-        std::runtime_error("Unidentified Token");
+        assert(false);
     }
-    return cur;
+    return std::move(cur);
 }
 
 unique_ptr<ASTNode> Parser::parseAssign() {
@@ -103,10 +91,13 @@ unique_ptr<ASTNode> Parser::parseAssign() {
         std::nullopt);
 
     cur->addChild(parseName());
-    expect(Token::Tag::Assignment);
+
+    accept(Token::Tag::Assignment);
+
     cur->addChild(parseExpr());
-    expect(Token::Tag::SemiColon);
-    return cur;
+
+    accept(Token::Tag::SemiColon);
+    return std::move(cur);
 }
 
 unique_ptr<ASTNode> Parser::parseRead() {
@@ -116,8 +107,9 @@ unique_ptr<ASTNode> Parser::parseRead() {
         std::nullopt);
 
     cur->addChild(parseName());
-    expect(Token::Tag::SemiColon);
-    return cur;
+
+    accept(Token::Tag::SemiColon);
+    return std::move(cur);
 }
 
 unique_ptr<ASTNode> Parser::parsePrint() {
@@ -127,8 +119,9 @@ unique_ptr<ASTNode> Parser::parsePrint() {
         std::nullopt);
 
     cur->addChild(parseName());
-    expect(Token::Tag::SemiColon);
-    return cur;
+
+    accept(Token::Tag::SemiColon);
+    return std::move(cur);
 }
 
 unique_ptr<ASTNode> Parser::parseExpr() {
@@ -141,7 +134,7 @@ unique_ptr<ASTNode> Parser::parseExpr() {
         op->addChild(std::move(firstOp));
         op->addChild(std::move(secondOp));
 
-        return op;
+        return std::move(op);
     } else if (accept(Token::Tag::Minus)) {
         unique_ptr<ASTNode> op = std::make_unique<ASTNode>(
             ASTNode::SyntaxType::minus,
@@ -150,9 +143,9 @@ unique_ptr<ASTNode> Parser::parseExpr() {
         op->addChild(std::move(firstOp));
         op->addChild(std::move(secondOp));
 
-        return op;
+        return std::move(op);
     } else {
-        return firstOp;
+        return std::move(firstOp);
     }
 }
 
@@ -166,7 +159,7 @@ unique_ptr<ASTNode> Parser::parseTerm() {
         op->addChild(std::move(firstOp));
         op->addChild(std::move(secondOp));
 
-        return op;
+        return std::move(op);
     } else if (accept(Token::Tag::Divide)) {
         unique_ptr<ASTNode> op = std::make_unique<ASTNode>(
             ASTNode::SyntaxType::div,
@@ -175,7 +168,7 @@ unique_ptr<ASTNode> Parser::parseTerm() {
         op->addChild(std::move(firstOp));
         op->addChild(std::move(secondOp));
 
-        return op;
+        return std::move(op);
     } else if (accept(Token::Tag::Modulo)) {
         unique_ptr<ASTNode> op = std::make_unique<ASTNode>(
             ASTNode::SyntaxType::mod,
@@ -184,9 +177,9 @@ unique_ptr<ASTNode> Parser::parseTerm() {
         op->addChild(std::move(firstOp));
         op->addChild(std::move(secondOp));
 
-        return op;
+        return std::move(op);
     } else {
-        return firstOp;
+        return std::move(firstOp);
     }
 }
 
@@ -196,32 +189,33 @@ unique_ptr<ASTNode> Parser::parseFactor() {
         cur = parseName();
     } else if (peek(Token::Tag::Integer)) {
         cur = parseInteger();
-    } else if (accept(Token::Tag::LParen)) {
-        cur = parseExpr();
-        expect(Token::Tag::RParen);
     } else {
-        std::runtime_error("Factor: syntax error");
+        accept(Token::Tag::LParen);
+        cur = parseExpr();
+        accept(Token::Tag::RParen);
     }
-    return cur;
+    return std::move(cur);
 }
 
 unique_ptr<ASTNode> Parser::parseName() {
-    peek(Token::Tag::Name);
+    assert(peek(Token::Tag::Name) == 1);
     unique_ptr<ASTNode> cur = std::make_unique<ASTNode>(
         ASTNode::SyntaxType::var,
-        cur_->getLexeme());
+        peekLexeme());
     accept(Token::Tag::Name);
-    return cur;
+    return std::move(cur);
 }
 
 unique_ptr<ASTNode> Parser::parseInteger() {
-    peek(Token::Tag::Integer);
+    assert(peek(Token::Tag::Integer) == 1);
     unique_ptr<ASTNode> cur = std::make_unique<ASTNode>(
         ASTNode::SyntaxType::constVal,
-        cur_->getLexeme());
+        peekLexeme());
     accept(Token::Tag::Integer);
-    return cur;
+    return std::move(cur);
 }
+
+
 
 
 
