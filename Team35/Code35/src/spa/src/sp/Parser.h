@@ -13,16 +13,11 @@ using std::unique_ptr;
 
 class Parser : public IParser {
  public:
-    Parser(
-        PROGRAM src, std::unique_ptr<PKBWriter> pkb,
-        std::deque<std::unique_ptr<Token>> tokenLst, bool flagExtract = true);
+    explicit Parser(std::deque<std::unique_ptr<Token>> tokenLst);
     unique_ptr<ASTNode> Parse() override;
 
  private:
     std::deque<std::unique_ptr<Token>> tokenLst_;
-    PROGRAM src_;
-    std::unique_ptr<DesignExtractor> de_;
-    bool flagExtract_;
 
     int peek(Token::Tag);
     Lexeme peekLexeme();

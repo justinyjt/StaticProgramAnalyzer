@@ -5,12 +5,10 @@
 
 #include "Parser.h"
 #include "commons/ASTNode.h"
+
 using std::unique_ptr;
 
-Parser::Parser(IParser::PROGRAM src, std::unique_ptr<PKBWriter> pkb, std::deque<std::unique_ptr<Token>> tokenLst,
-               bool flagExtract) :
-    tokenLst_(std::move(tokenLst)), flagExtract_(flagExtract),
-    src_(std::move(src)), de_(std::make_unique<DesignExtractor>(DesignExtractor(std::move(pkb)))) {}
+Parser::Parser(std::deque<std::unique_ptr<Token>> tokenLst) : tokenLst_(std::move(tokenLst)) {}
 
 int Parser::peek(Token::Tag tag) {
     return tokenLst_.back()->getTag() == tag ? 1 : 0;
@@ -38,7 +36,7 @@ unique_ptr<ASTNode> Parser::Parse() {
     }
 
     accept(Token::Tag::EndOfFile);
-    return flagExtract_ ? de_->extractProgram(std::move(root)) : std::move(root);
+    return std::move(root);
 }
 
 unique_ptr<ASTNode> Parser::parseProc() {

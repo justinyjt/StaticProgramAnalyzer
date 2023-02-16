@@ -19,13 +19,8 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
 
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDeque(tokens, tokenLst);
-        PKB pkb;
-        std::unique_ptr<PKBWriter> pkbWriterPtr = std::make_unique<PKBWriter>(pkb);
 
-        std::unique_ptr<IParser> parser =
-            std::make_unique<Parser>(
-                "Hello World", std::move(pkbWriterPtr), std::move(tokenLst),
-                false);
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
         std::unique_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -44,13 +39,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDeque(tokens, tokenLst);
 
-        PKB pkb;
-        std::unique_ptr<PKBWriter> pkbWriterPtr = std::make_unique<PKBWriter>(pkb);
-
-        std::unique_ptr<IParser> parser =
-            std::make_unique<Parser>(
-                "Hello World", std::move(pkbWriterPtr), std::move(tokenLst),
-                false);
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
         std::unique_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -73,13 +62,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDeque(tokens, tokenLst);
 
-        PKB pkb;
-        std::unique_ptr<PKBWriter> pkbWriterPtr = std::make_unique<PKBWriter>(pkb);
-
-        std::unique_ptr<IParser> parser =
-            std::make_unique<Parser>(
-                "Hello World", std::move(pkbWriterPtr), std::move(tokenLst),
-                false);
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
         std::unique_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -107,19 +90,15 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDeque(tokens, tokenLst);
 
-        PKB pkb;
-        std::unique_ptr<PKBWriter> pkbWriterPtr = std::make_unique<PKBWriter>(pkb);
-
-        std::unique_ptr<IParser> parser =
-            std::make_unique<Parser>(
-                "Hello World", std::move(pkbWriterPtr), std::move(tokenLst),
-                false);
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
         std::unique_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
 
         REQUIRE(printer.printAST(root) == "procedure main {\nx=1+y*22;\n}\n");
-    }SECTION("Parser can parse one procedure with x = (y % 123) / 456;") {
+    }
+
+    SECTION("Parser can parse one procedure with x = (y % 123) / 456;") {
         Token EoF(Token::Tag::EndOfFile);
         Token Proc(Token::Tag::Procedure);
         Token ProcName("main", Token::Tag::Name);
@@ -141,19 +120,15 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDeque(tokens, tokenLst);
 
-        PKB pkb;
-        std::unique_ptr<PKBWriter> pkbWriterPtr = std::make_unique<PKBWriter>(pkb);
-
-        std::unique_ptr<IParser> parser =
-            std::make_unique<Parser>(
-                "Hello World", std::move(pkbWriterPtr), std::move(tokenLst),
-                false);
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
         std::unique_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
 
         REQUIRE(printer.printAST(root) == "procedure main {\nx=y%123/456;\n}\n");
-    }SECTION("Parser can parse one procedure with K0koM0 = ((14 * (1926 % 817)) / (zZz + r4t));") {
+    }
+
+    SECTION("Parser can parse one procedure with K0koM0 = ((14 * (1926 % 817)) / (zZz + r4t));") {
         Token EoF(Token::Tag::EndOfFile);
         Token Proc(Token::Tag::Procedure);
         Token ProcName("main", Token::Tag::Name);
@@ -180,19 +155,15 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDeque(tokens, tokenLst);
 
-        PKB pkb;
-        std::unique_ptr<PKBWriter> pkbWriterPtr = std::make_unique<PKBWriter>(pkb);
-
-        std::unique_ptr<IParser> parser =
-            std::make_unique<Parser>(
-                "Hello World", std::move(pkbWriterPtr), std::move(tokenLst),
-                false);
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
         std::unique_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
 
         REQUIRE(printer.printAST(root) == "procedure main {\nK0koM0=14*1926%817/zZz+r4t;\n}\n");
-    }SECTION("Parser can parse one procedure with x = (y % 123) / 456; y = 456;") {
+    }
+
+    SECTION("Parser can parse one procedure with x = (y % 123) / 456; y = 456;") {
         Token EoF(Token::Tag::EndOfFile);
         Token Proc(Token::Tag::Procedure);
         Token ProcName("main", Token::Tag::Name);
@@ -215,13 +186,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDeque(tokens, tokenLst);
 
-        PKB pkb;
-        std::unique_ptr<PKBWriter> pkbWriterPtr = std::make_unique<PKBWriter>(pkb);
-
-        std::unique_ptr<IParser> parser =
-            std::make_unique<Parser>(
-                "Hello World", std::move(pkbWriterPtr), std::move(tokenLst),
-                false);
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
         std::unique_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -245,13 +210,7 @@ TEST_CASE("Parser can parse read correctly", "[Parser]") {
         convertDeque(tokens, tokenLst);
         tokens.clear();
 
-        PKB pkb;
-        std::unique_ptr<PKBWriter> pkbWriterPtr = std::make_unique<PKBWriter>(pkb);
-
-        std::unique_ptr<IParser> parser =
-            std::make_unique<Parser>(
-                "Hello World", std::move(pkbWriterPtr), std::move(tokenLst),
-                false);
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
         std::unique_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -274,12 +233,7 @@ TEST_CASE("Parser can parse print correctly", "[Parser]") {
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDeque(tokens, tokenLst);
 
-        PKB pkb;
-        std::unique_ptr<PKBWriter> pkbWriterPtr = std::make_unique<PKBWriter>(pkb);
-
-        std::unique_ptr<IParser> parser =
-            std::make_unique<Parser>("Hello World", std::move(pkbWriterPtr), std::move(tokenLst),
-                                     false);
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
         std::unique_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
