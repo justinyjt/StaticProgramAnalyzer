@@ -5,6 +5,7 @@
 #include "catch.hpp"
 #include "commons/token/Token.h"
 #include "MockLexer.h"
+#include "../testHelper.h"
 #include "sp/SyntaxValidator.h"
 
 TEST_CASE("SyntaxValidator can validate very simple program correctly") {
@@ -219,4 +220,348 @@ TEST_CASE("SV can validate multiple stmt program") {
 
         REQUIRE(sv.validateProgram() == true);
     }
+}
+
+TEST_CASE("SV can validate if statements") {
+    SECTION("SV can validate single if statement") {
+        Token eof (Token::Tag::EndOfFile);
+        Token proc (Token::Tag::Procedure);
+        Token procName ("main", Token::Tag::Name);
+        Token lBrace (Token::Tag::LBrace);
+        Token rBrace (Token::Tag::RBrace);
+        Token semi (Token::Tag::SemiColon);
+        Token readStmt (Token::Tag::Read);
+        Token varName1 ("x", Token::Tag::Name);
+        Token varName2 ("y", Token::Tag::Name);
+        Token ifDeclaration (Token::Tag::If);
+        Token equiv (Token::Tag::Equivalence);
+        Token leftParent (Token::Tag::LParen);
+        Token rightParent (Token::Tag::RParen);
+        Token constVal1 ("1", Token::Tag::Integer);
+        Token then (Token::Tag::Then);
+        Token els (Token::Tag::Else);
+        std::vector<Token> tokens = {
+                eof, rBrace, rBrace,
+                semi, varName1, readStmt,
+                lBrace, els, rBrace,
+                semi, varName2, readStmt,
+                lBrace, then, rightParent, constVal1, equiv, varName1, leftParent, ifDeclaration,
+                semi, varName1, readStmt,
+                lBrace, procName, proc
+        };
+        MockLexer lex (tokens);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
+        SyntaxValidator sv (std::move(lexPtr));
+        requireTrue(sv.validateProgram());
+    }
+
+    SECTION("SV can invalidate invalid if statement (missing right brace)") {
+        Token eof (Token::Tag::EndOfFile);
+        Token proc (Token::Tag::Procedure);
+        Token procName ("main", Token::Tag::Name);
+        Token lBrace (Token::Tag::LBrace);
+        Token rBrace (Token::Tag::RBrace);
+        Token semi (Token::Tag::SemiColon);
+        Token readStmt (Token::Tag::Read);
+        Token varName1 ("x", Token::Tag::Name);
+        Token varName2 ("y", Token::Tag::Name);
+        Token ifDeclaration (Token::Tag::If);
+        Token equiv (Token::Tag::Equivalence);
+        Token leftParent (Token::Tag::LParen);
+        Token rightParent (Token::Tag::RParen);
+        Token constVal1 ("1", Token::Tag::Integer);
+        Token then (Token::Tag::Then);
+        Token els (Token::Tag::Else);
+        std::vector<Token> tokens = {
+                eof, rBrace,
+                semi, varName1, readStmt,
+                lBrace, els, rBrace,
+                semi, varName2, readStmt,
+                lBrace, then, rightParent, constVal1, equiv, varName1, leftParent, ifDeclaration,
+                semi, varName1, readStmt,
+                lBrace, procName, proc
+        };
+        MockLexer lex (tokens);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
+        SyntaxValidator sv (std::move(lexPtr));
+        requireFalse(sv.validateProgram());
+    }
+
+    SECTION("SV can invalidate invalid if statement (missing right brace)") {
+        Token eof (Token::Tag::EndOfFile);
+        Token proc (Token::Tag::Procedure);
+        Token procName ("main", Token::Tag::Name);
+        Token lBrace (Token::Tag::LBrace);
+        Token rBrace (Token::Tag::RBrace);
+        Token semi (Token::Tag::SemiColon);
+        Token readStmt (Token::Tag::Read);
+        Token varName1 ("x", Token::Tag::Name);
+        Token varName2 ("y", Token::Tag::Name);
+        Token ifDeclaration (Token::Tag::If);
+        Token equiv (Token::Tag::Equivalence);
+        Token leftParent (Token::Tag::LParen);
+        Token rightParent (Token::Tag::RParen);
+        Token constVal1 ("1", Token::Tag::Integer);
+        Token then (Token::Tag::Then);
+        Token els (Token::Tag::Else);
+        std::vector<Token> tokens = {
+                eof, rBrace, rBrace,
+                semi, varName1, readStmt,
+                els, rBrace,
+                semi, varName2, readStmt,
+                lBrace, then, rightParent, constVal1, equiv, varName1, leftParent, ifDeclaration,
+                semi, varName1, readStmt,
+                lBrace, procName, proc
+        };
+        MockLexer lex (tokens);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
+        SyntaxValidator sv (std::move(lexPtr));
+        requireFalse(sv.validateProgram());
+    }
+
+    SECTION("SV can invalidate invalid if statement (missing right parenthesis)") {
+        Token eof (Token::Tag::EndOfFile);
+        Token proc (Token::Tag::Procedure);
+        Token procName ("main", Token::Tag::Name);
+        Token lBrace (Token::Tag::LBrace);
+        Token rBrace (Token::Tag::RBrace);
+        Token semi (Token::Tag::SemiColon);
+        Token readStmt (Token::Tag::Read);
+        Token varName1 ("x", Token::Tag::Name);
+        Token varName2 ("y", Token::Tag::Name);
+        Token ifDeclaration (Token::Tag::If);
+        Token equiv (Token::Tag::Equivalence);
+        Token leftParent (Token::Tag::LParen);
+        Token rightParent (Token::Tag::RParen);
+        Token constVal1 ("1", Token::Tag::Integer);
+        Token then (Token::Tag::Then);
+        Token els (Token::Tag::Else);
+        std::vector<Token> tokens = {
+                eof, rBrace, rBrace,
+                semi, varName1, readStmt,
+                lBrace, els, rBrace,
+                semi, varName2, readStmt,
+                lBrace, then, constVal1, equiv, varName1, leftParent, ifDeclaration,
+                semi, varName1, readStmt,
+                lBrace, procName, proc
+        };
+        MockLexer lex (tokens);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
+        SyntaxValidator sv (std::move(lexPtr));
+        requireFalse(sv.validateProgram());
+    }
+    SECTION("SV can invalidate invalid if statement (missing left parenthesis)") {
+        Token eof (Token::Tag::EndOfFile);
+        Token proc (Token::Tag::Procedure);
+        Token procName ("main", Token::Tag::Name);
+        Token lBrace (Token::Tag::LBrace);
+        Token rBrace (Token::Tag::RBrace);
+        Token semi (Token::Tag::SemiColon);
+        Token readStmt (Token::Tag::Read);
+        Token varName1 ("x", Token::Tag::Name);
+        Token varName2 ("y", Token::Tag::Name);
+        Token ifDeclaration (Token::Tag::If);
+        Token equiv (Token::Tag::Equivalence);
+        Token leftParent (Token::Tag::LParen);
+        Token rightParent (Token::Tag::RParen);
+        Token constVal1 ("1", Token::Tag::Integer);
+        Token then (Token::Tag::Then);
+        Token els (Token::Tag::Else);
+        std::vector<Token> tokens = {
+                eof, rBrace, rBrace,
+                semi, varName1, readStmt,
+                lBrace, els, rBrace,
+                semi, varName2, readStmt,
+                lBrace, then, constVal1, equiv, rightParent, varName1, ifDeclaration,
+                semi, varName1, readStmt,
+                lBrace, procName, proc
+        };
+        MockLexer lex (tokens);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
+        SyntaxValidator sv (std::move(lexPtr));
+        requireFalse(sv.validateProgram());
+    }
+
+    SECTION("SV can invalidate invalid if statement (missing then)") {
+        Token eof (Token::Tag::EndOfFile);
+        Token proc (Token::Tag::Procedure);
+        Token procName ("main", Token::Tag::Name);
+        Token lBrace (Token::Tag::LBrace);
+        Token rBrace (Token::Tag::RBrace);
+        Token semi (Token::Tag::SemiColon);
+        Token readStmt (Token::Tag::Read);
+        Token varName1 ("x", Token::Tag::Name);
+        Token varName2 ("y", Token::Tag::Name);
+        Token ifDeclaration (Token::Tag::If);
+        Token equiv (Token::Tag::Equivalence);
+        Token leftParent (Token::Tag::LParen);
+        Token rightParent (Token::Tag::RParen);
+        Token constVal1 ("1", Token::Tag::Integer);
+        Token then (Token::Tag::Then);
+        Token els (Token::Tag::Else);
+        std::vector<Token> tokens = {
+                eof, rBrace, rBrace,
+                semi, varName1, readStmt,
+                lBrace, els, rBrace,
+                semi, varName2, readStmt,
+                lBrace, rightParent, constVal1, equiv, varName1, leftParent, ifDeclaration,
+                semi, varName1, readStmt,
+                lBrace, procName, proc
+        };
+        MockLexer lex (tokens);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
+        SyntaxValidator sv (std::move(lexPtr));
+        requireFalse(sv.validateProgram());
+    }
+
+    SECTION("SV can invalidate invalid if statement (missing else clause)") {
+        Token eof (Token::Tag::EndOfFile);
+        Token proc (Token::Tag::Procedure);
+        Token procName ("main", Token::Tag::Name);
+        Token lBrace (Token::Tag::LBrace);
+        Token rBrace (Token::Tag::RBrace);
+        Token semi (Token::Tag::SemiColon);
+        Token readStmt (Token::Tag::Read);
+        Token varName1 ("x", Token::Tag::Name);
+        Token varName2 ("y", Token::Tag::Name);
+        Token ifDeclaration (Token::Tag::If);
+        Token equiv (Token::Tag::Equivalence);
+        Token leftParent (Token::Tag::LParen);
+        Token rightParent (Token::Tag::RParen);
+        Token constVal1 ("1", Token::Tag::Integer);
+        Token then (Token::Tag::Then);
+        Token els (Token::Tag::Else);
+        std::vector<Token> tokens = {
+                eof, rBrace, rBrace,
+                semi, varName2, readStmt,
+                lBrace, then, rightParent, constVal1, equiv, varName1, leftParent, ifDeclaration,
+                semi, varName1, readStmt,
+                lBrace, procName, proc
+        };
+        MockLexer lex (tokens);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
+        SyntaxValidator sv (std::move(lexPtr));
+        requireFalse(sv.validateProgram());
+    }
+
+    SECTION("SV can validate two if statements") {
+        Token eof (Token::Tag::EndOfFile);
+        Token proc (Token::Tag::Procedure);
+        Token procName ("main", Token::Tag::Name);
+        Token lBrace (Token::Tag::LBrace);
+        Token rBrace (Token::Tag::RBrace);
+        Token semi (Token::Tag::SemiColon);
+        Token readStmt (Token::Tag::Read);
+        Token varName1 ("x", Token::Tag::Name);
+        Token varName2 ("y", Token::Tag::Name);
+        Token ifDeclaration (Token::Tag::If);
+        Token equiv (Token::Tag::Equivalence);
+        Token leftParent (Token::Tag::LParen);
+        Token rightParent (Token::Tag::RParen);
+        Token constVal1 ("1", Token::Tag::Integer);
+        Token then (Token::Tag::Then);
+        Token els (Token::Tag::Else);
+        std::vector<Token> tokens = {
+                eof, rBrace,
+                rBrace, semi, varName1, readStmt,
+                lBrace, els, rBrace,
+                semi, varName2, readStmt,
+                lBrace, then, rightParent, constVal1, equiv, varName1, leftParent, ifDeclaration,
+                rBrace, semi, varName1, readStmt,
+                lBrace, els, rBrace,
+                semi, varName2, readStmt,
+                lBrace, then, rightParent, constVal1, equiv, varName1, leftParent, ifDeclaration,
+                semi, varName1, readStmt,
+                lBrace, procName, proc
+        };
+        MockLexer lex (tokens);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
+        SyntaxValidator sv (std::move(lexPtr));
+        requireTrue(sv.validateProgram());
+    }
+
+    SECTION("SV can validate two if statements") {
+        Token eof (Token::Tag::EndOfFile);
+        Token proc (Token::Tag::Procedure);
+        Token procName ("main", Token::Tag::Name);
+        Token lBrace (Token::Tag::LBrace);
+        Token rBrace (Token::Tag::RBrace);
+        Token semi (Token::Tag::SemiColon);
+        Token readStmt (Token::Tag::Read);
+        Token varName1 ("x", Token::Tag::Name);
+        Token varName2 ("y", Token::Tag::Name);
+        Token ifDeclaration (Token::Tag::If);
+        Token equiv (Token::Tag::Equivalence);
+        Token leftParent (Token::Tag::LParen);
+        Token rightParent (Token::Tag::RParen);
+        Token constVal1 ("1", Token::Tag::Integer);
+        Token then (Token::Tag::Then);
+        Token els (Token::Tag::Else);
+        std::vector<Token> tokens = {
+                eof, rBrace,
+                rBrace, semi, varName1, readStmt,
+                lBrace, els, rBrace,
+                semi, varName2, readStmt,
+                rBrace, semi, varName1, readStmt,
+                lBrace, els, rBrace,
+                semi, varName2, readStmt,
+                lBrace, then, rightParent, constVal1, equiv, varName1, leftParent, ifDeclaration,
+                lBrace, then, rightParent, constVal1, equiv, varName1, leftParent, ifDeclaration,
+                rBrace, semi, varName1, readStmt,
+                lBrace, els, rBrace,
+                semi, varName2, readStmt,
+                lBrace, then, rightParent, constVal1, equiv, varName1, leftParent, ifDeclaration,
+                semi, varName1, readStmt,
+                lBrace, procName, proc
+        };
+        MockLexer lex (tokens);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
+        SyntaxValidator sv (std::move(lexPtr));
+        requireTrue(sv.validateProgram());
+    }
+
+    SECTION("SV can validate three if statements") {
+        Token eof (Token::Tag::EndOfFile);
+        Token proc (Token::Tag::Procedure);
+        Token procName ("main", Token::Tag::Name);
+        Token lBrace (Token::Tag::LBrace);
+        Token rBrace (Token::Tag::RBrace);
+        Token semi (Token::Tag::SemiColon);
+        Token readStmt (Token::Tag::Read);
+        Token varName1 ("x", Token::Tag::Name);
+        Token varName2 ("y", Token::Tag::Name);
+        Token ifDeclaration (Token::Tag::If);
+        Token equiv (Token::Tag::Equivalence);
+        Token leftParent (Token::Tag::LParen);
+        Token rightParent (Token::Tag::RParen);
+        Token constVal1 ("1", Token::Tag::Integer);
+        Token then (Token::Tag::Then);
+        Token els (Token::Tag::Else);
+        std::vector<Token> tokens = {
+                eof, rBrace,
+                rBrace, semi, varName1, readStmt,
+                lBrace, els, rBrace,
+                semi, varName2, readStmt,
+                rBrace, semi, varName1, readStmt,
+                lBrace, els, rBrace,
+                semi, varName2, readStmt,
+                rBrace, semi, varName1, readStmt,
+                lBrace, els, rBrace,
+                semi, varName2, readStmt,
+                lBrace, then, rightParent, constVal1, equiv, varName1, leftParent, ifDeclaration,
+                lBrace, then, rightParent, constVal1, equiv, varName1, leftParent, ifDeclaration,
+                lBrace, then, rightParent, constVal1, equiv, varName1, leftParent, ifDeclaration,
+                rBrace, semi, varName1, readStmt,
+                lBrace, els, rBrace,
+                semi, varName2, readStmt,
+                lBrace, then, rightParent, constVal1, equiv, varName1, leftParent, ifDeclaration,
+                semi, varName1, readStmt,
+                lBrace, procName, proc
+        };
+        MockLexer lex (tokens);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
+        SyntaxValidator sv (std::move(lexPtr));
+        requireTrue(sv.validateProgram());
+    }
+
 }
