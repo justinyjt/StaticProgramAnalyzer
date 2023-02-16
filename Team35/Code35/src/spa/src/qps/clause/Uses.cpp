@@ -2,7 +2,7 @@
 #include "qps/pql/StatementNumber.h"
 #include "qps/pql/Ident.h"
 
-UsesS::UsesS(PQLToken* first, PQLToken* second) : Relationship(first, second) {}
+UsesS::UsesS(PQLToken* first, PQLToken* second) : TwoArgClause(first, second) {}
 
 Result* UsesS::evaluate(PKBReader *db) {
     /* <stmt SYNONYM | STMT_NUM>, <var SYNONYM | IDENT | _ > */
@@ -24,7 +24,7 @@ Result* UsesS::evaluate(PKBReader *db) {
         case c(PQLToken::Tag::STMT_NUM, PQLToken::Tag::IDENT):  // Uses(1, "x")/ -> bool
         {
             int stmtNum = (dynamic_cast<const StatementNumber*>(first))->n;
-            bool b = db->isRelationshipExists(StmtNameRelationship::Uses, stmtNum, 
+            bool b = db->isRelationshipExists(StmtNameRelationship::Uses, stmtNum,
                                             second->str());
             Result *result = new BoolResult(b);
             return result;
@@ -61,5 +61,9 @@ Result* UsesS::evaluate(PKBReader *db) {
 
 
 bool UsesS::operator==(const Clause& rhs) const {
-    return (dynamic_cast<const UsesS*>(&rhs) != NULL) && Clause::equal(rhs);
+    const UsesS* pRhs = dynamic_cast<const UsesS*>(&rhs);
+    if (pRhs != nullptr) {
+        return equal(*pRhs);
+    }
+    return false;
 }

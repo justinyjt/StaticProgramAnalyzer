@@ -1,6 +1,6 @@
 #include <string>
 #include "PatternClauseParser.h"
-#include "qps/clause/pattern/Pattern.h"
+#include "qps/clause/Pattern.h"
 #include "qps/pql/Synonym.h"
 #include "qps/pql/Wildcard.h"
 #include "qps/pql/Expression.h"
@@ -27,7 +27,7 @@ Clause *PatternClauseParser::parse(TokenValidator &tokenValidator, std::vector<S
 
     tokenValidator.validateAndConsumeTokenType(Token::Tag::RParen);
 
-    Pattern *p = new Pattern(left, right, "");
+    Pattern *p = new Pattern(left, right, "");  // TODO
     return p;
 }
 

@@ -2,7 +2,7 @@
 #include "qps/pql/StatementNumber.h"
 
 Follows::Follows(PQLToken* first, PQLToken* second, bool isRecursive) :
-    Relationship(first, second), isRecursive(isRecursive) {}
+    TwoArgClause(first, second), isRecursive(isRecursive) {}
 
 Result* Follows::evaluate(PKBReader *db) {
     /* <stmt SYNONYM | _ | STMT_NUM> */
@@ -87,5 +87,9 @@ Result* Follows::evaluate(PKBReader *db) {
 
 
 bool Follows::operator==(const Clause& rhs) const {
-    return (dynamic_cast<const Follows*>(&rhs) != NULL) && Clause::equal(rhs);
+    const Follows* pRhs = dynamic_cast<const Follows*>(&rhs);
+    if (pRhs != nullptr) {
+        return equal(*pRhs);
+    }
+    return false;
 }

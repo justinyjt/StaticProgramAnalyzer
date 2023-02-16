@@ -2,9 +2,9 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include "Relationship.h"
+#include "TwoArgClause.h"
 
-class ModifiesS : public Relationship {
+class ModifiesS : public TwoArgClause {
  public:
     /* <stmt SYNONYM | STMT_NUM>, <var SYNONYM | IDENT | _ > */
     ModifiesS(PQLToken* first, PQLToken* second);
@@ -12,7 +12,7 @@ class ModifiesS : public Relationship {
     bool operator==(const Clause& rhs) const;
 };
 
-class ModifiesP : public Relationship {
+class ModifiesP : public TwoArgClause {
  public:
     /* <proc SYNONYM | proc IDENT>, <SYNONYM | IDENT | _ > */
     ModifiesP(PQLToken* first, PQLToken* second);

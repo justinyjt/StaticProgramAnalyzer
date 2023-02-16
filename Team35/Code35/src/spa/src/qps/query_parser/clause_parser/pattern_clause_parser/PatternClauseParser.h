@@ -5,7 +5,8 @@
 #include <vector>
 #include <utility>
 
-#include "qps/clause/pattern/Pattern.h"
+#include "qps/clause/Clause.h"
+#include "qps/clause/Pattern.h"
 #include "qps/pql/Synonym.h"
 #include "qps/pql/Wildcard.h"
 #include "commons/token/Token.h"

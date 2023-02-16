@@ -2,7 +2,7 @@
 #include "qps/pql/StatementNumber.h"
 
 Parent::Parent(PQLToken* first, PQLToken* second, bool isRecursive) :
-    Relationship(first, second), isRecursive(isRecursive) {}
+    TwoArgClause(first, second), isRecursive(isRecursive) {}
 
 Result* Parent::evaluate(PKBReader *db) {
     /* <stmt SYNONYM | _ | STMT_NUM> */
@@ -85,5 +85,9 @@ Result* Parent::evaluate(PKBReader *db) {
 }
 
 bool Parent::operator==(const Clause& rhs) const {
-    return (dynamic_cast<const Parent*>(&rhs) != NULL) && Clause::equal(rhs);
+    const Parent* pRhs = dynamic_cast<const Parent*>(&rhs);
+    if (pRhs != nullptr) {
+        return equal(*pRhs);
+    }
+    return false;
 }

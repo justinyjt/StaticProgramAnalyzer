@@ -2,7 +2,7 @@
 
 #include <utility>
 
-#include "qps/clause/relationship/Modifies.h"
+#include "qps/clause/Modifies.h"
 #include "qps/pql/StatementNumber.h"
 #include "qps/query_exceptions/SyntaxException.h"
 

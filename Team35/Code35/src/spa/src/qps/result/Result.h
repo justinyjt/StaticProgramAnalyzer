@@ -15,6 +15,7 @@ represents result of clause eval or query eval (multiple clause evals)
 class Result {
  public:
     virtual void output(std::list<std::string>&) = 0;
+    virtual Result* merge(Result* rhs) = 0;
 };
 
 // scalar result
@@ -26,6 +27,10 @@ class BoolResult : public Result {
 
     void output(std::list<std::string>& list) override {
       list.push_back(b ? "true" : "false");
+    }
+
+    Result* merge(Result* rhs) {
+      return nullptr;
     }
 };
 
@@ -51,6 +56,10 @@ class TwoColResult : public Result {
 
     void output(std::list<std::string>& list) override {
       throw std::runtime_error("");
+    }
+
+    Result* merge(Result* rhs) {
+      return nullptr;
     }
 };
 
@@ -80,5 +89,9 @@ class OneColResult : public Result {
           list.push_back(elem);
         }
       }
+    }
+
+    Result* merge(Result* rhs) {
+      return nullptr;
     }
 };

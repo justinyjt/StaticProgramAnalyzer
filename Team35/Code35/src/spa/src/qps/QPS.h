@@ -7,13 +7,12 @@
 #include <list>
 #include "commons/lexer/Lexer.h"
 #include "qps/query_parser/QueryParser.h"
-#include "qps/QueryEvaluator.h"
 #include "qps/clause/Clause.h"
 
 class QPS {
  private:
+   PKBReader* db;
     QueryParser* queryParser;
-    QueryEvaluator* queryEvaluator;
 
  public:
     explicit QPS(PKBReader* pkbReader);

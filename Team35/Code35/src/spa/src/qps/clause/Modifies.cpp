@@ -2,14 +2,14 @@
 #include "qps/pql/StatementNumber.h"
 #include "qps/pql/Ident.h"
 
-ModifiesS::ModifiesS(PQLToken* first, PQLToken* second) : Relationship(first, second) {}
+ModifiesS::ModifiesS(PQLToken* first, PQLToken* second) : TwoArgClause(first, second) {}
 
 Result* ModifiesS::evaluate(PKBReader *db) {
     /* <stmt SYNONYM | STMT_NUM>, <var SYNONYM | IDENT | _ > */
 
     switch (caseValue()) {
         case c(PQLToken::Tag::STMT_NUM, PQLToken::Tag::SYNONYM):  // Modifies(1, var) -> string[]
-        {            
+        {
             int stmtNum = (dynamic_cast<const StatementNumber*>(first))->n;
             ENT_SET set = db->getRelationship(StmtNameRelationship::Modifies, stmtNum);
             Result *result = new OneColResult<std::string>(second->str(), set);
@@ -25,7 +25,7 @@ Result* ModifiesS::evaluate(PKBReader *db) {
         case c(PQLToken::Tag::STMT_NUM, PQLToken::Tag::IDENT):  // Modifies(1, "x") -> bool
         {
             int stmtNum = (dynamic_cast<const StatementNumber*>(first))->n;
-            bool b = db->isRelationshipExists(StmtNameRelationship::Modifies, 
+            bool b = db->isRelationshipExists(StmtNameRelationship::Modifies,
                                             stmtNum, second->str());
             Result *result = new BoolResult(b);
             return result;
@@ -59,5 +59,9 @@ Result* ModifiesS::evaluate(PKBReader *db) {
 
 
 bool ModifiesS::operator==(const Clause& rhs) const {
-    return (dynamic_cast<const ModifiesS*>(&rhs) != NULL) && Clause::equal(rhs);
+    const ModifiesS* pRhs = dynamic_cast<const ModifiesS*>(&rhs);
+    if (pRhs != nullptr) {
+        return equal(*pRhs);
+    }
+    return false;
 }

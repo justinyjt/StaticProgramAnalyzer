@@ -1,7 +1,7 @@
 #include "Pattern.h"
 #include "qps/pql/Expression.h"
 
-Pattern::Pattern(PQLToken* first, PQLToken* second, std::string ident) : Clause(first, second), ident(ident) {}
+Pattern::Pattern(PQLToken* first, PQLToken* second, std::string ident) : TwoArgClause(first, second), ident(ident) {}
 
 Result* Pattern::evaluate(PKBReader *db) {
     /* <var SYNONYM | IDENT | _> , <EXPR | _EXPR_ | _> */
@@ -77,5 +77,9 @@ Result* Pattern::evaluate(PKBReader *db) {
 }
 
 bool Pattern::operator==(const Clause& rhs) const {
-    return (dynamic_cast<const Pattern*>(&rhs) != NULL) && Clause::equal(rhs);
+    const Pattern* pRhs = dynamic_cast<const Pattern*>(&rhs);
+    if (pRhs != nullptr) {
+        return ident == pRhs->ident && equal(*pRhs);
+    }
+    return false;
 }
