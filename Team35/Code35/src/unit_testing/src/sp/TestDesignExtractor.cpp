@@ -5,17 +5,17 @@
 TEST_CASE("DE can extract assign pattern correctly", "[Design Extractor]") {
     SECTION("DE can extract correct pattern: x = 3") {
         std::unique_ptr<ASTNode> root =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::program ,std::nullopt));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Program, std::nullopt));
         std::unique_ptr<ASTNode> proc =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::procedure ,std::nullopt));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Procedure, std::nullopt));
         std::unique_ptr<ASTNode> stmtLst =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::stmtLst ,std::nullopt));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::StmtLst, std::nullopt));
         std::unique_ptr<ASTNode> assign =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::assign ,std::nullopt));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Assign, std::nullopt));
         std::unique_ptr<ASTNode> lVar =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::var ,"x"));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Variable, "x"));
         std::unique_ptr<ASTNode> rConst =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::constVal ,"3"));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Constant, "3"));
 
         assign->addChild(std::move(lVar));
         assign->addChild(std::move(rConst));
@@ -28,7 +28,7 @@ TEST_CASE("DE can extract assign pattern correctly", "[Design Extractor]") {
         de.extractProgram(std::move(root));
 
         std::string ans;
-        for (const auto& itr : de.getAssignPatMap()) {
+        for (const auto &itr : de.getAssignPatMap()) {
             ans.append(std::to_string(itr.first) + "\t" + itr.second + "\n");
         }
 
@@ -37,21 +37,21 @@ TEST_CASE("DE can extract assign pattern correctly", "[Design Extractor]") {
 
     SECTION("DE can extract correct pattern: x =  y * 3") {
         std::unique_ptr<ASTNode> root =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::program ,std::nullopt));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Program, std::nullopt));
         std::unique_ptr<ASTNode> proc =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::procedure ,std::nullopt));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Procedure, std::nullopt));
         std::unique_ptr<ASTNode> stmtLst =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::stmtLst ,std::nullopt));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::StmtLst, std::nullopt));
         std::unique_ptr<ASTNode> assign =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::assign ,std::nullopt));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Assign, std::nullopt));
         std::unique_ptr<ASTNode> lVar =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::var ,"x"));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Variable, "x"));
         std::unique_ptr<ASTNode> rVar =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::var ,"y"));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Variable, "y"));
         std::unique_ptr<ASTNode> mul =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::times ,"*"));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Multiply, "*"));
         std::unique_ptr<ASTNode> rConst =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::constVal ,"3"));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Constant, "3"));
 
         mul->addChild(std::move(rVar));
         mul->addChild(std::move(rConst));
@@ -75,25 +75,25 @@ TEST_CASE("DE can extract assign pattern correctly", "[Design Extractor]") {
 
     SECTION("DE can extract correct pattern: x =  1 + y * 3") {
         std::unique_ptr<ASTNode> root =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::program ,std::nullopt));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Program, std::nullopt));
         std::unique_ptr<ASTNode> proc =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::procedure ,std::nullopt));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Procedure, std::nullopt));
         std::unique_ptr<ASTNode> stmtLst =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::stmtLst ,std::nullopt));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::StmtLst, std::nullopt));
         std::unique_ptr<ASTNode> assign =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::assign ,std::nullopt));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Assign, std::nullopt));
         std::unique_ptr<ASTNode> lVar =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::var ,"x"));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Variable, "x"));
         std::unique_ptr<ASTNode> rConst1 =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::constVal ,"1"));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Constant, "1"));
         std::unique_ptr<ASTNode> plus =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::plus ,"+"));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Plus, "+"));
         std::unique_ptr<ASTNode> rVar2 =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::var ,"y"));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Variable, "y"));
         std::unique_ptr<ASTNode> mul =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::times ,"*"));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Multiply, "*"));
         std::unique_ptr<ASTNode> rConst3 =
-                std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::constVal ,"3"));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Constant, "3"));
 
         mul->addChild(std::move(rVar2));
         mul->addChild(std::move(rConst3));
