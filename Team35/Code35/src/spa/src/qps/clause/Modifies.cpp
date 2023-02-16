@@ -40,7 +40,7 @@ Result* ModifiesS::evaluate(PKBReader *db) {
         {
             STMT_ENT_SET set = db->getAllRelationships(StmtNameRelationship::Modifies);
             ENT_SET eset;
-            for (auto& p: set) 
+            for (auto& p : set)
                 eset.insert(std::to_string(p.first));
             Result *result = new TableResult(first->str(), eset);
             return result;

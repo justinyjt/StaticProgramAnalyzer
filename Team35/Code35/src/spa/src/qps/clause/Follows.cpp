@@ -16,7 +16,7 @@ Result* Follows::evaluate(PKBReader *db) {
             STMT_STMT_SET s = db->getAllRelationships(rs);
             std::vector<std::list<std::string>> vec;
             for (auto& p : s)
-                vec.emplace_back(std::to_string(p.first), std::to_string(p.second));
+                vec.push_back({std::to_string(p.first), std::to_string(p.second)});
             Result* result = new TableResult(first->str(), second->str(), vec);
             return result;
         }

@@ -4,7 +4,7 @@
 class SelectClause : public Clause {
  public:
     Synonym const syn;
-    SelectClause(Synonym syn);
+    explicit SelectClause(Synonym syn);
     Result* evaluate(PKBReader* db);
     bool operator==(const Clause& rhs) const;
 };

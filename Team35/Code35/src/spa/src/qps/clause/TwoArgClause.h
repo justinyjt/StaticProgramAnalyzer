@@ -14,7 +14,7 @@ class TwoArgClause : public Clause {
     TwoArgClause(PQLToken* first, PQLToken* second);
     virtual bool operator==(const Clause &rhs) const = 0;
 
-  protected:
+ protected:
     bool equal(const TwoArgClause& rhs) const;
     int caseValue() const;
     static constexpr int c(PQLToken::Tag t1, PQLToken::Tag t2) {

@@ -1,21 +1,22 @@
 #include "QPS.h"
+#include "pkb/PKBReader.h"
 
 QPS::QPS(PKBReader* pkbReader) {
-    db = pkbReader;
-    queryParser = new QueryParser();
+  db = pkbReader;
+  queryParser = new QueryParser();
 };
 
 void QPS::executeQuery(std::string& query, std::list<std::string>& result) {
-    std::vector<Clause*> clauses = queryParser->parse(query);
-    
-    // first clause
-    Result* curr = clauses[0]->evaluate(db);
-    int i = 1;
-    while (i < clauses.size()) {
-        Result* next = clauses[i]->evaluate(db);
-        Result* merged = curr->merge(next);
-        curr = merged;
-    }
+  std::vector<Clause*> clauses = queryParser->parse(query);
 
-    curr->output(result);
+  // first clause
+  Result* curr = clauses[0]->evaluate(db);
+  int i = 1;
+  while (i < clauses.size()) {
+      Result* next = clauses[i]->evaluate(db);
+      Result* merged = curr->merge(next);
+      curr = merged;
+  }
+
+  curr->output(result);
 }

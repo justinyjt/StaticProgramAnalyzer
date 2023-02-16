@@ -11,7 +11,7 @@
 
 class QPS {
  private:
-   PKBReader* db;
+    PKBReader* db;
     QueryParser* queryParser;
 
  public:

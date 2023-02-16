@@ -30,9 +30,9 @@ class BoolResult : public Result {
     }
 
     Result* merge(Result* rhs) {
-      if (b) { // true
+      if (b) {  // true
         return rhs;
-      } else { // false
+      } else {  // false
         return this;
       }
     }
@@ -56,7 +56,7 @@ class TableResult : public Result {
       idents.push_back(ident1);
       idents.push_back(ident2);
       for (auto& p : set) {
-        rows.emplace_back(std::to_string(p.first), p.second);
+        rows.push_back({std::to_string(p.first), p.second});
       }
     }
 
@@ -69,17 +69,17 @@ class TableResult : public Result {
     }
 
     // for 1 col
-    explicit TableResult(const std::string& ident, ENT_SET& set) { 
+    explicit TableResult(const std::string& ident, ENT_SET& set) {
       idents.push_back(ident);
       for (auto& elem : set)
-        rows.emplace_back(elem);
+        rows.push_back({elem});
     }
 
     // for 1 col
-    explicit TableResult(const std::string& ident, STMT_SET& set) { 
+    explicit TableResult(const std::string& ident, STMT_SET& set) {
       idents.push_back(ident);
       for (auto& elem : set)
-        rows.emplace_back(std::to_string(elem));
+        rows.push_back({std::to_string(elem)});
     }
 
     void output(std::list<std::string>& list) override {

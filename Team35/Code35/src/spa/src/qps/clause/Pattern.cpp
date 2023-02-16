@@ -38,7 +38,7 @@ Result* Pattern::evaluate(PKBReader *db) {
             for (STMT_NUM s : stmtSet2) {  // for each statement, find e that is modified
                 ENT_SET entSet = db->getRelationship(StmtNameRelationship::Modifies, s);
                 for (const std::string& ent : entSet)
-                    vec.emplace_back(std::to_string(s), ent);
+                    vec.push_back({std::to_string(s), ent});
             }
             Result *result = new TableResult(this->ident, synonymIdent, vec);
             return result;
@@ -49,7 +49,7 @@ Result* Pattern::evaluate(PKBReader *db) {
             STMT_ENT_SET stmtEntSet = db->getAllRelationships(StmtNameRelationship::Modifies);
             std::vector<std::list<std::string>> vec;
             for (auto& p : stmtEntSet)
-                vec.emplace_back(std::to_string(p.first), p.second);
+                vec.push_back({std::to_string(p.first), p.second});
             Result *result = new TableResult(this->ident, synonymIdent, vec);
             return result;
         }
