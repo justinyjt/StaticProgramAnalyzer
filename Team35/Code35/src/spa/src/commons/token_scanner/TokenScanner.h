@@ -15,6 +15,7 @@ class TokenScanner {
     int peek(Token::Tag tag) const;
     int match(Token::Tag tag);
     int peekOffset(Token::Tag tag, uint32_t offset) const;
+    Lexeme peekLexeme() const;
     int isOffsetValid(uint32_t offset) const;
     void reset();
     [[nodiscard]] TokenLst getTokenLst() const;

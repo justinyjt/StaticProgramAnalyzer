@@ -31,6 +31,10 @@ int TokenScanner::peekOffset(Token::Tag tag, uint32_t offset) const {
     return (token_lst_[cur_idx_ + offset]->getTag() == tag);
 };
 
+Lexeme TokenScanner::peekLexeme() const {
+    return token_lst_[cur_idx_]->getLexeme();
+}
+
 int TokenScanner::isOffsetValid(uint32_t offset) const {
     return (cur_idx_ + offset < token_lst_.size());
 };
