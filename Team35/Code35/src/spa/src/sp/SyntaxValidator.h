@@ -19,9 +19,11 @@ class SyntaxValidator {
 
     void initialise();
 
-    int peek(Token::Tag);
-    int match(Token::Tag);
+    bool peek(Token::Tag tag);
+    bool match(Token::Tag tag);
+    bool peekOffset(Token::Tag tag, uint32_t offset);
     void next();
+    bool isOffsetValid(uint32_t offset);
 
     bool validateProc();
     bool validateStmtLst();
@@ -29,11 +31,18 @@ class SyntaxValidator {
     bool validateAssign();
     bool validateRead();
     bool validatePrint();
+    bool validateIf();
+    bool validateWhile();
+    bool validateCondExpr();
+    bool validateRelExpr();
     bool validateExpr();
     bool validateTerm();
     bool validateFactor();
     bool validateName();
     bool validateInt();
+
+    bool isName();
+    bool isCondExprSeparatedByLogicalOperator();
 };
 
 
