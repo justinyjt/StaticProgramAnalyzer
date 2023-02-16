@@ -9,34 +9,52 @@
 class ASTNode {
  public:
     enum class SyntaxType {
-        program,
-        procedure,
-        stmtLst,
-        assign,
-        read,
-        print,
-        var,
-        constVal,
-        plus,
-        minus,
-        times,
-        div,
-        mod,
+        Program,
+        Procedure,
+        StmtLst,
+        Assign,
+        Read,
+        Print,
+        Variable,
+        Constant,
+        If,
+        While,
+        Else,
+        Then,
+
+        // logical operators
+        LogicalAnd,
+        LogicalOr,
+        LogicalNot,
+
+        // relational operators
+        Equivalence,
+        NotEqual,
+        LessThan,
+        LessThanEqualTo,
+        GreaterThan,
+        GreaterThanEqualTo,
+
+        // arithmetic operators
+        Plus,
+        Minus,
+        Divide,
+        Multiply,
+        Modulo,
     };
 
     ASTNode(SyntaxType syntaxType, std::optional<std::string> label);
 
     [[nodiscard]] SyntaxType getSyntaxType() const;
     [[nodiscard]] std::string getLabel() const;
-    [[nodiscard]] const std::vector<std::unique_ptr<ASTNode>> & getChildren() const;
+    [[nodiscard]] const std::vector<std::unique_ptr<ASTNode>> &getChildren() const;
 
     void addChild(std::unique_ptr<ASTNode>);
 
  private:
     std::optional<std::string> label_;
     SyntaxType type_;
-    std::vector< std::unique_ptr<ASTNode> > children_;
+    std::vector<std::unique_ptr<ASTNode> > children_;
 };
-
 
 #endif  // TEAM35_CODE35_SRC_SPA_SRC_COMMONS_ASTNODE_H_

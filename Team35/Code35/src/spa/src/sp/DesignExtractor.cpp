@@ -20,7 +20,7 @@ DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
 
 std::unique_ptr<ASTNode> DesignExtractor::extractProgram(std::unique_ptr<ASTNode> root) {
     root_ = std::move(root);
-    assert(root_->getSyntaxType() == ASTNode::SyntaxType::program);
+    assert(root_->getSyntaxType() == ASTNode::SyntaxType::Program);
     for (const auto &child : root_->getChildren()) {
         extractProc(std::move(child));
     }
@@ -33,17 +33,17 @@ std::unique_ptr<ASTNode> DesignExtractor::extractProgram(std::unique_ptr<ASTNode
 }
 
 void DesignExtractor::extractProc(const std::unique_ptr<ASTNode> &node) {
-    assert(node->getSyntaxType() == ASTNode::SyntaxType::procedure);
+    assert(node->getSyntaxType() == ASTNode::SyntaxType::Procedure);
     const std::unique_ptr<ASTNode> &nodeC = node->getChildren().front();
-    assert(nodeC->getSyntaxType() == ASTNode::SyntaxType::stmtLst);
+    assert(nodeC->getSyntaxType() == ASTNode::SyntaxType::StmtLst);
     for (const auto &child : nodeC->getChildren()) {
         stmtCnt_++;
         switch (child->getSyntaxType()) {
-            case ASTNode::SyntaxType::assign:extractAssign(child);
+            case ASTNode::SyntaxType::Assign:extractAssign(child);
                 break;
-            case ASTNode::SyntaxType::read:extractRead(child);
+            case ASTNode::SyntaxType::Read:extractRead(child);
                 break;
-            case ASTNode::SyntaxType::print:extractPrint(child);
+            case ASTNode::SyntaxType::Print:extractPrint(child);
                 break;
             default:break;
         }
@@ -51,7 +51,7 @@ void DesignExtractor::extractProc(const std::unique_ptr<ASTNode> &node) {
 }
 
 void DesignExtractor::extractAssign(const std::unique_ptr<ASTNode> &node) {
-    assert(node->getSyntaxType() == ASTNode::SyntaxType::assign);
+    assert(node->getSyntaxType() == ASTNode::SyntaxType::Assign);
     assignPat_.clear();
     const auto &lAssign = node->getChildren().front();
     const auto &rAssign = node->getChildren().back();
@@ -61,7 +61,7 @@ void DesignExtractor::extractAssign(const std::unique_ptr<ASTNode> &node) {
 }
 
 std::string DesignExtractor::extractLeftAssign(const std::unique_ptr<ASTNode> &node) {
-    assert(node->getSyntaxType() == ASTNode::SyntaxType::var);
+    assert(node->getSyntaxType() == ASTNode::SyntaxType::Variable);
     std::string varName = node->getLabel();
     varNameSet_.insert(varName);
     stmtModPairSet_.insert(STMT_ENT(stmtCnt_, varName));
@@ -72,10 +72,10 @@ std::string DesignExtractor::extractLeftAssign(const std::unique_ptr<ASTNode> &n
 std::string DesignExtractor::extractRightAssign(const std::unique_ptr<ASTNode> &node) {
     std::string label = node->getLabel();
     switch (node->getSyntaxType()) {
-        case ASTNode::SyntaxType::var:varNameSet_.insert(label);
+        case ASTNode::SyntaxType::Variable:varNameSet_.insert(label);
             stmtUsePairSet_.insert(STMT_ENT(stmtCnt_, label));
             return label;
-        case ASTNode::SyntaxType::constVal:constSet_.insert(stmtCnt_);
+        case ASTNode::SyntaxType::Constant:constSet_.insert(stmtCnt_);
             return label;
         default:
             // operators;
@@ -90,9 +90,9 @@ std::string DesignExtractor::extractRightAssign(const std::unique_ptr<ASTNode> &
 }
 
 void DesignExtractor::extractRead(const std::unique_ptr<ASTNode> &node) {
-    assert(node->getSyntaxType() == ASTNode::SyntaxType::read);
+    assert(node->getSyntaxType() == ASTNode::SyntaxType::Read);
     const auto &child = node->getChildren().front();
-    assert(child->getSyntaxType() == ASTNode::SyntaxType::var);
+    assert(child->getSyntaxType() == ASTNode::SyntaxType::Variable);
     std::string varName = child->getLabel();
     varNameSet_.insert(varName);
     stmtModPairSet_.insert(STMT_ENT(stmtCnt_, varName));
@@ -100,9 +100,9 @@ void DesignExtractor::extractRead(const std::unique_ptr<ASTNode> &node) {
 }
 
 void DesignExtractor::extractPrint(const std::unique_ptr<ASTNode> &node) {
-    assert(node->getSyntaxType() == ASTNode::SyntaxType::print);
+    assert(node->getSyntaxType() == ASTNode::SyntaxType::Print);
     const auto &child = node->getChildren().front();
-    assert(child->getSyntaxType() == ASTNode::SyntaxType::var);
+    assert(child->getSyntaxType() == ASTNode::SyntaxType::Variable);
     std::string varName = child->getLabel();
     varNameSet_.insert(varName);
     stmtUsePairSet_.insert(STMT_ENT(stmtCnt_, varName));
@@ -142,4 +142,3 @@ void DesignExtractor::addStmtTypesToPKB() {
 std::unordered_map<STMT_NUM, std::string> DesignExtractor::getAssignPatMap() {
     return this->assignPatMap_;
 }
-
