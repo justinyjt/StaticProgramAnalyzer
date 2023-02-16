@@ -8,5 +8,5 @@ std::string StatementNumber::str() const {
 
 bool StatementNumber::operator==(const PQLToken& rhs) const {
     const StatementNumber* p_rhs = dynamic_cast<const StatementNumber*>(&rhs);
-    return p_rhs != NULL && PQLToken::equal(rhs) && n == p_rhs->n;
+    return p_rhs != nullptr && PQLToken::equal(rhs) && n == p_rhs->n;
 }

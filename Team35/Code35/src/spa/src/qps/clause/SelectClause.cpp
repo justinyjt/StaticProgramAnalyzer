@@ -10,7 +10,7 @@ Result* SelectClause::evaluate(PKBReader* db) {
 
 bool SelectClause::operator==(const Clause &rhs) const {
     const SelectClause* pRhs = dynamic_cast<const SelectClause*>(&rhs);
-    if (pRhs != NULL) {
+    if (pRhs != nullptr) {
         return syn == pRhs->syn;
     }
     return false;

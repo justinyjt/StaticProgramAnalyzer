@@ -14,8 +14,6 @@ void QPS::executeQuery(std::string& query, std::list<std::string>& result) {
     while (i < clauses.size()) {
         Result* next = clauses[i]->evaluate(db);
         Result* merged = curr->merge(next);
-        delete curr; 
-        delete next;
         curr = merged;
     }
 

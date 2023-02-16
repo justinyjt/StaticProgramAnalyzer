@@ -12,7 +12,7 @@ Result* ModifiesS::evaluate(PKBReader *db) {
         {
             int stmtNum = (dynamic_cast<const StatementNumber*>(first))->n;
             ENT_SET set = db->getRelationship(StmtNameRelationship::Modifies, stmtNum);
-            Result *result = new OneColResult<std::string>(second->str(), set);
+            Result *result = new TableResult(second->str(), set);
             return result;
         }
         case c(PQLToken::Tag::STMT_NUM, PQLToken::Tag::WILDCARD):  // Modifies(1, _) -> bool
@@ -32,25 +32,23 @@ Result* ModifiesS::evaluate(PKBReader *db) {
         }
         case c(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Modifies(stmt, var) -> pair<int, string>[]
         {
-            std::vector<std::pair<int, std::string>> vec;
             STMT_ENT_SET set = db->getAllRelationships(StmtNameRelationship::Modifies);
-            for (auto& se : set)                vec.push_back(se);
-            Result *result = new TwoColResult<int, std::string>(first->str(), second->str(), vec);
+            Result *result = new TableResult(first->str(), second->str(), set);
             return result;
         }
         case c(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // Modifies(stmt, _) -> int[]
         {
             STMT_ENT_SET set = db->getAllRelationships(StmtNameRelationship::Modifies);
-            std::vector<int> vec;
-            for (const STMT_ENT& se : set)
-                vec.push_back(se.first);
-            Result *result = new OneColResult<int>(first->str(), vec);
+            ENT_SET eset;
+            for (auto& p: set) 
+                eset.insert(std::to_string(p.first));
+            Result *result = new TableResult(first->str(), eset);
             return result;
         }
         case c(PQLToken::Tag::SYNONYM, PQLToken::Tag::IDENT):  // Modifies(stmt, "x")/ -> int[]
         {
             STMT_SET stmtSet = db->getRelationship(StmtNameRelationship::Modifies, second->str());
-            Result *result = new OneColResult<int>(first->str(), stmtSet);
+            Result *result = new TableResult(first->str(), stmtSet);
             return result;
         }
         default:

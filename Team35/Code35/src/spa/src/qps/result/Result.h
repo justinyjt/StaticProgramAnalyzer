@@ -30,68 +30,72 @@ class BoolResult : public Result {
     }
 
     Result* merge(Result* rhs) {
-      return nullptr;
+      if (b) { // true
+        return rhs;
+      } else { // false
+        return this;
+      }
     }
 };
 
-// 2-col result
-template <class T, class U>
-class TwoColResult : public Result {
-    std::vector<std::pair<T, U>> rows;
+// n-col result
+class TableResult : public Result {
+    std::list<std::string> idents;
+    std::vector<std::list<std::string>> rows;
 
  public:
-    const std::string ident1;
-    const std::string ident2;
-    explicit TwoColResult(std::string ident1, std::string ident2,
-      const std::vector<std::pair<T, U>>& vec) : ident1(ident1), ident2(ident2) {
+    // general for n-cols
+    explicit TableResult(std::list<std::string>& idents,
+          const std::vector<std::list<std::string>>& vec) : idents(idents) {
         rows.insert(rows.end(), vec.begin(), vec.end());
     }
 
-    explicit TwoColResult(std::string ident1, std::string ident2,
-      const std::unordered_set<std::pair<T, U>>& set) : ident1(ident1), ident2(ident2) {
-        for (auto& p : set) {
-          rows.push_back(p);
-        }
+    // for 2 cols
+    explicit TableResult(const std::string& ident1, const std::string& ident2,
+          STMT_ENT_SET& set) {
+      idents.push_back(ident1);
+      idents.push_back(ident2);
+      for (auto& p : set) {
+        rows.emplace_back(std::to_string(p.first), p.second);
+      }
     }
 
-    void output(std::list<std::string>& list) override {
-      throw std::runtime_error("");
-    }
-
-    Result* merge(Result* rhs) {
-      return nullptr;
-    }
-};
-
-// 1-col result
-template <class V>
-class OneColResult : public Result {
-    std::vector<V> rows;
-
- public:
-    std::string ident;
-    explicit OneColResult(std::string ident, const std::unordered_set<V>& set):
-      ident(ident) {
-      for (auto& elem : set)
-        rows.push_back(elem);
-    }
-
-    explicit OneColResult(std::string ident, const std::vector<V>& vec):
-    ident(ident) {
+    // for 2 cols
+    explicit TableResult(const std::string& ident1, const std::string& ident2,
+          const std::vector<std::list<std::string>>& vec) {
+      idents.push_back(ident1);
+      idents.push_back(ident2);
       rows.insert(rows.end(), vec.begin(), vec.end());
     }
 
+    // for 1 col
+    explicit TableResult(const std::string& ident, ENT_SET& set) { 
+      idents.push_back(ident);
+      for (auto& elem : set)
+        rows.emplace_back(elem);
+    }
+
+    // for 1 col
+    explicit TableResult(const std::string& ident, STMT_SET& set) { 
+      idents.push_back(ident);
+      for (auto& elem : set)
+        rows.emplace_back(std::to_string(elem));
+    }
+
     void output(std::list<std::string>& list) override {
+      if (idents.size() > 1) {
+        throw std::runtime_error("");
+      }
+
       for (auto& elem : rows) {
-        if constexpr (std::is_same<V, int>::value) {
-          list.push_back(std::to_string(elem));
-        }               if constexpr (std::is_same<V, std::string>::value) {
-          list.push_back(elem);
-        }
+        list.push_back(elem.front());
       }
     }
 
     Result* merge(Result* rhs) {
+      if (dynamic_cast<BoolResult*>(rhs) != nullptr) {
+        return rhs->merge(this);
+      }
       return nullptr;
     }
 };

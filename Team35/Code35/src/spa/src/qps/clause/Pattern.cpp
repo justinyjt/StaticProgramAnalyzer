@@ -19,38 +19,38 @@ Result* Pattern::evaluate(PKBReader *db) {
     switch (caseValue()) {
         case c(PQLToken::Tag::WILDCARD, PQLToken::Tag::EXPR):  // a(_, "x") -> int[]
         {
-            Result *result = new OneColResult<int>(this->ident, stmtSet2);
+            Result *result = new TableResult(this->ident, stmtSet2);
             return result;
         }
         case c(PQLToken::Tag::WILDCARD, PQLToken::Tag::WILDCARD):  // (_, _) -> int[]
         {
             STMT_ENT_SET stmtEntSet = db->getAllRelationships(StmtNameRelationship::Modifies);
             STMT_SET stmtSetResult;
-            for (STMT_ENT se : stmtEntSet)
-                stmtSetResult.insert(se.first);
-            Result *result = new OneColResult<int>(this->ident, stmtSetResult);
+            for (auto& p : stmtEntSet)
+                stmtSetResult.insert(p.first);
+            Result *result = new TableResult(this->ident, stmtSetResult);
             return result;
         }
         case c(PQLToken::Tag::SYNONYM, PQLToken::Tag::EXPR):  // a(v, "_x_") -> pair<int, str>[]
         {
             std::string synonymIdent = (dynamic_cast<const Synonym*>(first))->ident;
-            std::vector<std::pair<int, std::string>> vec;
+            std::vector<std::list<std::string>> vec;
             for (STMT_NUM s : stmtSet2) {  // for each statement, find e that is modified
                 ENT_SET entSet = db->getRelationship(StmtNameRelationship::Modifies, s);
                 for (const std::string& ent : entSet)
-                    vec.emplace_back(s, ent);
+                    vec.emplace_back(std::to_string(s), ent);
             }
-            Result *result = new TwoColResult<int, std::string>(this->ident, synonymIdent, vec);
+            Result *result = new TableResult(this->ident, synonymIdent, vec);
             return result;
         }
         case c(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // a(v, _) -> pair<int, str>[]
         {
             std::string synonymIdent = (dynamic_cast<const Synonym*>(first))->ident;
             STMT_ENT_SET stmtEntSet = db->getAllRelationships(StmtNameRelationship::Modifies);
-            std::vector<std::pair<int, std::string>> vec;
-            for (auto& se : stmtEntSet)
-                vec.push_back(se);
-            Result *result = new TwoColResult<int, std::string>(this->ident, synonymIdent, vec);
+            std::vector<std::list<std::string>> vec;
+            for (auto& p : stmtEntSet)
+                vec.emplace_back(std::to_string(p.first), p.second);
+            Result *result = new TableResult(this->ident, synonymIdent, vec);
             return result;
         }
         case c(PQLToken::Tag::IDENT, PQLToken::Tag::EXPR):  // a("x", "_1_") -> int[]
@@ -62,13 +62,13 @@ Result* Pattern::evaluate(PKBReader *db) {
                     stmtSetResult.insert(s);
                 }
             }
-            Result* result = new OneColResult<int>(this->ident, stmtSetResult);
+            Result* result = new TableResult(this->ident, stmtSetResult);
             return result;
         }
         case c(PQLToken::Tag::IDENT, PQLToken::Tag::WILDCARD):  // a("x", _) -> int[]
         {
             STMT_SET stmtSet1 = db->getRelationship(StmtNameRelationship::Modifies, first->str());
-            Result *result = new OneColResult<int>(this->ident, stmtSet1);
+            Result *result = new TableResult(this->ident, stmtSet1);
             return result;
         }
         default:
