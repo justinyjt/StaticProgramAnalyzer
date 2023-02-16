@@ -13,12 +13,9 @@ using std::unique_ptr;
 
 class Parser : public IParser {
  public:
-    explicit Parser(
+    Parser(
         PROGRAM src, std::unique_ptr<PKBWriter> pkb,
-        std::deque<std::unique_ptr<Token>> tokenLst);
-    explicit Parser(
-        PROGRAM src, std::unique_ptr<PKBWriter> pkb,
-        std::deque<std::unique_ptr<Token>> tokenLst, bool flagExtract);
+        std::deque<std::unique_ptr<Token>> tokenLst, bool flagExtract = true);
     unique_ptr<ASTNode> Parse() override;
 
  private:
