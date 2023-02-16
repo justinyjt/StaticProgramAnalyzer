@@ -2,33 +2,36 @@
 
 #include "SyntaxValidator.h"
 
-SyntaxValidator::SyntaxValidator(std::unique_ptr<ILexer> lex) :
-    lex_(std::move(lex)), tokenLst_() {
-    cur_ = std::move(lex_->scan());
+SyntaxValidator::SyntaxValidator(std::unique_ptr<ILexer> lex) : lex_(std::move(lex)), token_lst_() {}
+
+void SyntaxValidator::initialise() {
+    cur_idx_ = 0;
+    lex_->reset();
+    token_lst_.clear();
+    std::unique_ptr<Token> cur = lex_->scan();
+    while (cur->getTag() != Token::Tag::EndOfFile) {
+        token_lst_.push_back(std::move(cur));
+        cur = lex_->scan();
+    }
+    token_lst_.push_back(std::move(cur));
 }
 
 bool SyntaxValidator::validateProgram() {
+    initialise();
     while (peek(Token::Tag::Procedure)) {
-        tokenLst_.push_front(std::move(cur_));
-        next();
-
         if (!validateProc()) {
             return false;
         }
     }
-    if (peek(Token::Tag::EndOfFile)) {
-        tokenLst_.push_front(std::move(cur_));
-        return true;
-    }
-    return false;
+    return match(Token::Tag::EndOfFile);
 }
 
 bool SyntaxValidator::validateProc() {
-    if (!peek(Token::Tag::Name)) {
+    assert(peek(Token::Tag::Procedure));
+    next();
+    if (!match(Token::Tag::Name)) {
         return false;
     }
-    tokenLst_.push_front(std::move(cur_));
-    next();
 
     return validateStmtLst();
 }
@@ -37,7 +40,6 @@ bool SyntaxValidator::validateStmtLst() {
     if (!match(Token::Tag::LBrace)) {
         return false;
     }
-    tokenLst_.push_front(std::make_unique<Token>(Token::Tag::LBrace));
 
     while (!peek(Token::Tag::RBrace)) {
         if (!validateStmt()) {
@@ -45,7 +47,6 @@ bool SyntaxValidator::validateStmtLst() {
         }
     }
 
-    tokenLst_.push_front(std::make_unique<Token>(Token::Tag::RBrace));
     return match(Token::Tag::RBrace);
 }
 
@@ -57,45 +58,40 @@ bool SyntaxValidator::validateStmt() {
     } else if (peek(Token::Tag::Print)) {
         return validatePrint();
     } else {
-        //  std::runtime_error("Unidentified Token");
         return false;
     }
 }
 
 bool SyntaxValidator::validateAssign() {
-    tokenLst_.push_front(std::move(cur_));
+    assert(peek(Token::Tag::Name));
     next();
 
-    tokenLst_.push_front(std::make_unique<Token>(Token::Tag::Assignment));
     if (!match(Token::Tag::Assignment) || !validateExpr()) {
         return false;
     }
 
-    tokenLst_.push_front(std::make_unique<Token>(Token::Tag::SemiColon));
     return match(Token::Tag::SemiColon);
 }
 
 bool SyntaxValidator::validateRead() {
-    tokenLst_.push_front(std::move(cur_));
+    assert(peek(Token::Tag::Read));
     next();
 
     if (!validateName()) {
         return false;
     }
 
-    tokenLst_.push_front(std::make_unique<Token>(Token::Tag::SemiColon));
     return match(Token::Tag::SemiColon);
 }
 
 bool SyntaxValidator::validatePrint() {
-    tokenLst_.push_front(std::move(cur_));
+    assert(peek(Token::Tag::Print));
     next();
 
     if (!validateName()) {
         return false;
     }
 
-    tokenLst_.push_front(std::make_unique<Token>(Token::Tag::SemiColon));
     return match(Token::Tag::SemiColon);
 }
 
@@ -104,11 +100,9 @@ bool SyntaxValidator::validateExpr() {
         return false;
     }
     if (peek(Token::Tag::Plus)) {
-        tokenLst_.push_front(std::move(cur_));
         next();
         return validateExpr();
     } else if (peek(Token::Tag::Minus)) {
-        tokenLst_.push_front(std::move(cur_));
         next();
         return validateExpr();
     } else {
@@ -121,15 +115,12 @@ bool SyntaxValidator::validateTerm() {
         return false;
     }
     if (peek(Token::Tag::Multiply)) {
-        tokenLst_.push_front(std::move(cur_));
         next();
         return validateTerm();
     } else if (peek(Token::Tag::Divide)) {
-        tokenLst_.push_front(std::move(cur_));
         next();
         return validateTerm();
     } else if (peek(Token::Tag::Modulo)) {
-        tokenLst_.push_front(std::move(cur_));
         next();
         return validateTerm();
     } else {
@@ -143,56 +134,48 @@ bool SyntaxValidator::validateFactor() {
     } else if (peek(Token::Tag::Integer)) {
         return validateInt();
     } else if (match(Token::Tag::LParen)) {
-        tokenLst_.push_front(std::move(std::make_unique<Token>(Token::Tag::LParen)));
         if (!validateExpr()) {
             return false;
         }
-        tokenLst_.push_front(std::move(std::make_unique<Token>(Token::Tag::RParen)));
         return match(Token::Tag::RParen);
     } else {
-        std::runtime_error("Factor: syntax error");
         return false;
     }
 }
 
 bool SyntaxValidator::validateName() {
-    if (!peek(Token::Tag::Name)) {
-        return false;
+    if (peek(Token::Tag::Name) || peek(Token::Tag::Call) || peek(Token::Tag::Read) || peek(Token::Tag::Print)
+        || peek(Token::Tag::Procedure) || peek(Token::Tag::Else) || peek(Token::Tag::Then) || peek(Token::Tag::If)
+        || peek(Token::Tag::While)) {
+        next();
+        return true;
     }
-    tokenLst_.push_front(std::move(cur_));
-    next();
-    return true;
+    return false;
 }
 
 bool SyntaxValidator::validateInt() {
-    if (!peek(Token::Tag::Integer)) {
-        return false;
-    }
-    tokenLst_.push_front(std::move(cur_));
-    next();
-    return true;
+    return match(Token::Tag::Integer);
 }
 
 int SyntaxValidator::peek(Token::Tag tag) {
-    return (cur_->getTag() == tag) ? 1 : 0;
+    return (token_lst_[cur_idx_]->getTag() == tag) ? 1 : 0;
 }
 
 int SyntaxValidator::match(Token::Tag tag) {
-    if (cur_->getTag() == Token::Tag::EndOfFile) {
-        return tag == Token::Tag::EndOfFile ? 1 : 0;
-    }
-
-    if (cur_->getTag() == tag) {
-        cur_ = std::move(lex_->scan());
+    if (token_lst_[cur_idx_]->getTag() == tag) {
+        if (tag != Token::Tag::EndOfFile) {
+            next();
+        }
         return 1;
     }
     return 0;
 }
 
 void SyntaxValidator::next() {
-    cur_ = std::move(lex_->scan());
+    ++cur_idx_;
 }
 
 std::deque<std::unique_ptr<Token>> SyntaxValidator::getTokenLst() {
-    return std::move(this->tokenLst_);
+    std::reverse(token_lst_.begin(), token_lst_.end());
+    return std::move(this->token_lst_);
 }
