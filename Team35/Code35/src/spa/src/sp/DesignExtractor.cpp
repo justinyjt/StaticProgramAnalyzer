@@ -133,10 +133,10 @@ void DesignExtractor::addPatternsToPKB() {
 
 void DesignExtractor::addStmtTypesToPKB() {
     extractStmt();
-    pkbWriter_->addStatementEntities(StmtType::Assign, assignSet_);
-    pkbWriter_->addStatementEntities(StmtType::Read, readSet_);
-    pkbWriter_->addStatementEntities(StmtType::Print, printSet_);
-    pkbWriter_->addStatementEntities(StmtType::None, stmtSet_);
+    pkbWriter_->addStatements(StmtType::Assign, assignSet_);
+    pkbWriter_->addStatements(StmtType::Read, readSet_);
+    pkbWriter_->addStatements(StmtType::Print, printSet_);
+    pkbWriter_->addStatements(StmtType::None, stmtSet_);
 }
 
 std::unordered_map<STMT_NUM, std::string> DesignExtractor::getAssignPatMap() {
