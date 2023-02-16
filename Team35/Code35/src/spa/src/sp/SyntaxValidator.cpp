@@ -1,6 +1,7 @@
-#include <utility>
-
 #include "SyntaxValidator.h"
+
+#include <cassert>
+#include <utility>
 
 SyntaxValidator::SyntaxValidator(std::unique_ptr<ILexer> lex) : lex_(std::move(lex)), token_lst_() {}
 
