@@ -7,21 +7,17 @@
 #include "IParser.h"
 #include "commons/ASTNode.h"
 #include "commons/token/Token.h"
-#include "DesignExtractor.h"
+#include "commons/token_scanner/SimpleTokenScanner.h"
 
 using std::unique_ptr;
 
 class Parser : public IParser {
  public:
-    explicit Parser(std::deque<std::unique_ptr<Token>> tokenLst);
+    explicit Parser(TokenLst token_lst);
     unique_ptr<ASTNode> Parse() override;
 
  private:
-    std::deque<std::unique_ptr<Token>> tokenLst_;
-
-    int peek(Token::Tag);
-    Lexeme peekLexeme();
-    int accept(Token::Tag);
+    SimpleTokenScanner scanner_;
 
     unique_ptr<ASTNode> parseProc();
     unique_ptr<ASTNode> parseStmtLst();
