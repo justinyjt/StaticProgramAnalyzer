@@ -51,6 +51,10 @@ unique_ptr<ASTNode> Parser::parseStmt() {
         return std::move(parseRead());
     } else if (scanner_.peek(Token::Tag::Print)) {
         return std::move(parsePrint());
+    } else if (scanner_.peek(Token::Tag::If)) {
+        return std::move(parseIf());
+    } else if (scanner_.peek(Token::Tag::While)) {
+        return std::move(parseWhile());
     } else {
         assert(false);
     }
@@ -88,6 +92,142 @@ unique_ptr<ASTNode> Parser::parsePrint() {
 
     scanner_.match(Token::Tag::SemiColon);
     return std::move(cur);
+}
+
+unique_ptr<ASTNode> Parser::parseIf() {
+    scanner_.match(Token::Tag::If);
+    unique_ptr<ASTNode> cur = std::make_unique<ASTNode>(ASTNode::SyntaxType::If, std::nullopt);
+
+    scanner_.match(Token::Tag::LParen);
+    cur->addChild(parseCondExpr());
+    scanner_.match(Token::Tag::RParen);    
+
+    scanner_.match(Token::Tag::Then);
+    cur->addChild(parseStmtLst());
+
+    scanner_.match(Token::Tag::Else);
+    cur->addChild(parseStmtLst());
+
+    return std::move(cur);
+}
+
+unique_ptr<ASTNode> Parser::parseWhile() {
+    scanner_.match(Token::Tag::While);
+    unique_ptr<ASTNode> cur = std::make_unique<ASTNode>(ASTNode::SyntaxType::While, std::nullopt);
+
+    scanner_.match(Token::Tag::LParen);
+    cur->addChild(parseCondExpr());
+    scanner_.match(Token::Tag::RParen);
+
+    cur->addChild(parseStmtLst());
+
+    return std::move(cur);
+}
+
+unique_ptr<ASTNode> Parser::parseCondExpr() {
+    if (scanner_.peek(Token::Tag::LParen) && scanner_.isCondExprSeparatedByLogicalOperator()) {
+        scanner_.match(Token::Tag::LParen);
+        unique_ptr<ASTNode> expr1 = parseCondExpr();
+        scanner_.match(Token::Tag::RParen);
+
+        if (scanner_.match(Token::Tag::LogicalAnd)) {
+            unique_ptr<ASTNode> op = std::make_unique<ASTNode>(ASTNode::SyntaxType::LogicalAnd, "&&");
+
+            scanner_.match(Token::Tag::LParen);
+            unique_ptr<ASTNode> expr2 = parseCondExpr();
+            scanner_.match(Token::Tag::RParen);
+
+            op->addChild(std::move(expr1));
+            op->addChild(std::move(expr2));
+            return std::move(op);
+        } else if (scanner_.match(Token::Tag::LogicalOr)) {
+            unique_ptr<ASTNode> op = std::make_unique<ASTNode>(ASTNode::SyntaxType::LogicalOr, "||");
+
+            scanner_.match(Token::Tag::LParen);
+            unique_ptr<ASTNode> expr2 = parseCondExpr();
+            scanner_.match(Token::Tag::RParen);
+
+            op->addChild(std::move(expr1));
+            op->addChild(std::move(expr2));
+
+            return std::move(op);
+        }
+    } else {
+        if (scanner_.match(Token::Tag::LogicalNot)) {
+            unique_ptr<ASTNode> op = std::make_unique<ASTNode>(ASTNode::SyntaxType::LogicalNot, "!");
+
+            scanner_.match(Token::Tag::LParen);
+            unique_ptr<ASTNode> expr1 = parseCondExpr();
+            scanner_.match(Token::Tag::RParen);
+
+            op->addChild(std::move(expr1));
+
+            return std::move(op);
+        } else {
+            return std::move(parseRelExpr());
+        }
+    }
+}
+
+unique_ptr<ASTNode> Parser::parseRelExpr() {
+    unique_ptr<ASTNode> factor1 = parseRelFactor();
+    
+    if (scanner_.match(Token::Tag::GreaterThan)) {
+        unique_ptr<ASTNode> op = std::make_unique<ASTNode>(ASTNode::SyntaxType::GreaterThan, ">");
+        unique_ptr<ASTNode> factor2 = parseRelFactor();
+
+        op->addChild(std::move(factor1));
+        op->addChild(std::move(factor2));
+
+        return std::move(op);
+    } else if (scanner_.match(Token::Tag::GreaterThanEqualTo)) {
+        unique_ptr<ASTNode> op = std::make_unique<ASTNode>(ASTNode::SyntaxType::GreaterThanEqualTo, ">=");
+        unique_ptr<ASTNode> factor2 = parseRelFactor();
+
+        op->addChild(std::move(factor1));
+        op->addChild(std::move(factor2));
+
+        return std::move(op);
+    } else if (scanner_.match(Token::Tag::LessThan)) {
+        unique_ptr<ASTNode> op = std::make_unique<ASTNode>(ASTNode::SyntaxType::LessThan, "<");
+        unique_ptr<ASTNode> factor2 = parseRelFactor();
+
+        op->addChild(std::move(factor1));
+        op->addChild(std::move(factor2));
+
+        return std::move(op);
+    } else if (scanner_.match(Token::Tag::LessThanEqualTo)) {
+        unique_ptr<ASTNode> op = std::make_unique<ASTNode>(ASTNode::SyntaxType::LessThanEqualTo, "<=");
+        unique_ptr<ASTNode> factor2 = parseRelFactor();
+
+        op->addChild(std::move(factor1));
+        op->addChild(std::move(factor2));
+
+        return std::move(op);
+    } else if (scanner_.match(Token::Tag::Equal)) {
+        unique_ptr<ASTNode> op = std::make_unique<ASTNode>(ASTNode::SyntaxType::Equivalence, "==");
+        unique_ptr<ASTNode> factor2 = parseRelFactor();
+
+        op->addChild(std::move(factor1));
+        op->addChild(std::move(factor2));
+
+        return std::move(op);
+    } else if (scanner_.match(Token::Tag::NotEqual)) {
+        unique_ptr<ASTNode> op = std::make_unique<ASTNode>(ASTNode::SyntaxType::NotEqual, "!=");
+        unique_ptr<ASTNode> factor2 = parseRelFactor();
+
+        op->addChild(std::move(factor1));
+        op->addChild(std::move(factor2));
+
+        return std::move(op);
+    } else {
+        return std::move(factor1);
+    }
+}
+
+unique_ptr<ASTNode> Parser::parseRelFactor() {
+    unique_ptr<ASTNode> cur;
+    return std::move(parseExpr());
 }
 
 unique_ptr<ASTNode> Parser::parseExpr() {

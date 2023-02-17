@@ -246,3 +246,409 @@ TEST_CASE("Parser can parse print correctly", "[Parser]") {
         REQUIRE(printer.printAST(root) == "procedure main {\nprint x;\n}\n");
     }
 }
+
+TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
+    SECTION("Parser can parse: if(x>0){}then{}else{}") {
+        Token EoF(Token::Tag::EndOfFile);
+        Token Proc(Token::Tag::Procedure);
+        Token ProcName("main", Token::Tag::Name);
+        Token LBrace(Token::Tag::LBrace);
+        Token RBrace(Token::Tag::RBrace);
+        Token LParen(Token::Tag::LParen);
+        Token RParen(Token::Tag::RParen);
+        Token If(Token::Tag::If);
+        Token Then(Token::Tag::Then);
+        Token Else(Token::Tag::Else);
+        Token VarName("x", Token::Tag::Name);
+        Token GreaterThan(">", Token::Tag::GreaterThan);
+        Token ConstVal("0", Token::Tag::Integer);
+        std::deque<Token> tokens = { 
+            EoF, RBrace,
+            RBrace, LBrace, Else, 
+            RBrace, LBrace, Then, 
+            RParen, ConstVal, GreaterThan, VarName, LParen, If, 
+            LBrace, ProcName, Proc
+        };
+
+        std::deque<std::unique_ptr<Token>> tokenLst;
+        convertDequeReverse(tokens, tokenLst);
+
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<ASTNode> root = parser->Parse();
+
+        ASTPrinter printer;
+        REQUIRE(printer.printAST(root) == "procedure main {\nif (x>0) then {\n} else {\n}\n}\n");
+    }
+
+    SECTION("Parser can parse: if(x>(0+0)){}then{}else{}") {
+        Token EoF(Token::Tag::EndOfFile);
+        Token Proc(Token::Tag::Procedure);
+        Token ProcName("main", Token::Tag::Name);
+        Token LBrace(Token::Tag::LBrace);
+        Token RBrace(Token::Tag::RBrace);
+        Token LParen(Token::Tag::LParen);
+        Token RParen(Token::Tag::RParen);
+        Token If(Token::Tag::If);
+        Token Then(Token::Tag::Then);
+        Token Else(Token::Tag::Else);
+        Token VarName("x", Token::Tag::Name);
+        Token Plus("+", Token::Tag::Plus);
+        Token GreaterThan(">", Token::Tag::GreaterThan);
+        Token ConstVal("0", Token::Tag::Integer);
+        std::deque<Token> tokens = {
+            EoF, RBrace,
+            RBrace, LBrace, Else,
+            RBrace, LBrace, Then,
+            RParen, RParen, ConstVal, Plus, ConstVal, LParen, GreaterThan, VarName, LParen, If,
+            LBrace, ProcName, Proc};
+
+        std::deque<std::unique_ptr<Token>> tokenLst;
+        convertDequeReverse(tokens, tokenLst);
+
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<ASTNode> root = parser->Parse();
+
+        ASTPrinter printer;
+        REQUIRE(printer.printAST(root) == "procedure main {\nif (x>0+0) then {\n} else {\n}\n}\n");
+    }
+
+    SECTION("Parser can parse: if(!(x>0)){}then{}else{}") {
+        Token EoF(Token::Tag::EndOfFile);
+        Token Proc(Token::Tag::Procedure);
+        Token ProcName("main", Token::Tag::Name);
+        Token LBrace(Token::Tag::LBrace);
+        Token RBrace(Token::Tag::RBrace);
+        Token LParen(Token::Tag::LParen);
+        Token RParen(Token::Tag::RParen);
+        Token If(Token::Tag::If);
+        Token Then(Token::Tag::Then);
+        Token Else(Token::Tag::Else);
+        Token VarName("x", Token::Tag::Name);
+        Token LogicalNot("+", Token::Tag::LogicalNot);
+        Token GreaterThan(">", Token::Tag::GreaterThan);
+        Token ConstVal("0", Token::Tag::Integer);
+        std::deque<Token> tokens = {
+            EoF, RBrace,
+            RBrace, LBrace, Else,
+            RBrace, LBrace, Then,
+            RParen, RParen, ConstVal, GreaterThan, VarName, LParen, LogicalNot, LParen, If,
+            LBrace, ProcName, Proc};
+
+        std::deque<std::unique_ptr<Token>> tokenLst;
+        convertDequeReverse(tokens, tokenLst);
+
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<ASTNode> root = parser->Parse();
+
+        ASTPrinter printer;
+        REQUIRE(printer.printAST(root) == "procedure main {\nif (!(x>0)) then {\n} else {\n}\n}\n");
+    }
+
+    SECTION("Parser can parse: if((x>0)&&(x>0))then{}else{}") {
+        Token EoF(Token::Tag::EndOfFile);
+        Token Proc(Token::Tag::Procedure);
+        Token ProcName("main", Token::Tag::Name);
+        Token LBrace(Token::Tag::LBrace);
+        Token RBrace(Token::Tag::RBrace);
+        Token LParen(Token::Tag::LParen);
+        Token RParen(Token::Tag::RParen);
+        Token If(Token::Tag::If);
+        Token Then(Token::Tag::Then);
+        Token Else(Token::Tag::Else);
+        Token VarName("x", Token::Tag::Name);
+        Token LogicalAnd("&&", Token::Tag::LogicalAnd);
+        Token GreaterThan(">", Token::Tag::GreaterThan);
+        Token ConstVal("0", Token::Tag::Integer);
+        std::deque<Token> tokens = {
+            EoF, RBrace,
+            RBrace, LBrace, Else,
+            RBrace, LBrace, Then,
+            RParen, RParen, ConstVal, GreaterThan, VarName, LParen, LogicalAnd, RParen, ConstVal, GreaterThan, VarName, LParen, LParen, If,
+            LBrace, ProcName, Proc};
+
+        std::deque<std::unique_ptr<Token>> tokenLst;
+        convertDequeReverse(tokens, tokenLst);
+
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<ASTNode> root = parser->Parse();
+
+        ASTPrinter printer;
+        REQUIRE(printer.printAST(root) == "procedure main {\nif ((x>0)&&(x>0)) then {\n} else {\n}\n}\n");
+    }
+
+    SECTION("Parser can parse: if(((x>0)&&(x>0))||(x>0))then{}else{}") {
+        Token EoF(Token::Tag::EndOfFile);
+        Token Proc(Token::Tag::Procedure);
+        Token ProcName("main", Token::Tag::Name);
+        Token LBrace(Token::Tag::LBrace);
+        Token RBrace(Token::Tag::RBrace);
+        Token LParen(Token::Tag::LParen);
+        Token RParen(Token::Tag::RParen);
+        Token If(Token::Tag::If);
+        Token Then(Token::Tag::Then);
+        Token Else(Token::Tag::Else);
+        Token VarName("x", Token::Tag::Name);
+        Token LogicalAnd("&&", Token::Tag::LogicalAnd);
+        Token LogicalOr("||", Token::Tag::LogicalOr);
+        Token GreaterThan(">", Token::Tag::GreaterThan);
+        Token ConstVal("0", Token::Tag::Integer);
+        std::deque<Token> tokens = {
+            EoF, RBrace,
+            RBrace, LBrace, Else,
+            RBrace, LBrace, Then,
+            RParen, 
+            RParen, ConstVal, GreaterThan, VarName, LParen, LogicalOr,
+            RParen, RParen, ConstVal, GreaterThan, VarName, LParen, LogicalAnd, RParen, ConstVal, GreaterThan, VarName, LParen, LParen, 
+            LParen, If,
+            LBrace, ProcName, Proc};
+
+        std::deque<std::unique_ptr<Token>> tokenLst;
+        convertDequeReverse(tokens, tokenLst);
+
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<ASTNode> root = parser->Parse();
+
+        ASTPrinter printer;
+        REQUIRE(printer.printAST(root) == "procedure main {\nif (((x>0)&&(x>0))||(x>0)) then {\n} else {\n}\n}\n");
+    }
+}
+
+TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
+    SECTION("Parser can parse if(x>0)then{read x;}else{}") {
+        Token EoF(Token::Tag::EndOfFile);
+        Token Proc(Token::Tag::Procedure);
+        Token ProcName("main", Token::Tag::Name);
+        Token LBrace(Token::Tag::LBrace);
+        Token RBrace(Token::Tag::RBrace);
+        Token LParen(Token::Tag::LParen);
+        Token RParen(Token::Tag::RParen);
+        Token If(Token::Tag::If);
+        Token Then(Token::Tag::Then);
+        Token Else(Token::Tag::Else);
+        Token Semi(Token::Tag::SemiColon);
+        Token ReadStmt(Token::Tag::Read);
+        Token VarName("x", Token::Tag::Name);
+        Token GreaterThan(">", Token::Tag::GreaterThan);
+        Token ConstVal("0", Token::Tag::Integer);
+
+        std::deque<Token> tokens = {
+            EoF, RBrace,
+            RBrace, LBrace, Else,
+            RBrace, Semi, VarName, ReadStmt, LBrace, Then,
+            RParen, ConstVal, GreaterThan, VarName, LParen, If,
+            LBrace, ProcName, Proc};
+
+        std::deque<std::unique_ptr<Token>> tokenLst;
+        convertDequeReverse(tokens, tokenLst);
+
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<ASTNode> root = parser->Parse();
+
+        ASTPrinter printer;
+        REQUIRE(printer.printAST(root) == "procedure main {\nif (x>0) then {\nread x;\n} else {\n}\n}\n");
+    }
+
+    SECTION("Parser can parse if(x>0)then{}else{read x;}") {
+        Token EoF(Token::Tag::EndOfFile);
+        Token Proc(Token::Tag::Procedure);
+        Token ProcName("main", Token::Tag::Name);
+        Token LBrace(Token::Tag::LBrace);
+        Token RBrace(Token::Tag::RBrace);
+        Token LParen(Token::Tag::LParen);
+        Token RParen(Token::Tag::RParen);
+        Token If(Token::Tag::If);
+        Token Then(Token::Tag::Then);
+        Token Else(Token::Tag::Else);
+        Token Semi(Token::Tag::SemiColon);
+        Token ReadStmt(Token::Tag::Read);
+        Token VarName("x", Token::Tag::Name);
+        Token GreaterThan(">", Token::Tag::GreaterThan);
+        Token ConstVal("0", Token::Tag::Integer);
+
+        std::deque<Token> tokens = {
+            EoF, RBrace,
+            RBrace, Semi, VarName, ReadStmt, LBrace, Else,
+            RBrace, LBrace, Then,
+            RParen, ConstVal, GreaterThan, VarName, LParen, If,
+            LBrace, ProcName, Proc};
+
+        std::deque<std::unique_ptr<Token>> tokenLst;
+        convertDequeReverse(tokens, tokenLst);
+
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<ASTNode> root = parser->Parse();
+
+        ASTPrinter printer;
+        REQUIRE(printer.printAST(root) == "procedure main {\nif (x>0) then {\n} else {\nread x;\n}\n}\n");
+    }
+
+    SECTION("Parser can parse if(x>0)then{read x;}else{read x;}") {
+        Token EoF(Token::Tag::EndOfFile);
+        Token Proc(Token::Tag::Procedure);
+        Token ProcName("main", Token::Tag::Name);
+        Token LBrace(Token::Tag::LBrace);
+        Token RBrace(Token::Tag::RBrace);
+        Token LParen(Token::Tag::LParen);
+        Token RParen(Token::Tag::RParen);
+        Token If(Token::Tag::If);
+        Token Then(Token::Tag::Then);
+        Token Else(Token::Tag::Else);
+        Token Semi(Token::Tag::SemiColon);
+        Token ReadStmt(Token::Tag::Read);
+        Token VarName("x", Token::Tag::Name);
+        Token GreaterThan(">", Token::Tag::GreaterThan);
+        Token ConstVal("0", Token::Tag::Integer);
+
+        std::deque<Token> tokens = {
+            EoF, RBrace,
+            RBrace, Semi, VarName, ReadStmt, LBrace, Else,
+            RBrace, Semi, VarName, ReadStmt, LBrace, Then,
+            RParen, ConstVal, GreaterThan, VarName, LParen, If,
+            LBrace, ProcName, Proc};
+
+        std::deque<std::unique_ptr<Token>> tokenLst;
+        convertDequeReverse(tokens, tokenLst);
+
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<ASTNode> root = parser->Parse();
+
+        ASTPrinter printer;
+        REQUIRE(printer.printAST(root) == "procedure main {\nif (x>0) then {\nread x;\n} else {\nread x;\n}\n}\n");
+    }
+
+    SECTION("Parser can parse if(x>0)then{read x;read x;read x;}else{read x;}") {
+        Token EoF(Token::Tag::EndOfFile);
+        Token Proc(Token::Tag::Procedure);
+        Token ProcName("main", Token::Tag::Name);
+        Token LBrace(Token::Tag::LBrace);
+        Token RBrace(Token::Tag::RBrace);
+        Token LParen(Token::Tag::LParen);
+        Token RParen(Token::Tag::RParen);
+        Token If(Token::Tag::If);
+        Token Then(Token::Tag::Then);
+        Token Else(Token::Tag::Else);
+        Token Semi(Token::Tag::SemiColon);
+        Token ReadStmt(Token::Tag::Read);
+        Token VarName("x", Token::Tag::Name);
+        Token GreaterThan(">", Token::Tag::GreaterThan);
+        Token ConstVal("0", Token::Tag::Integer);
+
+        std::deque<Token> tokens = {
+            EoF, RBrace,
+            RBrace, Semi, VarName, ReadStmt, LBrace, Else,
+            RBrace, Semi, VarName, ReadStmt, Semi, VarName, ReadStmt, Semi, VarName, ReadStmt, LBrace, Then,
+            RParen, ConstVal, GreaterThan, VarName, LParen, If,
+            LBrace, ProcName, Proc};
+
+        std::deque<std::unique_ptr<Token>> tokenLst;
+        convertDequeReverse(tokens, tokenLst);
+
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<ASTNode> root = parser->Parse();
+
+        ASTPrinter printer;
+        REQUIRE(printer.printAST(root) == "procedure main {\nif (x>0) then {\nread x;\nread x;\nread x;\n} else {\nread x;\n}\n}\n");
+    }
+
+    SECTION("Parser can parse nested if: if(x>0)then{if(x>0)then{read x;}else{read x;}}else{read x;}") {
+        Token EoF(Token::Tag::EndOfFile);
+        Token Proc(Token::Tag::Procedure);
+        Token ProcName("main", Token::Tag::Name);
+        Token LBrace(Token::Tag::LBrace);
+        Token RBrace(Token::Tag::RBrace);
+        Token LParen(Token::Tag::LParen);
+        Token RParen(Token::Tag::RParen);
+        Token If(Token::Tag::If);
+        Token Then(Token::Tag::Then);
+        Token Else(Token::Tag::Else);
+        Token Semi(Token::Tag::SemiColon);
+        Token ReadStmt(Token::Tag::Read);
+        Token VarName("x", Token::Tag::Name);
+        Token GreaterThan(">", Token::Tag::GreaterThan);
+        Token ConstVal("0", Token::Tag::Integer);
+
+        std::deque<Token> tokens = {
+            EoF, RBrace,
+                RBrace, Semi, VarName, ReadStmt, LBrace, Else,
+                RBrace, 
+                    RBrace, Semi, VarName, ReadStmt, LBrace, Else,
+                    RBrace, Semi, VarName, ReadStmt, LBrace, Then,
+                    RParen, ConstVal, GreaterThan, VarName, LParen, If,
+                Then,
+                RParen, ConstVal, GreaterThan, VarName, LParen, If,
+            LBrace, ProcName, Proc};
+
+        std::deque<std::unique_ptr<Token>> tokenLst;
+        convertDequeReverse(tokens, tokenLst);
+
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<ASTNode> root = parser->Parse();
+
+        ASTPrinter printer;
+        REQUIRE(printer.printAST(root) =="procedure main {\nif (x>0) then {\nif (x>0) then {\nread x;\n} else {\nread x;\n}\n} else {\nread x;\n}\n}\n");
+    }
+}
+
+TEST_CASE("Parser can parse while... correctly", "[Parser]") {
+    SECTION("Parser can parse while(x>0){read x;}") {
+        Token EoF(Token::Tag::EndOfFile);
+        Token Proc(Token::Tag::Procedure);
+        Token ProcName("main", Token::Tag::Name);
+        Token LBrace(Token::Tag::LBrace);
+        Token RBrace(Token::Tag::RBrace);
+        Token LParen(Token::Tag::LParen);
+        Token RParen(Token::Tag::RParen);
+        Token While(Token::Tag::While);
+        Token Semi(Token::Tag::SemiColon);
+        Token ReadStmt(Token::Tag::Read);
+        Token VarName("x", Token::Tag::Name);
+        Token GreaterThan(">", Token::Tag::GreaterThan);
+        Token ConstVal("0", Token::Tag::Integer);
+
+        std::deque<Token> tokens = {
+            EoF, RBrace,
+            RBrace, Semi, VarName, ReadStmt, LBrace, 
+            RParen, ConstVal, GreaterThan, VarName, LParen, While,
+            LBrace, ProcName, Proc};
+
+        std::deque<std::unique_ptr<Token>> tokenLst;
+        convertDequeReverse(tokens, tokenLst);
+
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<ASTNode> root = parser->Parse();
+
+        ASTPrinter printer;
+        REQUIRE(printer.printAST(root) == "procedure main {\nwhile (x>0) {\nread x;\n}\n}\n");
+    }
+
+    SECTION("Parser can parse while(x>0){read x;read x;read x;}") {
+        Token EoF(Token::Tag::EndOfFile);
+        Token Proc(Token::Tag::Procedure);
+        Token ProcName("main", Token::Tag::Name);
+        Token LBrace(Token::Tag::LBrace);
+        Token RBrace(Token::Tag::RBrace);
+        Token LParen(Token::Tag::LParen);
+        Token RParen(Token::Tag::RParen);
+        Token While(Token::Tag::While);
+        Token Semi(Token::Tag::SemiColon);
+        Token ReadStmt(Token::Tag::Read);
+        Token VarName("x", Token::Tag::Name);
+        Token GreaterThan(">", Token::Tag::GreaterThan);
+        Token ConstVal("0", Token::Tag::Integer);
+
+        std::deque<Token> tokens = {
+            EoF, RBrace,
+            RBrace, Semi, VarName, ReadStmt, Semi, VarName, ReadStmt, Semi, VarName, ReadStmt, LBrace,
+            RParen, ConstVal, GreaterThan, VarName, LParen, While,
+            LBrace, ProcName, Proc};
+
+        std::deque<std::unique_ptr<Token>> tokenLst;
+        convertDequeReverse(tokens, tokenLst);
+
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<ASTNode> root = parser->Parse();
+
+        ASTPrinter printer;
+        REQUIRE(printer.printAST(root) == "procedure main {\nwhile (x>0) {\nread x;\nread x;\nread x;\n}\n}\n");
+    }
+}
