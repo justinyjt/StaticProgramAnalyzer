@@ -28,11 +28,10 @@ class Parser : public IParser {
     unique_ptr<ASTNode> parsePrint();
     unique_ptr<ASTNode> parseIf();
     unique_ptr<ASTNode> parseWhile();
-    
+
     unique_ptr<ASTNode> parseCondExpr();
     unique_ptr<ASTNode> parseRelExpr();
     unique_ptr<ASTNode> parseRelFactor();
-
     unique_ptr<ASTNode> parseExpr();
     unique_ptr<ASTNode> parseTerm();
     unique_ptr<ASTNode> parseFactor();

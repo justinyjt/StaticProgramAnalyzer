@@ -100,7 +100,7 @@ unique_ptr<ASTNode> Parser::parseIf() {
 
     scanner_.match(Token::Tag::LParen);
     cur->addChild(parseCondExpr());
-    scanner_.match(Token::Tag::RParen);    
+    scanner_.match(Token::Tag::RParen);
 
     scanner_.match(Token::Tag::Then);
     cur->addChild(parseStmtLst());
@@ -171,7 +171,6 @@ unique_ptr<ASTNode> Parser::parseCondExpr() {
 
 unique_ptr<ASTNode> Parser::parseRelExpr() {
     unique_ptr<ASTNode> factor1 = parseRelFactor();
-    
     if (scanner_.match(Token::Tag::GreaterThan)) {
         unique_ptr<ASTNode> op = std::make_unique<ASTNode>(ASTNode::SyntaxType::GreaterThan, ">");
         unique_ptr<ASTNode> factor2 = parseRelFactor();
