@@ -1,6 +1,6 @@
 /**
  * 2/5/2023
- * Currently the line number is determined by the semicolomn (new semicolomn means new stat means new line)
+ * Currently the line number is determined by the semicolon (new semicolon means new stat means new line)
  * need to change later
  */
 #include <cassert>
@@ -15,6 +15,7 @@
 
 DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
     pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(),
+    stmtSet_(), readSet_(), printSet_(), assignSet_(),
     stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(), stmtCnt_(0), assignPat_() {}
 
 std::unique_ptr<ASTNode> DesignExtractor::extractProgram(std::unique_ptr<ASTNode> root) {
@@ -26,15 +27,22 @@ std::unique_ptr<ASTNode> DesignExtractor::extractProgram(std::unique_ptr<ASTNode
     addVarNameSetToPKB();
     addStmtUsesPairSetToPKB();
     addStmtModifiesPairSetToPKB();
+    addStmtFollowPairSetToPKB();
     addPatternsToPKB();
+    addStmtTypesToPKB();
     return std::move(root_);
 }
 
 void DesignExtractor::extractProc(const std::unique_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::Procedure);
     const std::unique_ptr<ASTNode> &nodeC = node->getChildren().front();
-    assert(nodeC->getSyntaxType() == ASTNode::SyntaxType::StmtLst);
-    for (const auto &child : nodeC->getChildren()) {
+    extractStmtLst(nodeC);
+}
+
+void DesignExtractor::extractStmtLst(const std::unique_ptr<ASTNode> &node) {
+    assert(node->getSyntaxType() == ASTNode::SyntaxType::StmtLst);
+    STMT_NUM start_num = stmtCnt_;
+    for (const auto &child : node->getChildren()) {
         stmtCnt_++;
         switch (child->getSyntaxType()) {
             case ASTNode::SyntaxType::Assign:extractAssign(child);
@@ -44,6 +52,20 @@ void DesignExtractor::extractProc(const std::unique_ptr<ASTNode> &node) {
             case ASTNode::SyntaxType::Print:extractPrint(child);
                 break;
             default:break;
+        }
+    }
+
+    // have children
+    if (start_num != stmtCnt_) {
+        updateFollowsPairSet(start_num + 1, stmtCnt_);
+    }
+}
+
+void DesignExtractor::updateFollowsPairSet(STMT_NUM start_stmt, STMT_NUM end_stmt) {
+    for (int i = start_stmt; i < end_stmt; ++i) {
+        stmtFollowPairSet_.insert(STMT_STMT(i, i + 1));
+        for (int j = i + 1; j <= end_stmt; ++j) {
+            stmtFollowStarPairSet_.insert(STMT_STMT(i, j));
         }
     }
 }
@@ -63,6 +85,7 @@ std::string DesignExtractor::extractLeftAssign(const std::unique_ptr<ASTNode> &n
     std::string varName = node->getLabel();
     varNameSet_.insert(varName);
     stmtModPairSet_.insert(STMT_ENT(stmtCnt_, varName));
+    assignSet_.insert(stmtCnt_);
     return varName + "=";
 }
 
@@ -93,6 +116,7 @@ void DesignExtractor::extractRead(const std::unique_ptr<ASTNode> &node) {
     std::string varName = child->getLabel();
     varNameSet_.insert(varName);
     stmtModPairSet_.insert(STMT_ENT(stmtCnt_, varName));
+    readSet_.insert(stmtCnt_);
 }
 
 void DesignExtractor::extractPrint(const std::unique_ptr<ASTNode> &node) {
@@ -102,6 +126,13 @@ void DesignExtractor::extractPrint(const std::unique_ptr<ASTNode> &node) {
     std::string varName = child->getLabel();
     varNameSet_.insert(varName);
     stmtUsePairSet_.insert(STMT_ENT(stmtCnt_, varName));
+    printSet_.insert(stmtCnt_);
+}
+
+void DesignExtractor::updateStmtSet() {
+    for (int i = 1; i <= stmtCnt_; ++i) {
+        stmtSet_.insert(i);
+    }
 }
 
 void DesignExtractor::addVarNameSetToPKB() {
@@ -116,8 +147,21 @@ void DesignExtractor::addStmtModifiesPairSetToPKB() {
     pkbWriter_->addStmtEntityRelationships(StmtNameRelationship::Modifies, stmtModPairSet_);
 }
 
+void DesignExtractor::addStmtFollowPairSetToPKB() {
+    pkbWriter_->addStmtStmtRelationships(StmtStmtRelationship::Follows, stmtFollowPairSet_);
+    pkbWriter_->addStmtStmtRelationships(StmtStmtRelationship::FollowsStar, stmtFollowStarPairSet_);
+}
+
 void DesignExtractor::addPatternsToPKB() {
     pkbWriter_->addPatterns(assignPatMap_);
+}
+
+void DesignExtractor::addStmtTypesToPKB() {
+    updateStmtSet();
+    pkbWriter_->addStatements(StmtType::Assign, assignSet_);
+    pkbWriter_->addStatements(StmtType::Read, readSet_);
+    pkbWriter_->addStatements(StmtType::Print, printSet_);
+    pkbWriter_->addStatements(StmtType::None, stmtSet_);
 }
 
 std::unordered_map<STMT_NUM, std::string> DesignExtractor::getAssignPatMap() {
