@@ -38,11 +38,11 @@ void DesignExtractor::extractProc(const std::unique_ptr<ASTNode> &node) {
 
 void DesignExtractor::extractStmtLst(const std::unique_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::StmtLst);
-    std::vector<STMT_NUM> childStmtLst;
+    std::unique_ptr<std::vector<STMT_NUM>> childStmtLstPtr = std::make_unique<std::vector<STMT_NUM>>();
 
     for (const auto &child : node->getChildren()) {
         stmtCnt_++;
-        childStmtLst.push_back(stmtCnt_);
+        childStmtLstPtr->push_back(stmtCnt_);
         switch (child->getSyntaxType()) {
             case ASTNode::SyntaxType::Assign:extractAssign(child);
                 break;
@@ -59,26 +59,27 @@ void DesignExtractor::extractStmtLst(const std::unique_ptr<ASTNode> &node) {
     }
 
     // have children
-    if (!childStmtLst.empty()) {
-        updateFollowsPairSet(childStmtLst);
-        updateParentsPairSet(childStmtLst);
+    if (!childStmtLstPtr->empty()) {
+        updateFollowsPairSet(childStmtLstPtr);
+        updateParentsPairSet(childStmtLstPtr);
     }
 }
 
-void DesignExtractor::updateFollowsPairSet(std::vector<STMT_NUM> &lst) {
-    for (int i = 0; i < lst.size() - 1; ++i) {
-        stmtFollowPairSet_.insert(STMT_STMT(lst[i], lst[i + 1]));
-        for (int j = i + 1; j < lst.size(); ++j) {
-            stmtFollowStarPairSet_.insert(STMT_STMT(lst[i], lst[j]));
+void DesignExtractor::updateFollowsPairSet(const std::unique_ptr<std::vector<STMT_NUM>> &lst) {
+    for (int i = 0; i < lst->size() - 1; ++i) {
+        stmtFollowPairSet_.insert(STMT_STMT((*lst)[i], (*lst)[i + 1]));
+        for (int j = i + 1; j < lst->size(); ++j) {
+            stmtFollowStarPairSet_.insert(STMT_STMT((*lst)[i], (*lst)[j]));
         }
     }
 }
 
-void DesignExtractor::updateParentsPairSet(std::vector<STMT_NUM> &lst) {
+void DesignExtractor::updateParentsPairSet(const std::unique_ptr<std::vector<STMT_NUM>> &lst) {
     if (containerStmtLst_.empty()) {
         return;
     }
-    for (STMT_NUM stmt : lst) {
+    for (int i = 0; i < lst->size(); i++) {
+        STMT_NUM stmt = (*lst)[i];
         stmtParentPairSet_.insert(STMT_STMT(containerStmtLst_.back(), stmt));
         for (int &j : containerStmtLst_) {
             stmtParentStarPairSet_.insert(STMT_STMT(j, stmt));
