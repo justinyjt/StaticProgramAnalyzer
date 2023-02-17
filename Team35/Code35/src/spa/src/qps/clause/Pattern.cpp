@@ -44,10 +44,7 @@ Result* Pattern::evaluate(PKBReader *db) {
         {
             std::string synonymIdent = (dynamic_cast<const Synonym*>(first))->ident;
             STMT_ENT_SET stmtEntSet = db->getAllRelationships(StmtNameRelationship::Modifies);
-            std::vector<std::list<std::string>> vec;
-            for (auto& p : stmtEntSet)
-                vec.push_back({std::to_string(p.first), p.second});
-            Result *result = new TableResult(this->ident, synonymIdent, vec);
+            Result *result = new TableResult(this->ident, synonymIdent, stmtEntSet);
             return result;
         }
         case c(PQLToken::Tag::IDENT, PQLToken::Tag::EXPR):  // a("x", "_1_") -> int[]

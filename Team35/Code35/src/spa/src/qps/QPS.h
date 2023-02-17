@@ -4,14 +4,15 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include <list>
+#include "pkb/PKBReader.h"
 #include "commons/lexer/Lexer.h"
 #include "qps/query_parser/QueryParser.h"
 #include "qps/clause/Clause.h"
+#include "qps/QueryEvaluator.h"
 
 class QPS {
  private:
-    PKBReader* db;
+    QueryEvaluator* queryEvaluator;
     QueryParser* queryParser;
 
  public:

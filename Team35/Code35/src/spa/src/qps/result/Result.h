@@ -3,99 +3,82 @@
 #include <list>
 #include <vector>
 #include <iostream>
-#include <utility>
-#include <type_traits>
 #include <unordered_set>
+#include "qps/result/BoolResult.h"
+#include "qps/result/TableResult.h"
 #include "commons/types.h"
-#include "qps/pql/Synonym.h"
 
 /*
-represents result of clause eval or query eval (multiple clause evals)
+represents result of single clause evaluation 
+or query evaluation (multiple clause evaluations)
 */
+
+// Select st s.t. Modifies(1, v) pattern a(y, "x + 1")
+
 class Result {
  public:
+    enum class Tag { BOOL, TABLE };
+    Tag tag;
+    explicit Result(Tag _tag) : tag(_tag) {}
     virtual void output(std::list<std::string>&) = 0;
-    virtual Result* merge(Result* rhs) = 0;
-};
+    static Result* join(Result* lhs, Result* rhs) {
 
-// scalar result
-class BoolResult : public Result {
-  bool b;
-
- public:
-    explicit BoolResult(bool b) : b(b) { }
-
-    void output(std::list<std::string>& list) override {
-      list.push_back(b ? "true" : "false");
-    }
-
-    Result* merge(Result* rhs) {
-      if (b) {  // true
-        return rhs;
-      } else {  // false
-        return this;
-      }
-    }
-};
-
-// n-col result
-class TableResult : public Result {
-    std::list<std::string> idents;  // s1, s2
-    std::vector<std::list<std::string>> rows;  // vec<list<1,2>, list<2,3>, ...>
-
- public:
-    // general for n-cols
-    explicit TableResult(std::list<std::string>& idents,
-          const std::vector<std::list<std::string>>& vec) : idents(idents) {
-        rows.insert(rows.end(), vec.begin(), vec.end());
-    }
-
-    // for 2 cols
-    explicit TableResult(const std::string& ident1, const std::string& ident2,
-          STMT_ENT_SET& set) {
-      idents.push_back(ident1);
-      idents.push_back(ident2);
-      for (auto& p : set) {
-        rows.push_back({std::to_string(p.first), p.second});
-      }
-    }
-
-    // for 2 cols
-    explicit TableResult(const std::string& ident1, const std::string& ident2,
-          const std::vector<std::list<std::string>>& vec) {
-      idents.push_back(ident1);
-      idents.push_back(ident2);
-      rows.insert(rows.end(), vec.begin(), vec.end());
-    }
-
-    // for 1 col
-    explicit TableResult(const std::string& ident, ENT_SET& set) {
-      idents.push_back(ident);
-      for (auto& elem : set)
-        rows.push_back({elem});
-    }
-
-    // for 1 col
-    explicit TableResult(const std::string& ident, STMT_SET& set) {
-      idents.push_back(ident);
-      for (auto& elem : set)
-        rows.push_back({std::to_string(elem)});
-    }
-
-    void output(std::list<std::string>& list) override {
-      if (idents.size() > 1) {
-        throw std::runtime_error("");
+      // case bool <-> bool:
+      if (lhs->tag == Tag::BOOL && rhs->tag == Tag::BOOL) {
+        BoolResult* l = dynamic_cast<BoolResult*>(lhs);
+        BoolResult* r = dynamic_cast<BoolResult*>(rhs);
+        Result* result = new BoolResult(l->b && r->b);
       }
 
-      for (auto& elem : rows) {
-        list.push_back(elem.front());
-      }
-    }
+      // case table <-> table:
+      if (lhs->tag == Tag::TABLE && rhs->tag == Tag::TABLE) {
+        TableResult* l = dynamic_cast<TableResult*>(lhs);
+        TableResult* r = dynamic_cast<TableResult*>(rhs);
+        // assuming only maximum 1 column overlap
+        std::string commonIdent("");
+        for (auto& ident : l->idents) {
+          if (r->idents.find(ident) != r->idents.end()) {
+            commonIdent = ident;
+          }
+        }
 
-    Result* merge(Result* rhs) {
-      if (dynamic_cast<BoolResult*>(rhs) != nullptr) {
-        return rhs->merge(this);
+        if (commonIdent != "") {
+          // get stricter set
+          Result* larger; 
+          Result* smaller; 
+          if (l->rows.size() > r->rows.size())  {
+            larger = l;
+            smaller = r;
+          } else {
+            larger = r;
+            smaller = l;
+          }
+          // TODO join tables
+          // <x,a> <x>
+          // <1,2> <5>
+          // <3,4> <6>
+          // <5,6> <7>
+          
+          return nullptr;
+        } 
+
+        // no column to join on, return empty set???
+        Result* result = new TableResult();
+        return result;
       }
-      return nullptr;
+      
+      // case table <-> bool or bool <-> table:
+      BoolResult* br = dynamic_cast<BoolResult*>(rhs);
+      TableResult* tr = dynamic_cast<TableResult*>(rhs);
+      Result* result;
+
+      if (!br->b) {  // empty set
+        std::vector<std::list<std::string>> rows;
+        result = new TableResult(tr->idents, rows);
+      } else {  // make a copy
+        result = new TableResult(*tr);
+      }
+
+      return result;
     }
 };

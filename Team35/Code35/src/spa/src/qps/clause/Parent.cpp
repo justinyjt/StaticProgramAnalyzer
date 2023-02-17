@@ -13,10 +13,7 @@ Result* Parent::evaluate(PKBReader *db) {
         case c(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Parent(s1, s2) -> pair<int, int>[]
         {
             STMT_STMT_SET s = db->getAllRelationships(rs);
-            std::vector<std::list<std::string>> vec;
-            for (auto& p : s)
-                vec.push_back({std::to_string(p.first), std::to_string(p.second)});
-            Result* result = new TableResult(first->str(), second->str(), vec);
+            Result* result = new TableResult(first->str(), second->str(), s);
             return result;
         }
         case c(PQLToken::Tag::SYNONYM, PQLToken::Tag::STMT_NUM):  // Parent(stmt, 5) -> int[]
