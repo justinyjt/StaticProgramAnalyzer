@@ -27,6 +27,7 @@ std::unique_ptr<ASTNode> DesignExtractor::extractProgram(std::unique_ptr<ASTNode
     addVarNameSetToPKB();
     addStmtUsesPairSetToPKB();
     addStmtModifiesPairSetToPKB();
+    addStmtFollowPairSetToPKB();
     addPatternsToPKB();
     addStmtTypesToPKB();
     return std::move(root_);
@@ -35,8 +36,13 @@ std::unique_ptr<ASTNode> DesignExtractor::extractProgram(std::unique_ptr<ASTNode
 void DesignExtractor::extractProc(const std::unique_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::Procedure);
     const std::unique_ptr<ASTNode> &nodeC = node->getChildren().front();
-    assert(nodeC->getSyntaxType() == ASTNode::SyntaxType::StmtLst);
-    for (const auto &child : nodeC->getChildren()) {
+    extractStmtLst(nodeC);
+}
+
+void DesignExtractor::extractStmtLst(const std::unique_ptr<ASTNode> &node) {
+    assert(node->getSyntaxType() == ASTNode::SyntaxType::StmtLst);
+    STMT_NUM start_num = stmtCnt_;
+    for (const auto &child : node->getChildren()) {
         stmtCnt_++;
         switch (child->getSyntaxType()) {
             case ASTNode::SyntaxType::Assign:extractAssign(child);
@@ -46,6 +52,20 @@ void DesignExtractor::extractProc(const std::unique_ptr<ASTNode> &node) {
             case ASTNode::SyntaxType::Print:extractPrint(child);
                 break;
             default:break;
+        }
+    }
+
+    // have children
+    if (start_num != stmtCnt_) {
+        updateFollowsPairSet(start_num + 1, stmtCnt_);
+    }
+}
+
+void DesignExtractor::updateFollowsPairSet(STMT_NUM start_stmt, STMT_NUM end_stmt) {
+    for (int i = start_stmt; i < end_stmt; ++i) {
+        stmtFollowPairSet_.insert(STMT_STMT(i, i + 1));
+        for (int j = i + 1; j <= end_stmt; ++j) {
+            stmtFollowStarPairSet_.insert(STMT_STMT(i, j));
         }
     }
 }
@@ -109,7 +129,7 @@ void DesignExtractor::extractPrint(const std::unique_ptr<ASTNode> &node) {
     printSet_.insert(stmtCnt_);
 }
 
-void DesignExtractor::extractStmt() {
+void DesignExtractor::updateStmtSet() {
     for (int i = 1; i <= stmtCnt_; ++i) {
         stmtSet_.insert(i);
     }
@@ -127,12 +147,17 @@ void DesignExtractor::addStmtModifiesPairSetToPKB() {
     pkbWriter_->addStmtEntityRelationships(StmtNameRelationship::Modifies, stmtModPairSet_);
 }
 
+void DesignExtractor::addStmtFollowPairSetToPKB() {
+    pkbWriter_->addStmtStmtRelationships(StmtStmtRelationship::Follows, stmtFollowPairSet_);
+    pkbWriter_->addStmtStmtRelationships(StmtStmtRelationship::FollowsStar, stmtFollowStarPairSet_);
+}
+
 void DesignExtractor::addPatternsToPKB() {
     pkbWriter_->addPatterns(assignPatMap_);
 }
 
 void DesignExtractor::addStmtTypesToPKB() {
-    extractStmt();
+    updateStmtSet();
     pkbWriter_->addStatements(StmtType::Assign, assignSet_);
     pkbWriter_->addStatements(StmtType::Read, readSet_);
     pkbWriter_->addStatements(StmtType::Print, printSet_);
