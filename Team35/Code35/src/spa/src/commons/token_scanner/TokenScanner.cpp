@@ -56,6 +56,7 @@ TokenLst TokenScanner::getTokenLst() {
     if (lex_ == nullptr) {
         TokenLst token_lst = std::move(token_lst_);
         token_lst_ = TokenLst();
+        token_lst_.push_back(std::make_unique<Token>(Token::Tag::EndOfFile));
         return std::move(token_lst);
     }
     lex_->reset();
