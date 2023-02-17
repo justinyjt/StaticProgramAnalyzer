@@ -1,5 +1,5 @@
 #include "Parent.h"
-#include "qps/pql/StatementNumber.h"
+#include <unordered_set>
 
 Parent::Parent(PQLToken* first, PQLToken* second, bool isRecursive) :
     TwoArgClause(first, second), isRecursive(isRecursive) {}

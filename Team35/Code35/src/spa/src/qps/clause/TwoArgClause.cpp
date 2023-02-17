@@ -1,5 +1,4 @@
 #include "TwoArgClause.h"
-#include "qps/pql/PQLToken.h"
 
 TwoArgClause::TwoArgClause(PQLToken* first, PQLToken* second) : first(first), second(second) {}
 

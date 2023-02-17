@@ -1,5 +1,6 @@
 #include "Pattern.h"
-#include "qps/pql/Expression.h"
+#include <list>
+#include <vector>
 
 Pattern::Pattern(PQLToken* first, PQLToken* second, std::string ident) : TwoArgClause(first, second), ident(ident) {}
 

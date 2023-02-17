@@ -1,8 +1,9 @@
 #pragma once
 #include "qps/result/Result.h"
+#include "qps/result/TableResult.h"
+#include "qps/result/BoolResult.h"
 #include "pkb/PKBReader.h"
 #include "commons/types.h"
-#include "qps/pql/PQLToken.h"
 
 /* 
 Base class for clause in PQL (suchthat-cl, pattern-cl)

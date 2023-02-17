@@ -1,9 +1,4 @@
 #pragma once
-#include <string>
-#include <vector>
-#include <utility>
-#include <list>
-#include <unordered_set>
 #include "TwoArgClause.h"
 
 class Follows : public TwoArgClause {

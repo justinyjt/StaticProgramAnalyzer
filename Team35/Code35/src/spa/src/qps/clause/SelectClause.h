@@ -1,5 +1,6 @@
 #pragma once
 #include "qps/clause/Clause.h"
+#include "qps/pql/Synonym.h"
 
 class SelectClause : public Clause {
  public:

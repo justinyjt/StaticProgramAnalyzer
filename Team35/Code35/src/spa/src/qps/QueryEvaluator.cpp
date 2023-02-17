@@ -1,7 +1,7 @@
 #pragma once
 #include "qps/QueryEvaluator.h"
 
-QueryEvaluator::QueryEvaluator(PKBReader* db) : db(db) {};
+QueryEvaluator::QueryEvaluator(PKBReader* db) : db(db) {}
 
 Result* QueryEvaluator::evaluate(std::vector<Clause*> clauses) const {
   // first clause
@@ -14,4 +14,5 @@ Result* QueryEvaluator::evaluate(std::vector<Clause*> clauses) const {
       delete next;
       curr = merged;
   }
-};
+  return curr;
+}

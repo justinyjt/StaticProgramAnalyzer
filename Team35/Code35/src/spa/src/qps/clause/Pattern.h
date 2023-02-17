@@ -1,12 +1,7 @@
 #pragma once
 
 #include <string>
-#include <list>
-#include <vector>
-#include <utility>
-#include <unordered_set>
 #include "qps/clause/TwoArgClause.h"
-#include "qps/result/Result.h"
 
 class Pattern : public TwoArgClause {
     const std::string ident;

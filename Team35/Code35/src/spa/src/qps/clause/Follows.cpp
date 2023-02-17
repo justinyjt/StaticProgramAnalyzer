@@ -1,5 +1,5 @@
 #include "Follows.h"
-#include "qps/pql/StatementNumber.h"
+#include <unordered_set>
 
 Follows::Follows(PQLToken* first, PQLToken* second, bool isRecursive) :
     TwoArgClause(first, second), isRecursive(isRecursive) {}

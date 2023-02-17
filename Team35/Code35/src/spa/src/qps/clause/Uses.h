@@ -1,9 +1,5 @@
 #pragma once
 #include "TwoArgClause.h"
-#include <string>
-#include <vector>
-#include <utility>
-#include "qps/result/Result.h"
 
 class UsesS : public TwoArgClause {
  public:

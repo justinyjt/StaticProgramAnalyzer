@@ -1,5 +1,11 @@
 #pragma once
 #include "qps/clause/Clause.h"
+#include "qps/pql/Expression.h"
+#include "qps/pql/Ident.h"
+#include "qps/pql/PQLToken.h"
+#include "qps/pql/StatementNumber.h"
+#include "qps/pql/Synonym.h"
+#include "qps/pql/Wildcard.h"
 #include "commons/types.h"
 
 /*

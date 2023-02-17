@@ -1,6 +1,4 @@
 #include "Uses.h"
-#include "qps/pql/StatementNumber.h"
-#include "qps/pql/Ident.h"
 
 UsesS::UsesS(PQLToken* first, PQLToken* second) : TwoArgClause(first, second) {}
 

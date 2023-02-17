@@ -1,6 +1,4 @@
 #include "Modifies.h"
-#include "qps/pql/StatementNumber.h"
-#include "qps/pql/Ident.h"
 
 ModifiesS::ModifiesS(PQLToken* first, PQLToken* second) : TwoArgClause(first, second) {}
 
