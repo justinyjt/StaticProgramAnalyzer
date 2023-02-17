@@ -83,7 +83,7 @@ void DesignExtractor::updateFollowsPairSet(std::vector<STMT_NUM>* lst) {
 
 void DesignExtractor::updateParentsPairSet(std::vector<STMT_NUM>* lst) {
     if (containerStmtLst_.empty()) {
-        return ;
+        return;
     }
     for (int i = 0; i < lst->size(); i++) {
         int stmt = (*lst)[i];
@@ -221,14 +221,14 @@ void DesignExtractor::updateStmtSet() {
 
 void DesignExtractor::updateStmtUsesPairSet(STMT_NUM stmt, std::string varName) {
     stmtUsePairSet_.insert(STMT_ENT(stmt, varName));
-    for (STMT_NUM itr : containerStmtLst_ ) {
+    for (STMT_NUM itr : containerStmtLst_) {
         stmtUsePairSet_.insert(STMT_ENT(itr, varName));
     }
 }
 
 void DesignExtractor::updateStmtModsPairSet(STMT_NUM stmt, std::string varName) {
     stmtModPairSet_.insert(STMT_ENT(stmt, varName));
-    for (STMT_NUM itr : containerStmtLst_ ) {
+    for (STMT_NUM itr : containerStmtLst_) {
         stmtModPairSet_.insert(STMT_ENT(itr, varName));
     }
 }
