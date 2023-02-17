@@ -12,8 +12,8 @@ TokenScanner::TokenScanner(TokenLst token_lst) : lex_(nullptr), token_lst_(std::
 }
 
 /**
- * Increment the current index by 1, and return 1 if the current index is incremented and still valid.
- * @return
+ * Increment the current index by 1.
+ * @return return 1 if the current index is incremented and still valid.
  */
 int TokenScanner::next() {
     if (cur_idx_ + 1 >= token_lst_.size()) {

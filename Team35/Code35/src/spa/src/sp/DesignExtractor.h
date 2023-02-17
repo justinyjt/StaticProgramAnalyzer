@@ -62,8 +62,8 @@ class DesignExtractor {
     std::string extractRightAssign(const std::unique_ptr<ASTNode> &);
 
     void updateStmtSet();
-    void updateParentsPairSet(std::vector<STMT_NUM>*);
-    void updateFollowsPairSet(std::vector<STMT_NUM>*);
+    void updateParentsPairSet(std::vector<STMT_NUM> &);
+    void updateFollowsPairSet(std::vector<STMT_NUM> &);
     void updateStmtUsesPairSet(STMT_NUM stmt, std::string varName);
     void updateStmtModsPairSet(STMT_NUM stmt, std::string varName);
 };

@@ -38,57 +38,49 @@ void DesignExtractor::extractProc(const std::unique_ptr<ASTNode> &node) {
 
 void DesignExtractor::extractStmtLst(const std::unique_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::StmtLst);
-    auto childStmtLstPtr_ = new std::vector<STMT_NUM>();
+    std::vector<STMT_NUM> childStmtLst;
 
     for (const auto &child : node->getChildren()) {
         stmtCnt_++;
-        childStmtLstPtr_->push_back(stmtCnt_);
+        childStmtLst.push_back(stmtCnt_);
         switch (child->getSyntaxType()) {
-            case ASTNode::SyntaxType::Assign:
-                extractAssign(child);
+            case ASTNode::SyntaxType::Assign:extractAssign(child);
                 break;
-            case ASTNode::SyntaxType::Read:
-                extractRead(child);
+            case ASTNode::SyntaxType::Read:extractRead(child);
                 break;
-            case ASTNode::SyntaxType::Print:
-                extractPrint(child);
+            case ASTNode::SyntaxType::Print:extractPrint(child);
                 break;
-            case ASTNode::SyntaxType::If:
-                extractIf(child);
+            case ASTNode::SyntaxType::If:extractIf(child);
                 break;
-            case ASTNode::SyntaxType::While:
-                extractWhile(child);
+            case ASTNode::SyntaxType::While:extractWhile(child);
                 break;
             default:break;
         }
     }
 
     // have children
-    if (!childStmtLstPtr_->empty()) {
-        updateFollowsPairSet(childStmtLstPtr_);
-        updateParentsPairSet(childStmtLstPtr_);
+    if (!childStmtLst.empty()) {
+        updateFollowsPairSet(childStmtLst);
+        updateParentsPairSet(childStmtLst);
     }
-
-    delete childStmtLstPtr_;
 }
 
-void DesignExtractor::updateFollowsPairSet(std::vector<STMT_NUM>* lst) {
-    for (int i = 0; i < lst->size() - 1; ++i) {
-        stmtFollowPairSet_.insert(STMT_STMT((*lst)[i], (*lst)[i + 1]));
-        for (int j = i + 1; j < lst->size(); ++j) {
-            stmtFollowStarPairSet_.insert(STMT_STMT((*lst)[i], (*lst)[j]));
+void DesignExtractor::updateFollowsPairSet(std::vector<STMT_NUM> &lst) {
+    for (int i = 0; i < lst.size() - 1; ++i) {
+        stmtFollowPairSet_.insert(STMT_STMT(lst[i], lst[i + 1]));
+        for (int j = i + 1; j < lst.size(); ++j) {
+            stmtFollowStarPairSet_.insert(STMT_STMT(lst[i], lst[j]));
         }
     }
 }
 
-void DesignExtractor::updateParentsPairSet(std::vector<STMT_NUM>* lst) {
+void DesignExtractor::updateParentsPairSet(std::vector<STMT_NUM> &lst) {
     if (containerStmtLst_.empty()) {
         return;
     }
-    for (int i = 0; i < lst->size(); i++) {
-        int stmt = (*lst)[i];
+    for (STMT_NUM stmt : lst) {
         stmtParentPairSet_.insert(STMT_STMT(containerStmtLst_.back(), stmt));
-        for (int & j : containerStmtLst_) {
+        for (int &j : containerStmtLst_) {
             stmtParentStarPairSet_.insert(STMT_STMT(j, stmt));
         }
     }
@@ -116,12 +108,10 @@ std::string DesignExtractor::extractLeftAssign(const std::unique_ptr<ASTNode> &n
 std::string DesignExtractor::extractRightAssign(const std::unique_ptr<ASTNode> &node) {
     std::string label = node->getLabel();
     switch (node->getSyntaxType()) {
-        case ASTNode::SyntaxType::Variable:
-            varNameSet_.insert(label);
+        case ASTNode::SyntaxType::Variable:varNameSet_.insert(label);
             updateStmtUsesPairSet(stmtCnt_, label);
             return label;
-        case ASTNode::SyntaxType::Constant:
-            constSet_.insert(stmtCnt_);
+        case ASTNode::SyntaxType::Constant:constSet_.insert(stmtCnt_);
             return label;
         default:
             // operators;
@@ -158,15 +148,12 @@ void DesignExtractor::extractPrint(const std::unique_ptr<ASTNode> &node) {
 void DesignExtractor::extractCondExpr(const std::unique_ptr<ASTNode> &node) {
     std::string label = node->getLabel();
     switch (node->getSyntaxType()) {
-        case ASTNode::SyntaxType::Variable:
-            varNameSet_.insert(label);
+        case ASTNode::SyntaxType::Variable:varNameSet_.insert(label);
             updateStmtUsesPairSet(stmtCnt_, label);
             break;
-        case ASTNode::SyntaxType::Constant:
-            constSet_.insert(stmtCnt_);
+        case ASTNode::SyntaxType::Constant:constSet_.insert(stmtCnt_);
             break;
-        case ASTNode::SyntaxType::LogicalNot:
-            assert(node->getChildren().size() == 1);
+        case ASTNode::SyntaxType::LogicalNot:assert(node->getChildren().size() == 1);
             extractCondExpr(node->getChildren().front());
             break;
         default:
