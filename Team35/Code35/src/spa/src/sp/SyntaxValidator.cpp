@@ -1,115 +1,156 @@
-#include <utility>
-
 #include "SyntaxValidator.h"
 
-SyntaxValidator::SyntaxValidator(std::unique_ptr<ILexer> lex) :
-    lex_(std::move(lex)), tokenLst_() {
-    cur_ = std::move(lex_->scan());
+#include <cassert>
+#include <utility>
+
+SyntaxValidator::SyntaxValidator(std::unique_ptr<ILexer> lex) : scanner_(std::move(lex)) {}
+
+void SyntaxValidator::reset() {
+    scanner_.reset();
 }
 
 bool SyntaxValidator::validateProgram() {
-    while (peek(Token::Tag::Procedure)) {
-        tokenLst_.push_front(std::move(cur_));
-        next();
-
+    reset();
+    while (scanner_.peek(Token::Tag::Procedure)) {
         if (!validateProc()) {
             return false;
         }
     }
-    if (peek(Token::Tag::EndOfFile)) {
-        tokenLst_.push_front(std::move(cur_));
-        return true;
-    }
-    return false;
+    return scanner_.match(Token::Tag::EndOfFile);
 }
 
 bool SyntaxValidator::validateProc() {
-    if (!peek(Token::Tag::Name)) {
+    assert(scanner_.peek(Token::Tag::Procedure));
+    scanner_.next();
+    if (!scanner_.isName()) {
         return false;
     }
-    tokenLst_.push_front(std::move(cur_));
-    next();
-
+    scanner_.next();
     return validateStmtLst();
 }
 
 bool SyntaxValidator::validateStmtLst() {
-    if (!match(Token::Tag::LBrace)) {
+    if (!scanner_.match(Token::Tag::LBrace)) {
         return false;
     }
-    tokenLst_.push_front(std::make_unique<Token>(Token::Tag::LBrace));
 
-    while (!peek(Token::Tag::RBrace)) {
+    while (!scanner_.peek(Token::Tag::RBrace)) {
         if (!validateStmt()) {
             return false;
         }
     }
 
-    tokenLst_.push_front(std::make_unique<Token>(Token::Tag::RBrace));
-    return match(Token::Tag::RBrace);
+    return scanner_.match(Token::Tag::RBrace);
 }
 
 bool SyntaxValidator::validateStmt() {
-    if (peek(Token::Tag::Name)) {
+    if (scanner_.peekOffset(Token::Tag::Assignment, 1) && scanner_.isName()) {
         return validateAssign();
-    } else if (peek(Token::Tag::Read)) {
+    } else if (scanner_.peek(Token::Tag::Read)) {
         return validateRead();
-    } else if (peek(Token::Tag::Print)) {
+    } else if (scanner_.peek(Token::Tag::Print)) {
         return validatePrint();
+    } else if (scanner_.peek(Token::Tag::If)) {
+        return validateIf();
+    } else if (scanner_.peek(Token::Tag::While)) {
+        return validateWhile();
     } else {
-        //  std::runtime_error("Unidentified Token");
         return false;
     }
 }
 
 bool SyntaxValidator::validateAssign() {
-    tokenLst_.push_front(std::move(cur_));
-    next();
+    assert(scanner_.peek(Token::Tag::Name));
+    scanner_.next();
 
-    tokenLst_.push_front(std::make_unique<Token>(Token::Tag::Assignment));
-    if (!match(Token::Tag::Assignment) || !validateExpr()) {
+    if (!scanner_.match(Token::Tag::Assignment) || !validateExpr()) {
         return false;
     }
 
-    tokenLst_.push_front(std::make_unique<Token>(Token::Tag::SemiColon));
-    return match(Token::Tag::SemiColon);
+    return scanner_.match(Token::Tag::SemiColon);
 }
 
 bool SyntaxValidator::validateRead() {
-    tokenLst_.push_front(std::move(cur_));
-    next();
+    assert(scanner_.peek(Token::Tag::Read));
+    scanner_.next();
 
     if (!validateName()) {
         return false;
     }
 
-    tokenLst_.push_front(std::make_unique<Token>(Token::Tag::SemiColon));
-    return match(Token::Tag::SemiColon);
+    return scanner_.match(Token::Tag::SemiColon);
 }
 
 bool SyntaxValidator::validatePrint() {
-    tokenLst_.push_front(std::move(cur_));
-    next();
+    assert(scanner_.peek(Token::Tag::Print));
+    scanner_.next();
 
     if (!validateName()) {
         return false;
     }
 
-    tokenLst_.push_front(std::make_unique<Token>(Token::Tag::SemiColon));
-    return match(Token::Tag::SemiColon);
+    return scanner_.match(Token::Tag::SemiColon);
+}
+
+bool SyntaxValidator::validateIf() {
+    assert(scanner_.peek(Token::Tag::If));
+    scanner_.next();
+
+    if (!scanner_.match(Token::Tag::LParen)) {
+        return false;
+    }
+
+    if (!validateCondExpr()) {
+        return false;
+    }
+
+    if (!scanner_.match(Token::Tag::RParen)) {
+        return false;
+    }
+
+    if (!scanner_.match(Token::Tag::Then)) {
+        return false;
+    }
+
+    if (!validateStmtLst()) {
+        return false;
+    }
+
+    if (!scanner_.match(Token::Tag::Else)) {
+        return false;
+    }
+
+    return validateStmtLst();
+}
+
+bool SyntaxValidator::validateWhile() {
+    assert(scanner_.peek(Token::Tag::While));
+    scanner_.next();
+
+    if (!scanner_.match(Token::Tag::LParen)) {
+        return false;
+    }
+
+    if (!validateCondExpr()) {
+        return false;
+    }
+
+    if (!scanner_.match(Token::Tag::RParen)) {
+        return false;
+    }
+
+    return validateStmtLst();
 }
 
 bool SyntaxValidator::validateExpr() {
     if (!validateTerm()) {
         return false;
     }
-    if (peek(Token::Tag::Plus)) {
-        tokenLst_.push_front(std::move(cur_));
-        next();
+    if (scanner_.peek(Token::Tag::Plus)) {
+        scanner_.next();
         return validateExpr();
-    } else if (peek(Token::Tag::Minus)) {
-        tokenLst_.push_front(std::move(cur_));
-        next();
+    } else if (scanner_.peek(Token::Tag::Minus)) {
+        scanner_.next();
         return validateExpr();
     } else {
         return true;
@@ -120,17 +161,14 @@ bool SyntaxValidator::validateTerm() {
     if (!validateFactor()) {
         return false;
     }
-    if (peek(Token::Tag::Multiply)) {
-        tokenLst_.push_front(std::move(cur_));
-        next();
+    if (scanner_.peek(Token::Tag::Multiply)) {
+        scanner_.next();
         return validateTerm();
-    } else if (peek(Token::Tag::Divide)) {
-        tokenLst_.push_front(std::move(cur_));
-        next();
+    } else if (scanner_.peek(Token::Tag::Divide)) {
+        scanner_.next();
         return validateTerm();
-    } else if (peek(Token::Tag::Modulo)) {
-        tokenLst_.push_front(std::move(cur_));
-        next();
+    } else if (scanner_.peek(Token::Tag::Modulo)) {
+        scanner_.next();
         return validateTerm();
     } else {
         return true;
@@ -138,61 +176,95 @@ bool SyntaxValidator::validateTerm() {
 }
 
 bool SyntaxValidator::validateFactor() {
-    if (peek(Token::Tag::Name)) {
+    if (scanner_.isName()) {
         return validateName();
-    } else if (peek(Token::Tag::Integer)) {
+    } else if (scanner_.peek(Token::Tag::Integer)) {
         return validateInt();
-    } else if (match(Token::Tag::LParen)) {
-        tokenLst_.push_front(std::move(std::make_unique<Token>(Token::Tag::LParen)));
+    } else if (scanner_.match(Token::Tag::LParen)) {
         if (!validateExpr()) {
             return false;
         }
-        tokenLst_.push_front(std::move(std::make_unique<Token>(Token::Tag::RParen)));
-        return match(Token::Tag::RParen);
+        return scanner_.match(Token::Tag::RParen);
     } else {
-        std::runtime_error("Factor: syntax error");
         return false;
     }
 }
 
 bool SyntaxValidator::validateName() {
-    if (!peek(Token::Tag::Name)) {
-        return false;
+    if (scanner_.isName()) {
+        scanner_.next();
+        return true;
     }
-    tokenLst_.push_front(std::move(cur_));
-    next();
-    return true;
+    return false;
 }
 
 bool SyntaxValidator::validateInt() {
-    if (!peek(Token::Tag::Integer)) {
-        return false;
-    }
-    tokenLst_.push_front(std::move(cur_));
-    next();
-    return true;
-}
-
-int SyntaxValidator::peek(Token::Tag tag) {
-    return (cur_->getTag() == tag) ? 1 : 0;
-}
-
-int SyntaxValidator::match(Token::Tag tag) {
-    if (cur_->getTag() == Token::Tag::EndOfFile) {
-        return tag == Token::Tag::EndOfFile ? 1 : 0;
-    }
-
-    if (cur_->getTag() == tag) {
-        cur_ = std::move(lex_->scan());
-        return 1;
-    }
-    return 0;
-}
-
-void SyntaxValidator::next() {
-    cur_ = std::move(lex_->scan());
+    return scanner_.match(Token::Tag::Integer);
 }
 
 std::deque<std::unique_ptr<Token>> SyntaxValidator::getTokenLst() {
-    return std::move(this->tokenLst_);
+    return scanner_.getTokenLst();
+}
+
+bool SyntaxValidator::validateCondExpr() {
+    if (scanner_.peek(Token::Tag::LogicalNot)) {
+        scanner_.next();
+        if (!scanner_.match(Token::Tag::LParen)) {
+            return false;
+        }
+
+        if (!validateCondExpr()) {
+            return false;
+        }
+
+        return scanner_.match(Token::Tag::RParen);
+    } else if (scanner_.peek(Token::Tag::LParen)) {
+        if (!scanner_.isCondExprSeparatedByLogicalOperator()) {
+            return validateRelExpr();
+        }
+
+        // && || exist
+        if (!scanner_.match(Token::Tag::LParen)) {
+            return false;
+        }
+
+        if (!validateCondExpr()) {
+            return false;
+        }
+
+        if (!scanner_.match(Token::Tag::RParen)) {
+            return false;
+        }
+
+        if (!scanner_.match(Token::Tag::LogicalAnd) && !scanner_.match(Token::Tag::LogicalOr)) {
+            return false;
+        }
+
+        if (!scanner_.match(Token::Tag::LParen)) {
+            return false;
+        }
+
+        if (!validateCondExpr()) {
+            return false;
+        }
+
+        return scanner_.match(Token::Tag::RParen);
+    } else {
+        return validateRelExpr();
+    }
+}
+
+bool SyntaxValidator::validateRelExpr() {
+    if (!validateExpr()) {
+        return false;
+    }
+
+    if (!scanner_.match(Token::Tag::Equivalence) && !scanner_.match(Token::Tag::NotEqual)
+        && !scanner_.match(Token::Tag::LessThan)
+        && !scanner_.match(Token::Tag::LessThanEqualTo) && !scanner_.match(Token::Tag::GreaterThan)
+        && !scanner_.match(Token::Tag::GreaterThanEqualTo)) {
+        return false;
+    }
+
+    return validateExpr();
 }
