@@ -6,6 +6,6 @@ bool TwoArgClause::equal(const TwoArgClause &rhs) const {
     return *first == *(rhs.first) && *second == *(rhs.second);
 }
 
-int TwoArgClause::caseValue() const {
+int TwoArgClause::getPairEnum() const {
     return 10 * static_cast<int>(first->tag) + static_cast<int>(second->tag);
 }

@@ -18,4 +18,5 @@ class Result {
     explicit Result(Tag);
     virtual void output(std::list<std::string>&) = 0;
     static Result* join(Result*, Result*);
+    static Result* tableJoin(Result*, Result*);
 };

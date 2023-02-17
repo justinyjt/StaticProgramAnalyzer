@@ -4,22 +4,22 @@ UsesS::UsesS(PQLToken* first, PQLToken* second) : TwoArgClause(first, second) {}
 
 Result* UsesS::evaluate(PKBReader *db) {
     /* <stmt SYNONYM | STMT_NUM>, <var SYNONYM | IDENT | _ > */
-    switch (caseValue()) {
-        case c(PQLToken::Tag::STMT_NUM, PQLToken::Tag::SYNONYM):  // Uses(1, var) -> string[]
+    switch (getPairEnum()) {
+        case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::SYNONYM):  // Uses(1, var) -> string[]
         {
             int stmtNum = (dynamic_cast<const StatementNumber*>(first))->n;
             ENT_SET set = db->getRelationship(StmtNameRelationship::Uses, stmtNum);
             Result *result = new TableResult(second->str(), set);
             return result;
         }
-        case c(PQLToken::Tag::STMT_NUM, PQLToken::Tag::WILDCARD):  // Uses(1, _)/ -> bool
+        case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::WILDCARD):  // Uses(1, _)/ -> bool
         {
             int stmtNum = (dynamic_cast<const StatementNumber*>(first))->n;
             ENT_SET set = db->getRelationship(StmtNameRelationship::Uses, stmtNum);
             Result* result = new BoolResult(set.size() > 0);
             return result;
         }
-        case c(PQLToken::Tag::STMT_NUM, PQLToken::Tag::IDENT):  // Uses(1, "x")/ -> bool
+        case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::IDENT):  // Uses(1, "x")/ -> bool
         {
             int stmtNum = (dynamic_cast<const StatementNumber*>(first))->n;
             bool b = db->isRelationshipExists(StmtNameRelationship::Uses, stmtNum,
@@ -27,13 +27,13 @@ Result* UsesS::evaluate(PKBReader *db) {
             Result *result = new BoolResult(b);
             return result;
         }
-        case c(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Uses(stmt, var)/ -> pair<int, string>[]
+        case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Uses(stmt, var)/ -> pair<int, string>[]
         {
             STMT_ENT_SET set = db->getAllRelationships(StmtNameRelationship::Uses);
             Result *result = new TableResult(first->str(), second->str(), set);
             return result;
         }
-        case c(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // Uses(stmt, _)/ -> int[]
+        case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // Uses(stmt, _)/ -> int[]
         {
             STMT_ENT_SET set = db->getAllRelationships(StmtNameRelationship::Uses);
             ENT_SET eset;
@@ -42,7 +42,7 @@ Result* UsesS::evaluate(PKBReader *db) {
             Result *result = new TableResult(first->str(), eset);
             return result;
         }
-        case c(PQLToken::Tag::SYNONYM, PQLToken::Tag::IDENT):  // Uses(stmt, "x")/ -> int[]
+        case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::IDENT):  // Uses(stmt, "x")/ -> int[]
         {
             STMT_SET stmtSet = db->getRelationship(StmtNameRelationship::Uses, second->str());
             Result *result = new TableResult(first->str(), stmtSet);

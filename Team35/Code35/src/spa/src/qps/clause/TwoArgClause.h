@@ -22,8 +22,8 @@ class TwoArgClause : public Clause {
 
  protected:
     bool equal(const TwoArgClause& rhs) const;
-    int caseValue() const;
-    static constexpr int c(PQLToken::Tag t1, PQLToken::Tag t2) {
+    int getPairEnum() const;
+    static constexpr int pairEnum(PQLToken::Tag t1, PQLToken::Tag t2) {
       return 10 * static_cast<int>(t1) + static_cast<int>(t2);
     }
 };

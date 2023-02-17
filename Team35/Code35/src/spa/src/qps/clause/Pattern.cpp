@@ -17,19 +17,19 @@ Result* Pattern::evaluate(PKBReader *db) {
         }
     }
 
-    switch (caseValue()) {
-        case c(PQLToken::Tag::WILDCARD, PQLToken::Tag::EXPR):  // a(_, "x") -> int[]
+    switch (getPairEnum()) {
+        case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::EXPR):  // a(_, "x") -> int[]
         {
             Result *result = new TableResult(this->ident, stmtSet2);
             return result;
         }
-        case c(PQLToken::Tag::WILDCARD, PQLToken::Tag::WILDCARD):  // a(_, _) -> int[]
+        case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::WILDCARD):  // a(_, _) -> int[]
         {
             STMT_SET stmtSet = db->getStatements(StmtType::Assign);
             Result *result = new TableResult(this->ident, stmtSet);
             return result;
         }
-        case c(PQLToken::Tag::SYNONYM, PQLToken::Tag::EXPR):  // a(v, "_x_") -> pair<int, str>[]
+        case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::EXPR):  // a(v, "_x_") -> pair<int, str>[]
         {
             std::string synonymIdent = (dynamic_cast<const Synonym*>(first))->ident;
             std::vector<std::list<std::string>> vec;
@@ -41,14 +41,14 @@ Result* Pattern::evaluate(PKBReader *db) {
             Result *result = new TableResult(this->ident, synonymIdent, vec);
             return result;
         }
-        case c(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // a(v, _) -> pair<int, str>[]
+        case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // a(v, _) -> pair<int, str>[]
         {
             std::string synonymIdent = (dynamic_cast<const Synonym*>(first))->ident;
             STMT_ENT_SET stmtEntSet = db->getAllRelationships(StmtNameRelationship::Modifies);
             Result *result = new TableResult(this->ident, synonymIdent, stmtEntSet);
             return result;
         }
-        case c(PQLToken::Tag::IDENT, PQLToken::Tag::EXPR):  // a("x", "_1_") -> int[]
+        case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::EXPR):  // a("x", "_1_") -> int[]
         {
             STMT_SET stmtSet1 = db->getRelationship(StmtNameRelationship::Modifies, first->str());
             STMT_SET stmtSetResult;
@@ -60,7 +60,7 @@ Result* Pattern::evaluate(PKBReader *db) {
             Result* result = new TableResult(this->ident, stmtSetResult);
             return result;
         }
-        case c(PQLToken::Tag::IDENT, PQLToken::Tag::WILDCARD):  // a("x", _) -> int[]
+        case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::WILDCARD):  // a("x", _) -> int[]
         {
             STMT_SET stmtSet1 = db->getRelationship(StmtNameRelationship::Modifies, first->str());
             Result *result = new TableResult(this->ident, stmtSet1);

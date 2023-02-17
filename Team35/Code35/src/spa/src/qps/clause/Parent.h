@@ -4,8 +4,8 @@
 class Parent : public TwoArgClause {
  public:
     /* <SYNONYM | _ | STMT_NUM> */
-    const bool isRecursive;
-    Parent(PQLToken* first, PQLToken* second, bool isRecursive);
+    const bool isTransitive;
+    Parent(PQLToken* first, PQLToken* second, bool isTransitive);
     Result* evaluate(PKBReader*);
     bool operator==(const Clause& rhs) const;
 };
