@@ -3,8 +3,9 @@
 #include <memory>
 #include <deque>
 
-#include "commons/token/Token.h"
 #include "commons/lexer/ILexer.h"
+#include "commons/token/Token.h"
+#include "commons/token_scanner/SimpleTokenScanner.h"
 
 class SyntaxValidator {
  public:
@@ -13,17 +14,9 @@ class SyntaxValidator {
     std::deque<std::unique_ptr<Token>> getTokenLst();
 
  private:
-    std::unique_ptr<ILexer> lex_;
-    std::deque<std::unique_ptr<Token>> token_lst_;
-    uint32_t cur_idx_ = 0;
+    SimpleTokenScanner scanner_;
 
-    void initialise();
-
-    bool peek(Token::Tag tag);
-    bool match(Token::Tag tag);
-    bool peekOffset(Token::Tag tag, uint32_t offset);
-    void next();
-    bool isOffsetValid(uint32_t offset);
+    void reset();
 
     bool validateProc();
     bool validateStmtLst();
@@ -40,9 +33,6 @@ class SyntaxValidator {
     bool validateFactor();
     bool validateName();
     bool validateInt();
-
-    bool isName();
-    bool isCondExprSeparatedByLogicalOperator();
 };
 
 

@@ -12,7 +12,7 @@ class TokenScanner {
  public:
     explicit TokenScanner(std::unique_ptr<ILexer> lex);
     explicit TokenScanner(TokenLst token_lst);
-    void next();
+    int next();
     int peek(Token::Tag tag) const;
     int match(Token::Tag tag);
     int peekOffset(Token::Tag tag, uint32_t offset) const;
