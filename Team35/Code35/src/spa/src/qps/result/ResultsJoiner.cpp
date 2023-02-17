@@ -1,6 +1,9 @@
 #include <unordered_map>
 #include <algorithm>
 #include <iostream>
+#include <string>
+#include <vector>
+#include <utility>
 #include "ResultsJoiner.h"
 #include "commons/VectorStringHash.h"
 
@@ -49,8 +52,7 @@ Results* ResultsJoiner::join(Results& r1, Results& r2) {
 
     // find non common headers for table 1
     for (int i = 0; i < headers1.size(); i++) {
-        if(std::find(commonHeaders1.begin(), commonHeaders1.end(), i) != commonHeaders1.end()) {
-
+        if (std::find(commonHeaders1.begin(), commonHeaders1.end(), i) != commonHeaders1.end()) {
         } else {
             // i is not in common headers, add to values
             nonCommonHeaders1.push_back(i);
@@ -59,8 +61,7 @@ Results* ResultsJoiner::join(Results& r1, Results& r2) {
 
     // find non common headers for table 2
     for (int i = 0; i < headers2.size(); i++) {
-        if(std::find(commonHeaders2.begin(), commonHeaders2.end(), i) != commonHeaders2.end()) {
-
+        if (std::find(commonHeaders2.begin(), commonHeaders2.end(), i) != commonHeaders2.end()) {
         } else {
             // i is not in common headers, add to values
             nonCommonHeaders2.push_back(i);
@@ -69,35 +70,31 @@ Results* ResultsJoiner::join(Results& r1, Results& r2) {
 
     // if there are matching column headers, merge
     if (commonHeaders1.size() > 0) {
-
         // produce output headers
-        for (int commonHeader: commonHeaders1) {
+        for (int commonHeader : commonHeaders1) {
             outputHeaders.push_back(headers1.at(commonHeader));
         }
 
-        for (int nonCommonHeader: nonCommonHeaders1) {
+        for (int nonCommonHeader : nonCommonHeaders1) {
             outputHeaders.push_back(headers1.at(nonCommonHeader));
         }
 
-        for (int nonCommonHeader: nonCommonHeaders2) {
+        for (int nonCommonHeader : nonCommonHeaders2) {
             outputHeaders.push_back(headers2.at(nonCommonHeader));
         }
 
 
-        // create multimap based on the columns for each table
         // separate rows in table into keys and values
 
         std::vector<std::pair<std::vector<std::string>, std::vector<std::string>>> hashmap1;
         std::vector<std::vector<std::string>> rows1 = t1->rows;
         for (std::vector<std::string> row : rows1) {
-            std::vector<std::string> keys; // generate keys
-            std::vector<std::string> values; // generate values
+            std::vector<std::string> keys;
+            std::vector<std::string> values;
             for (int i = 0; i < row.size(); i++) {
-                if(std::find(commonHeaders1.begin(), commonHeaders1.end(), i) != commonHeaders1.end()) {
-                    // i is in common headers, add to keys
+                if (std::find(commonHeaders1.begin(), commonHeaders1.end(), i) != commonHeaders1.end()) {
                     keys.push_back(row.at(i));
                 } else {
-                    // i is not in common headers, add to values
                     values.push_back(row.at(i));
                 }
             }
@@ -109,10 +106,10 @@ Results* ResultsJoiner::join(Results& r1, Results& r2) {
         std::vector<std::pair<std::vector<std::string>, std::vector<std::string>>> hashmap2;
         std::vector<std::vector<std::string>> rows2 = t2->rows;
         for (std::vector<std::string> row : rows2) {
-            std::vector<std::string> keys; // generate keys
-            std::vector<std::string> values; // generate values
+            std::vector<std::string> keys;
+            std::vector<std::string> values;
             for (int i = 0; i < row.size(); i++) {
-                if(std::find(commonHeaders2.begin(), commonHeaders2.end(), i) != commonHeaders2.end()) {
+                if (std::find(commonHeaders2.begin(), commonHeaders2.end(), i) != commonHeaders2.end()) {
                     // i is in common headers, add to keys
                     keys.push_back(row.at(i));
                 } else {
@@ -121,10 +118,6 @@ Results* ResultsJoiner::join(Results& r1, Results& r2) {
                 }
             }
             hashmap2.push_back(std::make_pair(keys, values));
-        }
-
-        for (int i = 0; i < hashmap2.size(); i++) {
-            std::cout << hashmap2.at(i).second.at(0);
         }
 
         // generate new table
@@ -154,7 +147,7 @@ Results* ResultsJoiner::join(Results& r1, Results& r2) {
             }
         }
 
-    } else { // when there are no common headers
+    } else {  // when there are no common headers
         std::vector<std::vector<std::string>> rows1 = t1->rows;
         std::vector<std::vector<std::string>> rows2 = t2->rows;
 
@@ -167,8 +160,8 @@ Results* ResultsJoiner::join(Results& r1, Results& r2) {
             outputHeaders.push_back(header);
         }
 
-        for (std::vector<std::string> row1: rows1) {
-            for (std::vector<std::string> row2: rows2) {
+        for (std::vector<std::string> row1 : rows1) {
+            for (std::vector<std::string> row2 : rows2) {
                 std::vector<std::string> concat;
                 for (std::string s : row1) {
                     concat.push_back(s);
@@ -180,6 +173,11 @@ Results* ResultsJoiner::join(Results& r1, Results& r2) {
                 outputColumns.push_back(concat);
             }
         }
+    }
+
+    if (outputColumns.size() == 0) {
+        BoolResults *boolResults = new BoolResults(false);
+        return boolResults;
     }
 
     TableResults* tableResult1 = new TableResults(outputHeaders, outputColumns);

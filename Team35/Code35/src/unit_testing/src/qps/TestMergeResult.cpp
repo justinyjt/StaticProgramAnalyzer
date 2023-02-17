@@ -93,7 +93,7 @@ TEST_CASE("Test merge4") {
 
     std::vector<std::string> resultHeader = {"v", "c", "s", "a"};
     std::vector<std::vector<std::string>> resultRows;
-    TableResults* expectedResult = new TableResults(resultHeader, resultRows);
+    BoolResults* expectedResult = new BoolResults(false);
 
     Results* results = resultsJoiner->join(*tableResult1, *tableResult2);
 

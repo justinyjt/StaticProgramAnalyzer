@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include <string>
 
@@ -6,17 +8,16 @@ class Results {
 };
 
 class BoolResults : public Results {
-public:
+ public:
     explicit BoolResults(bool b);
     bool operator==(const Results& rhs) const;
     bool b;
 };
 
 class TableResults : public Results {
-public:
+ public:
     std::vector<std::string> headers;
-    std::vector<std::vector<std::string>> rows; // <1, x>, <1, y>
+    std::vector<std::vector<std::string>> rows;
     TableResults(std::vector<std::string> headers, std::vector<std::vector<std::string>> rows);
     bool operator==(const Results& rhs) const;
 };
-

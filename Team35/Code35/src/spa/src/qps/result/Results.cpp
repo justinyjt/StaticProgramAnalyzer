@@ -10,9 +10,8 @@ bool BoolResults::operator==(const Results& rhs) const {
     return false;
 }
 
-TableResults::TableResults(std::vector<std::string> headers, std::vector<std::vector<std::string>> rows) : headers(headers), rows(rows) {
-
-}
+TableResults::TableResults(std::vector<std::string> headers, std::vector<std::vector<std::string>> rows) :
+    headers(headers), rows(rows) {}
 
 bool TableResults::operator==(const Results& rhs) const {
     const TableResults* p_rhs = dynamic_cast<const TableResults*>(&rhs);
