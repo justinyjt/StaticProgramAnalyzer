@@ -11,8 +11,16 @@ TokenScanner::TokenScanner(TokenLst token_lst) : lex_(nullptr), token_lst_(std::
     initialise();
 }
 
-void TokenScanner::next() {
+/**
+ * Increment the current index by 1, and return 1 if the current index is incremented and still valid.
+ * @return
+ */
+int TokenScanner::next() {
+    if (cur_idx_ + 1 >= token_lst_.size()) {
+        return 0;
+    }
     ++cur_idx_;
+    return 1;
 }
 
 int TokenScanner::peek(Token::Tag tag) const {
@@ -45,7 +53,7 @@ int TokenScanner::isOffsetValid(uint32_t offset) const {
 }
 
 void TokenScanner::reset() {
-    cur_idx_ = 0;
+    initialise();
 }
 
 /**
