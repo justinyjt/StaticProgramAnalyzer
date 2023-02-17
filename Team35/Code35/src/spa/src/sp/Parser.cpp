@@ -225,7 +225,6 @@ unique_ptr<ASTNode> Parser::parseRelExpr() {
 }
 
 unique_ptr<ASTNode> Parser::parseRelFactor() {
-    unique_ptr<ASTNode> cur;
     return std::move(parseExpr());
 }
 
