@@ -39,145 +39,119 @@ Result* Result::tableJoin(Result* lhs, Result* rhs) {
 
   std::vector<std::string> headers1(t1->idents.begin(), t1->idents.end());
   std::vector<std::string> headers2(t2->idents.begin(), t2->idents.end());
-  std::vector<int> commonHeaders1;
-  std::vector<int> commonHeaders2;
-  std::vector<int> nonCommonHeaders1;
-  std::vector<int> nonCommonHeaders2;
+  std::unordered_set<int> commonHeaders1;
+  std::unordered_set<int> commonHeaders2;
+  std::list<int> nonCommonHeaders1;
+  std::list<int> nonCommonHeaders2;
   std::list<std::string> outputHeaders;
   std::vector<std::list<std::string>> outputColumns;
 
   // find common headers for table 1 and 2
   for (int i = 0; i < headers1.size(); i++) {
     for (int j = 0; j < headers2.size(); j++) {
-      if (headers1.at(i) == headers2.at(j)) {
-        commonHeaders1.push_back(i);
-        commonHeaders2.push_back(j);
+      if (headers1[i] == headers2[j]) {
+        commonHeaders1.insert(i);
+        commonHeaders2.insert(j);
       }
     }
   }
 
   // find non common headers for table 1
   for (int i = 0; i < headers1.size(); i++) {
-    if (std::find(commonHeaders1.begin(), commonHeaders1.end(), i) != commonHeaders1.end()) {
-    } else {
-      // i is not in common headers, add to values
+    if (commonHeaders1.find(i) == commonHeaders1.end()) {
       nonCommonHeaders1.push_back(i);
     }
   }
 
   // find non common headers for table 2
   for (int i = 0; i < headers2.size(); i++) {
-    if (std::find(commonHeaders2.begin(), commonHeaders2.end(), i) != commonHeaders2.end()) {
-    } else {
-      // i is not in common headers, add to values
+    if (commonHeaders2.find(i) == commonHeaders2.end()) {
       nonCommonHeaders2.push_back(i);
     }
   }
 
-  // if there are matching column headers, merge
-  if (commonHeaders1.size() > 0) {
+  // if no matching headers
+  if (commonHeaders1.size() == 0) {
+      // append all headers
+      outputHeaders.insert(outputHeaders.end(), headers1.begin(), headers1.end());
+      outputHeaders.insert(outputHeaders.end(), headers2.begin(), headers2.end());
+
+      for (std::list<std::string> row1 : t1->rows) {
+        for (std::list<std::string> row2 : t2->rows) {
+          std::list<std::string> concat;
+          concat.insert(concat.end(), row1.begin(), row1.end());
+          concat.insert(concat.end(), row2.begin(), row2.end());
+          outputColumns.push_back(concat);
+        }
+      }
+  } else {
+    // there are matching column headers, inner join
+
     // produce output headers
-    for (int commonHeader : commonHeaders1) {
-      outputHeaders.push_back(headers1.at(commonHeader));
+    for (int idx : commonHeaders1) {
+      outputHeaders.push_back(headers1[idx]);
     }
-
-    for (int nonCommonHeader : nonCommonHeaders1) {
-      outputHeaders.push_back(headers1.at(nonCommonHeader));
+    for (int idx : nonCommonHeaders1) {
+      outputHeaders.push_back(headers1[idx]);
     }
-
-    for (int nonCommonHeader : nonCommonHeaders2) {
-      outputHeaders.push_back(headers2.at(nonCommonHeader));
+    for (int idx : nonCommonHeaders2) {
+      outputHeaders.push_back(headers2[idx]);
     }
 
     // separate rows in table into keys and values
 
     std::vector<std::pair<std::vector<std::string>, std::vector<std::string>>> hashmap1;
-    for (std::list<std::string> row : t1->rows) {
-      std::vector<std::string> rowVec(row.begin(), row.end());
+    for (std::list<std::string>& row : t1->rows) {
       std::vector<std::string> keys;
       std::vector<std::string> values;
-      for (int i = 0; i < row.size(); i++) {
-        if (std::find(commonHeaders1.begin(), commonHeaders1.end(), i) != commonHeaders1.end()) {
-          keys.push_back(rowVec.at(i));
+      int i = 0;
+      for (std::string& val : row) {
+        if (commonHeaders1.find(i) != commonHeaders1.end()) {
+          keys.push_back(val);
         } else {
-          values.push_back(rowVec.at(i));
+          values.push_back(val);
         }
+        i++;
       }
-
       hashmap1.push_back(std::make_pair(keys, values));
     }
 
 
     std::vector<std::pair<std::vector<std::string>, std::vector<std::string>>> hashmap2;
     for (std::list<std::string> row : t2->rows) {
-      std::vector<std::string> rowVec(row.begin(), row.end());
       std::vector<std::string> keys;
       std::vector<std::string> values;
-      for (int i = 0; i < row.size(); i++) {
-        if (std::find(commonHeaders2.begin(), commonHeaders2.end(), i) != commonHeaders2.end()) {
-          // i is in common headers, add to keys
-          keys.push_back(rowVec.at(i));
+      int i = 0;
+      for (std::string& val : row) {
+        if (commonHeaders2.find(i) != commonHeaders2.end()) {
+          keys.push_back(val);
         } else {
-          // i is not in common headers, add to values
-          values.push_back(rowVec.at(i));
+          values.push_back(val);
         }
+        i++;
       }
       hashmap2.push_back(std::make_pair(keys, values));
     }
 
     // generate new table
-
     for (auto kv : hashmap1) {
-      std::vector<std::string> key1 = kv.first;
-      std::vector<std::string> value1 = kv.second;
+      std::vector<std::string>& key1 = kv.first;
+      std::vector<std::string>& value1 = kv.second;
 
       // Look up the key in the second table
       for (auto kv2 : hashmap2) {
-        std::vector<std::string> key2 = kv2.first;
-        std::vector<std::string> value2 = kv2.second;
+        std::vector<std::string>& key2 = kv2.first;
+        std::vector<std::string>& value2 = kv2.second;
         if (key1 == key2) {
           // append values from t1 and t2
           std::list<std::string> res;
-          for (std::string s : key1) {
-              res.push_back(s);
-          }
-          for (std::string s : value1) {
-              res.push_back(s);
-          }
-          for (std::string s : value2) {
-              res.push_back(s);
-          }
+          res.insert(res.end(), key1.begin(), key1.end());
+          res.insert(res.end(), value1.begin(), value1.end());
+          res.insert(res.end(), value2.begin(), value2.end());
           outputColumns.push_back(res);
         }
       }
     }
-
-  } else {  // when there are no common headers
-      std::vector<std::list<std::string>> rows1 = t1->rows;
-      std::vector<std::list<std::string>> rows2 = t2->rows;
-
-      // append all headers
-      for (std::string header : headers1) {
-        outputHeaders.push_back(header);
-      }
-
-      for (std::string header : headers2) {
-        outputHeaders.push_back(header);
-      }
-
-      for (std::list<std::string> row1 : rows1) {
-        for (std::list<std::string> row2 : rows2) {
-          std::list<std::string> concat;
-          for (std::string s : row1) {
-            concat.push_back(s);
-          }
-          for (std::string s : row2) {
-            concat.push_back(s);
-          }
-
-          outputColumns.push_back(concat);
-        }
-      }
   }
 
   if (outputColumns.size() == 0) {
@@ -185,6 +159,6 @@ Result* Result::tableJoin(Result* lhs, Result* rhs) {
     return boolResult;
   }
 
-  TableResult* tableResult1 = new TableResult(outputHeaders, outputColumns);
-  return tableResult1;
+  TableResult* tableResult = new TableResult(outputHeaders, outputColumns);
+  return tableResult;
 }
