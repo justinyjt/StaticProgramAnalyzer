@@ -18,20 +18,15 @@ Result* Result::join(Result* lhs, Result* rhs) {
     return Result::tableJoin(lhs, rhs);
   }
 
-  // case table <-> bool or bool <-> table:
-  BoolResult* br = dynamic_cast<BoolResult*>(rhs);
-  TableResult* tr = dynamic_cast<TableResult*>(rhs);
   Result* result;
-  std::cout << br;
-  std::cout << tr;
-
-  if (!br->b) {  // empty set
-    std::vector<std::list<std::string>> rows;
-    result = new TableResult(tr->idents, rows);
-  } else {  // make a copy
-    result = new TableResult(*tr);
+  // case table <-> bool or bool <-> table:
+  if (lhs->tag == Tag::BOOL) {
+      BoolResult* l = dynamic_cast<BoolResult*>(lhs);
+      result = l->b ? rhs : lhs;
+  } else {
+      BoolResult* r = dynamic_cast<BoolResult*>(rhs);
+      result = r->b ? lhs : rhs;
   }
-
   return result;
 }
 
