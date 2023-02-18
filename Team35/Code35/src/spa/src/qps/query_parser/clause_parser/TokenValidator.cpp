@@ -47,7 +47,7 @@ std::string TokenValidator::validateAndConsumeRelationship() {
                cur_->getTag() == Token::Tag::Follows) {
         relationship += cur_->getLexeme();
         cur_ = lexer->scan();
-        if (cur_->getTag() == Token::Tag::Multiply) {
+        if (cur_->getTag() == Token::Tag::Star) {
             relationship += cur_->getLexeme();
             cur_ = lexer->scan();
         }

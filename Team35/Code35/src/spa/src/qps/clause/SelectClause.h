@@ -1,10 +1,11 @@
 #pragma once
+#include <memory>
 #include "qps/clause/Clause.h"
 
 class SelectClause : public Clause {
  public:
     Synonym const syn;
     explicit SelectClause(Synonym syn);
-    Result* evaluate(PKBReader* db);
+    std::unique_ptr<Result> evaluate(PKBReader* db);
     bool operator==(const Clause& rhs) const;
 };

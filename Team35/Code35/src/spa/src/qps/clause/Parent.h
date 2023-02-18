@@ -1,4 +1,6 @@
 #pragma once
+
+#include <memory>
 #include <string>
 #include <vector>
 #include <utility>
@@ -10,7 +12,7 @@ class Parent : public TwoArgClause {
  public:
     /* <SYNONYM | _ | STMT_NUM> */
     const bool isRecursive;
-    Parent(PQLToken* first, PQLToken* second, bool isRecursive);
-    Result* evaluate(PKBReader*);
+    Parent(std::shared_ptr<PQLToken> first, std::shared_ptr<PQLToken> second, bool isRecursive);
+    std::unique_ptr<Result> evaluate(PKBReader*);
     bool operator==(const Clause& rhs) const;
 };

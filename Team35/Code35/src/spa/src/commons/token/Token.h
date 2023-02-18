@@ -67,6 +67,7 @@ class Token {
         Underscore,
         DoubleQuotes,
         Comma,
+        Star,
 
         // types
         Ascii,

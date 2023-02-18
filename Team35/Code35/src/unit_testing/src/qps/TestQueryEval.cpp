@@ -44,9 +44,9 @@
 //
 //    // Perform evaluation
 //    Synonym syn(Synonym::DesignEntity::VARIABLE, "v");
-//    std::vector<Clause*> clauses;
-//    clauses.push_back(new ModifiesS(StatementNumber("1"), syn));
-//    Result* evalResult = qe.evaluate(syn, clauses);
+//    std::vector<std::unique_ptr<Clause>> clauses;
+//    clauses.push_back(std::make_unique<ModifiesS>(StatementNumber("1"), syn));
+//    std::unique_ptr<Result> evalResult = qe.evaluate(syn, clauses);
 //    evalResult->output(resultList);
 //    requireEqual(resultList.front(), std::string("x"));
 //}
@@ -63,9 +63,9 @@
 //
 //    // Perform evaluation
 //    Synonym syn(Synonym::DesignEntity::ASSIGN, "a");
-//    std::vector<Clause*> clauses;
-//    clauses.push_back(new Pattern(Wildcard(), Expression("x + 1")));
-//    Result* evalResult = qe.evaluate(syn, clauses);
+//    std::vector<std::unique_ptr<Clause>> clauses;
+//    clauses.push_back(std::make_unique<Pattern>(Wildcard(), Expression("x + 1")));
+//    std::unique_ptr<Result> evalResult = qe.evaluate(syn, clauses);
 //    evalResult->output(resultList);
 //    requireEqual(resultList.front(), std::string("1"));
 //}

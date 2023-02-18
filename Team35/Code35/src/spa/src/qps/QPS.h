@@ -12,7 +12,7 @@
 class QPS {
  private:
     PKBReader* db;
-    QueryParser* queryParser;
+    std::unique_ptr<QueryParser> queryParser;
 
  public:
     explicit QPS(PKBReader* pkbReader);

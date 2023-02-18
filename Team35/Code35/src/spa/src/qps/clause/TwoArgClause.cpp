@@ -1,7 +1,8 @@
 #include "TwoArgClause.h"
 #include "qps/pql/PQLToken.h"
 
-TwoArgClause::TwoArgClause(PQLToken* first, PQLToken* second) : first(first), second(second) {}
+TwoArgClause::TwoArgClause(std::shared_ptr<PQLToken> first,
+                           std::shared_ptr<PQLToken> second) :first(first), second(second) {}
 
 bool TwoArgClause::equal(const TwoArgClause &rhs) const {
     return *first == *(rhs.first) && *second == *(rhs.second);

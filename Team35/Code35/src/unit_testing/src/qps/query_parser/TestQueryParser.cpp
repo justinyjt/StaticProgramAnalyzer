@@ -5,39 +5,28 @@
 #include "qps/clause/Modifies.h"
 #include "qps/pql/StatementNumber.h"
 #include "qps/pql/Expression.h"
-#include "commons/lexer/LexerFactory.h"
-#include "qps/query_parser/selection_parser/SelectionParser.h"
 #include "qps/query_parser/clause_parser/ClauseParser.h"
+#include "qps/query_parser/QueryParser.h"
+#include "qps/clause/Parent.h"
 
 TEST_CASE("1. Query parser") {
-    std::string query = "variable v, x; assign a, b, c; read y; Select c such that Modifies(2,v) pattern a ( _ , _\"x\"_)";
-    DeclarationParser dp;
-    SelectionParser sp;
-    ClauseParser cp;
-    std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator(lexer);
-    std::vector<Synonym> declarationList = dp.parse(tokenValidator);
-    requireEqual(declarationList.front(), Synonym(Synonym::DesignEntity::VARIABLE, "v"));
+    std::string query = "variable v, x; assign a, b, c; read y; Select c such that Parent*(a,b) pattern a ( _ , _\"x\"_)";
+    QueryParser qp;
+    std::vector<std::unique_ptr<Clause>> clauses = qp.parse(query);
 
-    Synonym selectedSynonym = sp.parse(tokenValidator, declarationList);
-    requireEqual(selectedSynonym, Synonym(Synonym::DesignEntity::ASSIGN, "c"));
+    requireTrue(clauses.size() == 3);
 
-    // Perform parsing
-    std::vector<Clause *> clauses = cp.parse(tokenValidator, declarationList);
+    std::shared_ptr<Synonym> st = std::make_shared<Synonym>(Synonym::DesignEntity::STMT, "a");
+    std::shared_ptr<Synonym> syn = std::make_shared<Synonym>(Synonym::DesignEntity::STMT, "b");
+    std::unique_ptr<Parent> m = std::make_unique<Parent>(st,syn, true);
 
-    requireTrue(clauses.size() == 2);
+    requireTrue(*clauses[1] == *m);
 
-    StatementNumber* st = new StatementNumber(2);
-    Synonym* syn = new Synonym(Synonym::DesignEntity::VARIABLE, "v");
-    ModifiesS m(st, syn);
+    std::shared_ptr<Wildcard> w = std::make_shared<Wildcard>();
+    std::shared_ptr<Expression> expr = std::make_shared<Expression>("x", true);
 
-    Clause *c1 = clauses[0];
-    requireTrue(*c1 == m);
+    std::unique_ptr<Pattern> pattern = std::make_unique<Pattern>(w, expr, "a");
 
-    Wildcard* w = new Wildcard();
-    Expression* expr = new Expression("x", true);
-    Pattern a(w, expr, "a");  // todo: should be 'a'
-
-    Clause *c2 = clauses[1];
-    requireTrue(*c2 == a);
+    std::unique_ptr<Clause> c2 = std::move(clauses[2]);
+    requireTrue(*c2 == *pattern);
 }

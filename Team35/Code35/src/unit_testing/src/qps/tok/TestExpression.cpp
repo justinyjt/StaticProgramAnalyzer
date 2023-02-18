@@ -6,7 +6,7 @@
 TEST_CASE("Expression") {
     Expression* st1 = new Expression("x+1", false);
     Expression* st2 = new Expression("y+1", false);
-    PQLToken* st1_ = new Expression("x+1", false);
+    std::unique_ptr<PQLToken> st1_ = std::make_unique<Expression>("x+1", false);
 
     requireTrue(*st1 == *st1_);
     requireTrue(*st1 != *st2);

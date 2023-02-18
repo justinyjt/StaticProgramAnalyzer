@@ -9,7 +9,7 @@
 #include "commons/lexer/exception/LexerException.h"
 #include "qps/query_exceptions/SyntaxException.h"
 
-std::vector<Clause*> QueryParser::parse(std::string& query) {
+std::vector<std::unique_ptr<Clause>> QueryParser::parse(std::string& query) {
     std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator(lexer);
     try {
@@ -19,14 +19,17 @@ std::vector<Clause*> QueryParser::parse(std::string& query) {
         // parse select using list of found synonyms
         SelectionParser selectionParser;
         Synonym selectedSynonym = selectionParser.parse(tokenValidator, synonyms);
-        Clause* selectClause = new SelectClause(selectedSynonym);
+        std::unique_ptr<Clause> selectClause = std::make_unique<SelectClause>(selectedSynonym);
 
-        std::vector<Clause*> res{selectClause};
+        std::vector<std::unique_ptr<Clause>> res;
+        res.push_back(std::move(selectClause));
 
         // parse clauses
         ClauseParser clauseParser;
-        std::vector<Clause*> clauses = clauseParser.parse(tokenValidator, synonyms);
-        res.insert(res.end(), clauses.begin(), clauses.end());
+        std::vector<std::unique_ptr<Clause>> clauses = clauseParser.parse(tokenValidator, synonyms);
+        for (auto& clause : clauses) {
+            res.push_back(std::move(clause));
+        }
 
         return res;
     } catch (const LexerException& e) {

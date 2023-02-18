@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include "qps/clause/Clause.h"
 #include "commons/types.h"
 
@@ -8,10 +9,10 @@ Pattern | Follows | FollowsT | Parent | ParentT | UsesS | UsesP | ModifiesS | Mo
 */
 class TwoArgClause : public Clause {
  public:
-    const PQLToken* first;
-    const PQLToken* second;
+    const std::shared_ptr<PQLToken> first;
+    const std::shared_ptr<PQLToken> second;
 
-    TwoArgClause(PQLToken* first, PQLToken* second);
+    TwoArgClause(std::shared_ptr<PQLToken> first, std::shared_ptr<PQLToken> second);
     virtual bool operator==(const Clause &rhs) const = 0;
 
  protected:

@@ -10,5 +10,5 @@
 
 class QueryParser {
  public:
-    std::vector<Clause*> parse(std::string&);
+    std::vector<std::unique_ptr<Clause>> parse(std::string&);
 };

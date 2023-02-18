@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <list>
+#include <memory>
 #include <vector>
 #include <iostream>
 #include <utility>
@@ -15,7 +16,7 @@ represents result of clause eval or query eval (multiple clause evals)
 class Result {
  public:
     virtual void output(std::list<std::string>&) = 0;
-    virtual Result* merge(Result* rhs) = 0;
+    virtual std::unique_ptr<Result> merge(std::unique_ptr<Result> rhs) = 0;
 };
 
 // scalar result
@@ -29,12 +30,8 @@ class BoolResult : public Result {
       list.push_back(b ? "true" : "false");
     }
 
-    Result* merge(Result* rhs) override {
-      if (b) {  // true
-        return rhs;
-      } else {  // false
-        return this;
-      }
+    std::unique_ptr<Result> merge(std::unique_ptr<Result> rhs) override {
+      return nullptr;
     }
 };
 
@@ -92,10 +89,7 @@ class TableResult : public Result {
       }
     }
 
-    Result* merge(Result* rhs) override {
-      if (dynamic_cast<BoolResult*>(rhs) != nullptr) {
-        return rhs->merge(this);
-      }
+    std::unique_ptr<Result> merge(std::unique_ptr<Result> rhs) override {
       return nullptr;
     }
 };
