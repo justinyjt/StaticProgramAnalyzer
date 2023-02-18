@@ -138,7 +138,7 @@ unique_ptr<ASTNode> Parser::parseCondExpr() {
             op->addChild(std::move(expr1));
             op->addChild(std::move(expr2));
             return std::move(op);
-        } else if (scanner_.match(Token::Tag::LogicalOr)) {
+        } else { // LogicalOr checked by SyntaxValidator
             unique_ptr<ASTNode> op = std::make_unique<ASTNode>(ASTNode::SyntaxType::LogicalOr, "||");
 
             scanner_.match(Token::Tag::LParen);
