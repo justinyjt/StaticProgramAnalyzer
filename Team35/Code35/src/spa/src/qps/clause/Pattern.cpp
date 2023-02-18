@@ -2,9 +2,12 @@
 #include <list>
 #include <vector>
 
-Pattern::Pattern(PQLToken* first, PQLToken* second, std::string ident) : TwoArgClause(first, second), ident(ident) {}
+Pattern::Pattern(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second,
+                 std::string  ident) : TwoArgClause(std::move(first), std::move(second)), ident(ident) {
+    validateArgs();
+}
 
-Result* Pattern::evaluate(PKBReader *db) {
+std::unique_ptr<Result> Pattern::evaluate(PKBReader* db) {
     /* <var SYNONYM | IDENT | _> , <EXPR | _EXPR_ | _> */
     STMT_SET stmtSet2;
 
@@ -20,33 +23,33 @@ Result* Pattern::evaluate(PKBReader *db) {
     switch (getPairEnum()) {
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::EXPR):  // a(_, "x") -> int[]
         {
-            Result *result = new TableResult(this->ident, stmtSet2);
-            return result;
+            std::unique_ptr<Result> result = std::make_unique<TableResult>(this->ident, stmtSet2);
+            return std::move(result);
         }
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::WILDCARD):  // a(_, _) -> int[]
         {
             STMT_SET stmtSet = db->getStatements(StmtType::Assign);
-            Result *result = new TableResult(this->ident, stmtSet);
-            return result;
+            std::unique_ptr<Result> result = std::make_unique<TableResult>(this->ident, stmtSet);
+            return std::move(result);
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::EXPR):  // a(v, "_x_") -> pair<int, str>[]
         {
-            std::string synonymIdent = (dynamic_cast<const Synonym*>(first))->ident;
+            std::string synonymIdent = dynamic_cast<const Synonym*>(first.get())->ident;
             std::vector<std::list<std::string>> vec;
             for (STMT_NUM s : stmtSet2) {  // for each statement, find entity that is modified
                 ENT_SET entSet = db->getRelationship(StmtNameRelationship::Modifies, s);
                 for (const std::string& ent : entSet)
                     vec.push_back({std::to_string(s), ent});
             }
-            Result *result = new TableResult(this->ident, synonymIdent, vec);
-            return result;
+            std::unique_ptr<Result> result = std::make_unique<TableResult>(this->ident, synonymIdent, vec);
+            return std::move(result);
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // a(v, _) -> pair<int, str>[]
         {
-            std::string synonymIdent = (dynamic_cast<const Synonym*>(first))->ident;
+            std::string synonymIdent = dynamic_cast<const Synonym*>(first.get())->ident;
             STMT_ENT_SET stmtEntSet = db->getAllRelationships(StmtNameRelationship::Modifies);
-            Result *result = new TableResult(this->ident, synonymIdent, stmtEntSet);
-            return result;
+            std::unique_ptr<Result> result = std::make_unique<TableResult>(this->ident, synonymIdent, stmtEntSet);
+            return std::move(result);
         }
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::EXPR):  // a("x", "_1_") -> int[]
         {
@@ -57,22 +60,29 @@ Result* Pattern::evaluate(PKBReader *db) {
                     stmtSetResult.insert(s);
                 }
             }
-            Result* result = new TableResult(this->ident, stmtSetResult);
-            return result;
+            std::unique_ptr<Result> result = std::make_unique<TableResult>(this->ident, stmtSetResult);
+            return std::move(result);
         }
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::WILDCARD):  // a("x", _) -> int[]
         {
             STMT_SET stmtSet1 = db->getRelationship(StmtNameRelationship::Modifies, first->str());
-            Result *result = new TableResult(this->ident, stmtSet1);
-            return result;
+            std::unique_ptr<Result> result = std::make_unique<TableResult>(this->ident, stmtSet1);
+            return std::move(result);
         }
         default:
             throw std::runtime_error("Pattern.cpp");
     }
 }
 
+void Pattern::validateArgs() {
+    const Synonym* synonym1 = dynamic_cast<const Synonym*>(first.get());
+    if (synonym1 != nullptr && synonym1->de != Synonym::DesignEntity::VARIABLE) {
+        throw SemanticException();
+    }
+}
+
 bool Pattern::operator==(const Clause& rhs) const {
-    const Pattern* pRhs = dynamic_cast<const Pattern*>(&rhs);
+    const auto* pRhs = dynamic_cast<const Pattern*>(&rhs);
     if (pRhs != nullptr) {
         return ident == pRhs->ident && equal(*pRhs);
     }

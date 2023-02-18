@@ -3,16 +3,14 @@
 
 QueryEvaluator::QueryEvaluator(PKBReader* db) : db(db) {}
 
-Result* QueryEvaluator::evaluate(std::vector<Clause*> clauses) const {
+std::unique_ptr<Result> QueryEvaluator::evaluate(std::vector<std::unique_ptr<Clause>>& clauses) const {
   // first clause
-  Result* curr = clauses[0]->evaluate(db);
+  std::unique_ptr<Result> curr = clauses[0]->evaluate(db);
   int i = 1;
   while (i < clauses.size()) {
-      Result* next = clauses[i]->evaluate(db);
-      Result* merged = Result::join(curr, next);
-      delete curr;
-      delete next;
-      curr = merged;
+      std::unique_ptr<Result> next = clauses[i]->evaluate(db);
+      std::unique_ptr<Result> merged = Result::join(curr.get(), next.get());
+      curr = std::move(merged);
   }
-  return curr;
+  return std::move(curr);
 }

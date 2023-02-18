@@ -1,4 +1,7 @@
 #pragma once
+
+#include <memory>
+#include <utility>
 #include "qps/result/Result.h"
 #include "qps/result/TableResult.h"
 #include "qps/result/BoolResult.h"
@@ -18,5 +21,5 @@ class Clause {
     virtual bool operator==(const Clause &rhs) const = 0;
     bool operator!=(const Clause &rhs) const;
 
-    virtual Result* evaluate(PKBReader* db) = 0;
+    virtual std::unique_ptr<Result> evaluate(PKBReader* db) = 0;
 };

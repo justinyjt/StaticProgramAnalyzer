@@ -4,7 +4,7 @@
 Wildcard::Wildcard() : PQLToken(Tag::WILDCARD) {}
 
 std::string Wildcard::str() const {
-  return "_";
+    return "_";
 }
 
 bool Wildcard::operator==(const PQLToken& rhs) const {

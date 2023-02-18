@@ -13,8 +13,8 @@
 
 class QPS {
  private:
-    QueryEvaluator* queryEvaluator;
-    QueryParser* queryParser;
+    std::unique_ptr<QueryEvaluator> queryEvaluator;
+    std::unique_ptr<QueryParser> queryParser;
 
  public:
     explicit QPS(PKBReader* pkbReader);

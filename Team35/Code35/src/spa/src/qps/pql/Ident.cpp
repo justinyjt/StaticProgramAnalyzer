@@ -1,5 +1,7 @@
 #include "Ident.h"
 
+#include <utility>
+
 Ident::Ident(std::string s) : PQLToken(Tag::IDENT), s(s) {}
 
 std::string Ident::str() const {

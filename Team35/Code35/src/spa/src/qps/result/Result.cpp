@@ -5,32 +5,42 @@
 
 Result::Result(Result::Tag _tag) : tag(_tag) {}
 
-Result* Result::join(Result* lhs, Result* rhs) {
-    Result* result;
+std::unique_ptr<Result> Result::join(Result* lhs, Result* rhs) {
   // case bool <-> bool:
   if (lhs->tag == Tag::BOOL && rhs->tag == Tag::BOOL) {
     BoolResult* l = dynamic_cast<BoolResult*>(lhs);
     BoolResult* r = dynamic_cast<BoolResult*>(rhs);
-    result = new BoolResult(l->b && r->b);
+    std::unique_ptr<Result> res = std::make_unique<BoolResult>(l->b && r->b);
+    return std::move(res);
   }
 
   // case table <-> table:
   if (lhs->tag == Tag::TABLE && rhs->tag == Tag::TABLE) {
-    return Result::tableJoin(lhs, rhs);
+    std::unique_ptr<Result> res = Result::tableJoin(lhs, rhs);
+    return std::move(res);
   }
 
   // case table <-> bool or bool <-> table:
+  BoolResult* boolResult;
+  TableResult* tableResult;
   if (lhs->tag == Tag::BOOL) {
-      BoolResult* l = dynamic_cast<BoolResult*>(lhs);
-      result = l->b ? rhs : lhs;
+      boolResult = dynamic_cast<BoolResult*>(lhs);
+      tableResult = dynamic_cast<TableResult*>(rhs);
   } else {
-      BoolResult* r = dynamic_cast<BoolResult*>(rhs);
-      result = r->b ? lhs : rhs;
+      boolResult = dynamic_cast<BoolResult*>(rhs);
+      tableResult = dynamic_cast<TableResult*>(lhs);
   }
-  return result;
+
+  if (boolResult->b) {
+    std::unique_ptr<Result> res = std::make_unique<TableResult>(*tableResult);
+    return std::move(res);
+  } else {
+    std::unique_ptr<Result> res = std::make_unique<BoolResult>(boolResult);
+    return std::move(res);
+  }
 }
 
-Result* Result::tableJoin(Result* lhs, Result* rhs) {
+std::unique_ptr<Result> Result::tableJoin(Result* lhs, Result* rhs) {
   TableResult* t1 = dynamic_cast<TableResult*>(lhs);
   TableResult* t2 = dynamic_cast<TableResult*>(rhs);
 
@@ -151,10 +161,6 @@ Result* Result::tableJoin(Result* lhs, Result* rhs) {
     }
   }
 
-  TableResult* tableResult = new TableResult(outputHeaders, outputColumns);
-  return tableResult;
-}
-
-bool Result::equal(const Result &rhs) const {
-    return tag == rhs.tag;
+  std::unique_ptr<TableResult> tableResult = std::make_unique<TableResult>(outputHeaders, outputColumns);
+  return std::move(tableResult);
 }

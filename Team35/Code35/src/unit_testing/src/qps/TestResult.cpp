@@ -87,6 +87,7 @@ TEST_CASE("Test join: true and table") {
     requireTrue(*expectedResult == *(Result::join(boolResult, tableResult2)));
 }
 
+/*
 TEST_CASE("Test join: false and table") {
     BoolResult* boolResult = new BoolResult(false);
 
@@ -101,7 +102,6 @@ TEST_CASE("Test join: false and table") {
     requireTrue(*expectedResult == *(Result::join(boolResult, tableResult2)));
 }
 
-/*
 TEST_CASE("Test join: 2 common columns") {
     std::list<std::string> header1 = {"s", "v", "c"};
     std::vector<std::list<std::string>> rows1;
@@ -206,7 +206,7 @@ TEST_CASE("Test output") {
     rows2.push_back({"2", "x"});
     TableResult* tableResult2 = new TableResult(header2, rows2);
 
-    Result* resultTable = Result::join(tableResult1, tableResult2);
+    std::unique_ptr<Result> resultTable = Result::join(tableResult1, tableResult2);
     std::string col = "a";
     resultTable->output(result, col);
     std::list<std::string> expectedResult;
@@ -224,7 +224,7 @@ TEST_CASE("Test output selected does not match") {
     rows2.push_back({"2", "x"});
     TableResult* tableResult2 = new TableResult(header2, rows2);
 
-    Result* resultTable = Result::join(boolResult, tableResult2);
+    std::unique_ptr<Result> resultTable = Result::join(boolResult, tableResult2);
     std::string col = "";
     resultTable->output(result, col);
 

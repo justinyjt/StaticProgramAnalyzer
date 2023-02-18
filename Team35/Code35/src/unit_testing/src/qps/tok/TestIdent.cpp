@@ -6,7 +6,7 @@
 TEST_CASE("Ident") {
     Ident* hi = new Ident("hi");
     Ident* bye = new Ident("bye");
-    PQLToken* hi_ = new Ident("hi");
+    std::unique_ptr<PQLToken> hi_ = std::make_unique<Ident>("hi");
 
     requireTrue(*hi == *hi_);
     requireTrue(*hi != *bye);

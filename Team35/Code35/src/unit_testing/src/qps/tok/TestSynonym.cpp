@@ -4,9 +4,9 @@
 #include "qps/pql/PQLToken.h"
 
 TEST_CASE("Synonym") {
-    Synonym* x = new Synonym(Synonym::DesignEntity::VARIABLE, "x");
-    Synonym* y = new Synonym(Synonym::DesignEntity::VARIABLE, "y");
-    PQLToken* x_ = new Synonym(Synonym::DesignEntity::VARIABLE, "x");
+    std::unique_ptr<Synonym> x = std::make_unique<Synonym>(Synonym::DesignEntity::VARIABLE, "x");
+    std::unique_ptr<Synonym> y = std::make_unique<Synonym>(Synonym::DesignEntity::VARIABLE, "y");
+    std::unique_ptr<PQLToken> x_ = std::make_unique<Synonym>(Synonym::DesignEntity::VARIABLE, "x");
 
     requireTrue(*x == *x_);
     requireTrue(*x != *y);

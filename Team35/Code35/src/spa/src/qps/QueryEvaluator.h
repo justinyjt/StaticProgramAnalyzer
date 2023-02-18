@@ -2,6 +2,8 @@
 
 #include <string>
 #include <vector>
+#include <memory>
+#include <utility>
 #include "qps/clause/Clause.h"
 
 class QueryEvaluator {
@@ -10,5 +12,5 @@ class QueryEvaluator {
 
  public:
   explicit QueryEvaluator(PKBReader*);
-  Result* evaluate(std::vector<Clause*>) const;
+  std::unique_ptr<Result> evaluate(std::vector<std::unique_ptr<Clause>>&) const;
 };

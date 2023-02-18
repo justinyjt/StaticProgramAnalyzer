@@ -1,11 +1,11 @@
 #include "SelectClause.h"
 
-SelectClause::SelectClause(Synonym syn) : syn(syn) {}
+SelectClause::SelectClause(Synonym& syn) : syn(syn) {}
 
-Result* SelectClause::evaluate(PKBReader* db) {
+std::unique_ptr<Result> SelectClause::evaluate(PKBReader* db) {
     STMT_SET ss;
     ENT_SET es;
-    Result* result;
+    std::unique_ptr<Result> result;
 
     switch (syn.de) {
         case Synonym::DesignEntity::VARIABLE:
@@ -39,16 +39,16 @@ Result* SelectClause::evaluate(PKBReader* db) {
 
     if (syn.de == Synonym::DesignEntity::VARIABLE ||
             syn.de == Synonym::DesignEntity::CONSTANT) {
-        result = new TableResult(syn.ident, es);
+        result = std::make_unique<TableResult>(syn.ident, es);
     } else {
-        result = new TableResult(syn.ident, ss);
+        result = std::make_unique<TableResult>(syn.ident, ss);
     }
 
     return result;
 }
 
 bool SelectClause::operator==(const Clause &rhs) const {
-    const SelectClause* pRhs = dynamic_cast<const SelectClause*>(&rhs);
+    const auto* pRhs = dynamic_cast<const SelectClause*>(&rhs);
     if (pRhs != nullptr) {
         return syn == pRhs->syn;
     }

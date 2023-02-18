@@ -7,7 +7,7 @@ Base class for all PQL tokens
 */
 class PQLToken {
  public:
-    enum class Tag { IDENT, STMT_NUM, SYNONYM, WILDCARD, EXPR };
+    enum class Tag { IDENT, STMT_NUM, SYNONYM, WILDCARD, EXPR, IDENT_WILDCARD };
 
     explicit PQLToken(Tag tag);
     const Tag tag;

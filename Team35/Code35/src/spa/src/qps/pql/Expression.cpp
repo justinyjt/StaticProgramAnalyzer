@@ -1,6 +1,8 @@
 #include "Expression.h"
 
-Expression::Expression(std::string s) : PQLToken(Tag::EXPR), s(s) {}
+#include <utility>
+
+Expression::Expression(std::string s, bool hasWildcard) : PQLToken(Tag::EXPR), s(s), hasWildcard(hasWildcard) {}
 
 std::string Expression::str() const {
     return s;
@@ -8,5 +10,5 @@ std::string Expression::str() const {
 
 bool Expression::operator==(const PQLToken& rhs) const {
   const Expression* p_rhs = dynamic_cast<const Expression*>(&rhs);
-  return p_rhs != nullptr && s == p_rhs->s;
+  return p_rhs != nullptr && s == p_rhs->s && hasWildcard == p_rhs->hasWildcard;
 }

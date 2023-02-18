@@ -4,8 +4,8 @@
 #include "qps/pql/PQLToken.h"
 
 TEST_CASE("Wildcard") {
-    Wildcard* w = new Wildcard();
-    PQLToken* w_ = new Wildcard();
+    std::unique_ptr<Wildcard> w = std::make_unique<Wildcard>();
+    std::unique_ptr<PQLToken> w_ = std::make_unique<Wildcard>();
 
     requireTrue(*w == *w_);
     requireEqual(w->str(), std::string("_"));

@@ -1,4 +1,6 @@
 #pragma once
+#include <memory>
+#include <utility>
 #include "qps/clause/Clause.h"
 #include "qps/pql/Expression.h"
 #include "qps/pql/Ident.h"
@@ -6,6 +8,7 @@
 #include "qps/pql/StatementNumber.h"
 #include "qps/pql/Synonym.h"
 #include "qps/pql/Wildcard.h"
+#include "qps/query_exceptions/SemanticException.h"
 #include "commons/types.h"
 
 /*
@@ -14,11 +17,12 @@ Pattern | Follows | FollowsT | Parent | ParentT | UsesS | UsesP | ModifiesS | Mo
 */
 class TwoArgClause : public Clause {
  public:
-    const PQLToken* first;
-    const PQLToken* second;
+    const std::unique_ptr<PQLToken> first;
+    const std::unique_ptr<PQLToken> second;
 
-    TwoArgClause(PQLToken* first, PQLToken* second);
-    virtual bool operator==(const Clause &rhs) const = 0;
+    TwoArgClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second);
+    bool operator==(const Clause &rhs) const override = 0;
+    virtual void validateArgs() = 0;
 
  protected:
     bool equal(const TwoArgClause& rhs) const;

@@ -4,9 +4,9 @@
 #include "qps/pql/PQLToken.h"
 
 TEST_CASE("StatementNumber") {
-    StatementNumber* st1 = new StatementNumber(1);
-    StatementNumber* st2 = new StatementNumber(2);
-    PQLToken* st1_ = new StatementNumber(1);
+    std::unique_ptr<StatementNumber> st1 = std::make_unique<StatementNumber>(1);
+    std::unique_ptr<StatementNumber> st2 = std::make_unique<StatementNumber>(2);
+    std::unique_ptr<PQLToken> st1_ = std::make_unique<StatementNumber>(1);
 
     requireTrue(*st1 == *st1);
     requireTrue(*st1 != *st2);

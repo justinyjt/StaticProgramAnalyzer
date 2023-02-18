@@ -1,11 +1,14 @@
 #pragma once
+#include <memory>
+#include <utility>
 #include "TwoArgClause.h"
 
 class Parent : public TwoArgClause {
  public:
     /* <SYNONYM | _ | STMT_NUM> */
     const bool isTransitive;
-    Parent(PQLToken* first, PQLToken* second, bool isTransitive);
-    Result* evaluate(PKBReader*);
-    bool operator==(const Clause& rhs) const;
+    Parent(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive);
+    std::unique_ptr<Result> evaluate(PKBReader*) override;
+    void validateArgs() override;
+    bool operator==(const Clause& rhs) const override;
 };
