@@ -2,8 +2,7 @@
 
 BoolResult::BoolResult(bool b) : Result(Tag::BOOL), b(b) {}
 
-void BoolResult::output(std::list<std::string>& list) {
-  list.push_back(b ? "true" : "false");
+void BoolResult::output(std::list<std::string>& list, std::string selected) {
 }
 
 bool BoolResult::operator==(const Result& rhs) const {

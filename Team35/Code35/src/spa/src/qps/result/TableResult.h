@@ -3,6 +3,7 @@
 #include <list>
 #include <vector>
 #include <iostream>
+#include <iterator>
 #include <unordered_set>
 #include "Result.h"
 
@@ -37,7 +38,7 @@ class TableResult : public Result {
     // for 1 col with STMT_SET
     TableResult(const std::string& ident, STMT_SET& set);
 
-    void output(std::list<std::string>& list) override;
+    void output(std::list<std::string>& list, std::string selected) override;
 
     bool operator==(const Result& rhs) const;
 };

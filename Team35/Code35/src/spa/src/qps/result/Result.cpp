@@ -6,11 +6,12 @@
 Result::Result(Result::Tag _tag) : tag(_tag) {}
 
 Result* Result::join(Result* lhs, Result* rhs) {
+    Result* result;
   // case bool <-> bool:
   if (lhs->tag == Tag::BOOL && rhs->tag == Tag::BOOL) {
     BoolResult* l = dynamic_cast<BoolResult*>(lhs);
     BoolResult* r = dynamic_cast<BoolResult*>(rhs);
-    Result* result = new BoolResult(l->b && r->b);
+    result = new BoolResult(l->b && r->b);
   }
 
   // case table <-> table:
@@ -18,7 +19,6 @@ Result* Result::join(Result* lhs, Result* rhs) {
     return Result::tableJoin(lhs, rhs);
   }
 
-  Result* result;
   // case table <-> bool or bool <-> table:
   if (lhs->tag == Tag::BOOL) {
       BoolResult* l = dynamic_cast<BoolResult*>(lhs);
