@@ -23,7 +23,8 @@ class Lexer : public ILexer {
                    const CharacterList &character_list,
                    bool include_operator = true,
                    bool include_string = true);
-    std::unique_ptr<Token> scan();
+    std::unique_ptr<Token> scan() override;
+    void reset() override;
     ~Lexer() = default;
 
  protected:

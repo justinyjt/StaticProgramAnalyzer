@@ -13,9 +13,9 @@
 
 const EntityTable<ENT_NAME> &PKB::getEntityTable(Entity entityType) const {
     switch (entityType) {
-        case (Entity::Variable):
+        case Entity::Variable:
             return variableTable;
-        case (Entity::Constant):
+        case Entity::Constant:
             return constantTable;
         default:
             assert(false);
@@ -24,16 +24,18 @@ const EntityTable<ENT_NAME> &PKB::getEntityTable(Entity entityType) const {
 
 const EntityTable<STMT_NUM> &PKB::getStatementTable(StmtType stmtType) const {
     switch (stmtType) {
-        case (StmtType::Assign):
+        case StmtType::Assign:
             return assignStatementTable;
-        case (StmtType::Print):
+        case StmtType::Print:
             return printStatementTable;
-        case (StmtType::Read):
+        case StmtType::Read:
             return readStatementTable;
-        case (StmtType::If):
+        case StmtType::If:
             return ifStatementTable;
-        case (StmtType::While)   :
+        case StmtType::While:
             return whileStatementTable;
+        case StmtType::None:
+            return statementTable;
         default:
             assert(false);
     }
@@ -51,9 +53,9 @@ EntityTable<STMT_NUM> &PKB::getStatementTable(StmtType stmtType) {
 
 const RelationshipTable<STMT_NUM, ENT_NAME> &PKB::getStmtNameRelationshipTable(StmtNameRelationship tableType) const {
     switch (tableType) {
-        case (StmtNameRelationship::Modifies):
+        case StmtNameRelationship::Modifies:
             return modifiesStmtNameTable;
-        case (StmtNameRelationship::Uses):
+        case StmtNameRelationship::Uses:
             return usesStmtNameTable;
         default:
             assert(false);
@@ -67,9 +69,9 @@ RelationshipTable<STMT_NUM, ENT_NAME> &PKB::getStmtNameRelationshipTable(StmtNam
 
 const RelationshipTable<ENT_NAME, ENT_NAME> &PKB::getNameNameRelationshipTable(NameNameRelationship tableType) const {
     switch (tableType) {
-        case (NameNameRelationship::Modifies):
+        case NameNameRelationship::Modifies:
             return modifiesNameNameTable;
-        case (NameNameRelationship::Uses):
+        case NameNameRelationship::Uses:
             return usesNameNameTable;
         default:
             assert(false);
@@ -83,13 +85,13 @@ RelationshipTable<STMT_NUM, STMT_NUM> &PKB::getStmtStmtRelationshipTable(StmtStm
 
 const RelationshipTable<STMT_NUM, STMT_NUM> &PKB::getStmtStmtRelationshipTable(StmtStmtRelationship tableType) const {
     switch (tableType) {
-        case (StmtStmtRelationship::Parent):
+        case StmtStmtRelationship::Parent:
             return parentTable;
-        case (StmtStmtRelationship::ParentStar):
+        case StmtStmtRelationship::ParentStar:
             return parentStarTable;
-        case (StmtStmtRelationship::Follows):
+        case StmtStmtRelationship::Follows:
             return followsTable;
-        case (StmtStmtRelationship::FollowsStar):
+        case StmtStmtRelationship::FollowsStar:
             return followsStarTable;
         default:
             assert(false);
