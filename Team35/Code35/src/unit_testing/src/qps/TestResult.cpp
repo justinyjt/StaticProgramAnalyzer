@@ -205,7 +205,8 @@ TEST_CASE("Test output") {
     TableResult* tableResult2 = new TableResult(header2, rows2);
 
     Result* resultTable = Result::join(tableResult1, tableResult2);
-    resultTable->output(result, "a");
+    std::string col = "a";
+    resultTable->output(result, col);
     std::list<std::string> expectedResult;
     expectedResult.push_back("1");
     requireEqual(expectedResult, result);
@@ -222,7 +223,8 @@ TEST_CASE("Test output selected does not match") {
     TableResult* tableResult2 = new TableResult(header2, rows2);
 
     Result* resultTable = Result::join(boolResult, tableResult2);
-    resultTable->output(result, "x");
+    std::string col = "";
+    resultTable->output(result, col);
 
     requireTrue(result.size() == 0);
 }
