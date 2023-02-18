@@ -42,8 +42,7 @@ unique_ptr<ASTNode> Parser::parseStmtLst() {
 }
 
 unique_ptr<ASTNode> Parser::parseStmt() {
-    unique_ptr<ASTNode> cur = std::make_unique<ASTNode>(ASTNode::SyntaxType::Program, std::nullopt);
-    if (scanner_.peek(Token::Tag::Name)) {
+    if (scanner_.isAssign()) {
         return std::move(parseAssign());
     } else if (scanner_.peek(Token::Tag::Read)) {
         return std::move(parseRead());
@@ -51,11 +50,9 @@ unique_ptr<ASTNode> Parser::parseStmt() {
         return std::move(parsePrint());
     } else if (scanner_.peek(Token::Tag::If)) {
         return std::move(parseIf());
-    } else if (scanner_.peek(Token::Tag::While)) {
-        return std::move(parseWhile());
     } else {
-        assert(false);
-        return std::move(cur);
+        assert(scanner_.peek(Token::Tag::While));
+        return std::move(parseWhile());
     }
 }
 
