@@ -7,36 +7,31 @@
 #include "IParser.h"
 #include "commons/ASTNode.h"
 #include "commons/token/Token.h"
-#include "DesignExtractor.h"
+#include "commons/token_scanner/SimpleTokenScanner.h"
 
 using std::unique_ptr;
 
 class Parser : public IParser {
  public:
-    explicit Parser(
-        PROGRAM src, std::unique_ptr<PKBWriter> pkb,
-        std::deque<std::unique_ptr<Token>> tokenLst);
-    explicit Parser(
-        PROGRAM src, std::unique_ptr<PKBWriter> pkb,
-        std::deque<std::unique_ptr<Token>> tokenLst, bool flagExtract);
+    explicit Parser(TokenLst token_lst);
     unique_ptr<ASTNode> Parse() override;
 
  private:
-    std::deque<std::unique_ptr<Token>> tokenLst_;
-    PROGRAM src_;
-    std::unique_ptr<DesignExtractor> de_;
-    bool flagExtract_;
-
-    int peek(Token::Tag);
-    Lexeme peekLexeme();
-    int accept(Token::Tag);
+    SimpleTokenScanner scanner_;
 
     unique_ptr<ASTNode> parseProc();
     unique_ptr<ASTNode> parseStmtLst();
     unique_ptr<ASTNode> parseStmt();
+
     unique_ptr<ASTNode> parseAssign();
     unique_ptr<ASTNode> parseRead();
     unique_ptr<ASTNode> parsePrint();
+    unique_ptr<ASTNode> parseIf();
+    unique_ptr<ASTNode> parseWhile();
+
+    unique_ptr<ASTNode> parseCondExpr();
+    unique_ptr<ASTNode> parseRelExpr();
+    unique_ptr<ASTNode> parseRelFactor();
     unique_ptr<ASTNode> parseExpr();
     unique_ptr<ASTNode> parseTerm();
     unique_ptr<ASTNode> parseFactor();

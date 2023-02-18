@@ -8,5 +8,6 @@
 class ILexer {
  public:
     virtual std::unique_ptr<Token> scan() = 0;
+    virtual void reset() = 0;
     virtual ~ILexer() = default;
 };

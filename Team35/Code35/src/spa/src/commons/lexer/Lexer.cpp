@@ -26,6 +26,11 @@ Lexer::Lexer(Source source,
     }
 }
 
+void Lexer::reset() {
+    current_position_ = 0;
+    current_line_ = 1;
+}
+
 std::unique_ptr<Token> Lexer::scan() {
     if (isEof()) {
         return std::make_unique<Token>(Token::Tag::EndOfFile, getCurrentLineNumber());
