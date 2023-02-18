@@ -236,9 +236,7 @@ bool SyntaxValidator::validateCondExpr() {
             return false;
         }
 
-        if (!scanner_.match(Token::Tag::LogicalAnd) && !scanner_.match(Token::Tag::LogicalOr)) {
-            return false;
-        }
+        scanner_.next();
 
         if (!scanner_.match(Token::Tag::LParen)) {
             return false;
