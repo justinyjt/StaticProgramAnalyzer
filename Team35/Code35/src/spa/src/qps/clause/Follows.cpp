@@ -1,7 +1,5 @@
 #include "Follows.h"
-
 #include <unordered_set>
-#include "qps/pql/StatementNumber.h"
 
 Follows::Follows(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :
     TwoArgClause(std::move(first), std::move(second)), isTransitive(isTransitive) {}
@@ -88,8 +86,5 @@ void Follows::validateArgs() {}
 
 bool Follows::operator==(const Clause& rhs) const {
     const auto* pRhs = dynamic_cast<const Follows*>(&rhs);
-    if (pRhs != nullptr) {
-        return equal(*pRhs) && isTransitive == pRhs->isTransitive;
-    }
-    return false;
+    return pRhs != nullptr && equal(*pRhs) && isTransitive == pRhs->isTransitive;
 }

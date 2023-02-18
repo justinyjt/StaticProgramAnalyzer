@@ -83,8 +83,5 @@ void Pattern::validateArgs() {
 
 bool Pattern::operator==(const Clause& rhs) const {
     const auto* pRhs = dynamic_cast<const Pattern*>(&rhs);
-    if (pRhs != nullptr) {
-        return ident == pRhs->ident && equal(*pRhs);
-    }
-    return false;
+    return pRhs != nullptr && equal(*pRhs) && ident == pRhs->ident;
 }

@@ -85,8 +85,5 @@ void Parent::validateArgs() {}
 
 bool Parent::operator==(const Clause& rhs) const {
     const auto* pRhs = dynamic_cast<const Parent*>(&rhs);
-    if (pRhs != nullptr) {
-        return equal(*pRhs) && isTransitive == pRhs->isTransitive;
-    }
-    return false;
+    return pRhs != nullptr && equal(*pRhs) && isTransitive == pRhs->isTransitive;
 }

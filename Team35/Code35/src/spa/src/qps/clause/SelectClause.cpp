@@ -44,13 +44,10 @@ std::unique_ptr<Result> SelectClause::evaluate(PKBReader* db) {
         result = std::make_unique<TableResult>(syn.ident, ss);
     }
 
-    return result;
+    return std::move(result);
 }
 
 bool SelectClause::operator==(const Clause &rhs) const {
     const auto* pRhs = dynamic_cast<const SelectClause*>(&rhs);
-    if (pRhs != nullptr) {
-        return syn == pRhs->syn;
-    }
-    return false;
+    return pRhs != nullptr && syn == pRhs->syn;
 }

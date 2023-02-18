@@ -68,8 +68,5 @@ void ModifiesS::validateArgs() {
 
 bool ModifiesS::operator==(const Clause& rhs) const {
     const auto* pRhs = dynamic_cast<const ModifiesS*>(&rhs);
-    if (pRhs != nullptr) {
-        return equal(*pRhs);
-    }
-    return false;
+    return pRhs != nullptr && equal(*pRhs);
 }

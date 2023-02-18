@@ -67,9 +67,6 @@ void UsesS::validateArgs() {
 }
 
 bool UsesS::operator==(const Clause& rhs) const {
-    const UsesS* pRhs = dynamic_cast<const UsesS*>(&rhs);
-    if (pRhs != nullptr) {
-        return equal(*pRhs);
-    }
-    return false;
+    const auto* pRhs = dynamic_cast<const UsesS*>(&rhs);
+    return pRhs != nullptr && equal(*pRhs);
 }
