@@ -29,7 +29,7 @@ class BoolResult : public Result {
       list.push_back(b ? "true" : "false");
     }
 
-    Result* merge(Result* rhs) {
+    Result* merge(Result* rhs) override {
       if (b) {  // true
         return rhs;
       } else {  // false
@@ -92,7 +92,7 @@ class TableResult : public Result {
       }
     }
 
-    Result* merge(Result* rhs) {
+    Result* merge(Result* rhs) override {
       if (dynamic_cast<BoolResult*>(rhs) != nullptr) {
         return rhs->merge(this);
       }

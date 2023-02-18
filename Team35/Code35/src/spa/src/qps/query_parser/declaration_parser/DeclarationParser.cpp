@@ -15,9 +15,7 @@ std::vector<Synonym> DeclarationParser::parse(TokenValidator &tokenValidator) {
         if (tokenValidator.isNextTokenType(Token::Tag::Select) || tokenValidator.isEof()) {
             break;
         }
-
-        std::unique_ptr<Token> designEntity = tokenValidator.validateAndConsumeDesignEntityToken();
-        Synonym::DesignEntity de = processDesignEntity(std::move(designEntity));
+        Synonym::DesignEntity de = processDesignEntity(tokenValidator);
 
         // check if there are multiple declarations of the same type
         while (true) {
@@ -42,27 +40,31 @@ std::vector<Synonym> DeclarationParser::parse(TokenValidator &tokenValidator) {
 }
 
 // convert Token tag to Synonym design entity
-Synonym::DesignEntity DeclarationParser::processDesignEntity(std::unique_ptr<Token> token) {
-    if (token->getTag() == Token::Tag::Statement) {
-        return Synonym::DesignEntity::STMT;
-    } else if (token->getTag() == Token::Tag::Read) {
-        return Synonym::DesignEntity::READ;
-    } else if (token->getTag() == Token::Tag::Print) {
-        return Synonym::DesignEntity::PRINT;
-    } else if (token->getTag() == Token::Tag::Call) {
-        return Synonym::DesignEntity::CALL;
-    } else if (token->getTag() == Token::Tag::While) {
-        return Synonym::DesignEntity::WHILE;
-    } else if (token->getTag() == Token::Tag::If) {
-        return Synonym::DesignEntity::IF;
-    } else if (token->getTag() == Token::Tag::Assign) {
-        return Synonym::DesignEntity::ASSIGN;
-    } else if (token->getTag() == Token::Tag::Variable) {
-        return Synonym::DesignEntity::VARIABLE;
-    } else if (token->getTag() == Token::Tag::Constant) {
-        return Synonym::DesignEntity::CONSTANT;
-    } else if (token->getTag() == Token::Tag::Procedure) {
-        return Synonym::DesignEntity::PROCEDURE;
+Synonym::DesignEntity DeclarationParser::processDesignEntity(TokenValidator &tokenValidator) {
+    std::unique_ptr<Token> designEntity = tokenValidator.validateAndConsumeDesignEntityToken();
+    switch (designEntity->getTag()) {
+        case Token::Tag::Statement:
+            return Synonym::DesignEntity::STMT;
+        case Token::Tag::Read:
+            return Synonym::DesignEntity::READ;
+        case Token::Tag::Print:
+            return Synonym::DesignEntity::PRINT;
+        case Token::Tag::Call:
+            return Synonym::DesignEntity::CALL;
+        case Token::Tag::While:
+            return Synonym::DesignEntity::WHILE;
+        case Token::Tag::If:
+            return Synonym::DesignEntity::IF;
+        case Token::Tag::Assign:
+            return Synonym::DesignEntity::ASSIGN;
+        case Token::Tag::Variable:
+            return Synonym::DesignEntity::VARIABLE;
+        case Token::Tag::Constant:
+            return Synonym::DesignEntity::CONSTANT;
+        case Token::Tag::Procedure:
+            return Synonym::DesignEntity::PROCEDURE;
+        default:
+            throw SyntaxException();
     }
 }
 

@@ -62,46 +62,44 @@ Clause* SuchThatClauseParser::createClause(std::unique_ptr<Token> token1, std::u
     PQLToken* first = createArg(token1, synonyms);
     PQLToken* second = createArg(token2, synonyms);
 
-    switch (hash(relationship)) {
-        case MODIFIES:
-            if (isStmtRef(*first) && isEntRef(*second)) {
-                ModifiesS *m = new ModifiesS(first, second);
-                return m;
-            }
-            throw SyntaxException();
-        case USES:
-            if (isStmtRef(*first) && isEntRef(*second)) {
-                UsesS *u = new UsesS(first, second);
-                return u;
-            }
-            throw SyntaxException();
-        case FOLLOWS:
-            if (isStmtRef(*first) && isStmtRef(*second)) {
-                Follows *f = new Follows(first, second, false);
-                return f;
-            }
-            throw SyntaxException();
-        case FOLLOWS_T:
-            if (isStmtRef(*first) && isStmtRef(*second)) {
-                Follows *f = new Follows(first, second, true);
-                return f;
-            }
-            throw SyntaxException();
-        case PARENT:
-            if (isStmtRef(*first) && isStmtRef(*second)) {
-                Parent *p = new Parent(first, second, false);
-                return p;
-            }
-            throw SyntaxException();
-        case PARENT_T:
-            if (isStmtRef(*first) && isStmtRef(*second)) {
-                Parent *p = new Parent(first, second, true);
-                return p;
-            }
-            throw SyntaxException();
-        default:
-            break;
+    if (relationship == "Modifies") {
+        if (isStmtRef(*first) && isEntRef(*second)) {
+            ModifiesS *m = new ModifiesS(first, second);
+            return m;
+        }
+        throw SyntaxException();
+    } else if (relationship == "Uses") {
+        if (isStmtRef(*first) && isEntRef(*second)) {
+            UsesS *u = new UsesS(first, second);
+            return u;
+        }
+        throw SyntaxException();
+    } else if (relationship == "Follows") {
+        if (isStmtRef(*first) && isStmtRef(*second)) {
+            Follows *f = new Follows(first, second, false);
+            return f;
+        }
+        throw SyntaxException();
+    } else if (relationship == "Follows*") {
+        if (isStmtRef(*first) && isStmtRef(*second)) {
+            Follows *f = new Follows(first, second, true);
+            return f;
+        }
+        throw SyntaxException();
+    } else if (relationship == "Parent") {
+        if (isStmtRef(*first) && isStmtRef(*second)) {
+            Parent *p = new Parent(first, second, false);
+            return p;
+        }
+        throw SyntaxException();
+    } else if (relationship == "Parent*") {
+        if (isStmtRef(*first) && isStmtRef(*second)) {
+            Parent *p = new Parent(first, second, true);
+            return p;
+        }
+        throw SyntaxException();
     }
+    throw SyntaxException();
 }
 
 bool SuchThatClauseParser::isStmtRef(PQLToken &tok) {
@@ -124,13 +122,4 @@ bool SuchThatClauseParser::isEntRef(PQLToken &tok) {
            synonym != NULL && (synonym->de == Synonym::DesignEntity::VARIABLE ||
                                synonym->de == Synonym::DesignEntity::CONSTANT ||
                                 synonym->de == Synonym::DesignEntity::PROCEDURE);
-}
-
-SuchThatClauseParser::relationship SuchThatClauseParser::hash(std::string const& string) {
-    if (string == "Modifies") return MODIFIES;
-    if (string == "Uses") return USES;
-    if (string == "Follows") return FOLLOWS;
-    if (string == "Follows*") return FOLLOWS_T;
-    if (string == "Parent") return PARENT;
-    if (string == "Parent*") return PARENT_T;
 }
