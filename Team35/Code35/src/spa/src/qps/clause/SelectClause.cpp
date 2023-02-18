@@ -1,6 +1,6 @@
 #include "SelectClause.h"
 
-SelectClause::SelectClause(Synonym syn) : syn(syn) {}
+SelectClause::SelectClause(Synonym& syn) : syn(syn) {}
 
 std::unique_ptr<Result> SelectClause::evaluate(PKBReader* db) {
     STMT_SET ss;
@@ -48,7 +48,7 @@ std::unique_ptr<Result> SelectClause::evaluate(PKBReader* db) {
 }
 
 bool SelectClause::operator==(const Clause &rhs) const {
-    const SelectClause* pRhs = dynamic_cast<const SelectClause*>(&rhs);
+    const auto* pRhs = dynamic_cast<const SelectClause*>(&rhs);
     if (pRhs != nullptr) {
         return syn == pRhs->syn;
     }

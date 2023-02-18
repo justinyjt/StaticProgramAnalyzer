@@ -13,8 +13,8 @@ class Synonym : public PQLToken {
 
     Synonym(DesignEntity de, std::string ident);
 
-    bool operator==(const PQLToken& rhs) const;
-    std::string str() const;
+    bool operator==(const PQLToken& rhs) const override;
+    std::string str() const override;
 
     const DesignEntity de;
     const std::string ident;

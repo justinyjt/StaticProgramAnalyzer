@@ -9,7 +9,7 @@ TEST_CASE("Selection parser") {
     std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator(lexer);
     std::vector<Synonym> synonyms;
-    synonyms.push_back(Synonym(Synonym::DesignEntity::STMT, "s"));
+    synonyms.emplace_back(Synonym(Synonym::DesignEntity::STMT, "s"));
     Synonym s = sp.parse(tokenValidator, synonyms);
     requireEqual(s, Synonym(Synonym::DesignEntity::STMT, "s"));
 }

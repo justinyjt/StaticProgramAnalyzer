@@ -1,13 +1,16 @@
 #include "Pattern.h"
+
+#include <utility>
+#include <memory>
 #include "qps/pql/Expression.h"
 #include "qps/query_exceptions/SemanticException.h"
 
-Pattern::Pattern(std::shared_ptr<PQLToken> first, std::shared_ptr<PQLToken> second,
-                 std::string ident) : TwoArgClause(first, second), ident(ident) {
-    validateArgs(first, second);
+Pattern::Pattern(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second,
+                 std::string  ident) : TwoArgClause(std::move(first), std::move(second)), ident(ident) {
+    validateArgs();
 }
 
-std::unique_ptr<Result> Pattern::evaluate(PKBReader *db) {
+std::unique_ptr<Result> Pattern::evaluate(PKBReader* db) {
     /* <var SYNONYM | IDENT | _> , <EXPR | _EXPR_ | _> */
     STMT_SET stmtSet2;
 
@@ -34,7 +37,7 @@ std::unique_ptr<Result> Pattern::evaluate(PKBReader *db) {
         }
         case c(PQLToken::Tag::SYNONYM, PQLToken::Tag::EXPR):  // a(v, "_x_") -> pair<int, str>[]
         {
-            std::string synonymIdent = std::dynamic_pointer_cast<Synonym>(first)->ident;
+            std::string synonymIdent = dynamic_cast<const Synonym*>(first.get())->ident;
             std::vector<std::list<std::string>> vec;
             for (STMT_NUM s : stmtSet2) {  // for each statement, find entity that is modified
                 ENT_SET entSet = db->getRelationship(StmtNameRelationship::Modifies, s);
@@ -46,7 +49,7 @@ std::unique_ptr<Result> Pattern::evaluate(PKBReader *db) {
         }
         case c(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // a(v, _) -> pair<int, str>[]
         {
-            std::string synonymIdent = std::dynamic_pointer_cast<Synonym>(first)->ident;
+            std::string synonymIdent = dynamic_cast<const Synonym*>(first.get())->ident;
             STMT_ENT_SET stmtEntSet = db->getAllRelationships(StmtNameRelationship::Modifies);
             std::vector<std::list<std::string>> vec;
             for (auto& p : stmtEntSet)
@@ -77,15 +80,15 @@ std::unique_ptr<Result> Pattern::evaluate(PKBReader *db) {
     }
 }
 
-void Pattern::validateArgs(std::shared_ptr<PQLToken> first, std::shared_ptr<PQLToken> second) {
-    std::shared_ptr<Synonym> synonym1 = std::dynamic_pointer_cast<Synonym>(first);
-    if (synonym1 != NULL && synonym1->de != Synonym::DesignEntity::VARIABLE) {
+void Pattern::validateArgs() {
+    const Synonym* synonym1 = dynamic_cast<const Synonym*>(first.get());
+    if (synonym1 != nullptr && synonym1->de != Synonym::DesignEntity::VARIABLE) {
         throw SemanticException();
     }
 }
 
 bool Pattern::operator==(const Clause& rhs) const {
-    const Pattern* pRhs = dynamic_cast<const Pattern*>(&rhs);
+    const auto* pRhs = dynamic_cast<const Pattern*>(&rhs);
     if (pRhs != nullptr) {
         return ident == pRhs->ident && equal(*pRhs);
     }

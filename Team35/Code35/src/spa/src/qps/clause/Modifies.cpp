@@ -1,33 +1,33 @@
 #include "Modifies.h"
 #include "qps/pql/StatementNumber.h"
 #include "qps/query_exceptions/SemanticException.h"
-#include "qps/pql/Wildcard.h"
 
-ModifiesS::ModifiesS(std::shared_ptr<PQLToken> first, std::shared_ptr<PQLToken> second) : TwoArgClause(first, second) {
-    validateArgs(first, second);
+ModifiesS::ModifiesS(std::unique_ptr<PQLToken> first,
+                     std::unique_ptr<PQLToken> second) : TwoArgClause(std::move(first), std::move(second)) {
+    validateArgs();
 }
 
-std::unique_ptr<Result> ModifiesS::evaluate(PKBReader *db) {
+std::unique_ptr<Result> ModifiesS::evaluate(PKBReader* db) {
     /* <stmt SYNONYM | STMT_NUM>, <var SYNONYM | IDENT | _ > */
 
     switch (caseValue()) {
         case c(PQLToken::Tag::STMT_NUM, PQLToken::Tag::SYNONYM):  // Modifies(1, var) -> string[]
         {
-            int stmtNum = std::dynamic_pointer_cast<StatementNumber>(first)->n;
+            int stmtNum = dynamic_cast<const StatementNumber*>(first.get())->n;
             ENT_SET set = db->getRelationship(StmtNameRelationship::Modifies, stmtNum);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), set);
             return std::move(result);
         }
         case c(PQLToken::Tag::STMT_NUM, PQLToken::Tag::WILDCARD):  // Modifies(1, _) -> bool
         {
-            int stmtNum = std::dynamic_pointer_cast<StatementNumber>(first)->n;
+            int stmtNum = dynamic_cast<const StatementNumber*>(first.get())->n;
             ENT_SET set = db->getRelationship(StmtNameRelationship::Modifies, stmtNum);
-            std::unique_ptr<Result> result = std::make_unique<BoolResult>(set.size() > 0);
+            std::unique_ptr<Result> result = std::make_unique<BoolResult>(!set.empty());
             return std::move(result);
         }
         case c(PQLToken::Tag::STMT_NUM, PQLToken::Tag::IDENT):  // Modifies(1, "x") -> bool
         {
-            int stmtNum = std::dynamic_pointer_cast<StatementNumber>(first)->n;
+            int stmtNum = dynamic_cast<const StatementNumber*>(first.get())->n;
             bool b = db->isRelationshipExists(StmtNameRelationship::Modifies,
                                             stmtNum, second->str());
             std::unique_ptr<Result> result = std::make_unique<BoolResult>(b);
@@ -58,19 +58,18 @@ std::unique_ptr<Result> ModifiesS::evaluate(PKBReader *db) {
             throw std::runtime_error("");
     }}
 
-void ModifiesS::validateArgs(std::shared_ptr<PQLToken> first, std::shared_ptr<PQLToken> second) {
-    std::shared_ptr<Wildcard> wildcard = std::dynamic_pointer_cast<Wildcard>(first);
-    std::shared_ptr<Synonym> synonym1 = std::dynamic_pointer_cast<Synonym>(first);
-    std::shared_ptr<Synonym> synonym2 = std::dynamic_pointer_cast<Synonym>(second);
-    if (synonym1 != NULL && (synonym1->de == Synonym::DesignEntity::PRINT) ||
-        wildcard != NULL ||
-        (synonym2 != NULL && synonym2->de != Synonym::DesignEntity::VARIABLE)) {
+void ModifiesS::validateArgs() {
+    const Synonym* synonym1 = dynamic_cast<const Synonym*>(first.get());
+    const Synonym* synonym2 = dynamic_cast<const Synonym*>(second.get());
+    if (synonym1 != nullptr && (synonym1->de == Synonym::DesignEntity::PRINT) ||
+        first->tag == PQLToken::Tag::WILDCARD ||
+        (synonym2 != nullptr && synonym2->de != Synonym::DesignEntity::VARIABLE)) {
         throw SemanticException();
     }
 }
 
 bool ModifiesS::operator==(const Clause& rhs) const {
-    const ModifiesS* pRhs = dynamic_cast<const ModifiesS*>(&rhs);
+    const auto* pRhs = dynamic_cast<const ModifiesS*>(&rhs);
     if (pRhs != nullptr) {
         return equal(*pRhs);
     }

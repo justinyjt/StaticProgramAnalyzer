@@ -9,11 +9,12 @@ Pattern | Follows | FollowsT | Parent | ParentT | UsesS | UsesP | ModifiesS | Mo
 */
 class TwoArgClause : public Clause {
  public:
-    const std::shared_ptr<PQLToken> first;
-    const std::shared_ptr<PQLToken> second;
+    const std::unique_ptr<PQLToken> first;
+    const std::unique_ptr<PQLToken> second;
 
-    TwoArgClause(std::shared_ptr<PQLToken> first, std::shared_ptr<PQLToken> second);
-    virtual bool operator==(const Clause &rhs) const = 0;
+    TwoArgClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second);
+    bool operator==(const Clause &rhs) const override = 0;
+    virtual void validateArgs() = 0;
 
  protected:
     bool equal(const TwoArgClause& rhs) const;

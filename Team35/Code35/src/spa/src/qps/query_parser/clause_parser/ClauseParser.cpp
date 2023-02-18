@@ -6,7 +6,7 @@
 
 
 std::vector<std::unique_ptr<Clause>> ClauseParser::parse(TokenValidator &tokenValidator,
-                                                         std::vector<Synonym> synonyms) {
+                                                         std::vector<Synonym>& synonyms) {
     std::vector<std::unique_ptr<Clause>> result;
     while (true) {
         if (tokenValidator.isNextTokenType(Token::Tag::EndOfFile)) {

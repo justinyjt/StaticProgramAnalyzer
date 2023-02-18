@@ -1,8 +1,10 @@
 #include "TwoArgClause.h"
+
+#include <utility>
 #include "qps/pql/PQLToken.h"
 
-TwoArgClause::TwoArgClause(std::shared_ptr<PQLToken> first,
-                           std::shared_ptr<PQLToken> second) :first(first), second(second) {}
+TwoArgClause::TwoArgClause(std::unique_ptr<PQLToken> first,
+                           std::unique_ptr<PQLToken> second) :first(std::move(first)), second(std::move(second)) {}
 
 bool TwoArgClause::equal(const TwoArgClause &rhs) const {
     return *first == *(rhs.first) && *second == *(rhs.second);

@@ -21,17 +21,16 @@ class Result {
 
 // scalar result
 class BoolResult : public Result {
-  bool b;
-
+    bool b;
  public:
     explicit BoolResult(bool b) : b(b) { }
 
     void output(std::list<std::string>& list) override {
-      list.push_back(b ? "true" : "false");
+        list.push_back(b ? "true" : "false");
     }
 
     std::unique_ptr<Result> merge(std::unique_ptr<Result> rhs) override {
-      return nullptr;
+        return nullptr;
     }
 };
 
@@ -50,46 +49,46 @@ class TableResult : public Result {
     // for 2 cols
     explicit TableResult(const std::string& ident1, const std::string& ident2,
           STMT_ENT_SET& set) {
-      idents.push_back(ident1);
-      idents.push_back(ident2);
-      for (auto& p : set) {
-        rows.push_back({std::to_string(p.first), p.second});
-      }
+        idents.push_back(ident1);
+        idents.push_back(ident2);
+        for (auto& p : set) {
+            rows.push_back({std::to_string(p.first), p.second});
+        }
     }
 
     // for 2 cols
     explicit TableResult(const std::string& ident1, const std::string& ident2,
           const std::vector<std::list<std::string>>& vec) {
-      idents.push_back(ident1);
-      idents.push_back(ident2);
-      rows.insert(rows.end(), vec.begin(), vec.end());
+        idents.push_back(ident1);
+        idents.push_back(ident2);
+        rows.insert(rows.end(), vec.begin(), vec.end());
     }
 
     // for 1 col
     explicit TableResult(const std::string& ident, ENT_SET& set) {
-      idents.push_back(ident);
-      for (auto& elem : set)
-        rows.push_back({elem});
+        idents.push_back(ident);
+        for (auto& elem : set)
+            rows.push_back({elem});
     }
 
     // for 1 col
     explicit TableResult(const std::string& ident, STMT_SET& set) {
-      idents.push_back(ident);
-      for (auto& elem : set)
-        rows.push_back({std::to_string(elem)});
+        idents.push_back(ident);
+        for (auto& elem : set)
+            rows.push_back({std::to_string(elem)});
     }
 
     void output(std::list<std::string>& list) override {
-      if (idents.size() > 1) {
-        throw std::runtime_error("");
-      }
+        if (idents.size() > 1) {
+            throw std::runtime_error("");
+        }
 
-      for (auto& elem : rows) {
-        list.push_back(elem.front());
-      }
+        for (auto& elem : rows) {
+            list.push_back(elem.front());
+        }
     }
 
     std::unique_ptr<Result> merge(std::unique_ptr<Result> rhs) override {
-      return nullptr;
+        return nullptr;
     }
 };

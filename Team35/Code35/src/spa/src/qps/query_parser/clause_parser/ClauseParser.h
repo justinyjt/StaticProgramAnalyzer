@@ -12,7 +12,7 @@
 
 class ClauseParser {
  public:
-    std::vector<std::unique_ptr<Clause>> parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms);
+    std::vector<std::unique_ptr<Clause>> parse(TokenValidator &tokenValidator, std::vector<Synonym>& synonyms);
  private:
     std::unique_ptr<PatternClauseParser> patternClauseParser;
     std::unique_ptr<SuchThatClauseParser> suchThatClauseParser;

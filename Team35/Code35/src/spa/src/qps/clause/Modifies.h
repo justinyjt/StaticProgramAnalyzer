@@ -9,16 +9,8 @@
 class ModifiesS : public TwoArgClause {
  public:
     /* <stmt SYNONYM | STMT_NUM>, <var SYNONYM | IDENT | _ > */
-    ModifiesS(std::shared_ptr<PQLToken> first, std::shared_ptr<PQLToken> second);
-    std::unique_ptr<Result> evaluate(PKBReader*);
-    void validateArgs(std::shared_ptr<PQLToken> first, std::shared_ptr<PQLToken> second);
-    bool operator==(const Clause& rhs) const;
-};
-
-class ModifiesP : public TwoArgClause {
- public:
-    /* <proc SYNONYM | proc IDENT>, <SYNONYM | IDENT | _ > */
-    ModifiesP(std::shared_ptr<PQLToken> first, std::shared_ptr<PQLToken> second);
-    std::unique_ptr<Result> evaluate(PKBReader*);
-    bool operator==(const Clause& rhs) const;
+    ModifiesS(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second);
+    std::unique_ptr<Result> evaluate(PKBReader*) override;
+    void validateArgs() override;
+    bool operator==(const Clause& rhs) const override;
 };

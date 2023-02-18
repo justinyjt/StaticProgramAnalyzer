@@ -12,10 +12,10 @@
 
 class SuchThatClauseParser {
  public:
-    std::unique_ptr<Clause> parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms);
-    std::shared_ptr<PQLToken> createArg(std::unique_ptr<Token>& token, const std::vector<Synonym>& synonyms);
+    std::unique_ptr<Clause> parse(TokenValidator &tokenValidator, std::vector<Synonym>& synonyms);
+    std::unique_ptr<PQLToken> createArg(std::unique_ptr<Token> token, const std::vector<Synonym>& synonyms);
     std::unique_ptr<Clause> createClause(std::unique_ptr<Token> token1, std::unique_ptr<Token> token2,
-                         std::string relationship, std::vector<Synonym> synonyms);
-    bool isStmtRef(PQLToken &tok);
-    bool isEntRef(PQLToken &tok);
+                         const std::string& relationship, std::vector<Synonym>& synonyms);
+    bool isStmtRef(PQLToken& tok);
+    bool isEntRef(PQLToken& tok);
 };

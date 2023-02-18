@@ -14,19 +14,19 @@ std::vector<std::unique_ptr<Clause>> QueryParser::parse(std::string& query) {
     TokenValidator tokenValidator(lexer);
     try {
         // pass tokenList and parse declaration
-        DeclarationParser declarationParser;
-        std::vector<Synonym> synonyms = declarationParser.parse(tokenValidator);
+        std::unique_ptr<DeclarationParser> declarationParser = std::make_unique<DeclarationParser>();
+        std::vector<Synonym> synonyms = declarationParser->parse(tokenValidator);
         // parse select using list of found synonyms
-        SelectionParser selectionParser;
-        Synonym selectedSynonym = selectionParser.parse(tokenValidator, synonyms);
+        std::unique_ptr<SelectionParser> selectionParser = std::make_unique<SelectionParser>();
+        Synonym selectedSynonym = selectionParser->parse(tokenValidator, synonyms);
         std::unique_ptr<Clause> selectClause = std::make_unique<SelectClause>(selectedSynonym);
 
         std::vector<std::unique_ptr<Clause>> res;
         res.push_back(std::move(selectClause));
 
         // parse clauses
-        ClauseParser clauseParser;
-        std::vector<std::unique_ptr<Clause>> clauses = clauseParser.parse(tokenValidator, synonyms);
+        std::unique_ptr<ClauseParser> clauseParser = std::make_unique<ClauseParser>();
+        std::vector<std::unique_ptr<Clause>> clauses = clauseParser->parse(tokenValidator, synonyms);
         for (auto& clause : clauses) {
             res.push_back(std::move(clause));
         }

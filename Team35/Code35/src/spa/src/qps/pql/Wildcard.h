@@ -8,6 +8,6 @@
 class Wildcard : public PQLToken {
  public:
     Wildcard();
-    std::string str() const;
-    bool operator==(const PQLToken& rhs) const;
+    std::string str() const override;
+    bool operator==(const PQLToken& rhs) const override;
 };

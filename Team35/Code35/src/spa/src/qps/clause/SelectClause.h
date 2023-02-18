@@ -5,7 +5,7 @@
 class SelectClause : public Clause {
  public:
     Synonym const syn;
-    explicit SelectClause(Synonym syn);
-    std::unique_ptr<Result> evaluate(PKBReader* db);
-    bool operator==(const Clause& rhs) const;
+    explicit SelectClause(Synonym& syn);
+    std::unique_ptr<Result> evaluate(PKBReader* db) override;
+    bool operator==(const Clause& rhs) const override;
 };

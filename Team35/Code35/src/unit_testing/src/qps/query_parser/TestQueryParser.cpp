@@ -16,16 +16,16 @@ TEST_CASE("1. Query parser") {
 
     requireTrue(clauses.size() == 3);
 
-    std::shared_ptr<Synonym> st = std::make_shared<Synonym>(Synonym::DesignEntity::ASSIGN, "a");
-    std::shared_ptr<Synonym> syn = std::make_shared<Synonym>(Synonym::DesignEntity::ASSIGN, "b");
-    std::unique_ptr<Parent> m = std::make_unique<Parent>(st,syn, true);
+    std::unique_ptr<Synonym> st = std::make_unique<Synonym>(Synonym::DesignEntity::ASSIGN, "a");
+    std::unique_ptr<Synonym> syn = std::make_unique<Synonym>(Synonym::DesignEntity::ASSIGN, "b");
+    std::unique_ptr<Parent> m = std::make_unique<Parent>(std::move(st), std::move(syn), true);
 
     requireTrue(*clauses[1] == *m);
 
-    std::shared_ptr<Wildcard> w = std::make_shared<Wildcard>();
-    std::shared_ptr<Expression> expr = std::make_shared<Expression>("x", true);
+    std::unique_ptr<Wildcard> w = std::make_unique<Wildcard>();
+    std::unique_ptr<Expression> expr = std::make_unique<Expression>("x", true);
 
-    std::unique_ptr<Pattern> pattern = std::make_unique<Pattern>(w, expr, "a");
+    std::unique_ptr<Pattern> pattern = std::make_unique<Pattern>(std::move(w), std::move(expr), "a");
 
     std::unique_ptr<Clause> c2 = std::move(clauses[2]);
     requireTrue(*c2 == *pattern);

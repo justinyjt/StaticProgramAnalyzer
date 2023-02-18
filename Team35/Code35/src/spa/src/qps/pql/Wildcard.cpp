@@ -4,10 +4,10 @@
 Wildcard::Wildcard() : PQLToken(Tag::WILDCARD) {}
 
 std::string Wildcard::str() const {
-  return "_";
+    return "_";
 }
 
 bool Wildcard::operator==(const PQLToken& rhs) const {
-  const Wildcard* p_rhs = dynamic_cast<const Wildcard*>(&rhs);
-  return p_rhs != nullptr && PQLToken::equal(rhs);
+    const Wildcard* p_rhs = dynamic_cast<const Wildcard*>(&rhs);
+    return p_rhs != nullptr && PQLToken::equal(rhs);
 }

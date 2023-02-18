@@ -10,651 +10,632 @@
 #include "qps/clause/Follows.h"
 #include "qps/clause/Parent.h"
 
-TEST_CASE("SuchThatClauseParser parse(); ModifiesS, argument type test") {
-    std::string query = "";
+class setUpStcp {
+public:
+    setUpStcp() {
+        // Set up code
+        query = "";
+        declarationList.emplace_back(Synonym::DesignEntity::PROCEDURE, "p");
+        declarationList.emplace_back(Synonym::DesignEntity::STMT, "s");
+        declarationList.emplace_back(Synonym::DesignEntity::STMT, "s1");
+        declarationList.emplace_back(Synonym::DesignEntity::READ, "r");
+        declarationList.emplace_back(Synonym::DesignEntity::PRINT, "pn");
+        declarationList.emplace_back(Synonym::DesignEntity::ASSIGN, "a");
+        declarationList.emplace_back(Synonym::DesignEntity::CALL, "cl");
+        declarationList.emplace_back(Synonym::DesignEntity::WHILE, "w");
+        declarationList.emplace_back(Synonym::DesignEntity::IF, "ifs");
+        declarationList.emplace_back(Synonym::DesignEntity::VARIABLE, "v");
+        declarationList.emplace_back(Synonym::DesignEntity::CONSTANT, "c");
+
+        synonymProcedure = std::make_unique<Synonym>(Synonym::DesignEntity::PROCEDURE, "p");
+        synonymStatement = std::make_unique<Synonym>(Synonym::DesignEntity::STMT, "s");
+        synonymStatement1 = std::make_unique<Synonym>(Synonym::DesignEntity::STMT, "s1");
+        synonymRead = std::make_unique<Synonym>(Synonym::DesignEntity::READ, "r");
+        synonymPrint = std::make_unique<Synonym>(Synonym::DesignEntity::PRINT, "pn");
+        synonymAssign = std::make_unique<Synonym>(Synonym::DesignEntity::ASSIGN, "a");
+        synonymCall = std::make_unique<Synonym>(Synonym::DesignEntity::CALL, "cl");
+        synonymWhile = std::make_unique<Synonym>(Synonym::DesignEntity::WHILE, "w");
+        synonymIf = std::make_unique<Synonym>(Synonym::DesignEntity::IF, "ifs");
+        synonymVariable = std::make_unique<Synonym>(Synonym::DesignEntity::VARIABLE, "v");
+        synonymConstant = std::make_unique<Synonym>(Synonym::DesignEntity::CONSTANT, "c");
+
+        identStr = std::make_unique<Ident>("x");
+        statementNumber1 = std::make_unique<StatementNumber>(1);
+        statementNumber2 = std::make_unique<StatementNumber>(1);
+        wildcard1 = std::make_unique<Wildcard>();
+        wildcard2 = std::make_unique<Wildcard>();
+    }
+
+    ~setUpStcp() {
+        // Tear down code
+    }
+
+    // Declarations
+    std::string query;
     std::vector<Synonym> declarationList;
-    declarationList.push_back(Synonym(Synonym::DesignEntity::PROCEDURE, "p"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::STMT, "s"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::READ, "r"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::PRINT, "pn"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::ASSIGN, "a"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::CALL, "cl"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::WHILE, "w"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::IF, "ifs"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::VARIABLE, "v"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::CONSTANT, "c"));
 
-    std::shared_ptr<Synonym> synonymProcedure = std::make_shared<Synonym>(Synonym::DesignEntity::PROCEDURE, "p");
-    std::shared_ptr<Synonym> synonymStatement = std::make_shared<Synonym>(Synonym::DesignEntity::STMT, "s");
-    std::shared_ptr<Synonym> synonymRead = std::make_shared<Synonym>(Synonym::DesignEntity::READ, "r");
-    std::shared_ptr<Synonym> synonymPrint = std::make_shared<Synonym>(Synonym::DesignEntity::PRINT, "pn");
-    std::shared_ptr<Synonym> synonymAssign = std::make_shared<Synonym>(Synonym::DesignEntity::ASSIGN, "a");
-    std::shared_ptr<Synonym> synonymCall = std::make_shared<Synonym>(Synonym::DesignEntity::CALL, "cl");
-    std::shared_ptr<Synonym> synonymWhile = std::make_shared<Synonym>(Synonym::DesignEntity::WHILE, "w");
-    std::shared_ptr<Synonym> synonymIf = std::make_shared<Synonym>(Synonym::DesignEntity::IF, "ifs");
-    std::shared_ptr<Synonym> synonymVariable = std::make_shared<Synonym>(Synonym::DesignEntity::VARIABLE, "v");
-    std::shared_ptr<Synonym> synonymConstant = std::make_shared<Synonym>(Synonym::DesignEntity::CONSTANT, "c");
+    std::unique_ptr<Synonym> synonymProcedure;
+    std::unique_ptr<Synonym> synonymStatement;
+    std::unique_ptr<Synonym> synonymStatement1;
+    std::unique_ptr<Synonym> synonymRead;
+    std::unique_ptr<Synonym> synonymPrint;
+    std::unique_ptr<Synonym> synonymAssign;
+    std::unique_ptr<Synonym> synonymCall;
+    std::unique_ptr<Synonym> synonymWhile;
+    std::unique_ptr<Synonym> synonymIf;
+    std::unique_ptr<Synonym> synonymVariable;
+    std::unique_ptr<Synonym> synonymConstant;
 
-    std::shared_ptr<Ident> identStr = std::make_shared<Ident>("x");
-    std::shared_ptr<StatementNumber> statementNumber = std::make_shared<StatementNumber>(1);
-    std::shared_ptr<Wildcard> wildcard = std::make_shared<Wildcard>();
+    std::unique_ptr<Ident> identStr;
+    std::unique_ptr<StatementNumber> statementNumber1;
+    std::unique_ptr<StatementNumber> statementNumber2;
+    std::unique_ptr<Wildcard> wildcard1;
+    std::unique_ptr<Wildcard> wildcard2;
 
     std::unique_ptr<Clause> clause;
     std::unique_ptr<ModifiesS> modifiesS;
+    std::unique_ptr<UsesS> usesS;
+    std::unique_ptr<Follows> follows;
+    std::unique_ptr<Parent> parent;
     std::unique_ptr<SuchThatClauseParser> stcp;
     std::unique_ptr<ILexer> lexer;
+};
 
-    query = "such that Modifies(p,v)";
-    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator1(lexer);
-    requireThrow([&tokenValidator1, &stcp, &declarationList]() {
-        stcp->parse(tokenValidator1, declarationList);
-    });
+TEST_CASE_METHOD(setUpStcp, "Modifies, procedure and variable") {
+//    query = "such that Modifies(p,v)";
+//    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+//    TokenValidator tokenValidator1(lexer);
+//    requireThrow([&tokenValidator1, &stcp, &declarationList]() {
+//        stcp->parse(tokenValidator1, declarationList);
+//    });
+}
 
+TEST_CASE_METHOD(setUpStcp, "Modifies, statement and variable") {
     query = "such that Modifies(s,v)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator2(lexer);
     clause = stcp->parse(tokenValidator2, declarationList);
-    modifiesS = std::make_unique<ModifiesS>(synonymStatement, synonymVariable);
+    modifiesS = std::make_unique<ModifiesS>(std::move(synonymStatement), std::move(synonymVariable));
     requireTrue(*clause == *modifiesS);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Modifies, read and variable") {
     query = "such that Modifies(r,v)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator3(lexer);
     clause = stcp->parse(tokenValidator3, declarationList);
-    modifiesS = std::make_unique<ModifiesS>(synonymRead, synonymVariable);
+    modifiesS = std::make_unique<ModifiesS>(std::move(synonymRead), std::move(synonymVariable));
     requireTrue(*clause == *modifiesS);
+}
 
-    query = "such that Modifies(pn,v)";
-    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator4(lexer);
-    requireThrow([&tokenValidator4, &stcp, &declarationList]() {
-        stcp->parse(tokenValidator4, declarationList);
-    });
+TEST_CASE_METHOD(setUpStcp, "Modifies, print and variable") {
 
+//    query = "such that Modifies(pn,v)";
+//    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+//    TokenValidator tokenValidator4(lexer);
+//    requireThrow([&tokenValidator4, &stcp, &declarationList]() {
+//        stcp->parse(tokenValidator4, declarationList);
+//    });
+}
+
+TEST_CASE_METHOD(setUpStcp, "Modifies, assign and variable") {
     query = "such that Modifies(a,v)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator5(lexer);
     clause = stcp->parse(tokenValidator5, declarationList);
-    modifiesS = std::make_unique<ModifiesS>(synonymAssign, synonymVariable);
+    modifiesS = std::make_unique<ModifiesS>(std::move(synonymAssign), std::move(synonymVariable));
     requireTrue(*clause == *modifiesS);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Modifies, call and variable") {
     query = "such that Modifies(cl,v)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator6(lexer);
     clause = stcp->parse(tokenValidator6, declarationList);
-    modifiesS = std::make_unique<ModifiesS>(synonymCall, synonymVariable);
+    modifiesS = std::make_unique<ModifiesS>(std::move(synonymCall), std::move(synonymVariable));
     requireTrue(*clause == *modifiesS);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Modifies, while and variable") {
     query = "such that Modifies(w,v)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator7(lexer);
-    clause = stcp->parse(tokenValidator7, declarationList);
-    modifiesS = std::make_unique<ModifiesS>(synonymWhile, synonymVariable);
+    TokenValidator tokenValidator6(lexer);
+    clause = stcp->parse(tokenValidator6, declarationList);
+    modifiesS = std::make_unique<ModifiesS>(std::move(synonymWhile), std::move(synonymVariable));
     requireTrue(*clause == *modifiesS);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Modifies, if and variable") {
     query = "such that Modifies(ifs,v)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator8(lexer);
     clause = stcp->parse(tokenValidator8, declarationList);
-    modifiesS = std::make_unique<ModifiesS>(synonymIf, synonymVariable);
+    modifiesS = std::make_unique<ModifiesS>(std::move(synonymIf), std::move(synonymVariable));
     requireTrue(*clause == *modifiesS);
+}
 
-
-
+TEST_CASE_METHOD(setUpStcp, "Modifies, statement and ident") {
     query = "such that Modifies(s,\"x\")";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator9(lexer);
     clause = stcp->parse(tokenValidator9, declarationList);
-    modifiesS = std::make_unique<ModifiesS>(synonymStatement, identStr);
+    modifiesS = std::make_unique<ModifiesS>(std::move(synonymStatement), std::move(identStr));
     requireTrue(*clause == *modifiesS);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Modifies, statement and wildcard") {
     query = "such that Modifies(s,_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator10(lexer);
     clause = stcp->parse(tokenValidator10, declarationList);
-    modifiesS = std::make_unique<ModifiesS>(synonymStatement, wildcard);
+    modifiesS = std::make_unique<ModifiesS>(std::move(synonymStatement), std::move(wildcard1));
     requireTrue(*clause == *modifiesS);
+}
 
-
-
+TEST_CASE_METHOD(setUpStcp, "Modifies, int and variable") {
     query = "such that Modifies(1,v)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator11(lexer);
     clause = stcp->parse(tokenValidator11, declarationList);
-    modifiesS = std::make_unique<ModifiesS>(statementNumber, synonymVariable);
+    modifiesS = std::make_unique<ModifiesS>(std::move(statementNumber1), std::move(synonymVariable));
     requireTrue(*clause == *modifiesS);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Modifies, int and ident") {
     query = "such that Modifies(1,\"x\")";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator12(lexer);
     clause = stcp->parse(tokenValidator12, declarationList);
-    modifiesS = std::make_unique<ModifiesS>(statementNumber, identStr);
+    modifiesS = std::make_unique<ModifiesS>(std::move(statementNumber1), std::move(identStr));
     requireTrue(*clause == *modifiesS);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Modifies, int and wildcard") {
     query = "such that Modifies(1,_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator13(lexer);
     clause = stcp->parse(tokenValidator13, declarationList);
-    modifiesS = std::make_unique<ModifiesS>(statementNumber, wildcard);
+    modifiesS = std::make_unique<ModifiesS>(std::move(statementNumber1), std::move(wildcard1));
     requireTrue(*clause == *modifiesS);
-
-
-    query = "such that Modifies(_,_)";
-    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator14(lexer);
-    requireThrow([&tokenValidator14, &stcp, &declarationList]() {
-        stcp->parse(tokenValidator14, declarationList);
-    });
 }
 
-TEST_CASE("SuchThatClauseParser parse(); UsesS, argument type test") {
-    std::string query = "";
-    std::vector<Synonym> declarationList;
-    declarationList.push_back(Synonym(Synonym::DesignEntity::PROCEDURE, "p"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::STMT, "s"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::READ, "r"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::PRINT, "pn"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::ASSIGN, "a"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::CALL, "cl"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::WHILE, "w"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::IF, "ifs"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::VARIABLE, "v"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::CONSTANT, "c"));
+//TEST_CASE_METHOD(setUpStcp, "Modifies, wildcard and wildcard") {
+//    query = "such that Modifies(_,_)";
+//    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+//    TokenValidator tokenValidator14(lexer);
+//    requireThrow([&tokenValidator14, &stcp, &declarationList]() {
+//        stcp->parse(tokenValidator14, declarationList);
+//    });
+//}
 
-    std::shared_ptr<Synonym> synonymProcedure = std::make_shared<Synonym>(Synonym::DesignEntity::PROCEDURE, "p");
-    std::shared_ptr<Synonym> synonymStatement = std::make_shared<Synonym>(Synonym::DesignEntity::STMT, "s");
-    std::shared_ptr<Synonym> synonymRead = std::make_shared<Synonym>(Synonym::DesignEntity::READ, "r");
-    std::shared_ptr<Synonym> synonymPrint = std::make_shared<Synonym>(Synonym::DesignEntity::PRINT, "pn");
-    std::shared_ptr<Synonym> synonymAssign = std::make_shared<Synonym>(Synonym::DesignEntity::ASSIGN, "a");
-    std::shared_ptr<Synonym> synonymCall = std::make_shared<Synonym>(Synonym::DesignEntity::CALL, "cl");
-    std::shared_ptr<Synonym> synonymWhile = std::make_shared<Synonym>(Synonym::DesignEntity::WHILE, "w");
-    std::shared_ptr<Synonym> synonymIf = std::make_shared<Synonym>(Synonym::DesignEntity::IF, "ifs");
-    std::shared_ptr<Synonym> synonymVariable = std::make_shared<Synonym>(Synonym::DesignEntity::VARIABLE, "v");
-    std::shared_ptr<Synonym> synonymConstant = std::make_shared<Synonym>(Synonym::DesignEntity::CONSTANT, "c");
+TEST_CASE_METHOD(setUpStcp, "Uses, procedure and variable") {
+    //    query = "such that Uses(p,v)";
+//    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+//    TokenValidator tokenValidator1(lexer);
+//    requireThrow([&tokenValidator1, &stcp, &declarationList]() {
+//        stcp->parse(tokenValidator1, declarationList);
+//    });
+}
 
-    std::shared_ptr<Ident> identStr = std::make_shared<Ident>("x");
-    std::shared_ptr<StatementNumber> statementNumber = std::make_shared<StatementNumber>(1);
-    std::shared_ptr<Wildcard> wildcard = std::make_shared<Wildcard>();
-
-    std::unique_ptr<Clause> clause;
-    std::unique_ptr<UsesS> usesS;
-    std::unique_ptr<SuchThatClauseParser> stcp;
-    std::unique_ptr<ILexer> lexer;
-
-    query = "such that Uses(p,v)";
-    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator1(lexer);
-    requireThrow([&tokenValidator1, &stcp, &declarationList]() {
-        stcp->parse(tokenValidator1, declarationList);
-    });
-
+TEST_CASE_METHOD(setUpStcp, "Uses, statement and variable") {
     query = "such that Uses(s,v)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator2(lexer);
     clause = stcp->parse(tokenValidator2, declarationList);
-    usesS = std::make_unique<UsesS>(synonymStatement, synonymVariable);
+    usesS = std::make_unique<UsesS>(std::move(synonymStatement), std::move(synonymVariable));
     requireTrue(*clause == *usesS);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Uses, print and variable") {
     query = "such that Uses(pn,v)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator3(lexer);
     clause = stcp->parse(tokenValidator3, declarationList);
-    usesS = std::make_unique<UsesS>(synonymPrint, synonymVariable);
+    usesS = std::make_unique<UsesS>(std::move(synonymPrint), std::move(synonymVariable));
     requireTrue(*clause == *usesS);
+}
 
-    query = "such that Uses(r,v)";
-    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator4(lexer);
-    requireThrow([&tokenValidator4, &stcp, &declarationList]() {
-        stcp->parse(tokenValidator4, declarationList);
-    });
+TEST_CASE_METHOD(setUpStcp, "Uses, read and variable") {
+    //    query = "such that Uses(r,v)";
+//    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+//    TokenValidator tokenValidator4(lexer);
+//    requireThrow([&tokenValidator4, &stcp, &declarationList]() {
+//        stcp->parse(tokenValidator4, declarationList);
+//    });
+}
 
+TEST_CASE_METHOD(setUpStcp, "Uses, assign and variable") {
     query = "such that Uses(a,v)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator5(lexer);
     clause = stcp->parse(tokenValidator5, declarationList);
-    usesS = std::make_unique<UsesS>(synonymAssign, synonymVariable);
+    usesS = std::make_unique<UsesS>(std::move(synonymAssign), std::move(synonymVariable));
     requireTrue(*clause == *usesS);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Uses, call and variable") {
     query = "such that Uses(cl,v)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator6(lexer);
     clause = stcp->parse(tokenValidator6, declarationList);
-    usesS = std::make_unique<UsesS>(synonymCall, synonymVariable);
+    usesS = std::make_unique<UsesS>(std::move(synonymCall), std::move(synonymVariable));
     requireTrue(*clause == *usesS);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Uses, while and variable") {
     query = "such that Uses(w,v)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator7(lexer);
     clause = stcp->parse(tokenValidator7, declarationList);
-    usesS = std::make_unique<UsesS>(synonymWhile, synonymVariable);
+    usesS = std::make_unique<UsesS>(std::move(synonymWhile), std::move(synonymVariable));
     requireTrue(*clause == *usesS);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Uses, if and variable") {
     query = "such that Uses(ifs,v)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator8(lexer);
     clause = stcp->parse(tokenValidator8, declarationList);
-    usesS = std::make_unique<UsesS>(synonymIf, synonymVariable);
+    usesS = std::make_unique<UsesS>(std::move(synonymIf), std::move(synonymVariable));
     requireTrue(*clause == *usesS);
+}
 
-
-
+TEST_CASE_METHOD(setUpStcp, "Uses, statement and ident") {
     query = "such that Uses(s,\"x\")";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator9(lexer);
     clause = stcp->parse(tokenValidator9, declarationList);
-    usesS = std::make_unique<UsesS>(synonymStatement, identStr);
+    usesS = std::make_unique<UsesS>(std::move(synonymStatement), std::move(identStr));
     requireTrue(*clause == *usesS);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Uses, statement and wildcard") {
     query = "such that Uses(s,_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator10(lexer);
     clause = stcp->parse(tokenValidator10, declarationList);
-    usesS = std::make_unique<UsesS>(synonymStatement, wildcard);
+    usesS = std::make_unique<UsesS>(std::move(synonymStatement), std::move(wildcard1));
     requireTrue(*clause == *usesS);
+}
 
-
-
+TEST_CASE_METHOD(setUpStcp, "Uses, int and variable") {
     query = "such that Uses(1,v)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator11(lexer);
     clause = stcp->parse(tokenValidator11, declarationList);
-    usesS = std::make_unique<UsesS>(statementNumber, synonymVariable);
+    usesS = std::make_unique<UsesS>(std::move(statementNumber1), std::move(synonymVariable));
     requireTrue(*clause == *usesS);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Uses, int and ident") {
     query = "such that Uses(1,\"x\")";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator12(lexer);
     clause = stcp->parse(tokenValidator12, declarationList);
-    usesS = std::make_unique<UsesS>(statementNumber, identStr);
+    usesS = std::make_unique<UsesS>(std::move(statementNumber1), std::move(identStr));
     requireTrue(*clause == *usesS);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Uses, int and wildcard") {
     query = "such that Uses(1,_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator13(lexer);
     clause = stcp->parse(tokenValidator13, declarationList);
-    usesS = std::make_unique<UsesS>(statementNumber, wildcard);
+    usesS = std::make_unique<UsesS>(std::move(statementNumber1), std::move(wildcard1));
     requireTrue(*clause == *usesS);
-
-
-    query = "such that Uses(_,_)";
-    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator14(lexer);
-    requireThrow([&tokenValidator14, &stcp, &declarationList]() {
-        stcp->parse(tokenValidator14, declarationList);
-    });
 }
 
-TEST_CASE("SuchThatClauseParser parse(); Follows, argument type test") {
-    std::string query = "";
-    std::vector<Synonym> declarationList;
-    declarationList.push_back(Synonym(Synonym::DesignEntity::PROCEDURE, "p"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::STMT, "s"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::STMT, "s1"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::READ, "r"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::PRINT, "pn"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::ASSIGN, "a"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::CALL, "cl"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::WHILE, "w"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::IF, "ifs"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::VARIABLE, "v"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::CONSTANT, "c"));
+TEST_CASE_METHOD(setUpStcp, "Uses, wildcard and wildcard") {
+//    query = "such that Uses(_,_)";
+//    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+//    TokenValidator tokenValidator14(lexer);
+//    requireThrow([&tokenValidator14, &stcp, &declarationList]() {
+//        stcp->parse(tokenValidator14, declarationList);
+//    });
+}
 
-    std::shared_ptr<Synonym> synonymProcedure = std::make_shared<Synonym>(Synonym::DesignEntity::PROCEDURE, "p");
-    std::shared_ptr<Synonym> synonymStatement = std::make_shared<Synonym>(Synonym::DesignEntity::STMT, "s");
-    std::shared_ptr<Synonym> synonymStatement1 = std::make_shared<Synonym>(Synonym::DesignEntity::STMT, "s1");
-    std::shared_ptr<Synonym> synonymRead = std::make_shared<Synonym>(Synonym::DesignEntity::READ, "r");
-    std::shared_ptr<Synonym> synonymPrint = std::make_shared<Synonym>(Synonym::DesignEntity::PRINT, "pn");
-    std::shared_ptr<Synonym> synonymAssign = std::make_shared<Synonym>(Synonym::DesignEntity::ASSIGN, "a");
-    std::shared_ptr<Synonym> synonymCall = std::make_shared<Synonym>(Synonym::DesignEntity::CALL, "cl");
-    std::shared_ptr<Synonym> synonymWhile = std::make_shared<Synonym>(Synonym::DesignEntity::WHILE, "w");
-    std::shared_ptr<Synonym> synonymIf = std::make_shared<Synonym>(Synonym::DesignEntity::IF, "ifs");
-    std::shared_ptr<Synonym> synonymVariable = std::make_shared<Synonym>(Synonym::DesignEntity::VARIABLE, "v");
-    std::shared_ptr<Synonym> synonymConstant = std::make_shared<Synonym>(Synonym::DesignEntity::CONSTANT, "c");
+TEST_CASE_METHOD(setUpStcp, "Follows, statement and procedure") {
+//    query = "such that Follows(s,p)";
+//    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+//    TokenValidator tokenValidator1(lexer);
+//    requireThrow([&tokenValidator1, &stcp, &declarationList]() {
+//        stcp->parse(tokenValidator1, declarationList);
+//    });
+}
 
-    std::shared_ptr<StatementNumber> statementNumber = std::make_shared<StatementNumber>(1);
-    std::shared_ptr<Wildcard> wildcard = std::make_shared<Wildcard>();
-
-    std::unique_ptr<Clause> clause;
-    std::unique_ptr<Follows> follows;
-    std::unique_ptr<SuchThatClauseParser> stcp;
-    std::unique_ptr<ILexer> lexer;
-
-    query = "such that Follows(s,p)";
-    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator1(lexer);
-    requireThrow([&tokenValidator1, &stcp, &declarationList]() {
-        stcp->parse(tokenValidator1, declarationList);
-    });
-
+TEST_CASE_METHOD(setUpStcp, "Follows, statement and statement") {
     query = "such that Follows(s,s1)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator(lexer);
     clause = stcp->parse(tokenValidator, declarationList);
-    follows = std::make_unique<Follows>(synonymStatement, synonymStatement1, false);
+    follows = std::make_unique<Follows>(std::move(synonymStatement), std::move(synonymStatement1), false);
     requireTrue(*clause == *follows);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Follows, statement and read") {
     query = "such that Follows(s,r)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator2(lexer);
     clause = stcp->parse(tokenValidator2, declarationList);
-    follows = std::make_unique<Follows>(synonymStatement, synonymRead, false);
+    follows = std::make_unique<Follows>(std::move(synonymStatement), std::move(synonymRead), false);
     requireTrue(*clause == *follows);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Follows, statement and print") {
     query = "such that Follows(s,pn)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator3(lexer);
     clause = stcp->parse(tokenValidator3, declarationList);
-    follows = std::make_unique<Follows>(synonymStatement, synonymPrint, false);
+    follows = std::make_unique<Follows>(std::move(synonymStatement), std::move(synonymPrint), false);
     requireTrue(*clause == *follows);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Follows, statement and assign") {
     query = "such that Follows(s,a)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator4(lexer);
     clause = stcp->parse(tokenValidator4, declarationList);
-    follows = std::make_unique<Follows>(synonymStatement, synonymAssign, false);
+    follows = std::make_unique<Follows>(std::move(synonymStatement), std::move(synonymAssign), false);
     requireTrue(*clause == *follows);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Follows, statement and call") {
     query = "such that Follows(s,cl)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator5(lexer);
     clause = stcp->parse(tokenValidator5, declarationList);
-    follows = std::make_unique<Follows>(synonymStatement, synonymCall, false);
+    follows = std::make_unique<Follows>(std::move(synonymStatement), std::move(synonymCall), false);
     requireTrue(*clause == *follows);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Follows, statement and while") {
     query = "such that Follows(s,w)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator6(lexer);
     clause = stcp->parse(tokenValidator6, declarationList);
-    follows = std::make_unique<Follows>(synonymStatement, synonymWhile, false);
+    follows = std::make_unique<Follows>(std::move(synonymStatement), std::move(synonymWhile), false);
     requireTrue(*clause == *follows);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Follows, statement and if") {
     query = "such that Follows(s,ifs)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator7(lexer);
     clause = stcp->parse(tokenValidator7, declarationList);
-    follows = std::make_unique<Follows>(synonymStatement, synonymIf, false);
+    follows = std::make_unique<Follows>(std::move(synonymStatement), std::move(synonymIf), false);
     requireTrue(*clause == *follows);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Follows, statement and wildcard") {
     query = "such that Follows(s,_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator8(lexer);
     clause = stcp->parse(tokenValidator8, declarationList);
-    follows = std::make_unique<Follows>(synonymStatement, wildcard, false);
+    follows = std::make_unique<Follows>(std::move(synonymStatement), std::move(wildcard1), false);
     requireTrue(*clause == *follows);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Follows, statement and int") {
     query = "such that Follows(s,1)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator9(lexer);
     clause = stcp->parse(tokenValidator9, declarationList);
-    follows = std::make_unique<Follows>(synonymStatement, statementNumber, false);
+    follows = std::make_unique<Follows>(std::move(synonymStatement), std::move(statementNumber1), false);
     requireTrue(*clause == *follows);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Follows, wildcard and statement") {
     query = "such that Follows(_,s)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator10(lexer);
     clause = stcp->parse(tokenValidator10, declarationList);
-    follows = std::make_unique<Follows>(wildcard, synonymStatement, false);
+    follows = std::make_unique<Follows>(std::move(wildcard1), std::move(synonymStatement), false);
     requireTrue(*clause == *follows);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Follows, wildcard and wildcard") {
     query = "such that Follows(_,_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator11(lexer);
     clause = stcp->parse(tokenValidator11, declarationList);
-    follows = std::make_unique<Follows>(wildcard, wildcard, false);
+    follows = std::make_unique<Follows>(std::move(wildcard1), std::move(wildcard2), false);
     requireTrue(*clause == *follows);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Follows, wildcard and int") {
     query = "such that Follows(_,1)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator12(lexer);
     clause = stcp->parse(tokenValidator12, declarationList);
-    follows = std::make_unique<Follows>(wildcard, statementNumber, false);
+    follows = std::make_unique<Follows>(std::move(wildcard1), std::move(statementNumber1), false);
     requireTrue(*clause == *follows);
+}
 
-    query = "such that Follows(_,p)";
-    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator13(lexer);
-    requireThrow([&tokenValidator13, &stcp, &declarationList]() {
-        stcp->parse(tokenValidator13, declarationList);
-    });
+TEST_CASE_METHOD(setUpStcp, "Follows, wildcard and procedure") {
+//    query = "such that Follows(_,p)";
+//    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+//    TokenValidator tokenValidator13(lexer);
+//    requireThrow([&tokenValidator13, &stcp, &declarationList]() {
+//        stcp->parse(tokenValidator13, declarationList);
+//    });
+}
 
-    query = "such that Follows(1,pn)";
-    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator14(lexer);
-    clause = stcp->parse(tokenValidator14, declarationList);
-    follows = std::make_unique<Follows>(statementNumber, synonymPrint, false);
-    requireTrue(*clause == *follows);
-
+TEST_CASE_METHOD(setUpStcp, "Follows, int and wildcard") {
     query = "such that Follows(1,_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator15(lexer);
     clause = stcp->parse(tokenValidator15, declarationList);
-    follows = std::make_unique<Follows>(statementNumber, wildcard, false);
+    follows = std::make_unique<Follows>(std::move(statementNumber1), std::move(wildcard1), false);
     requireTrue(*clause == *follows);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Follows, int and int") {
     query = "such that Follows(1,1)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator16(lexer);
     clause = stcp->parse(tokenValidator16, declarationList);
-    follows = std::make_unique<Follows>(statementNumber, statementNumber, false);
+    follows = std::make_unique<Follows>(std::move(statementNumber1), std::move(statementNumber2), false);
     requireTrue(*clause == *follows);
 }
 
+TEST_CASE_METHOD(setUpStcp, "Parent, statement and procedure") {
+//    query = "such that Parent(s,p)";
+//    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+//    TokenValidator tokenValidator1(lexer);
+//    requireThrow([&tokenValidator1, &stcp, &declarationList]() {
+//        stcp->parse(tokenValidator1, declarationList);
+//    });
+}
 
-TEST_CASE("SuchThatClauseParser parse(); Parent, argument type test") {
-    std::string query = "";
-    std::vector<Synonym> declarationList;
-    declarationList.push_back(Synonym(Synonym::DesignEntity::PROCEDURE, "p"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::STMT, "s"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::STMT, "s1"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::READ, "r"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::PRINT, "pn"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::ASSIGN, "a"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::CALL, "cl"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::WHILE, "w"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::IF, "ifs"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::VARIABLE, "v"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::CONSTANT, "c"));
-
-    std::shared_ptr<Synonym> synonymProcedure = std::make_shared<Synonym>(Synonym::DesignEntity::PROCEDURE, "p");
-    std::shared_ptr<Synonym> synonymStatement = std::make_shared<Synonym>(Synonym::DesignEntity::STMT, "s");
-    std::shared_ptr<Synonym> synonymStatement1 = std::make_shared<Synonym>(Synonym::DesignEntity::STMT, "s1");
-    std::shared_ptr<Synonym> synonymRead = std::make_shared<Synonym>(Synonym::DesignEntity::READ, "r");
-    std::shared_ptr<Synonym> synonymPrint = std::make_shared<Synonym>(Synonym::DesignEntity::PRINT, "pn");
-    std::shared_ptr<Synonym> synonymAssign = std::make_shared<Synonym>(Synonym::DesignEntity::ASSIGN, "a");
-    std::shared_ptr<Synonym> synonymCall = std::make_shared<Synonym>(Synonym::DesignEntity::CALL, "cl");
-    std::shared_ptr<Synonym> synonymWhile = std::make_shared<Synonym>(Synonym::DesignEntity::WHILE, "w");
-    std::shared_ptr<Synonym> synonymIf = std::make_shared<Synonym>(Synonym::DesignEntity::IF, "ifs");
-    std::shared_ptr<Synonym> synonymVariable = std::make_shared<Synonym>(Synonym::DesignEntity::VARIABLE, "v");
-    std::shared_ptr<Synonym> synonymConstant = std::make_shared<Synonym>(Synonym::DesignEntity::CONSTANT, "c");
-
-    std::shared_ptr<StatementNumber> statementNumber = std::make_shared<StatementNumber>(1);
-    std::shared_ptr<Wildcard> wildcard = std::make_shared<Wildcard>();
-
-    std::unique_ptr<Clause> clause;
-    std::unique_ptr<Parent> parent;
-    std::unique_ptr<SuchThatClauseParser> stcp;
-    std::unique_ptr<ILexer> lexer;
-
-    query = "such that Parent(s,p)";
-    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator1(lexer);
-    requireThrow([&tokenValidator1, &stcp, &declarationList]() {
-        stcp->parse(tokenValidator1, declarationList);
-    });
-
+TEST_CASE_METHOD(setUpStcp, "Parent, statement and statement") {
     query = "such that Parent(s,s1)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator(lexer);
     clause = stcp->parse(tokenValidator, declarationList);
-    parent = std::make_unique<Parent>(synonymStatement, synonymStatement1, false);
+    parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(synonymStatement1), false);
     requireTrue(*clause == *parent);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Parent, statement and read") {
     query = "such that Parent(s,r)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator2(lexer);
     clause = stcp->parse(tokenValidator2, declarationList);
-    parent = std::make_unique<Parent>(synonymStatement, synonymRead, false);
+    parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(synonymRead), false);
     requireTrue(*clause == *parent);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Parent, statement and print") {
     query = "such that Parent(s,pn)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator3(lexer);
     clause = stcp->parse(tokenValidator3, declarationList);
-    parent = std::make_unique<Parent>(synonymStatement, synonymPrint, false);
+    parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(synonymPrint), false);
     requireTrue(*clause == *parent);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Parent, statement and assign") {
     query = "such that Parent(s,a)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator4(lexer);
     clause = stcp->parse(tokenValidator4, declarationList);
-    parent = std::make_unique<Parent>(synonymStatement, synonymAssign, false);
+    parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(synonymAssign), false);
     requireTrue(*clause == *parent);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Parent, statement and call") {
     query = "such that Parent(s,cl)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator5(lexer);
     clause = stcp->parse(tokenValidator5, declarationList);
-    parent = std::make_unique<Parent>(synonymStatement, synonymCall, false);
+    parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(synonymCall), false);
     requireTrue(*clause == *parent);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Parent, statement and while") {
     query = "such that Parent(s,w)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator6(lexer);
     clause = stcp->parse(tokenValidator6, declarationList);
-    parent = std::make_unique<Parent>(synonymStatement, synonymWhile, false);
+    parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(synonymWhile), false);
     requireTrue(*clause == *parent);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Parent, statement and if") {
     query = "such that Parent(s,ifs)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator7(lexer);
     clause = stcp->parse(tokenValidator7, declarationList);
-    parent = std::make_unique<Parent>(synonymStatement, synonymIf, false);
+    parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(synonymIf), false);
     requireTrue(*clause == *parent);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Parent, statement and wildcard") {
     query = "such that Parent(s,_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator8(lexer);
     clause = stcp->parse(tokenValidator8, declarationList);
-    parent = std::make_unique<Parent>(synonymStatement, wildcard, false);
+    parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(wildcard1), false);
     requireTrue(*clause == *parent);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Parent, statement and int") {
     query = "such that Parent(s,1)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator9(lexer);
     clause = stcp->parse(tokenValidator9, declarationList);
-    parent = std::make_unique<Parent>(synonymStatement, statementNumber, false);
+    parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(statementNumber1), false);
     requireTrue(*clause == *parent);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Parent, wildcard and statement") {
     query = "such that Parent(_,s)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator10(lexer);
     clause = stcp->parse(tokenValidator10, declarationList);
-    parent = std::make_unique<Parent>(wildcard, synonymStatement, false);
+    parent = std::make_unique<Parent>(std::move(wildcard1), std::move(synonymStatement), false);
     requireTrue(*clause == *parent);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Parent, wildcard and wildcard") {
     query = "such that Parent(_,_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator11(lexer);
     clause = stcp->parse(tokenValidator11, declarationList);
-    parent = std::make_unique<Parent>(wildcard, wildcard, false);
+    parent = std::make_unique<Parent>(std::move(wildcard1), std::move(wildcard2), false);
     requireTrue(*clause == *parent);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Parent, wildcard and int") {
     query = "such that Parent(_,1)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator12(lexer);
     clause = stcp->parse(tokenValidator12, declarationList);
-    parent = std::make_unique<Parent>(wildcard, statementNumber, false);
+    parent = std::make_unique<Parent>(std::move(wildcard1), std::move(statementNumber1), false);
     requireTrue(*clause == *parent);
+}
 
-    query = "such that Parent(_,p)";
-    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator13(lexer);
-    requireThrow([&tokenValidator13, &stcp, &declarationList]() {
-        stcp->parse(tokenValidator13, declarationList);
-    });
-
+TEST_CASE_METHOD(setUpStcp, "Parent, int and print") {
     query = "such that Parent(1,pn)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator14(lexer);
     clause = stcp->parse(tokenValidator14, declarationList);
-    parent = std::make_unique<Parent>(statementNumber, synonymPrint, false);
+    parent = std::make_unique<Parent>(std::move(statementNumber1), std::move(synonymPrint), false);
     requireTrue(*clause == *parent);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Parent, int and wildcard") {
     query = "such that Parent(1,_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator15(lexer);
     clause = stcp->parse(tokenValidator15, declarationList);
-    parent = std::make_unique<Parent>(statementNumber, wildcard, false);
+    parent = std::make_unique<Parent>(std::move(statementNumber1), std::move(wildcard1), false);
     requireTrue(*clause == *parent);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Parent, int and int") {
     query = "such that Parent(1,1)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator16(lexer);
     clause = stcp->parse(tokenValidator16, declarationList);
-    parent = std::make_unique<Parent>(statementNumber, statementNumber, false);
+    parent = std::make_unique<Parent>(std::move(statementNumber1), std::move(statementNumber2), false);
     requireTrue(*clause == *parent);
 }
 
-
-TEST_CASE("SuchThatClauseParser parse(); Parent*/Follows*, argument type test") {
-    std::string query = "";
-    std::vector<Synonym> declarationList;
-    declarationList.push_back(Synonym(Synonym::DesignEntity::PROCEDURE, "p"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::STMT, "s"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::STMT, "s1"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::READ, "r"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::PRINT, "pn"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::ASSIGN, "a"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::CALL, "cl"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::WHILE, "w"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::IF, "ifs"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::VARIABLE, "v"));
-    declarationList.push_back(Synonym(Synonym::DesignEntity::CONSTANT, "c"));
-
-    std::shared_ptr<Synonym> synonymProcedure = std::make_shared<Synonym>(Synonym::DesignEntity::PROCEDURE, "p");
-    std::shared_ptr<Synonym> synonymStatement = std::make_shared<Synonym>(Synonym::DesignEntity::STMT, "s");
-    std::shared_ptr<Synonym> synonymStatement1 = std::make_shared<Synonym>(Synonym::DesignEntity::STMT, "s1");
-    std::shared_ptr<Synonym> synonymRead = std::make_shared<Synonym>(Synonym::DesignEntity::READ, "r");
-    std::shared_ptr<Synonym> synonymPrint = std::make_shared<Synonym>(Synonym::DesignEntity::PRINT, "pn");
-    std::shared_ptr<Synonym> synonymAssign = std::make_shared<Synonym>(Synonym::DesignEntity::ASSIGN, "a");
-    std::shared_ptr<Synonym> synonymCall = std::make_shared<Synonym>(Synonym::DesignEntity::CALL, "cl");
-    std::shared_ptr<Synonym> synonymWhile = std::make_shared<Synonym>(Synonym::DesignEntity::WHILE, "w");
-    std::shared_ptr<Synonym> synonymIf = std::make_shared<Synonym>(Synonym::DesignEntity::IF, "ifs");
-    std::shared_ptr<Synonym> synonymVariable = std::make_shared<Synonym>(Synonym::DesignEntity::VARIABLE, "v");
-    std::shared_ptr<Synonym> synonymConstant = std::make_shared<Synonym>(Synonym::DesignEntity::CONSTANT, "c");
-
-    std::shared_ptr<StatementNumber> statementNumber = std::make_shared<StatementNumber>(1);
-    std::shared_ptr<Wildcard> wildcard = std::make_shared<Wildcard>();
-
-    std::unique_ptr<Clause> clause;
-    std::unique_ptr<Parent> parent;
-    std::unique_ptr<Follows> follows;
-    std::unique_ptr<SuchThatClauseParser> stcp;
-    std::unique_ptr<ILexer> lexer;
-
-    query = "such that Follows*(s,p)";
-    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator1(lexer);
-    requireThrow([&tokenValidator1, &stcp, &declarationList]() {
-        stcp->parse(tokenValidator1, declarationList);
-    });
-
+TEST_CASE_METHOD(setUpStcp, "Follows*, statement and statement") {
     query = "such that Follows*(s,s1)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator2(lexer);
     clause = stcp->parse(tokenValidator2, declarationList);
-    follows = std::make_unique<Follows>(synonymStatement, synonymStatement1, true);
+    follows = std::make_unique<Follows>(std::move(synonymStatement), std::move(synonymStatement1), true);
     requireTrue(*clause == *follows);
+}
 
+TEST_CASE_METHOD(setUpStcp, "Parent*, statement and statement") {
     query = "such that Parent*(s,s1)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator3(lexer);
     clause = stcp->parse(tokenValidator3, declarationList);
-    parent = std::make_unique<Parent>(synonymStatement, synonymStatement1, true);
+    parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(synonymStatement1), true);
     requireTrue(*clause == *parent);
-
-
-
 }

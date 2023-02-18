@@ -7,7 +7,7 @@
 #include "qps/query_exceptions/SyntaxException.h"
 #include "qps/query_exceptions/SemanticException.h"
 
-std::vector<Synonym> DeclarationParser::parse(TokenValidator &tokenValidator) {
+std::vector<Synonym> DeclarationParser::parse(TokenValidator& tokenValidator) {
     std::vector<Synonym> declarationList;
 
     // check for next declaration
@@ -21,7 +21,7 @@ std::vector<Synonym> DeclarationParser::parse(TokenValidator &tokenValidator) {
         while (true) {
             std::unique_ptr<Token> synonym = tokenValidator.validateAndConsumeSynonymToken();
             if (!isDeclared(synonym->getLexeme(), declarationList)) {
-                declarationList.push_back(Synonym(de, synonym->getLexeme()));
+                declarationList.emplace_back(de, synonym->getLexeme());
             } else {
                 throw SemanticException();
             }
@@ -40,7 +40,7 @@ std::vector<Synonym> DeclarationParser::parse(TokenValidator &tokenValidator) {
 }
 
 // convert Token tag to Synonym design entity
-Synonym::DesignEntity DeclarationParser::processDesignEntity(TokenValidator &tokenValidator) {
+Synonym::DesignEntity DeclarationParser::processDesignEntity(TokenValidator& tokenValidator) {
     std::unique_ptr<Token> designEntity = tokenValidator.validateAndConsumeDesignEntityToken();
     switch (designEntity->getTag()) {
         case Token::Tag::Statement:
@@ -68,9 +68,9 @@ Synonym::DesignEntity DeclarationParser::processDesignEntity(TokenValidator &tok
     }
 }
 
-bool DeclarationParser::isDeclared(std::string value, std::vector<Synonym> declarationList) {
+bool DeclarationParser::isDeclared(const std::string& value, std::vector<Synonym>& declarationList) {
     bool isDeclared = false;
-    for (Synonym s : declarationList) {
+    for (const Synonym& s : declarationList) {
         if (value == s.str()) {
             isDeclared = true;
         }

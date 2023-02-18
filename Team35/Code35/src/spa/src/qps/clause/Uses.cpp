@@ -1,33 +1,32 @@
 #include "Uses.h"
 #include "qps/pql/StatementNumber.h"
-#include "qps/pql/Ident.h"
-#include "qps/pql/Wildcard.h"
 #include "qps/query_exceptions/SemanticException.h"
 
-UsesS::UsesS(std::shared_ptr<PQLToken> first, std::shared_ptr<PQLToken> second) : TwoArgClause(first, second) {
-    validateArgs(first, second);
+UsesS::UsesS(std::unique_ptr<PQLToken> first,
+             std::unique_ptr<PQLToken> second) : TwoArgClause(std::move(first), std::move(second)) {
+    validateArgs();
 }
 
-std::unique_ptr<Result> UsesS::evaluate(PKBReader *db) {
+std::unique_ptr<Result> UsesS::evaluate(PKBReader* db) {
     /* <stmt SYNONYM | STMT_NUM>, <var SYNONYM | IDENT | _ > */
     switch (caseValue()) {
         case c(PQLToken::Tag::STMT_NUM, PQLToken::Tag::SYNONYM):  // Uses(1, var) -> string[]
         {
-            int stmtNum = std::dynamic_pointer_cast<StatementNumber>(first)->n;
+            int stmtNum = dynamic_cast<const StatementNumber*>(first.get())->n;
             ENT_SET set = db->getRelationship(StmtNameRelationship::Uses, stmtNum);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), set);
             return std::move(result);
         }
         case c(PQLToken::Tag::STMT_NUM, PQLToken::Tag::WILDCARD):  // Uses(1, _)/ -> bool
         {
-            int stmtNum = std::dynamic_pointer_cast<StatementNumber>(first)->n;
+            int stmtNum = dynamic_cast<const StatementNumber*>(first.get())->n;
             ENT_SET set = db->getRelationship(StmtNameRelationship::Uses, stmtNum);
-            std::unique_ptr<Result> result = std::make_unique<BoolResult>(set.size() > 0);
+            std::unique_ptr<Result> result = std::make_unique<BoolResult>(!set.empty());
             return std::move(result);
         }
         case c(PQLToken::Tag::STMT_NUM, PQLToken::Tag::IDENT):  // Uses(1, "x")/ -> bool
         {
-            int stmtNum = std::dynamic_pointer_cast<StatementNumber>(first)->n;
+            int stmtNum = dynamic_cast<const StatementNumber*>(first.get())->n;
             bool b = db->isRelationshipExists(StmtNameRelationship::Uses, stmtNum,
                                             second->str());
             std::unique_ptr<Result> result = std::make_unique<BoolResult>(b);
@@ -59,13 +58,12 @@ std::unique_ptr<Result> UsesS::evaluate(PKBReader *db) {
     }
 }
 
-void UsesS::validateArgs(std::shared_ptr<PQLToken> first, std::shared_ptr<PQLToken> second) {
-    std::shared_ptr<Wildcard> wildcard = std::dynamic_pointer_cast<Wildcard>(first);
-    std::shared_ptr<Synonym> synonym1 = std::dynamic_pointer_cast<Synonym>(first);
-    std::shared_ptr<Synonym> synonym2 = std::dynamic_pointer_cast<Synonym>(second);
-    if (synonym1 != NULL && (synonym1->de == Synonym::DesignEntity::READ) ||
-        wildcard != NULL ||
-        (synonym2 != NULL && synonym2->de != Synonym::DesignEntity::VARIABLE)) {
+void UsesS::validateArgs() {
+    const Synonym* synonym1 = dynamic_cast<const Synonym*>(first.get());
+    const Synonym* synonym2 = dynamic_cast<const Synonym*>(second.get());
+    if (synonym1 != nullptr && (synonym1->de == Synonym::DesignEntity::READ) ||
+            first->tag == PQLToken::Tag::WILDCARD ||
+        (synonym2 != nullptr && synonym2->de != Synonym::DesignEntity::VARIABLE)) {
         throw SemanticException();
     }
 }

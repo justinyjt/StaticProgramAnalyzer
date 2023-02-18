@@ -12,7 +12,8 @@ class Follows : public TwoArgClause {
  public:
     /* <SYNONYM | _ | STMT_NUM> */
     const bool isRecursive;
-    Follows(std::shared_ptr<PQLToken> first, std::shared_ptr<PQLToken> second, bool isRecursive);
+    Follows(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isRecursive);
     std::unique_ptr<Result> evaluate(PKBReader*);
+    void validateArgs() override;
     bool operator==(const Clause& rhs) const;
 };

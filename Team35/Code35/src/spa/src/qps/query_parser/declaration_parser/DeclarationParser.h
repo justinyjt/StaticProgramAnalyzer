@@ -9,7 +9,7 @@
 
 class DeclarationParser {
  public:
-    std::vector<Synonym> parse(TokenValidator &tokenValidator);
+    std::vector<Synonym> parse(TokenValidator& tokenValidator);
     Synonym::DesignEntity processDesignEntity(TokenValidator &tokenValidator);
-    bool isDeclared(std::string value, std::vector<Synonym> declarationList);
+    bool isDeclared(const std::string& value, std::vector<Synonym> &declarationList);
 };
