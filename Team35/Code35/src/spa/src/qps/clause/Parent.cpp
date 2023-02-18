@@ -87,7 +87,7 @@ std::unique_ptr<Result> Parent::evaluate(PKBReader *db) {
 bool Parent::operator==(const Clause& rhs) const {
     const Parent* pRhs = dynamic_cast<const Parent*>(&rhs);
     if (pRhs != nullptr) {
-        return equal(*pRhs);
+        return equal(*pRhs) && isRecursive == pRhs->isRecursive;
     }
     return false;
 }

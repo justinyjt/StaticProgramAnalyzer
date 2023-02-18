@@ -16,8 +16,8 @@ TEST_CASE("1. Query parser") {
 
     requireTrue(clauses.size() == 3);
 
-    std::shared_ptr<Synonym> st = std::make_shared<Synonym>(Synonym::DesignEntity::STMT, "a");
-    std::shared_ptr<Synonym> syn = std::make_shared<Synonym>(Synonym::DesignEntity::STMT, "b");
+    std::shared_ptr<Synonym> st = std::make_shared<Synonym>(Synonym::DesignEntity::ASSIGN, "a");
+    std::shared_ptr<Synonym> syn = std::make_shared<Synonym>(Synonym::DesignEntity::ASSIGN, "b");
     std::unique_ptr<Parent> m = std::make_unique<Parent>(st,syn, true);
 
     requireTrue(*clauses[1] == *m);

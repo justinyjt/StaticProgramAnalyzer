@@ -89,7 +89,7 @@ std::unique_ptr<Result> Follows::evaluate(PKBReader *db) {
 bool Follows::operator==(const Clause& rhs) const {
     const Follows* pRhs = dynamic_cast<const Follows*>(&rhs);
     if (pRhs != nullptr) {
-        return equal(*pRhs);
+        return equal(*pRhs) && isRecursive == pRhs->isRecursive;
     }
     return false;
 }
