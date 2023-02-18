@@ -169,7 +169,8 @@ unique_ptr<ASTNode> Parser::parseCondExpr() {
 
 unique_ptr<ASTNode> Parser::parseRelExpr() {
     unique_ptr<ASTNode> factor1 = parseRelFactor();
-    if (scanner_.match(Token::Tag::GreaterThan)) {
+    if (scanner_.peek(Token::Tag::GreaterThan)) {
+        scanner_.next();
         unique_ptr<ASTNode> op = std::make_unique<ASTNode>(ASTNode::SyntaxType::GreaterThan, ">");
         unique_ptr<ASTNode> factor2 = parseRelFactor();
 
@@ -177,7 +178,8 @@ unique_ptr<ASTNode> Parser::parseRelExpr() {
         op->addChild(std::move(factor2));
 
         return std::move(op);
-    } else if (scanner_.match(Token::Tag::GreaterThanEqualTo)) {
+    } else if (scanner_.peek(Token::Tag::GreaterThanEqualTo)) {
+        scanner_.next();
         unique_ptr<ASTNode> op = std::make_unique<ASTNode>(ASTNode::SyntaxType::GreaterThanEqualTo, ">=");
         unique_ptr<ASTNode> factor2 = parseRelFactor();
 
@@ -185,7 +187,8 @@ unique_ptr<ASTNode> Parser::parseRelExpr() {
         op->addChild(std::move(factor2));
 
         return std::move(op);
-    } else if (scanner_.match(Token::Tag::LessThan)) {
+    } else if (scanner_.peek(Token::Tag::LessThan)) {
+        scanner_.next();
         unique_ptr<ASTNode> op = std::make_unique<ASTNode>(ASTNode::SyntaxType::LessThan, "<");
         unique_ptr<ASTNode> factor2 = parseRelFactor();
 
@@ -193,7 +196,8 @@ unique_ptr<ASTNode> Parser::parseRelExpr() {
         op->addChild(std::move(factor2));
 
         return std::move(op);
-    } else if (scanner_.match(Token::Tag::LessThanEqualTo)) {
+    } else if (scanner_.peek(Token::Tag::LessThanEqualTo)) {
+        scanner_.next();
         unique_ptr<ASTNode> op = std::make_unique<ASTNode>(ASTNode::SyntaxType::LessThanEqualTo, "<=");
         unique_ptr<ASTNode> factor2 = parseRelFactor();
 
@@ -201,7 +205,8 @@ unique_ptr<ASTNode> Parser::parseRelExpr() {
         op->addChild(std::move(factor2));
 
         return std::move(op);
-    } else if (scanner_.match(Token::Tag::Equal)) {
+    } else if (scanner_.peek(Token::Tag::Equivalence)) {
+        scanner_.next();
         unique_ptr<ASTNode> op = std::make_unique<ASTNode>(ASTNode::SyntaxType::Equivalence, "==");
         unique_ptr<ASTNode> factor2 = parseRelFactor();
 
@@ -209,7 +214,9 @@ unique_ptr<ASTNode> Parser::parseRelExpr() {
         op->addChild(std::move(factor2));
 
         return std::move(op);
-    } else if (scanner_.match(Token::Tag::NotEqual)) {
+    } else {
+        assert(scanner_.peek(Token::Tag::NotEqual));
+        scanner_.next();
         unique_ptr<ASTNode> op = std::make_unique<ASTNode>(ASTNode::SyntaxType::NotEqual, "!=");
         unique_ptr<ASTNode> factor2 = parseRelFactor();
 
@@ -217,8 +224,6 @@ unique_ptr<ASTNode> Parser::parseRelExpr() {
         op->addChild(std::move(factor2));
 
         return std::move(op);
-    } else {
-        return std::move(factor1);
     }
 }
 
