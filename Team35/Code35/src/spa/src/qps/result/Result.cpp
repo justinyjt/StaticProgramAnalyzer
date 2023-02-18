@@ -22,6 +22,8 @@ Result* Result::join(Result* lhs, Result* rhs) {
   BoolResult* br = dynamic_cast<BoolResult*>(rhs);
   TableResult* tr = dynamic_cast<TableResult*>(rhs);
   Result* result;
+  std::cout << br;
+  std::cout << tr;
 
   if (!br->b) {  // empty set
     std::vector<std::list<std::string>> rows;
@@ -161,4 +163,8 @@ Result* Result::tableJoin(Result* lhs, Result* rhs) {
 
   TableResult* tableResult = new TableResult(outputHeaders, outputColumns);
   return tableResult;
+}
+
+bool Result::equal(const Result &rhs) const {
+    return tag == rhs.tag;
 }

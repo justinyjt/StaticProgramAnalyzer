@@ -19,4 +19,5 @@ class Result {
     virtual void output(std::list<std::string>&) = 0;
     static Result* join(Result*, Result*);
     static Result* tableJoin(Result*, Result*);
+    bool equal(const Result &rhs) const;
 };

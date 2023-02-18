@@ -38,4 +38,6 @@ class TableResult : public Result {
     TableResult(const std::string& ident, STMT_SET& set);
 
     void output(std::list<std::string>& list) override;
+
+    bool operator==(const Result& rhs) const;
 };

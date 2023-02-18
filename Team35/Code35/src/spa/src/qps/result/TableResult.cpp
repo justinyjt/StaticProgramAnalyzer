@@ -68,3 +68,11 @@ void TableResult::output(std::list<std::string>& list) {
     list.push_back(elem.front());
   }
 }
+
+bool TableResult::operator==(const Result& rhs) const {
+    const TableResult* pRhs = dynamic_cast<const TableResult*>(&rhs);
+    if (pRhs != nullptr) {
+        return equal(*pRhs) && idents == pRhs->idents && rows == pRhs->rows;
+    }
+    return false;
+}
