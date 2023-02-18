@@ -3,6 +3,8 @@
 
 #include "TestWrapper.h"
 #include "qps/QPS.h"
+#include "qps/query_exceptions/SyntaxException.h"
+#include "qps/query_exceptions/SemanticException.h"
 
 // implementation code of WrapperFactory - do NOT modify the next 5 lines
 AbstractWrapper *WrapperFactory::wrapper = 0;
@@ -54,8 +56,10 @@ void TestWrapper::evaluate(std::string query, std::list<std::string> &results) {
         QPS queryProcessor = QPS(&pkbReader);
         std::string &s = query;
         queryProcessor.executeQuery(s, results);
-    } catch (std::exception &e) {
-        std::cout << e.what() << std::endl;
+    } catch (SyntaxException& e) {
+        results.emplace_back(e.what());
+    } catch (SemanticException& e) {
+        results.emplace_back(e.what());
     }
 
 

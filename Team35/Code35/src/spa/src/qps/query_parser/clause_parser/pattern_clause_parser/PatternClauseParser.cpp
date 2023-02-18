@@ -7,6 +7,7 @@
 #include "qps/pql/StatementNumber.h"
 #include "qps/pql/Ident.h"
 #include "qps/query_exceptions/SyntaxException.h"
+#include "qps/query_exceptions/SemanticException.h"
 
 Clause *PatternClauseParser::parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms) {
     tokenValidator.validateAndConsumeTokenType(Token::Tag::Pattern);
@@ -35,7 +36,7 @@ PQLToken* PatternClauseParser::createLeftArg(std::unique_ptr<Token> &token, std:
                 return s;
             }
         }
-        throw SyntaxException();
+        throw SemanticException();
     } else if (token->getTag() == Token::Tag::Underscore) {
         auto* w = new Wildcard();
         return w;
@@ -80,7 +81,7 @@ bool PatternClauseParser::isValidPatternSynonym(const std::string& next, std::ve
             return true;
         }
     }
-    throw SyntaxException();
+    throw SemanticException();
 }
 
 bool PatternClauseParser::isEntRef(PQLToken &tok) {
