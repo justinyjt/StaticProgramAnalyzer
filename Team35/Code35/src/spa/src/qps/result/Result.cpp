@@ -151,11 +151,6 @@ Result* Result::tableJoin(Result* lhs, Result* rhs) {
     }
   }
 
-  if (outputColumns.size() == 0) {
-    BoolResult *boolResult = new BoolResult(false);
-    return boolResult;
-  }
-
   TableResult* tableResult = new TableResult(outputHeaders, outputColumns);
   return tableResult;
 }

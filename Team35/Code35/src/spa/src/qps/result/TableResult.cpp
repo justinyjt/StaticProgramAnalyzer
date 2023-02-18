@@ -60,43 +60,30 @@ TableResult::TableResult(const std::string& ident, STMT_SET& set) : Result(Tag::
             std::initializer_list<std::string>{std::to_string(elem)});
 }
 
-void TableResult::output(std::list<std::string>& list, std::string selected) {
-    std::unordered_set<std::string> set;
+void TableResult::output(std::list<std::string>& list, std::string& selected) {
+    std::unordered_set<std::string> resultSet;
 
-    // convert idents header to vector
-    std::vector<std::string> vec;
-    for (auto& elem : idents) {
-        vec.push_back(elem);
-    }
-
-    // loop through vector, if header is not same, skip
-    for (int i = 0; i < vec.size(); i++) {
-        if (vec.at(i) != selected) {
-            for (auto& row : rows) {
-                row.pop_front();
-            }
-        } else {
+    int selectedIdx = 0;
+    for (auto& s : idents) {
+        if (s == selected) {
             break;
         }
+        selectedIdx++;
     }
 
     // get all unique values corresponding to the selected ident
     for (auto& row : rows) {
-        if (row.size() > 0) {
-            set.insert(row.front());
-        }
+        resultSet.insert(
+            *(std::next(row.begin(), selectedIdx)));
     }
 
     // populate result
-    for (auto& elem : set) {
+    for (auto& elem : resultSet) {
         list.push_back(elem);
     }
 }
 
 bool TableResult::operator==(const Result& rhs) const {
     const TableResult* pRhs = dynamic_cast<const TableResult*>(&rhs);
-    if (pRhs != nullptr) {
-        return equal(*pRhs) && idents == pRhs->idents && rows == pRhs->rows;
-    }
-    return false;
+    return pRhs != nullptr && idents == pRhs->idents && rows == pRhs->rows;
 }

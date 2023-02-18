@@ -9,5 +9,5 @@ std::string Wildcard::str() const {
 
 bool Wildcard::operator==(const PQLToken& rhs) const {
   const Wildcard* p_rhs = dynamic_cast<const Wildcard*>(&rhs);
-  return p_rhs != nullptr && PQLToken::equal(rhs);
+  return p_rhs != nullptr;
 }

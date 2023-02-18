@@ -8,5 +8,5 @@ std::string Ident::str() const {
 
 bool Ident::operator==(const PQLToken& rhs) const {
   const Ident* p_rhs = dynamic_cast<const Ident*>(&rhs);
-  return p_rhs != nullptr && PQLToken::equal(rhs) && s == p_rhs->s;
+  return p_rhs != nullptr && s == p_rhs->s;
 }

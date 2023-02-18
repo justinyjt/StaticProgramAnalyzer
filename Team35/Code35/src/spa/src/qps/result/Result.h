@@ -16,7 +16,7 @@ class Result {
     enum class Tag { BOOL, TABLE };
     Tag tag;
     explicit Result(Tag);
-    virtual void output(std::list<std::string>&, std::string selected) = 0;
+    virtual void output(std::list<std::string>&, std::string& selected) = 0;
     static Result* join(Result*, Result*);
     static Result* tableJoin(Result*, Result*);
     bool equal(const Result &rhs) const;
