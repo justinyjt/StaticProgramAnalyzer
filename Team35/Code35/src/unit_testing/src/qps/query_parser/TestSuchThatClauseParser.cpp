@@ -81,15 +81,6 @@ public:
     std::unique_ptr<ILexer> lexer;
 };
 
-TEST_CASE_METHOD(setUpStcp, "Modifies, procedure and variable") {
-//    query = "such that Modifies(p,v)";
-//    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-//    TokenValidator tokenValidator1(lexer);
-//    requireThrow([&tokenValidator1, &stcp, &declarationList]() {
-//        stcp->parse(tokenValidator1, declarationList);
-//    });
-}
-
 TEST_CASE_METHOD(setUpStcp, "Modifies, statement and variable") {
     query = "such that Modifies(s,v)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
@@ -106,16 +97,6 @@ TEST_CASE_METHOD(setUpStcp, "Modifies, read and variable") {
     clause = stcp->parse(tokenValidator3, declarationList);
     modifiesS = std::make_unique<ModifiesS>(std::move(synonymRead), std::move(synonymVariable));
     requireTrue(*clause == *modifiesS);
-}
-
-TEST_CASE_METHOD(setUpStcp, "Modifies, print and variable") {
-
-//    query = "such that Modifies(pn,v)";
-//    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-//    TokenValidator tokenValidator4(lexer);
-//    requireThrow([&tokenValidator4, &stcp, &declarationList]() {
-//        stcp->parse(tokenValidator4, declarationList);
-//    });
 }
 
 TEST_CASE_METHOD(setUpStcp, "Modifies, assign and variable") {
@@ -199,24 +180,6 @@ TEST_CASE_METHOD(setUpStcp, "Modifies, int and wildcard") {
     requireTrue(*clause == *modifiesS);
 }
 
-//TEST_CASE_METHOD(setUpStcp, "Modifies, wildcard and wildcard") {
-//    query = "such that Modifies(_,_)";
-//    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-//    TokenValidator tokenValidator14(lexer);
-//    requireThrow([&tokenValidator14, &stcp, &declarationList]() {
-//        stcp->parse(tokenValidator14, declarationList);
-//    });
-//}
-
-TEST_CASE_METHOD(setUpStcp, "Uses, procedure and variable") {
-    //    query = "such that Uses(p,v)";
-//    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-//    TokenValidator tokenValidator1(lexer);
-//    requireThrow([&tokenValidator1, &stcp, &declarationList]() {
-//        stcp->parse(tokenValidator1, declarationList);
-//    });
-}
-
 TEST_CASE_METHOD(setUpStcp, "Uses, statement and variable") {
     query = "such that Uses(s,v)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
@@ -233,15 +196,6 @@ TEST_CASE_METHOD(setUpStcp, "Uses, print and variable") {
     clause = stcp->parse(tokenValidator3, declarationList);
     usesS = std::make_unique<UsesS>(std::move(synonymPrint), std::move(synonymVariable));
     requireTrue(*clause == *usesS);
-}
-
-TEST_CASE_METHOD(setUpStcp, "Uses, read and variable") {
-    //    query = "such that Uses(r,v)";
-//    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-//    TokenValidator tokenValidator4(lexer);
-//    requireThrow([&tokenValidator4, &stcp, &declarationList]() {
-//        stcp->parse(tokenValidator4, declarationList);
-//    });
 }
 
 TEST_CASE_METHOD(setUpStcp, "Uses, assign and variable") {
@@ -323,24 +277,6 @@ TEST_CASE_METHOD(setUpStcp, "Uses, int and wildcard") {
     clause = stcp->parse(tokenValidator13, declarationList);
     usesS = std::make_unique<UsesS>(std::move(statementNumber1), std::move(wildcard1));
     requireTrue(*clause == *usesS);
-}
-
-TEST_CASE_METHOD(setUpStcp, "Uses, wildcard and wildcard") {
-//    query = "such that Uses(_,_)";
-//    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-//    TokenValidator tokenValidator14(lexer);
-//    requireThrow([&tokenValidator14, &stcp, &declarationList]() {
-//        stcp->parse(tokenValidator14, declarationList);
-//    });
-}
-
-TEST_CASE_METHOD(setUpStcp, "Follows, statement and procedure") {
-//    query = "such that Follows(s,p)";
-//    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-//    TokenValidator tokenValidator1(lexer);
-//    requireThrow([&tokenValidator1, &stcp, &declarationList]() {
-//        stcp->parse(tokenValidator1, declarationList);
-//    });
 }
 
 TEST_CASE_METHOD(setUpStcp, "Follows, statement and statement") {
@@ -451,15 +387,6 @@ TEST_CASE_METHOD(setUpStcp, "Follows, wildcard and int") {
     requireTrue(*clause == *follows);
 }
 
-TEST_CASE_METHOD(setUpStcp, "Follows, wildcard and procedure") {
-//    query = "such that Follows(_,p)";
-//    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-//    TokenValidator tokenValidator13(lexer);
-//    requireThrow([&tokenValidator13, &stcp, &declarationList]() {
-//        stcp->parse(tokenValidator13, declarationList);
-//    });
-}
-
 TEST_CASE_METHOD(setUpStcp, "Follows, int and wildcard") {
     query = "such that Follows(1,_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
@@ -476,15 +403,6 @@ TEST_CASE_METHOD(setUpStcp, "Follows, int and int") {
     clause = stcp->parse(tokenValidator16, declarationList);
     follows = std::make_unique<Follows>(std::move(statementNumber1), std::move(statementNumber2), false);
     requireTrue(*clause == *follows);
-}
-
-TEST_CASE_METHOD(setUpStcp, "Parent, statement and procedure") {
-//    query = "such that Parent(s,p)";
-//    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-//    TokenValidator tokenValidator1(lexer);
-//    requireThrow([&tokenValidator1, &stcp, &declarationList]() {
-//        stcp->parse(tokenValidator1, declarationList);
-//    });
 }
 
 TEST_CASE_METHOD(setUpStcp, "Parent, statement and statement") {
