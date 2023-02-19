@@ -10,6 +10,7 @@ class PQLToken {
     enum class Tag { IDENT, STMT_NUM, SYNONYM, WILDCARD, EXPR, IDENT_WILDCARD };
 
     explicit PQLToken(Tag tag);
+    virtual ~PQLToken() = default;
     const Tag tag;
 
     virtual bool operator==(const PQLToken &rhs) const = 0;

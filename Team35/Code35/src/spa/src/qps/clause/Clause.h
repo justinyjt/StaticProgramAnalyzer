@@ -18,8 +18,9 @@ Base class for clause in PQL (suchthat-cl, pattern-cl)
 */
 class Clause {
  public:
+    virtual ~Clause() = default;
     virtual bool operator==(const Clause &rhs) const = 0;
     bool operator!=(const Clause &rhs) const;
 
-    virtual std::unique_ptr<Result> evaluate(PKBReader* db) = 0;
+    virtual std::unique_ptr<Result> evaluate(PKBReader *db) = 0;
 };

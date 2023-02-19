@@ -16,11 +16,12 @@ class Result {
  public:
     enum class Tag { BOOL, TABLE };
     explicit Result(Tag);
-    virtual void output(std::list<std::string>&, std::string& selected) = 0;
-    static std::unique_ptr<Result> join(Result*, Result*);
-    static std::unique_ptr<Result> selectJoin(Result*, Result*);
-    bool equal(const Result& rhs) const;
+    virtual ~Result() = default;
+    virtual void output(std::list<std::string> &, std::string &selected) = 0;
+    static std::unique_ptr<Result> join(Result *, Result *);
+    static std::unique_ptr<Result> selectJoin(Result *, Result *);
+    bool equal(const Result &rhs) const;
  private:
     Tag tag;
-    static std::unique_ptr<Result> tableJoin(Result*, Result*);
+    static std::unique_ptr<Result> tableJoin(Result *, Result *);
 };
