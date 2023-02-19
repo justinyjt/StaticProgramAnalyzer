@@ -31,3 +31,7 @@ int SimpleTokenScanner::isCondExprSeparatedByLogicalOperator() const {
         peekOffset(Token::Tag::LogicalAnd, offset) || peekOffset(Token::Tag::LogicalOr, offset);
     return is_logical_operator_exist;
 }
+
+int SimpleTokenScanner::isAssign() const {
+    return peekOffset(Token::Tag::Assignment, 1) && isName();
+}
