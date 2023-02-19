@@ -8,9 +8,9 @@
 
 class QueryEvaluator {
  private:
-  PKBReader* db;
+    PKBReader* db;
 
  public:
-  explicit QueryEvaluator(PKBReader*);
-  std::unique_ptr<Result> evaluate(std::vector<std::unique_ptr<Clause>>&) const;
+    explicit QueryEvaluator(PKBReader*);
+    std::unique_ptr<Result> evaluate(std::vector<std::unique_ptr<Clause>>&) const;
 };
