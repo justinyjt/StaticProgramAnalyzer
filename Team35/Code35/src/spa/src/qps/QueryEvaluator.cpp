@@ -12,8 +12,8 @@ std::unique_ptr<Result> QueryEvaluator::evaluate(std::vector<std::unique_ptr<Cla
         return std::move(res);
     }
 
-    std::unique_ptr<Result> curr = std::make_unique<BoolResult>(true);
-    int i = 1;
+    std::unique_ptr<Result> curr = clauses[1]->evaluate(db);
+    int i = 2;
     while (i < clauses.size()) {
         std::unique_ptr<Result> next = clauses[i]->evaluate(db);
         std::unique_ptr<Result> merged = Result::join(curr.get(), next.get());
