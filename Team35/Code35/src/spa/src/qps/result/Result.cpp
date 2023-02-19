@@ -86,8 +86,8 @@ std::unique_ptr<Result> Result::tableJoin(Result *lhs, Result *rhs) {
         outputHeaders.insert(outputHeaders.end(), headers1.begin(), headers1.end());
         outputHeaders.insert(outputHeaders.end(), headers2.begin(), headers2.end());
 
-        for (std::list<std::string> row1: t1->rows) {
-            for (std::list<std::string> row2: t2->rows) {
+        for (std::list<std::string> row1 : t1->rows) {
+            for (std::list<std::string> row2 : t2->rows) {
                 std::list<std::string> concat;
                 concat.insert(concat.end(), row1.begin(), row1.end());
                 concat.insert(concat.end(), row2.begin(), row2.end());
@@ -98,24 +98,24 @@ std::unique_ptr<Result> Result::tableJoin(Result *lhs, Result *rhs) {
         // there are matching column headers, inner join
 
         // produce output headers
-        for (int idx: commonHeaders1) {
+        for (int idx : commonHeaders1) {
             outputHeaders.push_back(headers1[idx]);
         }
-        for (int idx: nonCommonHeaders1) {
+        for (int idx : nonCommonHeaders1) {
             outputHeaders.push_back(headers1[idx]);
         }
-        for (int idx: nonCommonHeaders2) {
+        for (int idx : nonCommonHeaders2) {
             outputHeaders.push_back(headers2[idx]);
         }
 
         // separate rows in table into keys and values
 
         std::vector<std::pair<std::vector<std::string>, std::vector<std::string>>> hashmap1;
-        for (std::list<std::string> &row: t1->rows) {
+        for (std::list<std::string> &row : t1->rows) {
             std::vector<std::string> keys;
             std::vector<std::string> values;
             int i = 0;
-            for (std::string &val: row) {
+            for (std::string &val : row) {
                 auto it = std::find(commonHeaders1.begin(), commonHeaders1.end(), i);
 
                 // Check if value was found
@@ -131,11 +131,11 @@ std::unique_ptr<Result> Result::tableJoin(Result *lhs, Result *rhs) {
 
 
         std::vector<std::pair<std::vector<std::string>, std::vector<std::string>>> hashmap2;
-        for (std::list<std::string> row: t2->rows) {
+        for (std::list<std::string> row : t2->rows) {
             std::vector<std::string> keys;
             std::vector<std::string> values;
             int i = 0;
-            for (std::string &val: row) {
+            for (std::string &val : row) {
                 auto it = std::find(commonHeaders2.begin(), commonHeaders2.end(), i);
 
                 // Check if value was found
@@ -150,12 +150,12 @@ std::unique_ptr<Result> Result::tableJoin(Result *lhs, Result *rhs) {
         }
 
         // generate new table
-        for (auto kv: hashmap1) {
+        for (auto kv : hashmap1) {
             std::vector<std::string> &key1 = kv.first;
             std::vector<std::string> &value1 = kv.second;
 
             // Look up the key in the second table
-            for (auto kv2: hashmap2) {
+            for (auto kv2 : hashmap2) {
                 std::vector<std::string> &key2 = kv2.first;
                 std::vector<std::string> &value2 = kv2.second;
                 if (key1 == key2) {
