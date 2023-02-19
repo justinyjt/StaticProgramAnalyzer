@@ -193,23 +193,23 @@ TEST_CASE("Test join: no common columns, 3x2") {
 
 TEST_CASE("Test output") {
     std::list<std::string> result;
-    std::list<std::string> header1 = {"s", "y", "a"};
+    std::list<std::string> header1 = {"a", "s", "y"};
     std::vector<std::list<std::string>> rows1;
     rows1.push_back({"1", "1", "4"});
-    rows1.push_back({"2", "1", "4"});
+    rows1.push_back({"2", "2", "4"});
     std::unique_ptr<TableResult> tableResult1 = std::make_unique<TableResult>(header1, rows1);
 
-    std::list<std::string> header2 = {"y", "a"};
+    std::list<std::string> header2 = {"a", "y"};
     std::vector<std::list<std::string>> rows2;
     rows2.push_back({"1", "4"});
-    rows2.push_back({"2", "4"});
+    rows2.push_back({"1", "2"});
     std::unique_ptr<TableResult> tableResult2 = std::make_unique<TableResult>(header2, rows2);
 
     std::unique_ptr<Result> resultTable = Result::join(tableResult1.get(), tableResult2.get());
     std::string col = "y";
     resultTable->output(result, col);
     std::list<std::string> expectedResult;
-    expectedResult.push_back("1");
+    expectedResult.push_back("4");
     requireEqual(expectedResult, result);
 }
 
@@ -224,8 +224,20 @@ TEST_CASE("Test output selected does not match") {
     std::unique_ptr<TableResult> tableResult2 = std::make_unique<TableResult>(header2, rows2);
 
     std::unique_ptr<Result> resultTable = Result::join(boolResult.get(), tableResult2.get());
-    std::string col = "";
+    std::string col = "c";
     resultTable->output(result, col);
 
-    requireTrue(result.size() == 1);
+    requireTrue(result.size() == 0);
+}
+
+TEST_CASE("Test output empty") {
+    std::list<std::string> result;
+    std::list<std::string> header2 = {"a"};
+    std::vector<std::list<std::string>> rows2;
+    std::unique_ptr<TableResult> tableResult2 = std::make_unique<TableResult>(header2, rows2);
+
+    std::string col = "a";
+    tableResult2->output(result, col);
+
+    requireTrue(result.size() == 0);
 }
