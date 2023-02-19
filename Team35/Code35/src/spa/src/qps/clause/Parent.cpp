@@ -34,16 +34,16 @@ std::unique_ptr<Result> Parent::evaluate(PKBReader *db) {
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // Parent(stmt, _) -> int[]
         {
-            STMT_SET followsStmtSet = db->getStmtByRelationship(rs);
+            STMT_SET parentStmtSet = db->getKeyStmtByRelationship(rs);
             STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<const Synonym *>(first.get())->de));
             std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(first->str(), filterSet);
-            std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), followsStmtSet);
+            std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), parentStmtSet);
             return std::move(Result::join(result.get(), intermediateResult.get()));
         }
         case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::SYNONYM):  // Parent(1, stmt) -> int[]
         {
             int num = (dynamic_cast<StatementNumber *>(first.get()))->n;
-            STMT_SET set = db->getRelationshipByVal(rs, num);
+            STMT_SET set = db->getRelationshipByKey(rs, num);
             STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<const Synonym *>(second.get())->de));
             std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(second->str(), filterSet);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), set);
@@ -66,10 +66,10 @@ std::unique_ptr<Result> Parent::evaluate(PKBReader *db) {
         }
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::SYNONYM):  // Parent(_, stmt) -> int[]
         {
-            STMT_SET followsStmtSet = db->getStmtByRelationship(rs);
+            STMT_SET parentStmtSet = db->getValueStmtByRelationship(rs);
             STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<const Synonym *>(second.get())->de));
             std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(second->str(), filterSet);
-            std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), followsStmtSet);
+            std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), parentStmtSet);
             return std::move(Result::join(result.get(), intermediateResult.get()));
         }
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::STMT_NUM):  // Parent(_, 3) -> bool

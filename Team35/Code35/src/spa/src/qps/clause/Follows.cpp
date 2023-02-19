@@ -35,7 +35,7 @@ std::unique_ptr<Result> Follows::evaluate(PKBReader *db) {
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // Follows(stmt, _) -> int[]
         {
-            STMT_SET followsStmtSet = db->getStmtByRelationship(rs);
+            STMT_SET followsStmtSet = db->getKeyStmtByRelationship(rs);
             STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<const Synonym *>(first.get())->de));
             std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(first->str(), filterSet);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), followsStmtSet);
@@ -44,7 +44,7 @@ std::unique_ptr<Result> Follows::evaluate(PKBReader *db) {
         case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::SYNONYM):  // Follows(1, stmt) -> int[]
         {
             int num = (dynamic_cast<StatementNumber *>(first.get()))->n;
-            STMT_SET set = db->getRelationshipByVal(rs, num);
+            STMT_SET set = db->getRelationshipByKey(rs, num);
             STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<const Synonym *>(second.get())->de));
             std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(second->str(), filterSet);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), set);
@@ -67,7 +67,7 @@ std::unique_ptr<Result> Follows::evaluate(PKBReader *db) {
         }
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::SYNONYM):  // Follows(_, stmt) -> int[]
         {
-            STMT_SET followsStmtSet = db->getStmtByRelationship(rs);
+            STMT_SET followsStmtSet = db->getValueStmtByRelationship(rs);
             STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<const Synonym *>(second.get())->de));
             std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(second->str(), filterSet);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), followsStmtSet);

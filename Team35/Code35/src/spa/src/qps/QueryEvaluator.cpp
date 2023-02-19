@@ -22,6 +22,6 @@ std::unique_ptr<Result> QueryEvaluator::evaluate(std::vector<std::unique_ptr<Cla
 
     // finally, join with the select clause
     std::unique_ptr<Result> selectList = clauses[0]->evaluate(db);
-    Result::selectJoin(selectList.get(), curr.get());
-    return std::move(curr);
+    std::unique_ptr<Result> finalRes = Result::join(selectList.get(), curr.get());
+    return std::move(finalRes);
 }

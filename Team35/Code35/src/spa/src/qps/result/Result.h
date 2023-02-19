@@ -19,7 +19,6 @@ class Result {
     virtual ~Result() = default;
     virtual void output(std::list<std::string> &, std::string &selected) = 0;
     static std::unique_ptr<Result> join(Result *, Result *);
-    static std::unique_ptr<Result> selectJoin(Result *, Result *);
     bool equal(const Result &rhs) const;
  private:
     Tag tag;

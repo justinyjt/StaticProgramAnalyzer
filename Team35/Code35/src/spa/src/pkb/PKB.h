@@ -51,7 +51,8 @@ class PKB {
     STMT_SET getStmtByStmtKey(StmtStmtRelationship tableType, STMT_NUM stmt) const;
     STMT_SET getStmtByStmtVal(StmtStmtRelationship tableType, STMT_NUM stmt) const;
     STMT_STMT_SET getStmtStmtSet(StmtStmtRelationship tableType) const;
-    STMT_SET getStmtByRs(StmtStmtRelationship tableType) const;
+    STMT_SET getKeyStmtByRs(StmtStmtRelationship tableType) const;
+    STMT_SET getValStmtByRs(StmtStmtRelationship tableType) const;
     bool isStmtStmtPairExists(StmtStmtRelationship tableType, STMT_NUM key, STMT_NUM val) const;
 
 

@@ -187,8 +187,12 @@ STMT_STMT_SET PKB::getStmtStmtSet(StmtStmtRelationship tableType) const {
     return getStmtStmtRelationshipTable(tableType).getKeyValuePairs();
 }
 
-STMT_SET PKB::getStmtByRs(StmtStmtRelationship tableType) const {
+STMT_SET PKB::getKeyStmtByRs(StmtStmtRelationship tableType) const {
     return getStmtStmtRelationshipTable(tableType).getKeys();
+}
+
+STMT_SET PKB::getValStmtByRs(StmtStmtRelationship tableType) const {
+    return getStmtStmtRelationshipTable(tableType).getValues();
 }
 
 bool PKB::isStmtStmtPairExists(StmtStmtRelationship tableType, STMT_NUM key, STMT_NUM val) const {

@@ -26,7 +26,8 @@ class PKBReader {
     STMT_SET getRelationshipByKey(StmtStmtRelationship tableType, STMT_NUM keyName) const;
     STMT_SET getRelationshipByVal(StmtStmtRelationship tableType, STMT_NUM valName) const;
     STMT_STMT_SET getAllRelationships(StmtStmtRelationship tableType) const;
-    STMT_SET getStmtByRelationship(StmtStmtRelationship tableType) const;
+    STMT_SET getKeyStmtByRelationship(StmtStmtRelationship tableType) const;
+    STMT_SET getValueStmtByRelationship(StmtStmtRelationship tableType) const;
     STMT_SET getStmtByRs(StmtStmtRelationship tableType) const;
     bool isRelationshipExists(StmtStmtRelationship tableType, STMT_NUM keyName, STMT_NUM valName) const;
 
