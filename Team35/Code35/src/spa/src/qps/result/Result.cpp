@@ -125,7 +125,6 @@ std::unique_ptr<Result> Result::tableJoin(Result *lhs, Result *rhs) {
             hashmap1.push_back(std::make_pair(keys, values));
         }
 
-
         std::vector<std::pair<std::set<std::string>, std::vector<std::string>>> hashmap2;
         for (std::list<std::string> row : t2->rows) {
             std::set<std::string> keys;
