@@ -44,7 +44,7 @@ bool SyntaxValidator::validateStmtLst() {
 }
 
 bool SyntaxValidator::validateStmt() {
-    if (scanner_.peekOffset(Token::Tag::Assignment, 1) && scanner_.isName()) {
+    if (scanner_.isAssign()) {
         return validateAssign();
     } else if (scanner_.peek(Token::Tag::Read)) {
         return validateRead();
@@ -236,9 +236,7 @@ bool SyntaxValidator::validateCondExpr() {
             return false;
         }
 
-        if (!scanner_.match(Token::Tag::LogicalAnd) && !scanner_.match(Token::Tag::LogicalOr)) {
-            return false;
-        }
+        scanner_.next();
 
         if (!scanner_.match(Token::Tag::LParen)) {
             return false;
