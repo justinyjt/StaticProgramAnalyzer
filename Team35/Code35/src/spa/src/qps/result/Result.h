@@ -1,49 +1,27 @@
 #pragma once
-
 #include <string>
 #include <list>
+#include <memory>
 #include <vector>
 #include <iostream>
 #include <unordered_set>
+
 #include "commons/types.h"
+
 /*
-represents result of clause eval or query eval (multiple clause evals)
+represents result of single clause evaluation 
+or query evaluation (multiple clause evaluations)
 */
+
 class Result {
  public:
-    virtual void output(std::list<std::string>&) = 0;
-};
-
-class StrResult : public Result {
-    std::vector<std::string> results;
-
- public:
-    explicit StrResult(const std::unordered_set<std::string>& set) {
-      for (auto& elem : set) {
-        results.push_back(elem);
-      }
-    }
-
-    void output(std::list<std::string>& list) override {
-      for (std::string& elem : results) {
-        list.push_back(elem);
-      }
-    }
-};
-
-class IntResult : public Result {
-  std::vector<int> results;
-
- public:
-    explicit IntResult(const std::unordered_set<int>& set) {
-      for (auto& elem : set) {
-        results.push_back(elem);
-      }
-    }
-
-    void output(std::list<std::string>& list) override {
-      for (int elem : results) {
-        list.push_back(std::to_string(elem));
-      }
-    }
+    enum class Tag { BOOL, TABLE };
+    explicit Result(Tag);
+    virtual ~Result() = default;
+    virtual void output(std::list<std::string> &, std::string &selected) = 0;
+    static std::unique_ptr<Result> join(Result *, Result *);
+    bool equal(const Result &rhs) const;
+ private:
+    Tag tag;
+    static std::unique_ptr<Result> tableJoin(Result *, Result *);
 };

@@ -1,21 +1,23 @@
 #pragma once
 
 #include <memory>
+#include <list>
 #include <string>
 #include <vector>
 #include <utility>
-#include <list>
+
+#include "pkb/PKBReader.h"
 #include "commons/lexer/Lexer.h"
 #include "qps/query_parser/QueryParser.h"
-#include "qps/QueryEvaluator.h"
 #include "qps/clause/Clause.h"
+#include "qps/QueryEvaluator.h"
 
 class QPS {
  private:
-    QueryParser* queryParser;
-    QueryEvaluator* queryEvaluator;
+    std::unique_ptr<QueryEvaluator> queryEvaluator;
+    std::unique_ptr<QueryParser> queryParser;
 
  public:
-    explicit QPS(PKBReader* pkbReader);
-    void executeQuery(std::string& query, std::list<std::string>& result);
+    explicit QPS(PKBReader *pkbReader);
+    void executeQuery(std::string &query, std::list<std::string> &result);
 };

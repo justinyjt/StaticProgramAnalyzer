@@ -1,12 +1,12 @@
 #pragma once
 
 #include <string>
-#include "Tok.h"
+#include "PQLToken.h"
 
-class StatementNumber : public Tok {
+class StatementNumber : public PQLToken {
  public:
     explicit StatementNumber(int n);
     int n;
-    std::string str() const;
-    bool operator==(const Tok& rhs) const;
+    std::string str() const override;
+    bool operator==(const PQLToken& rhs) const override;
 };

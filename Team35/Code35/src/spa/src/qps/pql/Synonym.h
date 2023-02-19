@@ -1,11 +1,11 @@
 #pragma once
 #include <string>
-#include "Tok.h"
+#include "PQLToken.h"
 
 /*
 represents **declared** synonym 
 */
-class Synonym : public Tok {
+class Synonym : public PQLToken {
  public:
     enum class DesignEntity {
         STMT, READ, PRINT, CALL, WHILE, IF, ASSIGN, VARIABLE, CONSTANT, PROCEDURE
@@ -13,8 +13,8 @@ class Synonym : public Tok {
 
     Synonym(DesignEntity de, std::string ident);
 
-    bool operator==(const Tok& rhs) const;
-    std::string str() const;
+    bool operator==(const PQLToken& rhs) const override;
+    std::string str() const override;
 
     const DesignEntity de;
     const std::string ident;

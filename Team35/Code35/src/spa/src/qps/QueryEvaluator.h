@@ -1,13 +1,17 @@
 #pragma once
 
+#include <memory>
+#include <string>
+#include <utility>
 #include <vector>
+
 #include "qps/clause/Clause.h"
-#include "qps/pql/Synonym.h"
-#include "pkb/PKBReader.h"
 
 class QueryEvaluator {
  public:
-    PKBReader* pkbReader;
-    explicit QueryEvaluator(PKBReader* pkbReader);
-    Result* evaluate(Synonym, std::vector<Clause*>);
+    explicit QueryEvaluator(PKBReader *);
+    std::unique_ptr<Result> evaluate(std::vector<std::unique_ptr<Clause>> &) const;
+
+ private:
+    PKBReader *db;
 };

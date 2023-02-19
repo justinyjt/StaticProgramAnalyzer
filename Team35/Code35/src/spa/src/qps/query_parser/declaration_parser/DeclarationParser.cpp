@@ -5,26 +5,25 @@
 #include "commons/token/Token.h"
 #include "qps/query_parser/clause_parser/TokenValidator.h"
 #include "qps/query_exceptions/SyntaxException.h"
+#include "qps/query_exceptions/SemanticException.h"
 
-std::vector<Synonym> DeclarationParser::parse(TokenValidator &tokenValidator) {
+std::vector<Synonym> DeclarationParser::parse(TokenValidator& tokenValidator) {
     std::vector<Synonym> declarationList;
 
     // check for next declaration
     while (true) {
-        if (tokenValidator.isNextTokenType(Token::Tag::Select)) {
+        if (tokenValidator.isNextTokenType(Token::Tag::Select) || tokenValidator.isEof()) {
             break;
         }
-
-        std::unique_ptr<Token> designEntity = tokenValidator.validateAndConsumeDesignEntityToken();
-        Synonym::DesignEntity de = processDesignEntity(std::move(designEntity));
+        Synonym::DesignEntity de = processDesignEntity(tokenValidator);
 
         // check if there are multiple declarations of the same type
         while (true) {
             std::unique_ptr<Token> synonym = tokenValidator.validateAndConsumeSynonymToken();
             if (!isDeclared(synonym->getLexeme(), declarationList)) {
-                declarationList.push_back(Synonym(de, synonym->getLexeme()));
+                declarationList.emplace_back(de, synonym->getLexeme());
             } else {
-                throw SyntaxException();
+                throw SemanticException();
             }
 
             if (tokenValidator.isNextTokenType(Token::Tag::SemiColon)) {
@@ -41,33 +40,37 @@ std::vector<Synonym> DeclarationParser::parse(TokenValidator &tokenValidator) {
 }
 
 // convert Token tag to Synonym design entity
-Synonym::DesignEntity DeclarationParser::processDesignEntity(std::unique_ptr<Token> token) {
-    if (token->getTag() == Token::Tag::Statement) {
-        return Synonym::DesignEntity::STMT;
-    } else if (token->getTag() == Token::Tag::Read) {
-        return Synonym::DesignEntity::READ;
-    } else if (token->getTag() == Token::Tag::Print) {
-        return Synonym::DesignEntity::PRINT;
-    } else if (token->getTag() == Token::Tag::Call) {
-        return Synonym::DesignEntity::CALL;
-    } else if (token->getTag() == Token::Tag::While) {
-        return Synonym::DesignEntity::WHILE;
-    } else if (token->getTag() == Token::Tag::If) {
-        return Synonym::DesignEntity::IF;
-    } else if (token->getTag() == Token::Tag::Assign) {
-        return Synonym::DesignEntity::ASSIGN;
-    } else if (token->getTag() == Token::Tag::Variable) {
-        return Synonym::DesignEntity::VARIABLE;
-    } else if (token->getTag() == Token::Tag::Constant) {
-        return Synonym::DesignEntity::CONSTANT;
-    } else if (token->getTag() == Token::Tag::Procedure) {
-        return Synonym::DesignEntity::PROCEDURE;
+Synonym::DesignEntity DeclarationParser::processDesignEntity(TokenValidator& tokenValidator) {
+    std::unique_ptr<Token> designEntity = tokenValidator.validateAndConsumeDesignEntityToken();
+    switch (designEntity->getTag()) {
+        case Token::Tag::Statement:
+            return Synonym::DesignEntity::STMT;
+        case Token::Tag::Read:
+            return Synonym::DesignEntity::READ;
+        case Token::Tag::Print:
+            return Synonym::DesignEntity::PRINT;
+        case Token::Tag::Call:
+            return Synonym::DesignEntity::CALL;
+        case Token::Tag::While:
+            return Synonym::DesignEntity::WHILE;
+        case Token::Tag::If:
+            return Synonym::DesignEntity::IF;
+        case Token::Tag::Assign:
+            return Synonym::DesignEntity::ASSIGN;
+        case Token::Tag::Variable:
+            return Synonym::DesignEntity::VARIABLE;
+        case Token::Tag::Constant:
+            return Synonym::DesignEntity::CONSTANT;
+        case Token::Tag::Procedure:
+            return Synonym::DesignEntity::PROCEDURE;
+        default:
+            throw SyntaxException();
     }
 }
 
-bool DeclarationParser::isDeclared(std::string value, std::vector<Synonym> declarationList) {
+bool DeclarationParser::isDeclared(const std::string& value, std::vector<Synonym>& declarationList) {
     bool isDeclared = false;
-    for (Synonym s : declarationList) {
+    for (const Synonym& s : declarationList) {
         if (value == s.str()) {
             isDeclared = true;
         }

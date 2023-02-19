@@ -9,7 +9,7 @@
 class SourceProcessor {
  public:
     explicit SourceProcessor(std::unique_ptr<PKBWriter> pkb);
-    void process(std::string source);
+    bool process(std::string source);
  private:
     std::unique_ptr<PKBWriter> pkb_;
 };

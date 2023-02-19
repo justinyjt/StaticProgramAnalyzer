@@ -23,6 +23,10 @@ STMT_ENT_SET PKBReader::getAllRelationships(StmtNameRelationship tableType) cons
     return pkb.getStmtEntSet(tableType);
 }
 
+STMT_SET PKBReader::getStmtByRelationship(StmtNameRelationship tableType) const {
+    return pkb.getStmtByRs(tableType);
+}
+
 bool PKBReader::isRelationshipExists(StmtNameRelationship tableType, STMT_NUM stmt, ENT_NAME name) const {
     return pkb.isStmtEntPairExists(tableType, stmt, name);
 }
@@ -57,6 +61,15 @@ STMT_SET PKBReader::getRelationshipByVal(StmtStmtRelationship tableType, STMT_NU
 STMT_STMT_SET PKBReader::getAllRelationships(StmtStmtRelationship tableType) const {
     return pkb.getStmtStmtSet(tableType);
 }
+
+STMT_SET PKBReader::getKeyStmtByRelationship(StmtStmtRelationship tableType) const {
+    return pkb.getKeyStmtByRs(tableType);
+}
+
+STMT_SET PKBReader::getValueStmtByRelationship(StmtStmtRelationship tableType) const {
+    return pkb.getValStmtByRs(tableType);
+}
+
 
 bool PKBReader::isRelationshipExists(StmtStmtRelationship tableType, STMT_NUM keyName, STMT_NUM valName) const {
     return pkb.isStmtStmtPairExists(tableType, keyName, valName);

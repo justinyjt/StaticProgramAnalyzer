@@ -19,7 +19,23 @@ class RelationshipTable {
             std::unordered_set<TKey>();
 
  public:
-    const std::unordered_set<TKey> &getKeys(TValue val) const {
+    const std::unordered_set<TKey> getKeys() const {
+        std::unordered_set<TKey> res;
+        for (auto const& keys : keyValueMap) {
+            res.emplace(keys.first);
+        }
+        return res;
+    }
+
+    const std::unordered_set<TValue> getValues() const {
+        std::unordered_set<TValue> res;
+        for (auto const& values : valueKeyMap) {
+            res.emplace(values.first);
+        }
+        return res;
+    }
+
+    const std::unordered_set<TKey> &getKeysByValue(TValue val) const {
         auto iterator = valueKeyMap.find(val);
         if (iterator == valueKeyMap.end()) {
             return emptyKeySet;
@@ -27,7 +43,7 @@ class RelationshipTable {
         return iterator->second;
     }
 
-    const std::unordered_set<TValue> &getValues(TKey key) const {
+    const std::unordered_set<TValue> &getValuesByKey(TKey key) const {
         auto iterator = keyValueMap.find(key);
         if (iterator == keyValueMap.end()) {
             return emptyValSet;

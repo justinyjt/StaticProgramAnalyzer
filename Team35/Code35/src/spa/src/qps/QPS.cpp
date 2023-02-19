@@ -1,12 +1,21 @@
 #include "QPS.h"
 
-QPS::QPS(PKBReader* pkbReader) {
-    queryEvaluator = new QueryEvaluator(pkbReader);
-    queryParser = new QueryParser();
-};
+#include "qps/clause/SelectClause.h"
+#include "qps/query_exceptions/SyntaxException.h"
+#include "qps/query_exceptions/SemanticException.h"
 
-void QPS::executeQuery(std::string& query, std::list<std::string>& result) {
-    std::pair<Synonym, std::vector<Clause*>> parseResult = queryParser->parse(query);
-    Result* res = queryEvaluator->evaluate(parseResult.first, parseResult.second);
-    res->output(result);
+QPS::QPS(PKBReader *pkbReader)
+    : queryEvaluator(std::make_unique<QueryEvaluator>(pkbReader)), queryParser(std::make_unique<QueryParser>()) {}
+
+void QPS::executeQuery(std::string &query, std::list<std::string> &result) {
+    try {
+        std::vector<std::unique_ptr<Clause>> clauses = queryParser->parse(query);
+        std::string selected = dynamic_cast<SelectClause *>(clauses[0].get())->syn.ident;
+        std::unique_ptr<Result> eval = queryEvaluator->evaluate(clauses);
+        eval->output(result, selected);
+    } catch (SyntaxException &e) {
+        result.emplace_back(e.what());
+    } catch (SemanticException &e) {
+        result.emplace_back(e.what());
+    }
 }

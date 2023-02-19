@@ -1,12 +1,12 @@
 #include "StatementNumber.h"
 
-StatementNumber::StatementNumber(int n) : Tok::Tok(Tag::STMT_NUM), n(n) {}
+StatementNumber::StatementNumber(int n) : PQLToken::PQLToken(Tag::STMT_NUM), n(n) {}
 
 std::string StatementNumber::str() const {
     return std::to_string(n);
 }
 
-bool StatementNumber::operator==(const Tok& rhs) const {
+bool StatementNumber::operator==(const PQLToken& rhs) const {
     const StatementNumber* p_rhs = dynamic_cast<const StatementNumber*>(&rhs);
-    return p_rhs != NULL && Tok::equal(rhs) && n == p_rhs->n;
+    return p_rhs != nullptr && n == p_rhs->n;
 }

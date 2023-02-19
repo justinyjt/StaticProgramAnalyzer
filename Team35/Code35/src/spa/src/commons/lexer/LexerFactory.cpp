@@ -68,6 +68,7 @@ std::unique_ptr<ILexer> LexerFactory::createPqlLexer(Source source) {
         Keyword("that", Token::Tag::That),
     };
     CharacterList character_list{
+        Character('*', Token::Tag::Star),
         Character('(', Token::Tag::LParen),
         Character(')', Token::Tag::RParen),
         Character(';', Token::Tag::SemiColon),

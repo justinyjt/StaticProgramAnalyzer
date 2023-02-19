@@ -21,6 +21,7 @@ std::unique_ptr<ASTNode> DesignExtractor::extractProgram(std::unique_ptr<ASTNode
         extractProc(std::move(child));
     }
     addVarNameSetToPKB();
+    addConstantSetToPKB();
     addStmtUsesPairSetToPKB();
     addStmtModifiesPairSetToPKB();
     addStmtFollowPairSetToPKB();
@@ -112,7 +113,7 @@ std::string DesignExtractor::extractRightAssign(const std::unique_ptr<ASTNode> &
         case ASTNode::SyntaxType::Variable:varNameSet_.insert(label);
             updateStmtUsesPairSet(stmtCnt_, label);
             return label;
-        case ASTNode::SyntaxType::Constant:constSet_.insert(stmtCnt_);
+        case ASTNode::SyntaxType::Constant:constSet_.insert(label);
             return label;
         default:
             // operators;
@@ -152,7 +153,7 @@ void DesignExtractor::extractCondExpr(const std::unique_ptr<ASTNode> &node) {
         case ASTNode::SyntaxType::Variable:varNameSet_.insert(label);
             updateStmtUsesPairSet(stmtCnt_, label);
             break;
-        case ASTNode::SyntaxType::Constant:constSet_.insert(stmtCnt_);
+        case ASTNode::SyntaxType::Constant:constSet_.insert(label);
             break;
         case ASTNode::SyntaxType::LogicalNot:assert(node->getChildren().size() == 1);
             extractCondExpr(node->getChildren().front());
@@ -225,6 +226,9 @@ void DesignExtractor::addVarNameSetToPKB() {
     pkbWriter_->addEntities(Entity::Variable, varNameSet_);
 }
 
+void DesignExtractor::addConstantSetToPKB() {
+    pkbWriter_->addEntities(Entity::Constant, constSet_);
+}
 void DesignExtractor::addStmtUsesPairSetToPKB() {
     pkbWriter_->addStmtEntityRelationships(StmtNameRelationship::Uses, stmtUsePairSet_);
 }

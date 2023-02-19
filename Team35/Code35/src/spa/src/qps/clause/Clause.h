@@ -1,22 +1,27 @@
 #pragma once
+
+#include <memory>
+#include <utility>
+
 #include "qps/result/Result.h"
+#include "qps/result/TableResult.h"
+#include "qps/result/BoolResult.h"
 #include "pkb/PKBReader.h"
 #include "commons/types.h"
-#include "qps/pql/Tok.h"
 
 /* 
-Base class for select clause in PQL (suchthat-cl, pattern-cl)
+Base class for clause in PQL (suchthat-cl, pattern-cl)
+            Clause
+            /     \
+   SelectClause   TwoArgClause
+                  /         \
+            Pattern  Modifies/Uses/Parent/Follows
 */
 class Clause {
  public:
-    const Tok* first;
-    const Tok* second;
-
-    Clause(Tok* first, Tok* second);
+    virtual ~Clause() = default;
     virtual bool operator==(const Clause &rhs) const = 0;
     bool operator!=(const Clause &rhs) const;
 
-    virtual Result* evaluate(PKBReader* db) = 0;
- protected:
-    bool equal(const Clause& rhs) const;
+    virtual std::unique_ptr<Result> evaluate(PKBReader *db) = 0;
 };

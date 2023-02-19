@@ -8,5 +8,5 @@
 
 class SelectionParser {
  public:
-    Synonym parse(TokenValidator &tokenValidator, std::vector<Synonym> synonyms);
+    Synonym parse(TokenValidator& tokenValidator, std::vector<Synonym>& synonyms);
 };
