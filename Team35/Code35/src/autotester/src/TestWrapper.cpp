@@ -40,7 +40,10 @@ void TestWrapper::parse(std::string filename) {
     try {
         std::cout << "successful call" << std::endl;
         std::string simpleProgramCode = readFile(filename);
-        sourceProcessor.process(simpleProgramCode);
+        bool isProcessSuccess = sourceProcessor.process(simpleProgramCode);
+        if (!isProcessSuccess) {
+            throw;
+        }
         // INCLUDE SourceProcessor's method here to parse, extract knowledge and store info into PKB
     } catch (std::exception &e) {
         std::cout << e.what();
@@ -56,10 +59,8 @@ void TestWrapper::evaluate(std::string query, std::list<std::string> &results) {
         QPS queryProcessor = QPS(&pkbReader);
         std::string &s = query;
         queryProcessor.executeQuery(s, results);
-    } catch (SyntaxException& e) {
-        results.emplace_back(e.what());
-    } catch (SemanticException& e) {
-        results.emplace_back(e.what());
+    } catch (std::exception &e) {
+        std::cout << e.what();
     }
 
 

@@ -1,5 +1,7 @@
 #include "QPS.h"
 #include "qps/clause/SelectClause.h"
+#include "qps/query_exceptions/SyntaxException.h"
+#include "qps/query_exceptions/SemanticException.h"
 
 QPS::QPS(PKBReader* pkbReader) {
     queryEvaluator = std::make_unique<QueryEvaluator>(pkbReader);
@@ -7,8 +9,14 @@ QPS::QPS(PKBReader* pkbReader) {
 };
 
 void QPS::executeQuery(std::string& query, std::list<std::string>& result) {
-    std::vector<std::unique_ptr<Clause>> clauses = queryParser->parse(query);
-    std::string selected = dynamic_cast<SelectClause*>(clauses[0].get())->syn.ident;
-    std::unique_ptr<Result> eval = queryEvaluator->evaluate(clauses);
-    eval->output(result, selected);
+    try {
+        std::vector<std::unique_ptr<Clause>> clauses = queryParser->parse(query);
+        std::string selected = dynamic_cast<SelectClause*>(clauses[0].get())->syn.ident;
+        std::unique_ptr<Result> eval = queryEvaluator->evaluate(clauses);
+        eval->output(result, selected);
+    } catch (SyntaxException& e) {
+        result.emplace_back(e.what());
+    } catch (SemanticException& e) {
+        result.emplace_back(e.what());
+    }
 }
