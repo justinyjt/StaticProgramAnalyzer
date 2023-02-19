@@ -1,4 +1,4 @@
-# Team 00
+# Team 35
 
 > Please fill in this Readme with the required information, and delete this box.
 > 
@@ -17,8 +17,8 @@
 
 Item | Version
 -|-
-OS | Windows 10
-Toolchain | Microsoft Visual Studio Enterprise 2019 Version 16.11.0
+OS | Mac OS/ Linux
+Toolchain | CMake in CLion
 C++ Standard | C++17
 
 ### Additional Build Instructions
@@ -29,4 +29,9 @@ No additional instructions required.
 
 Name | Mobile | Email | Development OS/Toolchain
 -:|:-:|:-|-|
-John Doe | 99887766 | john@doe.com | Windows 10/Visual Studio 2019
+Justin Yip | 92307732 | e0560296@u.nus.edu | Mac OS/ CMake in CLion
+Low Qi Xiang | |
+Lyu Xiao Teng | 94274763 | e0492505@u.nus.edu | Mac OS / Cmake in CLion
+Ng Jun Kang | 91148440 | e0544361@u.nus.edu | Mac OS / CMake in CLion
+Ngu Yi Yang | 98366239 |e0543495@u.nus.edu | Mac OS / CMake in CLion
+Pang Yuan Ker | 82232133 | e0660595@u.nus.edu | Mac OS / CMake in CLion
