@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <utility>
+
 #include "pkb/PKBReader.h"
 #include "commons/lexer/Lexer.h"
 #include "qps/query_parser/QueryParser.h"
@@ -17,6 +18,6 @@ class QPS {
     std::unique_ptr<QueryParser> queryParser;
 
  public:
-    explicit QPS(PKBReader* pkbReader);
-    void executeQuery(std::string& query, std::list<std::string>& result);
+    explicit QPS(PKBReader *pkbReader);
+    void executeQuery(std::string &query, std::list<std::string> &result);
 };

@@ -1,4 +1,5 @@
 #include "Parent.h"
+
 #include <unordered_set>
 
 Parent::Parent(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :

@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <utility>
+
 #include "qps/result/Result.h"
 #include "qps/result/TableResult.h"
 #include "qps/result/BoolResult.h"

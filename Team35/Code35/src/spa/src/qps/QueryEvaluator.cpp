@@ -3,9 +3,6 @@
 QueryEvaluator::QueryEvaluator(PKBReader *db) : db(db) {}
 
 std::unique_ptr<Result> QueryEvaluator::evaluate(std::vector<std::unique_ptr<Clause>> &clauses) const {
-    // first clause
-//    std::unique_ptr<Result> curr = clauses[0]->evaluate(db);
-
     if (clauses.size() == 1) {
         std::unique_ptr<Result> res = clauses[0]->evaluate(db);
         return std::move(res);

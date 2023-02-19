@@ -1,5 +1,7 @@
-#include <vector>
 #include "TokenValidator.h"
+
+#include <vector>
+
 #include "qps/query_exceptions/SyntaxException.h"
 
 TokenValidator::TokenValidator(std::unique_ptr<ILexer> &lexer) : lexer(lexer) {
@@ -8,15 +10,15 @@ TokenValidator::TokenValidator(std::unique_ptr<ILexer> &lexer) : lexer(lexer) {
 
 std::unique_ptr<Token> TokenValidator::validateAndConsumeDesignEntityToken() {
     if (cur_->getTag() == Token::Tag::Statement ||
-            cur_->getTag() == Token::Tag::Read ||
-            cur_->getTag() == Token::Tag::Print ||
-            cur_->getTag() == Token::Tag::Call ||
-            cur_->getTag() == Token::Tag::While ||
-            cur_->getTag() == Token::Tag::If ||
-            cur_->getTag() == Token::Tag::Assign ||
-            cur_->getTag() == Token::Tag::Variable ||
-            cur_->getTag() == Token::Tag::Constant ||
-            cur_->getTag() == Token::Tag::Procedure) {
+        cur_->getTag() == Token::Tag::Read ||
+        cur_->getTag() == Token::Tag::Print ||
+        cur_->getTag() == Token::Tag::Call ||
+        cur_->getTag() == Token::Tag::While ||
+        cur_->getTag() == Token::Tag::If ||
+        cur_->getTag() == Token::Tag::Assign ||
+        cur_->getTag() == Token::Tag::Variable ||
+        cur_->getTag() == Token::Tag::Constant ||
+        cur_->getTag() == Token::Tag::Procedure) {
         std::unique_ptr<Token> res = std::move(cur_);
         cur_ = lexer->scan();
         return res;
@@ -39,12 +41,12 @@ std::unique_ptr<Token> TokenValidator::validateAndConsumeSynonymToken() {
 std::string TokenValidator::validateAndConsumeRelationship() {
     std::string relationship;
     if (cur_->getTag() == Token::Tag::Modifies ||
-            cur_->getTag() == Token::Tag::Uses) {
+        cur_->getTag() == Token::Tag::Uses) {
         relationship += cur_->getLexeme();
         cur_ = lexer->scan();
         return relationship;
     } else if (cur_->getTag() == Token::Tag::Parent ||
-               cur_->getTag() == Token::Tag::Follows) {
+        cur_->getTag() == Token::Tag::Follows) {
         relationship += cur_->getLexeme();
         cur_ = lexer->scan();
         if (cur_->getTag() == Token::Tag::Star) {
@@ -59,9 +61,9 @@ std::string TokenValidator::validateAndConsumeRelationship() {
 
 std::unique_ptr<Token> TokenValidator::validateAndConsumeRelationshipArg() {
     if (cur_->getTag() == Token::Tag::Name ||
-            cur_->getTag() == Token::Tag::Underscore ||
-            cur_->getTag() == Token::Tag::String ||
-            cur_->getTag() == Token::Tag::Integer) {
+        cur_->getTag() == Token::Tag::Underscore ||
+        cur_->getTag() == Token::Tag::String ||
+        cur_->getTag() == Token::Tag::Integer) {
         std::unique_ptr<Token> res = std::move(cur_);
         cur_ = lexer->scan();
         return res;
@@ -72,8 +74,8 @@ std::unique_ptr<Token> TokenValidator::validateAndConsumeRelationshipArg() {
 
 std::unique_ptr<Token> TokenValidator::validateAndConsumePatternFirstArg() {
     if (cur_->getTag() == Token::Tag::Name ||
-            cur_->getTag() == Token::Tag::Underscore ||
-            cur_->getTag() == Token::Tag::String) {
+        cur_->getTag() == Token::Tag::Underscore ||
+        cur_->getTag() == Token::Tag::String) {
         std::unique_ptr<Token> res = std::move(cur_);
         cur_ = lexer->scan();
         return res;
