@@ -140,15 +140,19 @@ bool PKB::addPattern(STMT_NUM stmtNum, std::string pattern) {
 }
 
 ENT_SET PKB::getEntByStmtKey(StmtNameRelationship tableType, STMT_NUM stmt) const {
-    return getStmtNameRelationshipTable(tableType).getValues(stmt);
+    return getStmtNameRelationshipTable(tableType).getValuesByKey(stmt);
 }
 
 STMT_SET PKB::getStmtByEntVal(StmtNameRelationship tableType, ENT_NAME name) const {
-    return getStmtNameRelationshipTable(tableType).getKeys(name);
+    return getStmtNameRelationshipTable(tableType).getKeysByValue(name);
 }
 
 STMT_ENT_SET PKB::getStmtEntSet(StmtNameRelationship tableType) const {
     return getStmtNameRelationshipTable(tableType).getKeyValuePairs();
+}
+
+STMT_SET PKB::getStmtByRs(StmtNameRelationship tableType) const {
+    return getStmtNameRelationshipTable(tableType).getKeys();
 }
 
 bool PKB::isStmtEntPairExists(StmtNameRelationship tableType, STMT_NUM stmt, ENT_NAME name) const {
@@ -156,11 +160,11 @@ bool PKB::isStmtEntPairExists(StmtNameRelationship tableType, STMT_NUM stmt, ENT
 }
 
 ENT_SET PKB::getEntByEntKey(NameNameRelationship tableType, ENT_NAME name) const {
-    return getNameNameRelationshipTable(tableType).getValues(name);
+    return getNameNameRelationshipTable(tableType).getValuesByKey(name);
 }
 
 ENT_SET PKB::getEntByEntVal(NameNameRelationship tableType, ENT_NAME name) const {
-    return getNameNameRelationshipTable(tableType).getKeys(name);
+    return getNameNameRelationshipTable(tableType).getKeysByValue(name);
 }
 
 ENT_ENT_SET PKB::getEntEntSet(NameNameRelationship tableType) const {
@@ -172,14 +176,19 @@ bool PKB::isEntEntPairExists(NameNameRelationship tableType, ENT_NAME key, ENT_N
 }
 
 STMT_SET PKB::getStmtByStmtKey(StmtStmtRelationship tableType, STMT_NUM stmt) const {
-    return getStmtStmtRelationshipTable(tableType).getValues(stmt);
+    return getStmtStmtRelationshipTable(tableType).getValuesByKey(stmt);
 }
 
 STMT_SET PKB::getStmtByStmtVal(StmtStmtRelationship tableType, STMT_NUM stmt) const {
-    return getStmtStmtRelationshipTable(tableType).getKeys(stmt);
+    return getStmtStmtRelationshipTable(tableType).getKeysByValue(stmt);
 }
+
 STMT_STMT_SET PKB::getStmtStmtSet(StmtStmtRelationship tableType) const {
     return getStmtStmtRelationshipTable(tableType).getKeyValuePairs();
+}
+
+STMT_SET PKB::getStmtByRs(StmtStmtRelationship tableType) const {
+    return getStmtStmtRelationshipTable(tableType).getKeys();
 }
 
 bool PKB::isStmtStmtPairExists(StmtStmtRelationship tableType, STMT_NUM key, STMT_NUM val) const {

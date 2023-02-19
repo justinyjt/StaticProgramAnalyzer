@@ -30,4 +30,5 @@ class TwoArgClause : public Clause {
     static constexpr int pairEnum(PQLToken::Tag t1, PQLToken::Tag t2) {
       return 10 * static_cast<int>(t1) + static_cast<int>(t2);
     }
+    StmtType getStmtType(Synonym::DesignEntity type);
 };

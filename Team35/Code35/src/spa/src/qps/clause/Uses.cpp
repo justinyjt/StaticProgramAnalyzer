@@ -32,24 +32,27 @@ std::unique_ptr<Result> UsesS::evaluate(PKBReader* db) {
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Uses(stmt, var)/ -> pair<int, string>[]
         {
-            STMT_ENT_SET set = db->getAllRelationships(StmtNameRelationship::Uses);
-            std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), second->str(), set);
-            return std::move(result);
+            STMT_ENT_SET usesSet = db->getAllRelationships(StmtNameRelationship::Uses);
+            STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<const Synonym*>(first.get())->de));
+            std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(first->str(), filterSet);
+            std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), second->str(), usesSet);
+            return std::move(Result::join(result.get(), intermediateResult.get()));
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // Uses(stmt, _)/ -> int[]
         {
-            STMT_ENT_SET set = db->getAllRelationships(StmtNameRelationship::Uses);
-            ENT_SET eset;
-            for (auto& p : set)
-                eset.insert(std::to_string(p.first));
-            std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), eset);
-            return std::move(result);
+            STMT_SET usesStmtSet = db->getStmtByRelationship(StmtNameRelationship::Uses);
+            STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<const Synonym*>(first.get())->de));
+            std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(first->str(), filterSet);
+            std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), usesStmtSet);
+            return std::move(Result::join(result.get(), intermediateResult.get()));
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::IDENT):  // Uses(stmt, "x")/ -> int[]
         {
             STMT_SET stmtSet = db->getRelationship(StmtNameRelationship::Uses, second->str());
+            STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<const Synonym*>(first.get())->de));
+            std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(first->str(), filterSet);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), stmtSet);
-            return std::move(result);
+            return std::move(Result::join(result.get(), intermediateResult.get()));
         }
         default:
             throw std::runtime_error("");

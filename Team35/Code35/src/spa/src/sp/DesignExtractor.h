@@ -15,6 +15,7 @@ class DesignExtractor {
     std::unique_ptr<ASTNode> extractProgram(std::unique_ptr<ASTNode>);
 
     void addVarNameSetToPKB();
+    void addConstantSetToPKB();
     void addStmtUsesPairSetToPKB();
     void addStmtModifiesPairSetToPKB();
     void addStmtFollowPairSetToPKB();
@@ -26,7 +27,7 @@ class DesignExtractor {
 
  private:
     ENT_SET varNameSet_;
-    STMT_SET constSet_;
+    ENT_SET constSet_;
     STMT_SET stmtSet_;
     STMT_SET assignSet_;
     STMT_SET printSet_;

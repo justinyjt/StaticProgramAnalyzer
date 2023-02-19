@@ -166,3 +166,34 @@ std::unique_ptr<Result> Result::tableJoin(Result *lhs, Result *rhs) {
     std::unique_ptr<TableResult> tableResult = std::make_unique<TableResult>(outputHeaders, outputColumns);
     return std::move(tableResult);
 }
+
+std::unique_ptr<Result> Result::selectJoin(Result *lhs, Result *rhs) {
+    // case bool <-> bool:
+    TableResult *t = dynamic_cast<TableResult *>(lhs);
+    if (rhs->tag == Tag::BOOL) {
+        BoolResult *r = dynamic_cast<BoolResult *>(rhs);
+        if (r->b) {
+            std::unique_ptr<TableResult> tableResult = std::make_unique<TableResult>(t->idents, t->rows);
+            return tableResult;
+        }
+    }
+
+    // case table <-> bool or bool <-> table:
+    BoolResult *boolResult;
+    TableResult *tableResult;
+    if (lhs->tag == Tag::BOOL) {
+        boolResult = dynamic_cast<BoolResult *>(lhs);
+        tableResult = dynamic_cast<TableResult *>(rhs);
+    } else {
+        boolResult = dynamic_cast<BoolResult *>(rhs);
+        tableResult = dynamic_cast<TableResult *>(lhs);
+    }
+
+    if (boolResult->b) {
+        std::unique_ptr<Result> res = std::make_unique<TableResult>(*tableResult);
+        return std::move(res);
+    } else {
+        std::unique_ptr<Result> res = std::make_unique<BoolResult>(*boolResult);
+        return std::move(res);
+    }
+}

@@ -5,7 +5,8 @@ QueryEvaluator::QueryEvaluator(PKBReader* db) : db(db) {}
 
 std::unique_ptr<Result> QueryEvaluator::evaluate(std::vector<std::unique_ptr<Clause>>& clauses) const {
     // first clause
-    std::unique_ptr<Result> curr = clauses[0]->evaluate(db);
+//    std::unique_ptr<Result> curr = clauses[0]->evaluate(db);
+    std::unique_ptr<Result> curr;
     int i = 1;
     while (i < clauses.size()) {
         std::unique_ptr<Result> next = clauses[i]->evaluate(db);
@@ -13,5 +14,9 @@ std::unique_ptr<Result> QueryEvaluator::evaluate(std::vector<std::unique_ptr<Cla
         curr = std::move(merged);
         i++;
     }
+
+    // finally, join with the select clause
+    std::unique_ptr<Result> selectList = clauses[0]->evaluate(db);
+    Result::selectJoin(selectList.get(), curr.get());
     return std::move(curr);
 }
