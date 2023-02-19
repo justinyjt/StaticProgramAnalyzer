@@ -1,9 +1,11 @@
 #include "Result.h"
-#include "BoolResult.h"
-#include "TableResult.h"
+
 #include <utility>
 #include <set>
 #include <algorithm>
+
+#include "BoolResult.h"
+#include "TableResult.h"
 
 Result::Result(Result::Tag _tag) : tag(_tag) {}
 
@@ -165,4 +167,3 @@ std::unique_ptr<Result> Result::tableJoin(Result *lhs, Result *rhs) {
     std::unique_ptr<TableResult> tableResult = std::make_unique<TableResult>(outputHeaders, outputColumns);
     return std::move(tableResult);
 }
-

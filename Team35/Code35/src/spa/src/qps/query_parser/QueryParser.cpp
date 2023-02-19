@@ -1,4 +1,5 @@
 #include "QueryParser.h"
+
 #include "qps/clause/SelectClause.h"
 #include "qps/query_parser/declaration_parser/DeclarationParser.h"
 #include "qps/query_parser/selection_parser/SelectionParser.h"
@@ -9,7 +10,7 @@
 #include "commons/lexer/exception/LexerException.h"
 #include "qps/query_exceptions/SyntaxException.h"
 
-std::vector<std::unique_ptr<Clause>> QueryParser::parse(std::string& query) {
+std::vector<std::unique_ptr<Clause>> QueryParser::parse(std::string &query) {
     std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator(lexer);
     try {
@@ -27,12 +28,12 @@ std::vector<std::unique_ptr<Clause>> QueryParser::parse(std::string& query) {
         // parse clauses
         std::unique_ptr<ClauseParser> clauseParser = std::make_unique<ClauseParser>();
         std::vector<std::unique_ptr<Clause>> clauses = clauseParser->parse(tokenValidator, synonyms);
-        for (auto& clause : clauses) {
+        for (auto &clause : clauses) {
             res.push_back(std::move(clause));
         }
 
         return res;
-    } catch (const LexerException& e) {
+    } catch (const LexerException &e) {
         throw SyntaxException();
     }
 }

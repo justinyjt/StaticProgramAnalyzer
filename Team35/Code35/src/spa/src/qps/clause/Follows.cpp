@@ -1,4 +1,5 @@
 #include "Follows.h"
+
 #include <unordered_set>
 
 Follows::Follows(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :
@@ -7,8 +8,7 @@ Follows::Follows(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> seco
 std::unique_ptr<Result> Follows::evaluate(PKBReader *db) {
     /* <stmt SYNONYM | _ | STMT_NUM> */
 
-    StmtStmtRelationship rs = isTransitive ?
-                              StmtStmtRelationship::FollowsStar : StmtStmtRelationship::Follows;
+    StmtStmtRelationship rs = isTransitive ? StmtStmtRelationship::FollowsStar : StmtStmtRelationship::Follows;
 
     switch (getPairEnum()) {
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Follows(s1, s2) -> pair<int, int>[]
