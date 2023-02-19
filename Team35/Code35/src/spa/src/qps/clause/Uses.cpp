@@ -38,7 +38,7 @@ std::unique_ptr<Result> UsesS::evaluate(PKBReader *db) {
             STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym&>(*first).de));
             std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(first->str(), filterSet);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), second->str(), usesSet);
-            return std::move(Result::join(result.get(), intermediateResult.get()));
+            return std::move(Result::join(*result, *intermediateResult));
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // Uses(stmt, _)/ -> int[]
         {
@@ -46,7 +46,7 @@ std::unique_ptr<Result> UsesS::evaluate(PKBReader *db) {
             STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym&>(*first).de));
             std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(first->str(), filterSet);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), usesStmtSet);
-            return std::move(Result::join(result.get(), intermediateResult.get()));
+            return std::move(Result::join(*result, *intermediateResult));
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::IDENT):  // Uses(stmt, "x")/ -> int[]
         {
@@ -54,7 +54,7 @@ std::unique_ptr<Result> UsesS::evaluate(PKBReader *db) {
             STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym&>(*first).de));
             std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(first->str(), filterSet);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), stmtSet);
-            return std::move(Result::join(result.get(), intermediateResult.get()));
+            return std::move(Result::join(*result, *intermediateResult));
         }
         default:assert(false);
     }
