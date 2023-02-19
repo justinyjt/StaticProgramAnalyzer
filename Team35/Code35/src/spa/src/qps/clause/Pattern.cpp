@@ -25,7 +25,7 @@ std::unique_ptr<Result> Pattern::evaluate(PKBReader* db) {
     std::unique_ptr<Result> filterSet = std::make_unique<TableResult>(this->ident, assignSet);
 
     switch (getPairEnum()) {
-        case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::EXPR):  // a(_, "x") -> int[]
+        case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::EXPR):  // a(_, _"x"_) -> int[]
         {
             std::unique_ptr<Result> result = std::make_unique<TableResult>(this->ident, stmtSet2);
             return std::move(Result::join(result.get(), filterSet.get()));
@@ -36,7 +36,7 @@ std::unique_ptr<Result> Pattern::evaluate(PKBReader* db) {
             std::unique_ptr<Result> result = std::make_unique<TableResult>(this->ident, stmtSet);
             return std::move(Result::join(result.get(), filterSet.get()));
         }
-        case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::EXPR):  // a(v, "_x_") -> pair<int, str>[]
+        case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::EXPR):  // a(v, _"x"_) -> pair<int, str>[]
         {
             std::string synonymIdent = dynamic_cast<const Synonym*>(first.get())->ident;
             std::vector<std::list<std::string>> vec;
