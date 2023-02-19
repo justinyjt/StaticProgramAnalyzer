@@ -104,7 +104,7 @@ std::unique_ptr<Clause> SuchThatClauseParser::createClause(std::unique_ptr<Token
 }
 
 bool SuchThatClauseParser::isStmtRef(PQLToken& tok) {
-    const auto* synonym = dynamic_cast<const Synonym*>(&tok);
+    const auto* synonym = dynamic_cast<Synonym*>(&tok);
     return tok.tag == PQLToken::Tag::STMT_NUM ||
             tok.tag == PQLToken::Tag::WILDCARD ||
             synonym != nullptr && (synonym->de == Synonym::DesignEntity::STMT ||
@@ -117,7 +117,7 @@ bool SuchThatClauseParser::isStmtRef(PQLToken& tok) {
 }
 
 bool SuchThatClauseParser::isEntRef(PQLToken& tok) {
-    const auto* synonym = dynamic_cast<const Synonym*>(&tok);
+    const auto* synonym = dynamic_cast<Synonym*>(&tok);
     return tok.tag == PQLToken::Tag::IDENT ||
            tok.tag == PQLToken::Tag::WILDCARD ||
            synonym != nullptr && (synonym->de == Synonym::DesignEntity::VARIABLE ||
