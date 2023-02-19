@@ -10,8 +10,10 @@ std::unique_ptr<Result> SelectClause::evaluate(PKBReader* db) {
     switch (syn.de) {
         case Synonym::DesignEntity::VARIABLE:
             es = db->getEntities(Entity::Variable);
+            break;
         case Synonym::DesignEntity::CONSTANT:
             es = db->getEntities(Entity::Constant);
+            break;
         case Synonym::DesignEntity::STMT:
             ss = db->getStatements(StmtType::None);
             break;

@@ -201,7 +201,7 @@ unique_ptr<ASTNode> Parser::parseRelExpr() {
         op->addChild(std::move(factor2));
 
         return std::move(op);
-    } else if (scanner_.match(Token::Tag::Equal)) {
+    } else if (scanner_.match(Token::Tag::Equivalence)) {
         unique_ptr<ASTNode> op = std::make_unique<ASTNode>(ASTNode::SyntaxType::Equivalence, "==");
         unique_ptr<ASTNode> factor2 = parseRelFactor();
 
