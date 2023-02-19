@@ -1,9 +1,8 @@
-#pragma once
 #include "qps/QueryEvaluator.h"
 
-QueryEvaluator::QueryEvaluator(PKBReader* db) : db(db) {}
+QueryEvaluator::QueryEvaluator(PKBReader *db) : db(db) {}
 
-std::unique_ptr<Result> QueryEvaluator::evaluate(std::vector<std::unique_ptr<Clause>>& clauses) const {
+std::unique_ptr<Result> QueryEvaluator::evaluate(std::vector<std::unique_ptr<Clause>> &clauses) const {
     // first clause
 //    std::unique_ptr<Result> curr = clauses[0]->evaluate(db);
 

@@ -12,4 +12,6 @@ class SimpleTokenScanner : public TokenScanner {
     int isName() const;
 
     int isCondExprSeparatedByLogicalOperator() const;
+
+    int isAssign() const;
 };

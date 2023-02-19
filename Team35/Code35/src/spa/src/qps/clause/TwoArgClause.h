@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <utility>
+
 #include "qps/clause/Clause.h"
 #include "qps/pql/Expression.h"
 #include "qps/pql/Ident.h"

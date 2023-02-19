@@ -21,8 +21,8 @@ STMT_SET PatternTable::getExactPatternMatch(std::string pattern) const {
 }
 
 STMT_SET PatternTable::getPartialPatternMatch(std::string pattern) const {
-    STMT_SET  result;
-    // TODO fix temp solution
+    STMT_SET result;
+    // TODO(ngjunkang) fix temp solution
     // this assumes pattern is one token
     if (pattern.empty()) {
         return result;
