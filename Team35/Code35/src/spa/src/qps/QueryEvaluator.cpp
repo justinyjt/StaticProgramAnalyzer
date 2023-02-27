@@ -12,13 +12,13 @@ std::unique_ptr<Result> QueryEvaluator::evaluate(std::vector<std::unique_ptr<Cla
     int i = 2;
     while (i < clauses.size()) {
         std::unique_ptr<Result> next = clauses[i]->evaluate(db);
-        std::unique_ptr<Result> merged = Result::join(curr.get(), next.get());
+        std::unique_ptr<Result> merged = Result::join(*curr, *next);
         curr = std::move(merged);
         i++;
     }
 
     // finally, join with the select clause
     std::unique_ptr<Result> selectList = clauses[0]->evaluate(db);
-    std::unique_ptr<Result> finalRes = Result::join(selectList.get(), curr.get());
+    std::unique_ptr<Result> finalRes = Result::join(*selectList, *curr);
     return std::move(finalRes);
 }
