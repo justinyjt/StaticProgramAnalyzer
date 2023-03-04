@@ -5,10 +5,14 @@
 namespace CFG {
 CFGraphBuilder::CFGraphBuilder() : cf_graph_(), last_visited_node_data_(std::nullopt) {}
 
+/**
+ * Builds the control flow graph. This put the end node as the last node in the graph, if there is a last visited node.
+ * @return The control flow graph.
+ */
 CFGraph CFGraphBuilder::build() {
     this->addNode(CFGraph::end_node_data);
-    CFGraph cf_graph = std::move(cf_graph_);
-    cf_graph_ = CFGraph();
+    CFGraph cf_graph = std::move(this->cf_graph_);
+    this->cf_graph_ = CFGraph();
     return std::move(cf_graph);
 }
 
