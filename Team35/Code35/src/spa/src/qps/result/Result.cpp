@@ -9,46 +9,47 @@
 
 Result::Result(Result::Tag _tag) : tag(_tag) {}
 
-std::unique_ptr<Result> Result::join(Result &lhs, Result &rhs) {
+std::unique_ptr<Result> Result::join(Result *lhs, Result *rhs) {
     // case bool <-> bool:
-    if (lhs.tag == Tag::BOOL && rhs.tag == Tag::BOOL) {
-        BoolResult &l = dynamic_cast<BoolResult &>(lhs);
-        BoolResult &r = dynamic_cast<BoolResult &>(rhs);
-        std::unique_ptr<Result> res = std::make_unique<BoolResult>(l.b && r.b);
+    if (lhs->tag == Tag::BOOL && rhs->tag == Tag::BOOL) {
+        BoolResult *l = dynamic_cast<BoolResult *>(lhs);
+        BoolResult *r = dynamic_cast<BoolResult *>(rhs);
+        std::unique_ptr<Result> res = std::make_unique<BoolResult>(l->b && r->b);
         return std::move(res);
     }
 
     // case table <-> table:
-    if (lhs.tag == Tag::TABLE && rhs.tag == Tag::TABLE) {
+    if (lhs->tag == Tag::TABLE && rhs->tag == Tag::TABLE) {
         std::unique_ptr<Result> res = Result::tableJoin(lhs, rhs);
         return std::move(res);
     }
 
-    // case bool <-> table:
-    if (lhs.tag == Tag::BOOL) {
-        if (dynamic_cast<BoolResult&>(lhs).b) {
-            TableResult& tbl = dynamic_cast<TableResult&>(rhs);
-            return std::move(std::make_unique<TableResult>(tbl));
-        } else {
-            return std::move(std::make_unique<BoolResult>(false));
-        }
+    // case table <-> bool or bool <-> table:
+    BoolResult *boolResult;
+    TableResult *tableResult;
+    if (lhs->tag == Tag::BOOL) {
+        boolResult = dynamic_cast<BoolResult *>(lhs);
+        tableResult = dynamic_cast<TableResult *>(rhs);
+    } else {
+        boolResult = dynamic_cast<BoolResult *>(rhs);
+        tableResult = dynamic_cast<TableResult *>(lhs);
     }
 
-    // case table <-> bool:
-    if (dynamic_cast<BoolResult&>(rhs).b) {
-        TableResult& tbl = dynamic_cast<TableResult&>(lhs);
-        return std::move(std::make_unique<TableResult>(tbl));
+    if (boolResult->b) {
+        std::unique_ptr<Result> res = std::make_unique<TableResult>(*tableResult);
+        return std::move(res);
     } else {
-        return std::move(std::make_unique<BoolResult>(false));
+        std::unique_ptr<Result> res = std::make_unique<BoolResult>(*boolResult);
+        return std::move(res);
     }
 }
 
-std::unique_ptr<Result> Result::tableJoin(Result &lhs, Result &rhs) {
-    TableResult &t1 = dynamic_cast<TableResult &>(lhs);
-    TableResult &t2 = dynamic_cast<TableResult &>(rhs);
+std::unique_ptr<Result> Result::tableJoin(Result *lhs, Result *rhs) {
+    TableResult *t1 = dynamic_cast<TableResult *>(lhs);
+    TableResult *t2 = dynamic_cast<TableResult *>(rhs);
 
-    std::vector<std::string> headers1(t1.idents.begin(), t1.idents.end());
-    std::vector<std::string> headers2(t2.idents.begin(), t2.idents.end());
+    std::vector<std::string> headers1(t1->idents.begin(), t1->idents.end());
+    std::vector<std::string> headers2(t2->idents.begin(), t2->idents.end());
     std::set<int> commonHeaders1;
     std::set<int> commonHeaders2;
     std::list<int> nonCommonHeaders1;
@@ -86,8 +87,8 @@ std::unique_ptr<Result> Result::tableJoin(Result &lhs, Result &rhs) {
         outputHeaders.insert(outputHeaders.end(), headers1.begin(), headers1.end());
         outputHeaders.insert(outputHeaders.end(), headers2.begin(), headers2.end());
 
-        for (std::list<std::string> &row1 : t1.rows) {
-            for (std::list<std::string> &row2 : t2.rows) {
+        for (std::list<std::string> row1 : t1->rows) {
+            for (std::list<std::string> row2 : t2->rows) {
                 std::list<std::string> concat;
                 concat.insert(concat.end(), row1.begin(), row1.end());
                 concat.insert(concat.end(), row2.begin(), row2.end());
@@ -111,7 +112,7 @@ std::unique_ptr<Result> Result::tableJoin(Result &lhs, Result &rhs) {
         // separate rows in table into keys and values
 
         std::vector<std::pair<std::set<std::string>, std::vector<std::string>>> hashmap1;
-        for (std::list<std::string> &row : t1.rows) {
+        for (std::list<std::string> &row : t1->rows) {
             std::set<std::string> keys;
             std::vector<std::string> values;
             int i = 0;
@@ -127,7 +128,7 @@ std::unique_ptr<Result> Result::tableJoin(Result &lhs, Result &rhs) {
         }
 
         std::vector<std::pair<std::set<std::string>, std::vector<std::string>>> hashmap2;
-        for (std::list<std::string> &row : t2.rows) {
+        for (std::list<std::string> row : t2->rows) {
             std::set<std::string> keys;
             std::vector<std::string> values;
             int i = 0;
@@ -143,12 +144,12 @@ std::unique_ptr<Result> Result::tableJoin(Result &lhs, Result &rhs) {
         }
 
         // generate new table
-        for (auto &kv : hashmap1) {
+        for (auto kv : hashmap1) {
             std::set<std::string> &key1 = kv.first;
             std::vector<std::string> &value1 = kv.second;
 
             // Look up the key in the second table
-            for (auto &kv2 : hashmap2) {
+            for (auto kv2 : hashmap2) {
                 std::set<std::string> &key2 = kv2.first;
                 std::vector<std::string> &value2 = kv2.second;
                 if (key1 == key2) {

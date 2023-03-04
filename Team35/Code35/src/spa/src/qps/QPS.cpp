@@ -10,7 +10,7 @@ QPS::QPS(PKBReader *pkbReader)
 void QPS::executeQuery(std::string &query, std::list<std::string> &result) {
     try {
         std::vector<std::unique_ptr<Clause>> clauses = queryParser->parse(query);
-        std::string selected = dynamic_cast<SelectClause&>(*(clauses[0])).syn.ident;
+        std::string selected = dynamic_cast<SelectClause *>(clauses[0].get())->syn.ident;
         std::unique_ptr<Result> eval = queryEvaluator->evaluate(clauses);
         eval->output(result, selected);
     } catch (SyntaxException &e) {
