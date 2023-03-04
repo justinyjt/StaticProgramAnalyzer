@@ -9,10 +9,10 @@
 #include "commons/ASTNode.h"
 
 DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
-    pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(),
-    stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
-    stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(),
-    containerStmtLst_(), stmtCnt_(0), assignPat_() {}
+        pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(),
+        stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
+        stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(),
+        containerStmtLst_(), stmtCnt_(0), assignPat_(), callGraph_() {}
 
 std::unique_ptr<ASTNode> DesignExtractor::extractProgram(std::unique_ptr<ASTNode> root) {
     root_ = std::move(root);
@@ -28,6 +28,7 @@ std::unique_ptr<ASTNode> DesignExtractor::extractProgram(std::unique_ptr<ASTNode
     addStmtParentPairSetToPKB();
     addPatternsToPKB();
     addStmtTypesToPKB();
+    addCallsToPKB();
     return std::move(root_);
 }
 
@@ -45,17 +46,23 @@ void DesignExtractor::extractStmtLst(const std::unique_ptr<ASTNode> &node) {
         stmtCnt_++;
         childStmtLstPtr->push_back(stmtCnt_);
         switch (child->getSyntaxType()) {
-            case ASTNode::SyntaxType::Assign:extractAssign(child);
+            case ASTNode::SyntaxType::Assign:
+                extractAssign(child);
                 break;
-            case ASTNode::SyntaxType::Read:extractRead(child);
+            case ASTNode::SyntaxType::Read:
+                extractRead(child);
                 break;
-            case ASTNode::SyntaxType::Print:extractPrint(child);
+            case ASTNode::SyntaxType::Print:
+                extractPrint(child);
                 break;
-            case ASTNode::SyntaxType::If:extractIf(child);
+            case ASTNode::SyntaxType::If:
+                extractIf(child);
                 break;
-            case ASTNode::SyntaxType::While:extractWhile(child);
+            case ASTNode::SyntaxType::While:
+                extractWhile(child);
                 break;
-            default:break;
+            default:
+                break;
         }
     }
 
@@ -67,9 +74,9 @@ void DesignExtractor::extractStmtLst(const std::unique_ptr<ASTNode> &node) {
 }
 
 void DesignExtractor::updateFollowsPairSet(const std::unique_ptr<std::vector<STMT_NUM>> &lst) {
-    for (int i = 0; i < lst->size() - 1; ++i) {
+    for (int i = 0 ; i < lst->size() - 1 ; ++i) {
         stmtFollowPairSet_.insert(STMT_STMT((*lst)[i], (*lst)[i + 1]));
-        for (int j = i + 1; j < lst->size(); ++j) {
+        for (int j = i + 1 ; j < lst->size() ; ++j) {
             stmtFollowStarPairSet_.insert(STMT_STMT((*lst)[i], (*lst)[j]));
         }
     }
@@ -79,7 +86,7 @@ void DesignExtractor::updateParentsPairSet(const std::unique_ptr<std::vector<STM
     if (containerStmtLst_.empty()) {
         return;
     }
-    for (int i = 0; i < lst->size(); i++) {
+    for (int i = 0 ; i < lst->size() ; i++) {
         STMT_NUM stmt = (*lst)[i];
         stmtParentPairSet_.insert(STMT_STMT(containerStmtLst_.back(), stmt));
         for (int &j : containerStmtLst_) {
@@ -110,10 +117,12 @@ std::string DesignExtractor::extractLeftAssign(const std::unique_ptr<ASTNode> &n
 std::string DesignExtractor::extractRightAssign(const std::unique_ptr<ASTNode> &node) {
     std::string label = node->getLabel();
     switch (node->getSyntaxType()) {
-        case ASTNode::SyntaxType::Variable:varNameSet_.insert(label);
+        case ASTNode::SyntaxType::Variable:
+            varNameSet_.insert(label);
             updateStmtUsesPairSet(stmtCnt_, label);
             return label;
-        case ASTNode::SyntaxType::Constant:constSet_.insert(label);
+        case ASTNode::SyntaxType::Constant:
+            constSet_.insert(label);
             return label;
         default:
             // operators;
@@ -150,12 +159,15 @@ void DesignExtractor::extractPrint(const std::unique_ptr<ASTNode> &node) {
 void DesignExtractor::extractCondExpr(const std::unique_ptr<ASTNode> &node) {
     std::string label = node->getLabel();
     switch (node->getSyntaxType()) {
-        case ASTNode::SyntaxType::Variable:varNameSet_.insert(label);
+        case ASTNode::SyntaxType::Variable:
+            varNameSet_.insert(label);
             updateStmtUsesPairSet(stmtCnt_, label);
             break;
-        case ASTNode::SyntaxType::Constant:constSet_.insert(label);
+        case ASTNode::SyntaxType::Constant:
+            constSet_.insert(label);
             break;
-        case ASTNode::SyntaxType::LogicalNot:assert(node->getChildren().size() == 1);
+        case ASTNode::SyntaxType::LogicalNot:
+            assert(node->getChildren().size() == 1);
             extractCondExpr(node->getChildren().front());
             break;
         default:
@@ -203,7 +215,7 @@ void DesignExtractor::extractWhile(const std::unique_ptr<ASTNode> &node) {
 }
 
 void DesignExtractor::updateStmtSet() {
-    for (int i = 1; i <= stmtCnt_; ++i) {
+    for (int i = 1 ; i <= stmtCnt_ ; ++i) {
         stmtSet_.insert(i);
     }
 }
@@ -229,6 +241,7 @@ void DesignExtractor::addVarNameSetToPKB() {
 void DesignExtractor::addConstantSetToPKB() {
     pkbWriter_->addEntities(Entity::Constant, constSet_);
 }
+
 void DesignExtractor::addStmtUsesPairSetToPKB() {
     pkbWriter_->addStmtEntityRelationships(StmtNameRelationship::Uses, stmtUsePairSet_);
 }
@@ -259,6 +272,11 @@ void DesignExtractor::addStmtTypesToPKB() {
     pkbWriter_->addStatements(StmtType::If, ifSet_);
     pkbWriter_->addStatements(StmtType::While, whileSet_);
     pkbWriter_->addStatements(StmtType::None, stmtSet_);
+}
+
+void DesignExtractor::addCallsToPKB() {
+    pkbWriter_->addEntityEntityRelationships(NameNameRelationship::Calls, callGraph_.getImmediateCalls());
+    pkbWriter_->addEntityEntityRelationships(NameNameRelationship::CallsT, callGraph_.getTransitiveCalls());
 }
 
 std::unordered_map<STMT_NUM, std::string> DesignExtractor::getAssignPatMap() {
