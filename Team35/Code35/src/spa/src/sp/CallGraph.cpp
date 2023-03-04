@@ -8,7 +8,7 @@ CallGraph::CallGraph() : Graph<ENT_NAME>() {}
  * @param caller Parent entity invoking callee.
  * @param callee Child entity called by caller.
  */
-void CallGraph::addTransitiveCallRelationship(const ENT_NAME &caller, const ENT_NAME &callee) {
+void CallGraph::addCallRelationship(const ENT_NAME &caller, const ENT_NAME &callee) {
     this->addEdge(caller, callee);
 }
 
@@ -23,9 +23,33 @@ ENT_ENT_SET CallGraph::getTransitiveCalls() {
     ENT_ENT_SET result;
     for (int i = 0 ; i < this->getNoOfNodes() ; i++) {
         ENT_NAME caller = this->getNode(i);
+        IndexQueue calleeQueue;
+        IndexList calleeIndices = this->getOutgoingNodes(i);
+        calleeQueue.insert(calleeQueue.begin(), calleeIndices.begin(), calleeIndices.end());
+        while (calleeQueue.size() > 0) {
+            Index current = calleeQueue.front();
+            ENT_NAME callee = this->getNode(current);
+            result.emplace(caller, callee);
+            IndexList indices = this->getOutgoingNodes(current);
+            calleeQueue.insert(calleeQueue.end(), indices.begin(), indices.end());
+            calleeQueue.pop_front();
+        }
+    }
+    return result;
+}
+
+/**
+ * Get all ENT_ENT pairings for immediate calls
+ * 
+ * @return ENT_ENT_SET containing immediate calls
+ */
+ENT_ENT_SET CallGraph::getImmediateCalls() {
+    ENT_ENT_SET result;
+    for (int i = 0 ; i < this->getNoOfNodes() ; i++) {
+        ENT_NAME caller = this->getNode(i);
         ENT_SET callees = this->getCallEntities(i);
         for (auto callee : callees) {
-            result.emplace(ENT_ENT(caller, callee));
+            result.emplace(caller, callee);
         }
     }
     return result;
@@ -35,7 +59,7 @@ ENT_SET CallGraph::getCallEntities(Index index) {
     ENT_SET callees;
     IndexList calleeIndices = this->getOutgoingNodes(index);
     for (auto callee : calleeIndices) {
-        callees.emplace(ENT_NAME(this->getNode(callee)));
+        callees.emplace(this->getNode(callee));
     }
     return callees;
 }
