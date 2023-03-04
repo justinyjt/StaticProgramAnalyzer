@@ -169,10 +169,52 @@ std::unique_ptr<Result> Result::tableJoin(Result &lhs, Result &rhs) {
 }
 
 std::unique_ptr<Result> Result::selectJoin(Result &lhs, Result &rhs) {
-    // selectJoin
-    // if BOOLEAN, return BoolResult
-    //
-    // if SingleSynonym, return TableResult
-    //
-    return std::make_unique<BoolResult>(true);
+    // LHS(select clause) can only be BoolResult if Select BOOLEAN, always return BoolResult
+    // LHS(select clause) can be TableResult if SingleSynonym or tuple, always return TableResult
+    if (lhs.tag == Tag::BOOL && rhs.tag == Tag::BOOL) {
+        BoolResult &l = dynamic_cast<BoolResult &>(lhs);
+        BoolResult &r = dynamic_cast<BoolResult &>(rhs);
+        std::unique_ptr<Result> res = std::make_unique<BoolResult>(l.b && r.b);
+        return std::move(res);
+    } else if (lhs.tag == Tag::BOOL && rhs.tag == Tag::TABLE) {
+        // check RHS table is empty
+        TableResult &r = dynamic_cast<TableResult &>(rhs);
+        std::unique_ptr<Result> res = std::make_unique<BoolResult>(r.rows.size() != 0);
+        return std::move(res);
+    } else if (lhs.tag == Tag::TABLE && rhs.tag == Tag::BOOL) {
+        BoolResult &r = dynamic_cast<BoolResult &>(rhs);
+        TableResult& tbl = dynamic_cast<TableResult&>(lhs);
+        return r.b ? std::move(std::make_unique<TableResult>(tbl)) : std::move(std::make_unique<TableResult>());
+    } else {
+        int selectedIdx = 0;
+        TableResult& selectList = dynamic_cast<TableResult&>(lhs);
+        TableResult& tbl = dynamic_cast<TableResult&>(rhs);
+        std::string selected = selectList.idents.front();
+        std::list<std::string> resultTableHeaders;
+        std::vector<std::list<std::string>> rows;
+        std::unordered_set<std::string> resultSet;
+        resultTableHeaders.push_back(selected);
+
+        for (auto &s : tbl.idents) {
+            if (s == selected) {
+                break;
+            }
+            selectedIdx++;
+        }
+
+        // get all unique values corresponding to the selected ident
+        for (auto &row : tbl.rows) {
+            resultSet.insert(
+                *(std::next(row.begin(), selectedIdx)));
+        }
+
+        // populate table
+        for (auto &elem : resultSet) {
+            std::list<std::string> row;
+            row.push_back(elem);
+            rows.push_back(row);
+        }
+
+        return std::move(std::make_unique<TableResult>(resultTableHeaders, rows));
+    }
 }
