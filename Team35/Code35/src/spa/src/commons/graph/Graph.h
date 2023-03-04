@@ -13,7 +13,7 @@ typedef std::vector<Index> IndexList;
 template<typename T>
 class Graph {
  public:
-    Graph() : nodes(), nodeToIndex(), outgoingAdjList(), incomingAdjList() {};
+    Graph() : nodes(), nodeToIndex(), outgoingAdjList(), incomingAdjList() {}
     ~Graph() = default;
     void addEdge(const T &from, const T &to) {
         Index fromIndex = addNode(from);
@@ -40,6 +40,7 @@ class Graph {
     int getNoOfNodes() {
         return nodes.size();
     }
+
  protected:
     Index getNodeIndex(const T &node) const {
         assert(hasNode(node));
