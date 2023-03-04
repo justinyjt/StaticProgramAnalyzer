@@ -29,7 +29,6 @@ void CFGraphBuilder::addStmt(STMT_NUM stmt_num) {
 void CFGraphBuilder::addLoop(STMT_NUM stmt_num) {
     CFGraphNodeData node_data = makeNodeData(stmt_num);
     this->addNode(node_data);
-    this->addDummyNode(stmt_num);
 }
 
 /**
