@@ -13,7 +13,7 @@ typedef std::vector<Index> IndexList;
 template<typename T>
 class Graph {
  public:
-    Graph() : nodes(), nodeToIndex(), outgoingAdjList(), incomingAdjList() {};
+    Graph() : nodes(), nodeToIndex(), outgoingAdjList(), incomingAdjList() {}
     ~Graph() = default;
 
     bool operator==(const Graph &other) const {
