@@ -1,6 +1,6 @@
 #include "CallGraph.h"
 
-CallGraph::CallGraph() : Graph<ENT_NAME>() {};
+CallGraph::CallGraph() : Graph<ENT_NAME>() {}
 
 /**
  * Add Entities to call graph.
@@ -21,10 +21,10 @@ void CallGraph::addTransitiveCallRelationship(const ENT_NAME &caller, const ENT_
  */
 ENT_ENT_SET CallGraph::getTransitiveCalls() {
     ENT_ENT_SET result;
-    for (int i = 0; i < this->getNoOfNodes(); i++) {
+    for (int i = 0 ; i < this->getNoOfNodes() ; i++) {
         ENT_NAME caller = this->getNode(i);
         ENT_SET callees = this->getCallEntities(i);
-        for (auto callee: callees) {
+        for (auto callee : callees) {
             result.emplace(ENT_ENT(caller, callee));
         }
     }
@@ -34,7 +34,7 @@ ENT_ENT_SET CallGraph::getTransitiveCalls() {
 ENT_SET CallGraph::getCallEntities(Index index) {
     ENT_SET callees;
     IndexList calleeIndices = this->getOutgoingNodes(index);
-    for (auto callee: calleeIndices) {
+    for (auto callee : calleeIndices) {
         callees.emplace(ENT_NAME(this->getNode(callee)));
     }
     return callees;

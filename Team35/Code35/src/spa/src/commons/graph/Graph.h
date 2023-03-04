@@ -13,8 +13,10 @@ typedef std::vector<Index> IndexList;
 template<typename T>
 class Graph {
  public:
-    Graph() : nodes(), nodeToIndex(), outgoingAdjList(), incomingAdjList() {};
+    Graph() : nodes(), nodeToIndex(), outgoingAdjList(), incomingAdjList() {}
+
     ~Graph() = default;
+
     void addEdge(const T &from, const T &to) {
         Index fromIndex = addNode(from);
         Index toIndex = addNode(to);
@@ -29,7 +31,7 @@ class Graph {
     bool isCyclic() const {
         std::vector<bool> visited(nodes.size(), false);
         std::vector<bool> recursion_stack(nodes.size(), false);
-        for (Index i = 0; i < nodes.size(); ++i) {
+        for (Index i = 0 ; i < nodes.size() ; ++i) {
             if (isCyclicHelper(i, visited, recursion_stack)) {
                 return true;
             }
@@ -40,6 +42,7 @@ class Graph {
     int getNoOfNodes() {
         return nodes.size();
     }
+
  protected:
     Index getNodeIndex(const T &node) const {
         assert(hasNode(node));
