@@ -16,7 +16,7 @@ std::unique_ptr<Result> Follows::evaluate(PKBReader *db) {
             STMT_STMT_SET s = db->getAllRelationships(rs);
             STMT_SET filterSetByFirst = db->getStatements(getStmtType(dynamic_cast<Synonym&>(*first).de));
             STMT_SET
-                filterSetBySecond = db->getStatements(getStmtType(dynamic_cast<Synonym&>(*first).de));
+                filterSetBySecond = db->getStatements(getStmtType(dynamic_cast<Synonym&>(*second).de));
             std::unique_ptr<Result> intermediateResult1 = std::make_unique<TableResult>(first->str(), filterSetByFirst);
             std::unique_ptr<Result>
                 intermediateResult2 = std::make_unique<TableResult>(second->str(), filterSetBySecond);

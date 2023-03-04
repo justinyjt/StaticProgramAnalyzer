@@ -1,8 +1,6 @@
 #include "SelectClause.h"
 #include "SingleSynonymSelectClause.h"
 
-#include <cassert>
-
 SingleSynonymSelectClause::SingleSynonymSelectClause(Synonym &syn) : syn(syn) {}
 
 std::unique_ptr<Result> SingleSynonymSelectClause::evaluate(PKBReader *db) {

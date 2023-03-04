@@ -7,8 +7,8 @@
 #include "SelectClause.h"
 
 class BooleanSelectClause : public SelectClause {
-public:
-    explicit BooleanSelectClause();
+ public:
+    BooleanSelectClause();
     std::unique_ptr<Result> evaluate(PKBReader *db) override;
     bool operator==(const Clause &rhs) const override;
 };

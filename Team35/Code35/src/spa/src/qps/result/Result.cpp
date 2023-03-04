@@ -195,11 +195,21 @@ std::unique_ptr<Result> Result::selectJoin(Result &lhs, Result &rhs) {
         std::unordered_set<std::string> resultSet;
         resultTableHeaders.push_back(selected);
 
+        // select clause or result clause is empty
+        if (tbl.rows.size() == 0 || selectList.rows.size() == 0) {
+            return std::move(std::make_unique<TableResult>());
+        }
+
         for (auto &s : tbl.idents) {
             if (s == selected) {
                 break;
             }
             selectedIdx++;
+        }
+
+        // no matching headers, just return selected list
+        if (selectedIdx == tbl.idents.size()) {
+            return std::move(std::make_unique<TableResult>(selectList));
         }
 
         // get all unique values corresponding to the selected ident
