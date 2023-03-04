@@ -22,9 +22,9 @@ void CallGraph::addCallRelationship(const ENT_NAME &caller, const ENT_NAME &call
  * returns (Grandparent, Parent), (Grandparent, Child), (Parent, Child)
  */
 ENT_ENT_SET CallGraph::getTransitiveCalls() {
-    ENT_ENT_SET result;
     assert(!isCyclic());
-    for (int i = 0 ; i < this->getNoOfNodes() ; i++) {
+    ENT_ENT_SET result;
+    for (int i = 0; i < this->getNoOfNodes(); i++) {
         ENT_NAME caller = this->getNode(i);
         IndexQueue calleeQueue;
         IndexList calleeIndices = this->getOutgoingNodes(i);
@@ -47,9 +47,9 @@ ENT_ENT_SET CallGraph::getTransitiveCalls() {
  * @return ENT_ENT_SET containing immediate calls
  */
 ENT_ENT_SET CallGraph::getImmediateCalls() {
-    ENT_ENT_SET result;
     assert(!isCyclic());
-    for (int i = 0 ; i < this->getNoOfNodes() ; i++) {
+    ENT_ENT_SET result;
+    for (int i = 0; i < this->getNoOfNodes(); i++) {
         ENT_NAME caller = this->getNode(i);
         ENT_SET callees = this->getCallEntities(i);
         for (auto callee : callees) {

@@ -74,9 +74,9 @@ void DesignExtractor::extractStmtLst(const std::unique_ptr<ASTNode> &node) {
 }
 
 void DesignExtractor::updateFollowsPairSet(const std::unique_ptr<std::vector<STMT_NUM>> &lst) {
-    for (int i = 0 ; i < lst->size() - 1 ; ++i) {
+    for (int i = 0; i < lst->size() - 1; ++i) {
         stmtFollowPairSet_.insert(STMT_STMT((*lst)[i], (*lst)[i + 1]));
-        for (int j = i + 1 ; j < lst->size() ; ++j) {
+        for (int j = i + 1; j < lst->size(); ++j) {
             stmtFollowStarPairSet_.insert(STMT_STMT((*lst)[i], (*lst)[j]));
         }
     }
@@ -86,7 +86,7 @@ void DesignExtractor::updateParentsPairSet(const std::unique_ptr<std::vector<STM
     if (containerStmtLst_.empty()) {
         return;
     }
-    for (int i = 0 ; i < lst->size() ; i++) {
+    for (int i = 0; i < lst->size(); i++) {
         STMT_NUM stmt = (*lst)[i];
         stmtParentPairSet_.insert(STMT_STMT(containerStmtLst_.back(), stmt));
         for (int &j : containerStmtLst_) {
@@ -215,7 +215,7 @@ void DesignExtractor::extractWhile(const std::unique_ptr<ASTNode> &node) {
 }
 
 void DesignExtractor::updateStmtSet() {
-    for (int i = 1 ; i <= stmtCnt_ ; ++i) {
+    for (int i = 1; i <= stmtCnt_; ++i) {
         stmtSet_.insert(i);
     }
 }

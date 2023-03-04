@@ -31,7 +31,7 @@ class Graph {
     bool isCyclic() const {
         std::vector<bool> visited(nodes.size(), false);
         std::vector<bool> recursion_stack(nodes.size(), false);
-        for (Index i = 0 ; i < nodes.size() ; ++i) {
+        for (Index i = 0; i < nodes.size(); ++i) {
             if (isCyclicHelper(i, visited, recursion_stack)) {
                 return true;
             }
