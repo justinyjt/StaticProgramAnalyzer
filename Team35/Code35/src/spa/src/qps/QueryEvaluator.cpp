@@ -19,11 +19,6 @@ std::unique_ptr<Result> QueryEvaluator::evaluate(std::vector<std::unique_ptr<Cla
 
     // finally, join with the select clause
     std::unique_ptr<Result> selectList = clauses[0]->evaluate(db);
-    std::unique_ptr<Result> finalRes = Result::join(*selectList, *curr);
-    // selectJoin
-    // if BOOLEAN, return BoolResult
-    //
-    // if SingleSynonym, return TableResult
-    //
+    std::unique_ptr<Result> finalRes = Result::selectJoin(*selectList, *curr);
     return std::move(finalRes);
 }

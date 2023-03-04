@@ -60,27 +60,27 @@ TableResult::TableResult(const std::string &ident, STMT_SET &set) : Result(Tag::
             std::initializer_list<std::string>{std::to_string(elem)});
 }
 
-void TableResult::output(std::list<std::string> &list, std::string &selected) {
-    std::unordered_set<std::string> resultSet;
-
-    int selectedIdx = 0;
-    for (auto &s : idents) {
-        if (s == selected) {
-            break;
-        }
-        selectedIdx++;
-    }
-
-    // get all unique values corresponding to the selected ident
-    for (auto &row : rows) {
-        resultSet.insert(
-            *(std::next(row.begin(), selectedIdx)));
-    }
-
-    // populate result
-    for (auto &elem : resultSet) {
-        list.push_back(elem);
-    }
+void TableResult::output(std::list<std::string> &list) {
+//    std::unordered_set<std::string> resultSet;
+//
+//    int selectedIdx = 0;
+//    for (auto &s : idents) {
+//        if (s == selected) {
+//            break;
+//        }
+//        selectedIdx++;
+//    }
+//
+//    // get all unique values corresponding to the selected ident
+//    for (auto &row : rows) {
+//        resultSet.insert(
+//            *(std::next(row.begin(), selectedIdx)));
+//    }
+//
+//    // populate result
+//    for (auto &elem : resultSet) {
+//        list.push_back(elem);
+//    }
 }
 
 bool TableResult::operator==(const Result &rhs) const {

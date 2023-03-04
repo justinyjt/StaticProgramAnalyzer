@@ -10,6 +10,6 @@ class BoolResult : public Result {
     bool b;
     explicit BoolResult(bool b);
 
-    void output(std::list<std::string> &list, std::string &selected) override;
+    void output(std::list<std::string> &list) override;
     bool operator==(const Result &rhs) const;
 };

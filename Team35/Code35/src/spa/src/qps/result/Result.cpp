@@ -167,3 +167,12 @@ std::unique_ptr<Result> Result::tableJoin(Result &lhs, Result &rhs) {
     std::unique_ptr<TableResult> tableResult = std::make_unique<TableResult>(outputHeaders, outputColumns);
     return std::move(tableResult);
 }
+
+std::unique_ptr<Result> Result::selectJoin(Result &lhs, Result &rhs) {
+    // selectJoin
+    // if BOOLEAN, return BoolResult
+    //
+    // if SingleSynonym, return TableResult
+    //
+    return std::make_unique<BoolResult>(true);
+}

@@ -6,7 +6,7 @@
 #include "qps/pql/Synonym.h"
 
 class SingleSynonymSelectClause : public SelectClause {
-public:
+ public:
     Synonym const syn;
     explicit SingleSynonymSelectClause(Synonym &syn);
     std::unique_ptr<Result> evaluate(PKBReader *db) override;

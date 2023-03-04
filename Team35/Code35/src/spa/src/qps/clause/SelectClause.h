@@ -7,6 +7,5 @@
 
 class SelectClause : public Clause {
  public:
-    std::unique_ptr<Result> evaluate(PKBReader *db) override;
     bool operator==(const Clause &rhs) const override;
 };

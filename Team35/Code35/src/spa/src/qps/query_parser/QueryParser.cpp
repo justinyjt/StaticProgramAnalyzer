@@ -19,8 +19,7 @@ std::vector<std::unique_ptr<Clause>> QueryParser::parse(std::string &query) {
         std::vector<Synonym> synonyms = declarationParser->parse(tokenValidator);
         // parse select using list of found synonyms
         std::unique_ptr<SelectionParser> selectionParser = std::make_unique<SelectionParser>();
-        Synonym selectedSynonym = selectionParser->parse(tokenValidator, synonyms);
-        std::unique_ptr<Clause> selectClause = std::make_unique<SelectClause>(selectedSynonym);
+        std::unique_ptr<Clause> selectClause = selectionParser->parse(tokenValidator, synonyms);
 
         std::vector<std::unique_ptr<Clause>> res;
         res.push_back(std::move(selectClause));

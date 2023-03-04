@@ -2,20 +2,22 @@
 #include "SelectionParser.h"
 #include "qps/query_parser/clause_parser/TokenValidator.h"
 #include "qps/query_exceptions/SemanticException.h"
+#include "qps/clause/SingleSynonymSelectClause.h"
+#include "qps/clause/BooleanSelectClause.h"
 
 // Return a clause instead
-Synonym SelectionParser::parse(TokenValidator& tokenValidator, std::vector<Synonym>& synonyms) {
+std::unique_ptr<SelectClause> SelectionParser::parse(TokenValidator& tokenValidator, std::vector<Synonym>& synonyms) {
     tokenValidator.validateAndConsumeTokenType(Token::Tag::Select);
 
-    if (tokenValidator.isNextTokenType(Token::Tag::Bool) && !isSynonymDeclared("BOOLEAN", synonyms)) { // single synonym
+    if (tokenValidator.isNextTokenType(Token::Tag::Bool) && !isSynonymDeclared("BOOLEAN", synonyms)) { // BOOLEAN
         tokenValidator.validateAndConsumeTokenType(Token::Tag::Bool);
-        // return clause
-        return synonyms.front();
-    } else if (tokenValidator.isNextTokenValidName()) { // BOOLEAN
+        return std::move(std::make_unique<BooleanSelectClause>());
+    } else if (tokenValidator.isNextTokenValidName()) { // single synonym
         std::unique_ptr<Token> selectedSynonym = tokenValidator.validateAndConsumeSynonymToken();
         for (auto synonym : synonyms) {
             if (selectedSynonym->getLexeme() == synonym.str()) {
-                return synonym;
+                std::unique_ptr<SelectClause> selectClause = std::make_unique<SingleSynonymSelectClause>(synonym);
+                return std::move(selectClause);
             }
         }
     } else {
