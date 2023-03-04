@@ -56,18 +56,12 @@ TEST_CASE("Call Graph can successfully add immediate caller-callee pairs") {
         CallGraph cg;
         ENT_ENT_SET expected;
         expected.emplace(ENT_ENT("a", "b"));
-        expected.emplace(ENT_ENT("a", "c"));
-        expected.emplace(ENT_ENT("a", "d"));
         expected.emplace(ENT_ENT("b", "c"));
-        expected.emplace(ENT_ENT("b", "d"));
         expected.emplace(ENT_ENT("c", "d"));
         cg.addCallRelationship(ENT_NAME("a"), ENT_NAME("b"));
-        cg.addCallRelationship(ENT_NAME("a"), ENT_NAME("c"));
-        cg.addCallRelationship(ENT_NAME("a"), ENT_NAME("d"));
         cg.addCallRelationship(ENT_NAME("b"), ENT_NAME("c"));
-        cg.addCallRelationship(ENT_NAME("b"), ENT_NAME("d"));
         cg.addCallRelationship(ENT_NAME("c"), ENT_NAME("d"));
-        requireEqual(expected, cg.getTransitiveCalls());
+        requireEqual(expected, cg.getImmediateCalls());
     }
 
     SECTION("Caller and callee correct direction") {
