@@ -9,6 +9,7 @@
 
 Result::Result(Result::Tag _tag) : tag(_tag) {}
 
+// select v
 std::unique_ptr<Result> Result::join(Result &lhs, Result &rhs) {
     // case bool <-> bool:
     if (lhs.tag == Tag::BOOL && rhs.tag == Tag::BOOL) {

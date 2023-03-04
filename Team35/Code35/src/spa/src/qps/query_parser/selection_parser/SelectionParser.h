@@ -9,4 +9,5 @@
 class SelectionParser {
  public:
     Synonym parse(TokenValidator& tokenValidator, std::vector<Synonym>& synonyms);
+    bool isSynonymDeclared(std::string selectedSynonym, std::vector<Synonym>& synonyms);
 };

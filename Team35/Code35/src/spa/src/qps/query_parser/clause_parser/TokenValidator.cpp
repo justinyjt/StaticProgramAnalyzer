@@ -104,6 +104,10 @@ bool TokenValidator::isNextTokenType(Token::Tag tag) {
     return tag == cur_->getTag();
 }
 
+bool TokenValidator::isNextTokenValidName() {
+    return isName(cur_->getLexeme());
+}
+
 void TokenValidator::consumeNextToken() {
     cur_ = lexer->scan();
 }

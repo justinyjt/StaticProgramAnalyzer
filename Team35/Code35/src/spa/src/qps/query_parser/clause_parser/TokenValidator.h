@@ -17,6 +17,7 @@ class TokenValidator {
     std::unique_ptr<Token> validateAndConsumePatternFirstArg();
     std::vector<std::unique_ptr<Token>> validateAndConsumePatternSecondArg();
     void validateAndConsumeTokenType(Token::Tag tag);
+    bool isNextTokenValidName();
     bool isNextTokenType(Token::Tag tag);
     void consumeNextToken();
     bool isEof();
