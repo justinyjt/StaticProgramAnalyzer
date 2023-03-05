@@ -14,9 +14,8 @@ std::unique_ptr<Result> Follows::evaluate(PKBReader *db) {
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Follows(s1, s2) -> pair<int, int>[]
         {
             STMT_STMT_SET s = db->getAllRelationships(rs);
-            STMT_SET filterSetByFirst = db->getStatements(getStmtType(dynamic_cast<Synonym&>(*first).de));
-            STMT_SET
-                filterSetBySecond = db->getStatements(getStmtType(dynamic_cast<Synonym&>(*second).de));
+            STMT_SET filterSetByFirst = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*first).de));
+            STMT_SET filterSetBySecond = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*second).de));
             std::unique_ptr<Result> intermediateResult1 = std::make_unique<TableResult>(first->str(), filterSetByFirst);
             std::unique_ptr<Result>
                 intermediateResult2 = std::make_unique<TableResult>(second->str(), filterSetBySecond);
@@ -43,24 +42,24 @@ std::unique_ptr<Result> Follows::evaluate(PKBReader *db) {
         }
         case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::SYNONYM):  // Follows(1, stmt) -> int[]
         {
-            int num = (dynamic_cast<StatementNumber&>(*first)).n;
+            int num = (dynamic_cast<StatementNumber &>(*first)).n;
             STMT_SET set = db->getRelationshipByKey(rs, num);
-            STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym&>(*second).de));
+            STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*second).de));
             std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(second->str(), filterSet);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), set);
             return std::move(Result::join(*result, *intermediateResult));
         }
         case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::STMT_NUM):  // Follows(1, 2) -> bool
         {
-            int firstNum = (dynamic_cast<StatementNumber&>(*first)).n;
-            int secondNum = (dynamic_cast<StatementNumber&>(*second)).n;
+            int firstNum = (dynamic_cast<StatementNumber &>(*first)).n;
+            int secondNum = (dynamic_cast<StatementNumber &>(*second)).n;
             bool b = db->isRelationshipExists(rs, firstNum, secondNum);
             std::unique_ptr<Result> result = std::make_unique<BoolResult>(b);
             return std::move(result);
         }
         case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::WILDCARD):  // Follows(3, _) -> bool
         {
-            int num = (dynamic_cast<StatementNumber&>(*first)).n;
+            int num = (dynamic_cast<StatementNumber &>(*first)).n;
             STMT_SET s = db->getRelationshipByKey(rs, num);
             std::unique_ptr<Result> result = std::make_unique<BoolResult>(!s.empty());
             return std::move(result);
@@ -68,14 +67,14 @@ std::unique_ptr<Result> Follows::evaluate(PKBReader *db) {
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::SYNONYM):  // Follows(_, stmt) -> int[]
         {
             STMT_SET followsStmtSet = db->getValueStmtByRelationship(rs);
-            STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym&>(*second).de));
+            STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*second).de));
             std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(second->str(), filterSet);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), followsStmtSet);
             return std::move(Result::join(*result, *intermediateResult));
         }
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::STMT_NUM):  // Follows(_, 3) -> bool
         {
-            int num = (dynamic_cast<StatementNumber&>(*second)).n;
+            int num = (dynamic_cast<StatementNumber &>(*second)).n;
             STMT_SET s = db->getRelationshipByVal(rs, num);
             std::unique_ptr<Result> result = std::make_unique<BoolResult>(!s.empty());
             return std::move(result);
