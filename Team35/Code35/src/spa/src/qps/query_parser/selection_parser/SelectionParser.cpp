@@ -6,7 +6,6 @@
 #include "qps/clause/SingleSynonymSelectClause.h"
 #include "qps/clause/BooleanSelectClause.h"
 
-// Return a clause instead
 std::unique_ptr<SelectClause> SelectionParser::parse(TokenValidator& tokenValidator, std::vector<Synonym>& synonyms) {
     tokenValidator.validateAndConsumeTokenType(Token::Tag::Select);
 
@@ -15,12 +14,15 @@ std::unique_ptr<SelectClause> SelectionParser::parse(TokenValidator& tokenValida
         return std::move(std::make_unique<BooleanSelectClause>());
     } else if (tokenValidator.isNextTokenValidName()) {  // single synonym
         std::unique_ptr<Token> selectedSynonym = tokenValidator.validateAndConsumeSynonymToken();
+
+        // check whether synonym is declared
         for (auto synonym : synonyms) {
             if (selectedSynonym->getLexeme() == synonym.str()) {
                 std::unique_ptr<SelectClause> selectClause = std::make_unique<SingleSynonymSelectClause>(synonym);
                 return std::move(selectClause);
             }
         }
+        throw SemanticException();
     } else {
         throw SemanticException();
     }
