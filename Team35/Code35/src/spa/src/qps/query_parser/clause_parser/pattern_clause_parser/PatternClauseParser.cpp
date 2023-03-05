@@ -89,7 +89,7 @@ bool PatternClauseParser::isValidPatternSynonym(const std::string& next, std::ve
 }
 
 bool PatternClauseParser::isEntRef(PQLToken& tok) {
-    const auto* synonym = dynamic_cast<const Synonym*>(&tok);
+    const auto* synonym = dynamic_cast<Synonym*>(&tok);
     return tok.tag == PQLToken::Tag::IDENT ||
            tok.tag == PQLToken::Tag::WILDCARD ||
            synonym != nullptr && (synonym->de == Synonym::DesignEntity::VARIABLE ||
