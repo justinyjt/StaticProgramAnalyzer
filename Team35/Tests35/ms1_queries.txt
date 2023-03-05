@@ -1,0 +1,1065 @@
+UP1 - U(SYN, SYN) P(SYN, _)
+assign a; variable v;
+Select a such that Uses(a, v) pattern a(v, _)
+17, 21, 22, 23, 24, 29
+5000
+UP2 - U(NUM, SYN) P(SYN, _)
+assign a; variable v;
+Select v such that Uses(17, v) pattern a(v, _)
+j
+5000
+UP3 - U(NUM, _) P(SYN, _)
+assign a; variable v;
+Select v such that Uses(21, _) pattern a(v, _)
+w, x, y, z, e, f, g, h, j
+5000
+UP4 - U(NUM, IDENT) P(SYN, _)
+assign a; variable v;
+Select v such that Uses(12, "x") pattern a(v, _)
+w, x, y, z, e, f, g, h, j
+5000
+UP5 - U(SYN, IDENT) P(SYN, _)
+assign a; variable v;
+Select a such that Uses(a, "x") pattern a(v, _)
+12, 21, 29
+5000
+UP6 - U(SYN, _) P(SYN, _)
+assign a; stmt s; variable v;
+Select s such that Uses(s, _) pattern a(v, _)
+1, 10, 11, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32
+5000
+UP7 - U(SYN, SYN) P(IDENT, _EXPR_)
+assign a; variable v;
+Select a such that Uses(a, v) pattern a("w", _"u"_)
+1
+5000
+UP8 - U(NUM, SYN) P(IDENT, _EXPR_)
+assign a; variable v;
+Select v such that Uses(21, v) pattern a("e", _"1"_)
+e, x
+5000
+UP9 - U(NUM, _) P(IDENT, _EXPR_)
+assign a; variable v;
+Select a such that Uses(9, _) pattern a("x", _"y"_)
+none
+5000
+UP10 - U(NUM, IDENT) P(IDENT, _EXPR_)
+assign a; variable v;
+Select a such that Uses(12, "x") pattern a("j", _"1"_)
+17
+5000
+UP11 - U(SYN, IDENT) P(IDENT, _EXPR_)
+assign a;
+Select a such that Uses(a, "x") pattern a("j", _"3"_)
+none
+5000
+UP12 - U(SYN, _) P(IDENT, _EXPR_)
+assign a; stmt s; variable v;
+Select s such that Uses(s, _) pattern a("j", _"2"_)
+1, 10, 11, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32
+5000
+UP13 - U(SYN, SYN) P(IDENT, _)
+assign a; variable v;
+Select v such that Uses(a, v) pattern a("e", _)
+e, x
+5000
+UP14 - U(NUM, SYN) P(IDENT, _)
+assign a; variable v;
+Select v such that Uses(29, v) pattern a("e", _)
+x, y
+5000
+UP15 - U(NUM, _) P(IDENT, _)
+assign a; variable v;
+Select v such that Uses(9, _) pattern a("x", _)
+none
+5000
+UP16 - U(NUM, IDENT) P(IDENT, _)
+assign a; variable v;
+Select a such that Uses(12, "x") pattern a("j", _)
+17, 22, 23, 24
+5000
+UP17 - U(SYN, IDENT) P(IDENT, _)
+assign a; variable v;
+Select v such that Uses(a, "x") pattern a("j", _)
+none
+5000
+UP18 - U(SYN, _) P(IDENT, _)
+assign a; stmt s;
+Select a such that Uses(a, _) pattern a("j", _)
+17, 22, 23, 24
+5000
+UP19 - P(SYN, _) U(SYN, SYN)
+assign a; variable v;
+Select a pattern a(v, _) such that Uses(a, v)
+17, 21, 22, 23, 24, 29
+5000
+UP20 - P(SYN, _) U(NUM, SYN)
+assign a; variable v;
+Select v pattern a(v, _) such that Uses(17, v)
+j
+5000
+UP21 - P(SYN, _) U(NUM, _)
+assign a; variable v;
+Select v pattern a(v, _) such that Uses(21, _)
+w, x, y, z, e, f, g, h, j
+5000
+UP22 - P(SYN, _) U(NUM, IDENT)
+assign a; variable v;
+Select v pattern a(v, _) such that Uses(12, "x")
+w, x, y, z, e, f, g, h, j
+5000
+UP23 - P(SYN, _) U(SYN, IDENT)
+assign a; variable v;
+Select a pattern a(v, _) such that Uses(a, "x")
+12, 21, 29
+5000
+UP24 - P(SYN, _) U(SYN, _)
+assign a; stmt s; variable v;
+Select s pattern a(v, _) such that Uses(s, _)
+1, 10, 11, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32
+5000
+UP25 - P(IDENT, _EXPR_) U(SYN, SYN)
+assign a; variable v;
+Select a pattern a("w", _"u"_) such that Uses(a, v)
+1
+5000
+UP26 - P(IDENT, _EXPR_) U(NUM, SYN)
+assign a; variable v;
+Select v pattern a("e", _"1"_) such that Uses(21, v)
+e, x
+5000
+UP27 - P(IDENT, _EXPR_) U(NUM, _)
+assign a; variable v;
+Select a pattern a("x", _"y"_) such that Uses(9, _)
+none
+5000
+UP28 - P(IDENT, _EXPR_) U(NUM, IDENT)
+assign a; variable v;
+Select a pattern a("j", _"1"_) such that Uses(12, "x")
+17
+5000
+UP29 - P(IDENT, _EXPR_) U(SYN, IDENT)
+assign a; variable v;
+Select a pattern a("j", _"3"_) such that Uses(a, "x")
+none
+5000
+UP30 - P(IDENT, _EXPR_) U(SYN, _)
+assign a; stmt s; variable v;
+Select s pattern a("j", _"2"_) such that Uses(s, _)
+1,10,11,12,13,14,15,16,17,20,21,22,23,24,25,26,27,28,29,31,32
+5000
+UP31 - P(IDENT, _) U(SYN, SYN)
+assign a; variable v;
+Select v pattern a("e", _) such that Uses(a, v)
+e, x
+5000
+UP32 - P(IDENT, _) U(NUM, SYN)
+assign a; variable v;
+Select v pattern a("e", _) such that Uses(29, v)
+x, y
+5000
+UP33 - P(IDENT, _) U(NUM, _)
+assign a; variable v;
+Select v pattern a("x", _) such that Uses(9, _)
+none
+5000
+UP34 - P(IDENT, _) U(NUM, IDENT)
+assign a; variable v;
+Select a pattern a("j", _) such that Uses(12, "x")
+17, 22, 23, 24
+5000
+UP35 - P(IDENT, _) U(SYN, IDENT)
+assign a; variable v;
+Select v pattern a("j", _) such that Uses(a, "x")
+none
+5000
+UP36 - P(IDENT, _) U(SYN, _)
+assign a; stmt s;
+Select a pattern a("j", _) such that Uses(s, _)
+17, 22, 23, 24
+5000
+M1 - M(NUM, SYN)
+variable v;
+Select v such that Modifies(1, v)
+w
+5000
+M2 - M(NUM, _)
+assign a; variable v;
+Select a such that Modifies(1, _)
+1, 2, 3, 4, 5, 6, 7, 8, 12, 17, 19, 21, 22, 23, 24, 29
+5000
+M3 - M(NUM, IDENT)
+assign a;
+Select a such that Modifies(1, "w")
+1, 2, 3, 4, 5, 6, 7, 8, 12, 17, 19, 21, 22, 23, 24, 29
+5000
+M4 - M(SYN, SYN)
+stmt s; variable v;
+Select v such that Modifies(s, v)
+w, x, y, z, e, f, g, h, j
+5000
+M5 - M(SYN, _)
+print p; stmt s;
+Select p such that Modifies(s, _)
+11, 28, 32
+5000
+M6 - M(SYN, IDENT)
+read r;
+Select r such that Modifies(r, "j")
+9
+5000
+MP1 - M(NUM, SYN) P(_, _EXPR_)
+assign a; variable v;
+Select v such that Modifies(1, v) pattern a(_, _"x"_)
+w
+5000
+MP2 - M(NUM, _) P(_, _EXPR_)
+assign a; variable v;
+Select a such that Modifies(1, v) pattern a(_, _"x"_)
+12, 21, 29
+5000
+MP3 - M(NUM, IDENT) P(_, _EXPR_)
+assign a;
+Select a such that Modifies(1, "w") pattern a(_, _"x"_)
+12, 21, 29
+5000
+MP4 - M(SYN, SYN) P(_, _EXPR_)
+stmt s; variable v; assign a;
+Select v such that Modifies(s, v) pattern a(_, _"x"_)
+w, x, y, z, e, f, g, h, j
+5000
+MP5 - M(SYN, _) P(_, _EXPR_)
+print p; assign a; stmt s;
+Select p such that Modifies(s, _) pattern a(_, _"x"_)
+11, 28, 32
+5000
+MP6 - M(SYN, IDENT) P(_, _EXPR_)
+read r; assign a;
+Select r such that Modifies(r, "j") pattern a(_, _"x"_)
+9
+5000
+MP7 - M(NUM, SYN) P(_, _)
+assign a; variable v;
+Select v such that Modifies(1, v) pattern a(_, _)
+w
+5000
+MP8 - M(NUM, _) P(_, _)
+assign a; variable v;
+Select a such that Modifies(1, v) pattern a(_, _)
+12, 21, 29, 1, 17, 19, 2, 22, 23, 24, 3, 4, 5, 6, 7, 8
+5000
+MP9 - M(NUM, IDENT) P(_, _)
+assign a;
+Select a such that Modifies(1, "w") pattern a(_, _)
+12, 21, 29, 1, 17, 19, 2, 22, 23, 24, 3, 4, 5, 6, 7, 8
+5000
+MP10 - M(SYN, SYN) P(_, _)
+stmt s; variable v; assign a;
+Select v such that Modifies(s, v) pattern a(_, _)
+w, x, y, z, e, f, g, h, j
+5000
+MP11 - M(SYN, _) P(_, _)
+print p; assign a; stmt s;
+Select p such that Modifies(s, _) pattern a(_, _)
+11, 28, 32
+5000
+MP12 - M(SYN, IDENT) P(_, _)
+read r; assign a;
+Select r such that Modifies(r, "j") pattern a(_, _)
+9
+5000
+MP13 - M(NUM, SYN) P(SYN, EXPR)
+assign a; variable v;
+Select v such that Modifies(1, v) pattern a(v, _"u"_)
+w
+5000
+MP14 - M(NUM, _) P(SYN, EXPR)
+assign a; variable v;
+Select a such that Modifies(a, v) pattern a(v, _"1"_)
+1, 17, 21
+5000
+MP15 - M(NUM, IDENT) P(SYN, EXPR)
+assign a; variable v;
+Select a such that Modifies(1, "w") pattern a(v, _"x"_)
+12, 21, 29
+5000
+MP16 - M(SYN, SYN) P(SYN, EXPR)
+stmt s; variable v; assign a;
+Select v such that Modifies(s, v) pattern a(v, _"3"_)
+y, x, e, j
+5000
+MP17 - M(SYN, _) P(SYN, EXPR)
+print p; assign a; variable vSAG1312; stmt s;
+Select p such that Modifies(s, _) pattern a(vSAG1312, _"thank"_)
+none
+5000
+MP18 - M(SYN, IDENT) P(SYN, EXPR)
+read r; assign a; variable v;
+Select r such that Modifies(r, "j") pattern a(v, _"j"_)
+9
+5000
+P1 - Parent(SYN, SYN)
+stmt s; assign a;
+Select s such that Parent(s,a)
+10, 16, 20, 27, 13, 15
+5000
+P2 - Parent(SYN, NUM)
+stmt s;
+Select s such that Parent(s,11)
+10
+5000
+P3 - Parent(SYN, WC)
+if ifs;
+Select ifs such that Parent(ifs,_)
+10, 13, 15, 16, 27
+5000
+P4 - Parent(NUM, SYN)
+stmt s;
+Select s such that Parent(16,s)
+17, 18, 19, 20, 22
+5000
+P5 - Parent(NUM, NUM)
+read r;
+Select r such that Parent(10,11)
+9, 18, 30
+5000
+P6 - Parent(NUM, WC)
+if ifs;
+Select ifs such that Parent(ifs,_)
+10, 13, 15, 16, 27
+5000
+P7 - Parent(WC, SYN)
+if ifs;
+Select ifs such that Parent(_,ifs)
+15, 16, 27
+5000
+P8 - Parent(WC, NUM)
+read r;
+Select r such that Parent(_,11)
+9, 18, 30
+5000
+P9 - Parent(WC, WC)
+if ifs;
+Select ifs such that Parent(_,_)
+10, 13, 15, 16, 27
+5000
+PP1 - Parent(SYN, SYN), P(WC, EXPR)
+stmt s1; assign a;
+Select s1 such that Parent(s1,a) pattern a(_, _"j"_)
+13, 15, 16
+5000
+PP2 - Parent(SYN, NUM), P(WC, EXPR)
+stmt s; assign a;
+Select s such that Parent(s,10) pattern a(_, _"n"_)
+none
+5000
+PP3 - Parent(SYN, WC), P(WC, EXPR)
+stmt s; assign a;
+Select s such that Parent(s,_) pattern a(_, _"d"_)
+none
+5000
+PP4 - Parent(NUM, SYN), P(WC, EXPR)
+if ifs; assign a;
+Select ifs such that Parent(ifs,a) pattern a(_, _"j"_)
+13, 15, 16
+5000
+PP5 - Parent(NUM, NUM), P(WC, EXPR)
+stmt s; assign a;
+Select s such that Parent(4,5) pattern a(_, _"j"_)
+none
+5000
+PP6 - Parent(NUM, WC), P(WC, EXPR)
+assign a;
+Select a such that Parent(10,_) pattern a(_, _"j"_)
+17, 22, 23, 24
+5000
+PP7 - Parent(WC, SYN), P(WC, EXPR)
+print pn; read r; assign a;
+Select pn such that Parent(_,r) pattern a(_, _"j"_)
+11, 28, 32
+5000
+PP8 - Parent(WC, NUM), P(WC, EXPR)
+read r; assign a; while w;
+Select w such that Parent(_,14) pattern a(_, _"j"_)
+14, 20, 25, 26, 31
+5000
+PP9 - Parent(WC, WC), P(WC, EXPR)
+read r; assign a;
+Select r such that Parent(_,_) pattern a(_, _"j"_)
+9, 18, 30
+5000
+PP10 - Parent(SYN, SYN), P(WC, WC)
+while w; assign a;
+Select w such that Parent(w,a) pattern a(_, _)
+20
+5000
+PP11 - Parent(SYN, NUM), P(WC, WC)
+stmt s; assign a;
+Select s such that Parent(s,5) pattern a(_, _)
+none
+5000
+PP12 - Parent(SYN, WC), P(WC, WC)
+while w; assign a; stmt s;
+Select w such that Parent(s,_) pattern a(_, _)
+14, 20, 25, 26, 31
+5000
+PP13 - Parent(NUM, SYN), P(WC, WC)
+print pn; assign a;
+Select pn such that Parent(31,pn) pattern a(_, _)
+32
+5000
+PP14 - Parent(NUM, NUM), P(WC, WC)
+print pn; assign a;
+Select pn such that Parent(13,14) pattern a(_, _)
+11, 28, 32
+5000
+PP15 - Parent(NUM, WC), P(WC, WC)
+read r; assign a;
+Select r such that Parent(13,_) pattern a(_, _)
+9, 18, 30
+5000
+PP16 - Parent(WC, SYN), P(WC, WC)
+if ifs; assign a;
+Select ifs such that Parent(_,ifs) pattern a(_, _)
+15, 16, 27
+5000
+PP17 - Parent(WC, NUM), P(WC, WC)
+if ifs; assign a;
+Select ifs such that Parent(_,27) pattern a(_, _)
+10, 13, 15, 16, 27
+5000
+PP18 - Parent(WC, WC), P(WC, WC)
+assign a;
+Select a such that Parent(_,_) pattern a(_, _)
+1, 2, 3, 4, 5, 6, 7, 8, 12, 17, 19, 21, 22, 23, 24, 29
+5000
+PP19 - Parent(SYN, SYN), P(SYN, EXPR)
+assign a; while w; variable v;
+Select a such that Parent(w,a) pattern a(v, _"x"_)
+21
+5000
+PP20 - Parent(SYN, NUM), P(SYN, EXPR)
+assign a; while w; variable v;
+Select a such that Parent(w,15) pattern a(v, _"x"_)
+12, 21, 29
+5000
+PP21 - Parent(SYN, WC), P(SYN, EXPR)
+assign a; while w; variable v;
+Select w such that Parent(w,_) pattern a(v, _"x"_)
+14, 25, 20, 26, 31
+5000
+PP22 - Parent(NUM, SYN), P(SYN, EXPR)
+assign a; variable v;
+Select a such that Parent(10,a) pattern a(v, _"x"_)
+12
+5000
+PP23 - Parent(NUM, NUM), P(SYN, EXPR)
+assign a; variable v;
+Select a such that Parent(20,21) pattern a(v, _"y"_)
+29
+5000
+PP24 - Parent(NUM, WC), P(SYN, EXPR)
+assign a; variable v; read r;
+Select r such that Parent(25,_) pattern a(v, _"2"_)
+9, 18, 30
+5000
+PP25 - Parent(WC, SYN), P(SYN, EXPR)
+print pn; assign a; variable v; read r;
+Select a such that Parent(_,pn) pattern a(v, _"1"_)
+1, 17, 21
+5000
+PP26 - Parent(WC, NUM), P(SYN, EXPR)
+assign a; variable v; read r;
+Select a such that Parent(_,15) pattern a(v, _"10"_)
+5
+5000
+PP27 - Parent(WC, WC), P(SYN, EXPR)
+assign a; variable v; read r;
+Select a such that Parent(_,_) pattern a(v, _"40"_)
+8
+5000
+PP28 - P(WC, EXPR), Parent(SYN, SYN)
+stmt s1; assign a;
+Select s1 pattern a(_, _"j"_) such that Parent(s1,a)
+13, 15, 16
+5000
+PP29 - P(WC, EXPR), Parent(SYN, NUM)
+stmt s; assign a;
+Select s pattern a(_, _"n"_) such that Parent(s,10)
+none
+5000
+PP30 - P(WC, EXPR), Parent(SYN, WC)
+stmt s; assign a;
+Select s pattern a(_, _"d"_) such that Parent(s,_)
+none
+5000
+PP31 - P(WC, EXPR), Parent(NUM, SYN)
+if ifs; assign a;
+Select ifs  pattern a(_, _"j"_) such that Parent(ifs,a)
+13, 15, 16
+5000
+PP32 - P(WC, EXPR), Parent(NUM, NUM)
+stmt s; assign a;
+Select s pattern a(_, _"j"_) such that Parent(4,5)
+none
+5000
+PP33 - P(WC, EXPR), Parent(NUM, WC)
+assign a;
+Select a pattern a(_, _"j"_) such that Parent(10,_)
+17, 22, 23, 24
+5000
+PP34 - P(WC, EXPR), Parent(WC, SYN)
+print pn; read r; assign a;
+Select pn  pattern a(_, _"j"_) such that Parent(_,r)
+11, 28, 32
+5000
+PP35 - P(WC, EXPR), Parent(WC, NUM)
+read r; assign a; while w;
+Select w  pattern a(_, _"j"_) such that Parent(_,14)
+14, 20, 25, 26, 31
+5000
+PP36 - P(WC, EXPR), Parent(WC, WC)
+read r; assign a;
+Select r pattern a(_, _"j"_) such that Parent(_,_)
+9, 18, 30
+5000
+PP37 - P(WC, WC), Parent(SYN, SYN)
+while w; assign a;
+Select w pattern a(_, _) such that Parent(w,a)
+20
+5000
+PP38 - P(WC, WC), Parent(SYN, NUM)
+stmt s; assign a;
+Select s pattern a(_, _) such that Parent(s,5)
+none
+5000
+PP39 - P(WC, WC), Parent(SYN, WC)
+while w; assign a; stmt s;
+Select w pattern a(_, _) such that Parent(s,_)
+14, 20, 25, 26, 31
+5000
+PP40 - P(WC, WC), Parent(NUM, SYN)
+print pn; assign a;
+Select pn pattern a(_, _) such that Parent(31,pn)
+32
+5000
+PP41 - P(WC, WC), Parent(NUM, NUM)
+print pn; assign a;
+Select pn pattern a(_, _) such that Parent(13,14)
+11, 28, 32
+5000
+PP42 - P(WC, WC), Parent(NUM, WC)
+read r; assign a;
+Select r pattern a(_, _) such that Parent(13,_)
+9, 18, 30
+5000
+PP43 - P(WC, WC), Parent(WC, SYN)
+if ifs; assign a;
+Select ifs pattern a(_, _) such that Parent(_,ifs)
+15, 16, 27
+5000
+PP44 - P(WC, WC), Parent(WC, NUM)
+if ifs; assign a;
+Select ifs  pattern a(_, _) such that Parent(_,27)
+10, 13, 15, 16, 27
+5000
+PP45 - P(WC, WC), Parent(WC, WC)
+assign a;
+Select a pattern a(_, _) such that Parent(_,_)
+1, 2, 3, 4, 5, 6, 7, 8, 12, 17, 19, 21, 22, 23, 24, 29
+5000
+PP46 - P(SYN, EXPR), Parent(SYN, SYN)
+assign a; while w; variable v;
+Select a pattern a(v, _"x"_) such that Parent(w,a)
+21
+5000
+PP47 - P(SYN, EXPR), Parent(SYN, NUM)
+assign a; while w; variable v;
+Select a pattern a(v, _"x"_) such that Parent(w,15)
+12, 21, 29
+5000
+PP48 - P(SYN, EXPR), Parent(SYN, WC)
+assign a; while w; variable v;
+Select w pattern a(v, _"x"_) such that Parent(w,_)
+14, 25, 20, 26, 31
+5000
+PP49 - P(SYN, EXPR), Parent(NUM, SYN)
+assign a; variable v;
+Select a pattern a(v, _"x"_) such that Parent(10,a)
+12
+5000
+PP50 - P(SYN, EXPR), Parent(NUM, NUM)
+assign a; variable v;
+Select a pattern a(v, _"y"_) such that Parent(20,21)
+29
+5000
+PP51 - P(SYN, EXPR), Parent(NUM, WC)
+assign a; variable v; read r;
+Select r pattern a(v, _"2"_) such that Parent(25,_)
+9, 18, 30
+5000
+PP52 - P(SYN, EXPR), Parent(WC, SYN)
+print pn; assign a; variable v; read r;
+Select a pattern a(v, _"1"_) such that Parent(_,pn)
+1, 17, 21
+5000
+PP53 - P(SYN, EXPR), Parent(WC, NUM)
+assign a; variable v; read r;
+Select a  pattern a(v, _"10"_) such that Parent(_,15)
+5
+5000
+PP54 - P(SYN, EXPR), Parent(WC, WC)
+assign a; variable v; read r;
+Select a pattern a(v, _"40"_) such that Parent(_,_)
+8
+5000
+PSP1 - ParentS(SYN, SYN), P(WC, EXPR)
+stmt s1; assign a;
+Select s1 such that Parent*(s1,a) pattern a(_, _"j"_)
+13, 14, 15, 16
+5000
+PSP2 - ParentS(SYN, NUM), P(WC, EXPR)
+stmt s; assign a;
+Select s such that Parent*(s,10) pattern a(_, _"n"_)
+none
+5000
+PSP3 - ParentS(SYN, WC), P(WC, EXPR)
+stmt s; assign a;
+Select s such that Parent(s,_) pattern a(_, _"d"_)
+none
+5000
+PSP4 - ParentS(NUM, SYN), P(WC, EXPR)
+if ifs; assign a;
+Select ifs such that Parent*(ifs,a) pattern a(_, _"j"_)
+13, 15, 16
+5000
+PSP5 - ParentS(NUM, NUM), P(WC, EXPR)
+stmt s; assign a;
+Select s such that Parent*(4,5) pattern a(_, _"j"_)
+none
+5000
+PSP6 - ParentS(NUM, WC), P(WC, EXPR)
+assign a;
+Select a such that Parent*(10,_) pattern a(_, _"j"_)
+17, 22, 23, 24
+5000
+PSP7 - ParentS(WC, SYN), P(WC, EXPR)
+print pn; read r; assign a;
+Select pn such that Parent*(_,r) pattern a(_, _"j"_)
+11, 28, 32
+5000
+PSP8 - ParentS(WC, NUM), P(WC, EXPR)
+read r; assign a; while w;
+Select w such that Parent*(_,14) pattern a(_, _"j"_)
+14, 20, 25, 26, 31
+5000
+PSP9 - ParentS(WC, WC), P(WC, EXPR)
+read r; assign a;
+Select r such that Parent*(_,_) pattern a(_, _"j"_)
+9, 18, 30
+5000
+PSP10 - ParentS(SYN, SYN), P(WC, WC)
+while w; assign a;
+Select w such that Parent*(w,a) pattern a(_, _)
+14, 20, 25, 26
+5000
+PSP11 - ParentS(SYN, NUM), P(WC, WC)
+stmt s; assign a;
+Select s such that Parent*(s,5) pattern a(_, _)
+none
+5000
+PSP12 - ParentS(SYN, WC), P(WC, WC)
+while w; assign a; stmt s;
+Select w such that Parent*(s,_) pattern a(_, _)
+14, 20, 25, 26, 31
+5000
+PSP13 - ParentS(NUM, SYN), P(WC, WC)
+print pn; assign a;
+Select pn such that Parent*(31,pn) pattern a(_, _)
+32
+5000
+PSP14 - ParentS(NUM, NUM), P(WC, WC)
+print pn; assign a;
+Select pn such that Parent*(13,14) pattern a(_, _)
+11, 28, 32
+5000
+PSP15 - ParentS(NUM, WC), P(WC, WC)
+read r; assign a;
+Select r such that Parent*(13,_) pattern a(_, _)
+9, 18, 30
+5000
+PSP16 - ParentSWC, SYN), P(WC, WC)
+if ifs; assign a;
+Select ifs such that Parent*(_,ifs) pattern a(_, _)
+15, 16, 27
+5000
+PSP17 - ParentS(WC, NUM), P(WC, WC)
+if ifs; assign a;
+Select ifs such that Parent*(_,27) pattern a(_, _)
+10, 13, 15, 16, 27
+5000
+PSP18 - ParentS(WC, WC), P(WC, WC)
+assign a;
+Select a such that Parent*(_,_) pattern a(_, _)
+1, 2, 3, 4, 5, 6, 7, 8, 12, 17, 19, 21, 22, 23, 24, 29
+5000
+PSP19 - ParentS(SYN, SYN), P(SYN, EXPR)
+assign a; while w; variable v;
+Select a such that Parent*(w,a) pattern a(v, _"x"_)
+21, 29
+5000
+PSP20 - ParentS(SYN, NUM), P(SYN, EXPR)
+assign a; while w; variable v;
+Select a such that Parent*(w,15) pattern a(v, _"x"_)
+12, 21, 29
+5000
+PSP21 - ParentS(SYN, WC), P(SYN, EXPR)
+assign a; while w; variable v;
+Select w such that Parent*(w,_) pattern a(v, _"x"_)
+14, 25, 20, 26, 31
+5000
+PSP22 - ParentS(NUM, SYN), P(SYN, EXPR)
+assign a; variable v;
+Select a such that Parent*(10,a) pattern a(v, _"x"_)
+12
+5000
+PSP23 - ParentS(NUM, NUM), P(SYN, EXPR)
+assign a; variable v;
+Select a such that Parent*(20,21) pattern a(v, _"y"_)
+29
+5000
+PSP24 - ParentS(NUM, WC), P(SYN, EXPR)
+assign a; variable v; read r;
+Select r such that Parent*(25,_) pattern a(v, _"2"_)
+9, 18, 30
+5000
+PSP25 - ParentS(WC, SYN), P(SYN, EXPR)
+print pn; assign a; variable v; read r;
+Select a such that Parent*(_,pn) pattern a(v, _"1"_)
+1, 17, 21
+5000
+PSP26 - ParentS(WC, NUM), P(SYN, EXPR)
+assign a; variable v; read r;
+Select a such that Parent*(_,15) pattern a(v, _"10"_)
+5
+5000
+PSP27 - ParentS(WC, WC), P(SYN, EXPR)
+assign a; variable v; read r;
+Select a such that Parent*(_,_) pattern a(v, _"40"_)
+8
+5000
+F1 - F(SYN, SYN)
+assign a; stmt s; variable v;
+Select s such that Follows(a, s)
+2, 3, 4, 5, 6, 7, 8, 9, 18
+5000
+F2 - F(SYN, NUM)
+assign a; print p;
+Select p such that Follows(p, 30)
+none
+5000
+F3 - F(SYN, _)
+assign a;
+Select a such that Follows(a, _)
+1, 2, 3, 4, 5, 6, 7, 8, 17
+5000
+F4 - F(NUM, SYN)
+assign a;
+Select a such that Follows(2, a)
+3
+5000
+F5 - F(NUM, NUM)
+assign a; variable v;
+Select v such that Follows(1, 2)
+w, x, y, z, e, f, g, h, j, u
+5000
+F6 - F(NUM, _)
+assign a;
+Select a such that Follows(2, _)
+1, 2, 3, 4, 5, 6, 7, 8, 12, 17, 19, 21, 22, 23, 24, 29
+5000
+F7 - F(_, SYN)
+assign a, a1;
+Select a such that Follows(_, a1)
+1, 2, 3, 4, 5, 6, 7, 8, 12, 17, 19, 21, 22, 23, 24, 29
+5000
+F8 - F(_, NUM)
+print p; assign a;
+Select p such that Follows(_, 3)
+11, 28, 32
+5000
+F9 - F(_,_)
+assign a; variable v;
+Select a such that Follows(_, _)
+1, 2, 3, 4, 5, 6, 7, 8, 12, 17, 19, 21, 22, 23, 24, 29
+5000
+FP1 - F(SYN, SYN) P(SYN,_)
+assign a; stmt s; variable v;
+Select s such that Follows(a, s) pattern a(v, _)
+2, 3, 4, 5, 6, 7, 8, 9, 18
+5000
+FP2 - F(SYN, SYN) P(IDENT, EXPR)
+assign a; if ifs;
+Select ifs such that Follows(a, ifs) pattern a("j", _"j"_)
+none
+5000
+FP3 - F(SYN, SYN) P(IDENT, _)
+assign a; read r;
+Select r such that Follows(a, r) pattern a("j", _)
+18
+5000
+FP4 - F(SYN, NUM) P(SYN, _)
+assign a; stmt s; variable v;
+Select v such that Follows(a, 4) pattern a(v, _)
+y
+5000
+FP5 - F(SYN, NUM) P(IDENT, EXPR)
+assign a; print p;
+Select p such that Follows(p, 12) pattern a("y", _"3"_)
+none
+5000
+FP6 - F(SYN, NUM) P(IDENT, _)
+assign a;
+Select a such that Follows(a, 7) pattern a("f", _)
+6
+5000
+FP7 - F(SYN, _) P(SYN,_)
+assign a, a1; variable v;
+Select a such that Follows(a1, _) pattern a(v, _)
+1, 2, 3, 4, 5, 6, 7, 8, 12, 17, 19, 21, 22, 23, 24, 29
+5000
+FP8 - F(SYN, _) P(IDENT, EXPR)
+assign a, a1;
+Select a1 such that Follows(a, _) pattern a1("j", _"j"_)
+17, 22, 23, 24
+5000
+FP9 - F(SYN, _) P(IDENT, _)
+assign a;
+Select a such that Follows(a, _) pattern a("z", _)
+4
+5000
+FP10 - F(NUM, SYN) P(SYN, _)
+assign a; variable v;
+Select a such that Follows(2, a) pattern a(v, _)
+3
+5000
+FP11 - F(NUM, SYN) P(IDENT, EXPR)
+assign a;
+Select a such that Follows(2, a) pattern a("y", _"3"_)
+3
+5000
+FP12 - F(NUM, SYN) P(IDENT, _)
+assign a;
+Select a such that Follows(2, a) pattern a("fake", _)
+none
+5000
+FP13 - F(NUM, NUM) P(SYN, _)
+assign a; variable v;
+Select v such that Follows(1, 2) pattern a(v, _)
+w, x, y, z, e, f, g, h, j
+5000
+FP14 - F(NUM, NUM) P(IDENT, EXPR)
+assign a;
+Select a such that Follows(1, a) pattern a("x", _"2"_)
+2
+5000
+FP15 - F(NUM, NUM) P(IDENT, _)
+assign a;
+Select a such that Follows(2, 1) pattern a("x", _)
+none
+5000
+FP16 - F(NUM, _) P(SYN, _)
+assign a; variable v;
+Select a such that Follows(1, _) pattern a(v, _)
+1, 2, 3, 4, 5, 6, 7, 8, 12, 17, 19, 21, 22, 23, 24, 29
+5000
+FP17 - F(NUM, _) P(IDENT, EXPR)
+assign a;
+Select a such that Follows(2, _) pattern a("rubbish", _"HI"_)
+none
+5000
+FP18 - F(NUM, _) P(IDENT, _)
+assign a; while w;
+Select w such that Follows(2, _) pattern a("x", _)
+14, 20, 25, 26, 31
+5000
+FP19 - F(_, SYN) P(SYN, _)
+assign a, a1; variable v;
+Select a such that Follows(_, a1) pattern a(v, _)
+1, 2, 3, 4, 5, 6, 7, 8, 12, 17, 19, 21, 22, 23, 24, 29
+5000
+FP20 - F(_, SYN) P(IDENT, EXPR)
+assign a, a1;
+Select a such that Follows(_, a1) pattern a("xxx", _"hi"_)
+none
+5000
+FP21 - F(_, SYN) P(IDENT, _)
+assign a, a1;
+Select a such that Follows(_, a1) pattern a("xxx", _)
+none
+5000
+FP22 - F(_, NUM) P(SYN, _)
+assign a; read r; variable v;
+Select r such that Follows(_, 2) pattern a(v, _)
+9, 18, 30
+5000
+FP23 - F(_, NUM) P(IDENT, EXPR)
+assign a;
+Select a such that Follows(_, 1) pattern a("xxx", _"hi"_)
+none
+5000
+FP24 - F(_, NUM) P(IDENT, _)
+print p; assign a;
+Select p such that Follows(_, 3) pattern a("x", _)
+11, 28, 32
+5000
+FP25 - F(_, _) P(SYN, _)
+assign a; variable v;
+Select a such that Follows(_, _) pattern a(v, _)
+1, 2, 3, 4, 5, 6, 7, 8, 12, 17, 19, 21, 22, 23, 24, 29
+5000
+FP26 - F(_, _) P(IDENT, EXPR)
+assign a;
+Select a such that Follows(_, _) pattern a("x", _"3"_)
+19, 29
+5000
+FP27 - F(_, _) P(IDENT, _)
+assign a;
+Select a such that Follows(_, _) pattern a("x", _)
+2, 19, 29
+5000
+FSP1 - F(SYN, SYN) P(SYN,_)
+assign a; stmt s; variable v;
+Select s such that Follows*(a, s) pattern a(v, _)
+2, 3, 4, 5, 6, 7, 8, 9, 10, 13, 18, 19, 25
+5000
+FSP2 - F(SYN, SYN) P(IDENT, EXPR)
+assign a; if ifs;
+Select ifs such that Follows*(a, ifs) pattern a("j", _"j"_)
+none
+5000
+FSP3 - F(SYN, SYN) P(IDENT, _)
+assign a; read r;
+Select r such that Follows*(a, r) pattern a("j", _)
+18
+5000
+FSP4 - F(SYN, NUM) P(SYN, _)
+assign a; stmt s; variable v;
+Select v such that Follows*(a, 4) pattern a(v, _)
+w, x, y
+5000
+FSP5 - F(SYN, NUM) P(IDENT, EXPR)
+assign a; print p;
+Select p such that Follows*(p, 12) pattern a("y", _"3"_)
+none
+5000
+FSP6 - F(SYN, NUM) P(IDENT, _)
+assign a;
+Select a such that Follows*(a, 7) pattern a("f", _)
+6
+5000
+FSP7 - F(SYN, _) P(SYN,_)
+assign a, a1; variable v;
+Select a such that Follows*(a1, _) pattern a(v, _)
+1, 2, 3, 4, 5, 6, 7, 8, 12, 17, 19, 21, 22, 23, 24, 29
+5000
+FSP8 - F(SYN, _) P(IDENT, EXPR)
+assign a, a1;
+Select a1 such that Follows*(a, _) pattern a1("j", _"j"_)
+17, 22, 23, 24
+5000
+FSP9 - F(SYN, _) P(IDENT, _)
+assign a;
+Select a such that Follows*(a, _) pattern a("z", _)
+4
+5000
+FSP10 - F(NUM, SYN) P(SYN, _)
+assign a; variable v;
+Select a such that Follows*(2, a) pattern a(v, _)
+3, 4, 5, 6, 7, 8
+5000
+FSP11 - F(NUM, SYN) P(IDENT, EXPR)
+assign a;
+Select a such that Follows*(2, a) pattern a("y", _"3"_)
+3
+5000
+FSP12 - F(NUM, SYN) P(IDENT, _)
+assign a;
+Select a such that Follows*(2, a) pattern a("fake", _)
+none
+5000
+FSP13 - F(NUM, NUM) P(SYN, _)
+assign a; variable v;
+Select v such that Follows*(1, 2) pattern a(v, _)
+w, x, y, z, e, f, g, h, j
+5000
+FSP14 - F(NUM, NUM) P(IDENT, EXPR)
+assign a;
+Select a such that Follows*(1, a) pattern a("x", _"2"_)
+2
+5000
+FSP15 - F(NUM, NUM) P(IDENT, _)
+assign a;
+Select a such that Follows*(2, 1) pattern a("x", _)
+none
+5000
+FSP16 - F(NUM, _) P(SYN, _)
+assign a; variable v;
+Select a such that Follows*(1, _) pattern a(v, _)
+1, 2, 3, 4, 5, 6, 7, 8, 12, 17, 19, 21, 22, 23, 24, 29
+5000
+FSP17 - F(NUM, _) P(IDENT, EXPR)
+assign a;
+Select a such that Follows*(2, _) pattern a("rubbish", _"HI"_)
+none
+5000
+FSP18 - F(NUM, _) P(IDENT, _)
+assign a; while w;
+Select w such that Follows*(2, _) pattern a("x", _)
+14, 20, 25, 26, 31
+5000
+FSP19 - F(_, SYN) P(SYN, _)
+assign a, a1; variable v;
+Select a such that Follows*(_, a1) pattern a(v, _)
+1, 2, 3, 4, 5, 6, 7, 8, 12, 17, 19, 21, 22, 23, 24, 29
+5000
+FSP20 - F(_, SYN) P(IDENT, EXPR)
+assign a, a1;
+Select a such that Follows*(_, a1) pattern a("xxx", _"hi"_)
+none
+5000
+FSP21 - F(_, SYN) P(IDENT, _)
+assign a, a1;
+Select a such that Follows*(_, a1) pattern a("xxx", _)
+none
+5000
+FSP22 - F(_, NUM) P(SYN, _)
+assign a; read r; variable v;
+Select r such that Follows*(_, 2) pattern a(v, _)
+9, 18, 30
+5000
+FSP23 - F(_, NUM) P(IDENT, EXPR)
+assign a;
+Select a such that Follows*(_, 1) pattern a("xxx", _"hi"_)
+none
+5000
+FSP24 - F(_, NUM) P(IDENT, _)
+print p; assign a;
+Select p such that Follows*(_, 3) pattern a("x", _)
+11, 28, 32
+5000
+FSP25 - F(_, _) P(SYN, _)
+assign a; variable v;
+Select a such that Follows*(_, _) pattern a(v, _)
+1, 2, 3, 4, 5, 6, 7, 8, 12, 17, 19, 21, 22, 23, 24, 29
+5000
+FSP26 - F(_, _) P(IDENT, EXPR)
+assign a;
+Select a such that Follows*(_, _) pattern a("x", _"3"_)
+19, 29
+5000
+FSP27 - F(_, _) P(IDENT, _)
+assign a;
+Select a such that Follows*(_, _) pattern a("x", _)
+2, 19, 29
+5000
