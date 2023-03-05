@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include "SelectClause.h"
 #include "SingleSynonymSelectClause.h"
 
