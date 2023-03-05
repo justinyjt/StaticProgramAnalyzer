@@ -13,11 +13,18 @@ class CFGraphBuilder {
     void addLoop(STMT_NUM stmt_num);
     void linkToDummyNode(STMT_NUM stmt_num);
     void addDummyNode(STMT_NUM stmt_num);
+    void setProcName(ENT_NAME proc_name);
+    void setMaxStmtNum(STMT_NUM max_stmt_num);
+    void setMinStmtNum(STMT_NUM min_stmt_num);
     CFGraph build();
+    void reset();
 
  private:
     CFGraph cf_graph_;
     std::optional<CFGraphNodeData> last_visited_node_data_;
+    ENT_NAME proc_name_;
+    std::optional<STMT_NUM> max_stmt_num_;
+    std::optional<STMT_NUM> min_stmt_num_;
 
     void setLastVisitedNode(const CFGraphNodeData &node_data);
     bool isLastVisitedNodeExist() const;
