@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <queue>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -9,6 +10,8 @@
 
 typedef uint32_t Index;
 typedef std::vector<Index> IndexList;
+typedef std::unordered_set<Index> IndexSet;
+typedef std::queue<Index> IndexQueue;
 
 template<typename T>
 class Graph {
