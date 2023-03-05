@@ -206,11 +206,16 @@ TEST_CASE("Test output") {
     std::unique_ptr<TableResult> tableResult2 = std::make_unique<TableResult>(header2, rows2);
 
     std::unique_ptr<Result> resultTable = Result::join(*tableResult1, *tableResult2);
-    std::string col = "y";
-    resultTable->output(result, col);
-    std::list<std::string> expectedResult;
-    expectedResult.push_back("4");
-    requireEqual(expectedResult, result);
+
+    std::list<std::string> outputHeaders = {"a", "y", "s"};
+    std::vector<std::list<std::string>> outputRows;
+    std::list<std::string> row;
+    row.push_back("1");
+    row.push_back("4");
+    row.push_back("1");
+    outputRows.push_back(row);
+    std::unique_ptr<TableResult> outputTable = std::make_unique<TableResult>(outputHeaders, outputRows);
+    requireTrue(*outputTable==*resultTable);
 }
 
 TEST_CASE("Test output selected does not match") {
@@ -224,10 +229,11 @@ TEST_CASE("Test output selected does not match") {
     std::unique_ptr<TableResult> tableResult2 = std::make_unique<TableResult>(header2, rows2);
 
     std::unique_ptr<Result> resultTable = Result::join(*boolResult, *tableResult2);
+    std::unique_ptr<BoolResult> outputTable = std::make_unique<BoolResult>(false);
     std::string col = "c";
-    resultTable->output(result, col);
+    resultTable->output(result);
 
-    requireTrue(result.size() == 0);
+    requireTrue(*outputTable==*(Result::join(*boolResult, *tableResult2)));
 }
 
 TEST_CASE("Test output empty") {
@@ -237,7 +243,7 @@ TEST_CASE("Test output empty") {
     std::unique_ptr<TableResult> tableResult2 = std::make_unique<TableResult>(header2, rows2);
 
     std::string col = "a";
-    tableResult2->output(result, col);
+    tableResult2->output(result);
 
     requireTrue(result.size() == 0);
 }
