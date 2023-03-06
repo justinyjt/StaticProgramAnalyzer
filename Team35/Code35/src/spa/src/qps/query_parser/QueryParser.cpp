@@ -1,5 +1,4 @@
 #include "QueryParser.h"
-
 #include "qps/clause/SelectClause.h"
 #include "qps/query_parser/declaration_parser/DeclarationParser.h"
 #include "qps/query_parser/selection_parser/SelectionParser.h"

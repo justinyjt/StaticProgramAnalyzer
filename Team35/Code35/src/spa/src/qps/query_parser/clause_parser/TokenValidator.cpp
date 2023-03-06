@@ -1,7 +1,6 @@
-#include "TokenValidator.h"
-
 #include <vector>
 
+#include "TokenValidator.h"
 #include "qps/query_exceptions/SyntaxException.h"
 
 TokenValidator::TokenValidator(std::unique_ptr<ILexer> &lexer) : lexer(lexer) {

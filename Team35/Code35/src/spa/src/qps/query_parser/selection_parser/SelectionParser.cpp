@@ -1,7 +1,7 @@
 #include <string>
 #include <utility>
+
 #include "SelectionParser.h"
-#include "qps/query_parser/clause_parser/TokenValidator.h"
 #include "qps/query_exceptions/SemanticException.h"
 #include "qps/clause/SingleSynonymSelectClause.h"
 #include "qps/clause/BooleanSelectClause.h"
