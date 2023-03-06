@@ -1,3 +1,5 @@
+#include <string>
+
 #include "ExprNode.h"
 
 std::string ExprNode::toString() const {

@@ -1,3 +1,6 @@
+#include <memory>
+#include <utility>
+
 #include "ExprParser.h"
 
 using std::unique_ptr;

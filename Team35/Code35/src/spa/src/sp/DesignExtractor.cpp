@@ -113,16 +113,16 @@ void DesignExtractor::extractRightAssign(const std::unique_ptr<ASTNode> &node) {
     switch (node->getSyntaxType()) {
         case ASTNode::SyntaxType::Variable:varNameSet_.insert(label);
             updateStmtUsesPairSet(stmtCnt_, label);
-            return ;
+            return;
         case ASTNode::SyntaxType::Constant:constSet_.insert(label);
-            return ;
+            return;
         default:
             assert(node->getChildren().size() == 2);
             const auto &lChild = node->getChildren().front();
             const auto &rChild = node->getChildren().back();
             extractRightAssign(lChild);
             extractRightAssign(rChild);
-            return ;
+            return;
             break;
     }
 }
@@ -159,9 +159,6 @@ void DesignExtractor::extractCondExpr(const std::unique_ptr<ASTNode> &node) {
             extractCondExpr(node->getChildren().front());
             break;
         default:
-            // operators;
-            // This is based on the assumption that brackets are useless in pattern matching
-            // Only if we can safely ignore all brackets, this works
             assert(node->getChildren().size() == 2);
             const auto &lChild = node->getChildren().front();
             const auto &rChild = node->getChildren().back();

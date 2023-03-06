@@ -1,9 +1,12 @@
 #pragma once
 
+#include <string>
+#include <utility>
+
 #include "commons/ASTNode.h"
 
 class ExprNode : public ASTNode {
-public:
+ public:
     ExprNode(SyntaxType syntaxType, std::optional<std::string> label)
             : ASTNode(syntaxType, std::move(label)) {}
 
