@@ -94,9 +94,9 @@ void DesignExtractor::extractAssign(const std::unique_ptr<ASTNode> &node) {
     const auto &rAssign = node->getChildren().back();
 
     std::string lAssignPat = extractLeftAssign(lAssign);
-    auto *rAssignPat = dynamic_cast<ExprNode*>(rAssign.get());
-    ASSIGN_PAT assignPat = std::make_pair(lAssignPat, rAssignPat);
-    assignPatMap_.insert({stmtCnt_, assignPat});
+    std::unique_ptr<ExprNode> rAssignPat = std::unique_ptr<ExprNode>(dynamic_cast<ExprNode*>(rAssign.get()));
+    ASSIGN_PAT assignPat = std::make_pair(lAssignPat, std::move(rAssignPat));
+    assignPatMap_.emplace(stmtCnt_, std::move(assignPat));
 }
 
 std::string DesignExtractor::extractLeftAssign(const std::unique_ptr<ASTNode> &node) {
