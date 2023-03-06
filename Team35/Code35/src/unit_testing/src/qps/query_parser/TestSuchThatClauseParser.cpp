@@ -4,11 +4,9 @@
 #include "commons/lexer/LexerFactory.h"
 #include "qps/query_parser/declaration_parser/DeclarationParser.h"
 #include "qps/pql/StatementNumber.h"
-#include "qps/clause/Modifies.h"
 #include "qps/pql/Ident.h"
-#include "qps/clause/Uses.h"
-#include "qps/clause/Follows.h"
-#include "qps/clause/Parent.h"
+#include "qps/clause/UsesModifies.h"
+#include "qps/clause/ParentFollows.h"
 
 class setUpStcp {
 public:
@@ -196,6 +194,7 @@ TEST_CASE_METHOD(setUpStcp, "Uses, print and variable") {
     clause = stcp->parse(tokenValidator3, declarationList);
     usesS = std::make_unique<UsesS>(std::move(synonymPrint), std::move(synonymVariable));
     requireTrue(*clause == *usesS);
+    requireTrue(true);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Uses, assign and variable") {
