@@ -107,20 +107,12 @@ bool SuchThatClauseParser::isStmtRef(PQLToken& tok) {
     const auto* synonym = dynamic_cast<Synonym*>(&tok);
     return tok.tag == PQLToken::Tag::STMT_NUM ||
             tok.tag == PQLToken::Tag::WILDCARD ||
-            synonym != nullptr && (synonym->de == Synonym::DesignEntity::STMT ||
-                    synonym->de == Synonym::DesignEntity::READ ||
-                    synonym->de == Synonym::DesignEntity::PRINT ||
-                    synonym->de == Synonym::DesignEntity::ASSIGN ||
-                    synonym->de == Synonym::DesignEntity::CALL ||
-                    synonym->de == Synonym::DesignEntity::WHILE ||
-                    synonym->de == Synonym::DesignEntity::IF);
+            tok.tag == PQLToken::Tag::SYNONYM;
 }
 
 bool SuchThatClauseParser::isEntRef(PQLToken& tok) {
     const auto* synonym = dynamic_cast<Synonym*>(&tok);
     return tok.tag == PQLToken::Tag::IDENT ||
            tok.tag == PQLToken::Tag::WILDCARD ||
-           synonym != nullptr && (synonym->de == Synonym::DesignEntity::VARIABLE ||
-                               synonym->de == Synonym::DesignEntity::CONSTANT ||
-                                synonym->de == Synonym::DesignEntity::PROCEDURE);
+            tok.tag == PQLToken::Tag::SYNONYM;
 }

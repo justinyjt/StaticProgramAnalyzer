@@ -59,9 +59,9 @@ std::string TokenValidator::validateAndConsumeRelationship() {
 }
 
 std::unique_ptr<Token> TokenValidator::validateAndConsumeRelationshipArg() {
-    if (cur_->getTag() == Token::Tag::Name ||
+    if (cur_->getTag() == Token::Tag::Name && isName(cur_->getLexeme()) ||
         cur_->getTag() == Token::Tag::Underscore ||
-        cur_->getTag() == Token::Tag::String ||
+        cur_->getTag() == Token::Tag::String && isName(cur_->getLexeme()) ||
         cur_->getTag() == Token::Tag::Integer) {
         std::unique_ptr<Token> res = std::move(cur_);
         cur_ = lexer->scan();
@@ -72,9 +72,9 @@ std::unique_ptr<Token> TokenValidator::validateAndConsumeRelationshipArg() {
 }
 
 std::unique_ptr<Token> TokenValidator::validateAndConsumePatternFirstArg() {
-    if (cur_->getTag() == Token::Tag::Name ||
+    if (cur_->getTag() == Token::Tag::Name && isName(cur_->getLexeme()) ||
         cur_->getTag() == Token::Tag::Underscore ||
-        cur_->getTag() == Token::Tag::String) {
+        cur_->getTag() == Token::Tag::String && isName(cur_->getLexeme())) {
         std::unique_ptr<Token> res = std::move(cur_);
         cur_ = lexer->scan();
         return res;
@@ -88,7 +88,7 @@ std::vector<std::unique_ptr<Token>> TokenValidator::validateAndConsumePatternSec
     if (cur_->getTag() == Token::Tag::Underscore) {
         tokenList.push_back(std::move(cur_));
         cur_ = lexer->scan();
-        if (cur_->getTag() == Token::Tag::String) {
+        if (cur_->getTag() == Token::Tag::String && isName(cur_->getLexeme())) {
             tokenList.push_back(std::move(cur_));
             cur_ = lexer->scan();
             validateAndConsumeTokenType(Token::Tag::Underscore);

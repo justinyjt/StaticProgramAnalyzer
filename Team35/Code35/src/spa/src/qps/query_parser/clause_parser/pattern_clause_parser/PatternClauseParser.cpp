@@ -92,6 +92,5 @@ bool PatternClauseParser::isEntRef(PQLToken& tok) {
     const auto* synonym = dynamic_cast<Synonym*>(&tok);
     return tok.tag == PQLToken::Tag::IDENT ||
            tok.tag == PQLToken::Tag::WILDCARD ||
-           synonym != nullptr && (synonym->de == Synonym::DesignEntity::VARIABLE ||
-                               synonym->de == Synonym::DesignEntity::CONSTANT);
+            tok.tag == PQLToken::Tag::SYNONYM;
 }
