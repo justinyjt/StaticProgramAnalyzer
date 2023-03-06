@@ -30,6 +30,7 @@ class Token {
         Such,
         That,
         Select,
+        Bool,
         Follows,
         Modifies,
         Uses,

@@ -1,9 +1,7 @@
-#include "DeclarationParser.h"
-
 #include <utility>
 
+#include "DeclarationParser.h"
 #include "commons/token/Token.h"
-#include "qps/query_parser/clause_parser/TokenValidator.h"
 #include "qps/query_exceptions/SyntaxException.h"
 #include "qps/query_exceptions/SemanticException.h"
 

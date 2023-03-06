@@ -1,7 +1,6 @@
-#include "TokenValidator.h"
-
 #include <vector>
 
+#include "TokenValidator.h"
 #include "qps/query_exceptions/SyntaxException.h"
 
 TokenValidator::TokenValidator(std::unique_ptr<ILexer> &lexer) : lexer(lexer) {
@@ -102,6 +101,10 @@ std::vector<std::unique_ptr<Token>> TokenValidator::validateAndConsumePatternSec
 
 bool TokenValidator::isNextTokenType(Token::Tag tag) {
     return tag == cur_->getTag();
+}
+
+bool TokenValidator::isNextTokenValidName() {
+    return isName(cur_->getLexeme());
 }
 
 void TokenValidator::consumeNextToken() {

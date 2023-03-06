@@ -1,9 +1,8 @@
-#include "ClauseParser.h"
 #include <vector>
 
+#include "ClauseParser.h"
 #include "commons/token/Token.h"
 #include "qps/query_exceptions/SyntaxException.h"
-
 
 std::vector<std::unique_ptr<Clause>> ClauseParser::parse(TokenValidator &tokenValidator,
                                                          std::vector<Synonym>& synonyms) {
