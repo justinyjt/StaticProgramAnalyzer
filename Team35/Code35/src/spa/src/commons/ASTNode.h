@@ -51,6 +51,8 @@ class ASTNode {
 
     void addChild(std::unique_ptr<ASTNode>);
 
+    virtual ~ASTNode() = default;
+
  private:
     std::optional<std::string> label_;
     SyntaxType type_;

@@ -6,6 +6,7 @@
 #include <utility>
 
 #include "PairHash.h"
+#include "commons/expr_parser/ExprNode.h"
 
 typedef std::string ENT_NAME;
 typedef int STMT_NUM;
@@ -20,6 +21,7 @@ typedef std::unordered_set<STMT_ENT, hash_pair> STMT_ENT_SET;
 typedef std::unordered_set<ENT_ENT, hash_pair> ENT_ENT_SET;
 typedef std::unordered_set<STMT_STMT, hash_pair> STMT_STMT_SET;
 
+typedef std::pair<std::string, ExprNode*> ASSIGN_PAT;
 
 enum class StmtType {
     Print, Read, Assign, Call, While, If, None

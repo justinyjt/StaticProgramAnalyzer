@@ -12,7 +12,7 @@ DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
     pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(),
     stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
     stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(),
-    containerStmtLst_(), stmtCnt_(0), assignPat_() {}
+    containerStmtLst_(), stmtCnt_(0) {}
 
 std::unique_ptr<ASTNode> DesignExtractor::extractProgram(std::unique_ptr<ASTNode> root) {
     root_ = std::move(root);
@@ -90,12 +90,13 @@ void DesignExtractor::updateParentsPairSet(const std::unique_ptr<std::vector<STM
 
 void DesignExtractor::extractAssign(const std::unique_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::Assign);
-    assignPat_.clear();
     const auto &lAssign = node->getChildren().front();
     const auto &rAssign = node->getChildren().back();
-    extractLeftAssign(lAssign);
-    assignPat_.append(extractRightAssign(rAssign));
-    assignPatMap_.insert({stmtCnt_, assignPat_});
+
+    std::string lAssignPat = extractLeftAssign(lAssign);
+    auto *rAssignPat = dynamic_cast<ExprNode*>(rAssign.get());
+    ASSIGN_PAT assignPat = std::make_pair(lAssignPat, rAssignPat);
+    assignPatMap_.insert({stmtCnt_, assignPat});
 }
 
 std::string DesignExtractor::extractLeftAssign(const std::unique_ptr<ASTNode> &node) {
@@ -104,25 +105,24 @@ std::string DesignExtractor::extractLeftAssign(const std::unique_ptr<ASTNode> &n
     varNameSet_.insert(varName);
     updateStmtModsPairSet(stmtCnt_, varName);
     assignSet_.insert(stmtCnt_);
-    return varName + "=";
+    return varName;
 }
 
-std::string DesignExtractor::extractRightAssign(const std::unique_ptr<ASTNode> &node) {
+void DesignExtractor::extractRightAssign(const std::unique_ptr<ASTNode> &node) {
     std::string label = node->getLabel();
     switch (node->getSyntaxType()) {
         case ASTNode::SyntaxType::Variable:varNameSet_.insert(label);
             updateStmtUsesPairSet(stmtCnt_, label);
-            return label;
+            return ;
         case ASTNode::SyntaxType::Constant:constSet_.insert(label);
-            return label;
+            return ;
         default:
-            // operators;
-            // This is based on the assumption that brackets are useless in pattern matching
-            // Only if we can safely ignore all brackets, this works
             assert(node->getChildren().size() == 2);
             const auto &lChild = node->getChildren().front();
             const auto &rChild = node->getChildren().back();
-            return extractRightAssign(lChild) + label + extractRightAssign(rChild);
+            extractRightAssign(lChild);
+            extractRightAssign(rChild);
+            return ;
             break;
     }
 }
