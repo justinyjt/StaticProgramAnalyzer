@@ -194,7 +194,6 @@ TEST_CASE_METHOD(setUpStcp, "Uses, print and variable") {
     clause = stcp->parse(tokenValidator3, declarationList);
     usesS = std::make_unique<UsesS>(std::move(synonymPrint), std::move(synonymVariable));
     requireTrue(*clause == *usesS);
-    requireTrue(true);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Uses, assign and variable") {
