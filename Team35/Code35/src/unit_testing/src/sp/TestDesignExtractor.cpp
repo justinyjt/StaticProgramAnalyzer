@@ -29,7 +29,8 @@ TEST_CASE("DE can extract assign pattern correctly", "[Design Extractor]") {
 
         std::string ans;
         for (const auto &itr : de.getAssignPatMap()) {
-            ans.append(std::to_string(itr.first) + "\t" + itr.second + "\n");
+            ans.append(std::to_string(itr.first) + "\t" +
+                        itr.second.first + "="  + itr.second.second->toString() + "\n");
         }
 
         REQUIRE(ans == "1\t3\n");
@@ -67,7 +68,8 @@ TEST_CASE("DE can extract assign pattern correctly", "[Design Extractor]") {
 
         std::string ans;
         for (auto itr : de.getAssignPatMap()) {
-            ans.append(std::to_string(itr.first) + "\t" + itr.second + "\n");
+            ans.append(std::to_string(itr.first) + "\t" +
+                        itr.second.first + "="  + itr.second.second->toString() + "\n");
         }
 
         REQUIRE(ans == "1\ty*3\n");
@@ -111,7 +113,8 @@ TEST_CASE("DE can extract assign pattern correctly", "[Design Extractor]") {
 
         std::string ans;
         for (auto itr : de.getAssignPatMap()) {
-            ans.append(std::to_string(itr.first) + "\t" + itr.second + "\n");
+            ans.append(std::to_string(itr.first) + "\t" +
+                       itr.second.first + "="  + itr.second.second->toString() + "\n");
         }
         REQUIRE(ans == "1\t1+y*3\n");
     }
