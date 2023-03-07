@@ -50,9 +50,11 @@ unique_ptr<ASTNode> Parser::parseStmt() {
         return std::move(parsePrint());
     } else if (scanner_.peek(Token::Tag::If)) {
         return std::move(parseIf());
-    } else {
-        assert(scanner_.peek(Token::Tag::While));
+    } else if (scanner_.peek(Token::Tag::While)) {
         return std::move(parseWhile());
+    } else {
+        assert(scanner_.peek(Token::Tag::Call));
+        return std::move(parseCall());
     }
 }
 

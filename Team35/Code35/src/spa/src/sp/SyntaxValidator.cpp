@@ -54,6 +54,8 @@ bool SyntaxValidator::validateStmt() {
         return validateIf();
     } else if (scanner_.peek(Token::Tag::While)) {
         return validateWhile();
+    } else if (scanner_.peek(Token::Tag::Call)) {
+        return validateCall();
     } else {
         return false;
     }

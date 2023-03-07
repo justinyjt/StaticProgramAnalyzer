@@ -62,6 +62,9 @@ void DesignExtractor::extractStmtLst(const std::unique_ptr<ASTNode> &node) {
             case ASTNode::SyntaxType::While:
                 extractWhile(child);
                 break;
+            case ASTNode::SyntaxType::Call:
+                extractCall(child);
+                break;
             default:
                 break;
         }
