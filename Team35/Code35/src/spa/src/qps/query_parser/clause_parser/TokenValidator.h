@@ -26,5 +26,6 @@ class TokenValidator {
     std::unique_ptr<ILexer> &lexer;
     std::unique_ptr<Token> cur_;
     bool isName(std::string input);
+    bool isConstant(std::string input);
 };
 

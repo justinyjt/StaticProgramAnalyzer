@@ -88,7 +88,7 @@ std::vector<std::unique_ptr<Token>> TokenValidator::validateAndConsumePatternSec
     if (cur_->getTag() == Token::Tag::Underscore) {
         tokenList.push_back(std::move(cur_));
         cur_ = lexer->scan();
-        if (cur_->getTag() == Token::Tag::String && isName(cur_->getLexeme())) {
+        if (cur_->getTag() == Token::Tag::String && (isName(cur_->getLexeme()) || isConstant(cur_->getLexeme()))) {
             tokenList.push_back(std::move(cur_));
             cur_ = lexer->scan();
             validateAndConsumeTokenType(Token::Tag::Underscore);
@@ -121,6 +121,12 @@ bool TokenValidator::isName(std::string input) {
         }
     }
     return true;
+}
+
+bool TokenValidator::isConstant(std::string input) {
+    std::string::const_iterator it = input.begin();
+    while (it != input.end() && std::isdigit(*it)) ++it;
+    return !input.empty() && it == input.end();
 }
 
 void TokenValidator::validateAndConsumeTokenType(Token::Tag tag) {

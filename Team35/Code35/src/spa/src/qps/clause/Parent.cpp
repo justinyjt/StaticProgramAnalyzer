@@ -3,7 +3,9 @@
 #include <unordered_set>
 
 Parent::Parent(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :
-    TwoArgClause(std::move(first), std::move(second)), isTransitive(isTransitive) {}
+    TwoArgClause(std::move(first), std::move(second)), isTransitive(isTransitive) {
+    validateArgs();
+}
 
 std::unique_ptr<Result> Parent::evaluate(PKBReader *db) {
     /* <stmt SYNONYM | _ | STMT_NUM> */
@@ -90,7 +92,14 @@ std::unique_ptr<Result> Parent::evaluate(PKBReader *db) {
     }
 }
 
-void Parent::validateArgs() {}
+void Parent::validateArgs() {
+    Synonym* synonym1 = dynamic_cast<Synonym*>(first.get());
+    Synonym* synonym2 = dynamic_cast<Synonym*>(second.get());
+    if (synonym1 != nullptr && (synonym1->de == Synonym::DesignEntity::VARIABLE || synonym1->de == Synonym::DesignEntity::CONSTANT) ||
+        (synonym2 != nullptr && (synonym2->de == Synonym::DesignEntity::VARIABLE || synonym2->de == Synonym::DesignEntity::CONSTANT))) {
+        throw SemanticException();
+    }
+}
 
 bool Parent::operator==(const Clause &rhs) const {
     const auto *pRhs = dynamic_cast<const Parent *>(&rhs);
