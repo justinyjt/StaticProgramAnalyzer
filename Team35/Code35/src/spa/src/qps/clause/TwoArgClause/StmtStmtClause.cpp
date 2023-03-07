@@ -10,7 +10,7 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
     /* <stmt SYNONYM | _ | STMT_NUM> */
 
     switch (getPairEnum()) {
-        case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Parent/Follows(s1, s2) -> pair<int, int>[]
+        case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Parent/Follows(s1, s2) -> <int, int>[]
         {
             STMT_STMT_SET s = db->getAllRelationships(rs);
             STMT_SET filterSetByFirst = db->getStatements(getStmtType(dynamic_cast<Synonym&>(*first).de));

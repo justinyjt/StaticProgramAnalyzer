@@ -1,9 +1,9 @@
-#include "StmtNameClause.h"
+#include "StmtEntClause.h"
 
-StmtNameClause::StmtNameClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second,
+StmtEntClause::StmtEntClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second,
         StmtNameRelationship rs) : TwoArgClause(std::move(first), std::move(second)), rs(rs) {}
 
-std::unique_ptr<Result> StmtNameClause::evaluate(PKBReader* db) {
+std::unique_ptr<Result> StmtEntClause::evaluate(PKBReader* db) {
     /* <stmt SYNONYM | STMT_NUM>, <var SYNONYM | IDENT | _ > */
 
     switch (getPairEnum()) {
@@ -29,7 +29,7 @@ std::unique_ptr<Result> StmtNameClause::evaluate(PKBReader* db) {
             std::unique_ptr<Result> result = std::make_unique<BoolResult>(b);
             return std::move(result);
         }
-        case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Uses/Mod(stmt, var) -> pair<int, string>[]
+        case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Uses/Mod(stmt, var) -> <int, string>[]
         {
             STMT_ENT_SET modifiesSet = db->getAllRelationships(rs);
             STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym&>(*first).de));
@@ -45,7 +45,7 @@ std::unique_ptr<Result> StmtNameClause::evaluate(PKBReader* db) {
             std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), modifiesStmtSet);
             return std::move(Result::join(*result, *intermediateResult));
         }
-        case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::IDENT):  // Uses/Modifies(stmt, "x")/ -> int[]
+        case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::IDENT):  // Uses/Modifies(stmt, "x") -> int[]
         {
             STMT_SET stmtSet = db->getRelationship(rs, second->str());
             STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym&>(*first).de));
@@ -57,13 +57,14 @@ std::unique_ptr<Result> StmtNameClause::evaluate(PKBReader* db) {
             throw std::runtime_error("");
     }}
 
-bool StmtNameClause::operator==(const Clause &rhs) const {
-    const auto* pRhs = dynamic_cast<const StmtNameClause*>(&rhs);
+bool StmtEntClause::operator==(const Clause &rhs) const {
+    const auto* pRhs = dynamic_cast<const StmtEntClause*>(&rhs);
     return pRhs != nullptr && rs == pRhs->rs && TwoArgClause::equal(*pRhs);
 }
 
+
 UsesS::UsesS(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second) :
-                StmtNameClause(std::move(first), std::move(second), StmtNameRelationship::Uses) {
+                StmtEntClause(std::move(first), std::move(second), StmtNameRelationship::Uses) {
     validateArgs();
 }
 
@@ -77,11 +78,11 @@ void UsesS::validateArgs() {
     }
 }
 
+
 ModifiesS::ModifiesS(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second) :
-                StmtNameClause(std::move(first), std::move(second), StmtNameRelationship::Modifies) {
+                StmtEntClause(std::move(first), std::move(second), StmtNameRelationship::Modifies) {
     validateArgs();
 }
-
 
 void ModifiesS::validateArgs() {
     Synonym* synonym1 = dynamic_cast<Synonym*>(first.get());
