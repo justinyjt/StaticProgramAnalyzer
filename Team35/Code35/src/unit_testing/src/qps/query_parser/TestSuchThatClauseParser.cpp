@@ -557,3 +557,23 @@ TEST_CASE_METHOD(setUpStcp, "Parent*, statement and statement") {
     parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(synonymStatement1), true);
     requireTrue(*clause == *parent);
 }
+
+TEST_CASE_METHOD(setUpStcp, "invalid Modifies, statement and statement, semantic error") {
+    query = "such that Modifies(s,s1)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    TokenValidator tokenValidator3(lexer);
+    requireThrow([&tokenValidator3]() {
+        std::vector<Synonym> dl = setUpStcp().declarationList;
+        setUpStcp().stcp->parse(tokenValidator3, dl);
+    });
+}
+
+TEST_CASE_METHOD(setUpStcp, "invalid Follows, statement and variable, semantic error") {
+    query = "such that Parent(s,v)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    TokenValidator tokenValidator4(lexer);
+    requireThrow([&tokenValidator4]() {
+        std::vector<Synonym> dl = setUpStcp().declarationList;
+        setUpStcp().stcp->parse(tokenValidator4, dl);
+    });
+}

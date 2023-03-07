@@ -94,8 +94,8 @@ std::unique_ptr<Result> Follows::evaluate(PKBReader *db) {
 void Follows::validateArgs() {
     Synonym* synonym1 = dynamic_cast<Synonym*>(first.get());
     Synonym* synonym2 = dynamic_cast<Synonym*>(second.get());
-    if (synonym1 != nullptr && (synonym1->de == Synonym::DesignEntity::VARIABLE || synonym1->de == Synonym::DesignEntity::CONSTANT) ||
-        (synonym2 != nullptr && (synonym2->de == Synonym::DesignEntity::VARIABLE || synonym2->de == Synonym::DesignEntity::CONSTANT))) {
+    if (synonym1 != nullptr && (synonym1->de == Synonym::DesignEntity::PROCEDURE) || synonym1->de == Synonym::DesignEntity::VARIABLE || synonym1->de == Synonym::DesignEntity::CONSTANT) ||
+        (synonym2 != nullptr && (synonym2->de == Synonym::DesignEntity::PROCEDURE) || synonym2->de == Synonym::DesignEntity::VARIABLE || synonym2->de == Synonym::DesignEntity::CONSTANT))) {
         throw SemanticException();
     }
 }

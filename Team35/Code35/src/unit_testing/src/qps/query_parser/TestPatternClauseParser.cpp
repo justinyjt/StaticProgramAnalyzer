@@ -83,7 +83,7 @@ TEST_CASE_METHOD(setUp, "variable, constant value and wildcard") {
     requireTrue(*clause == *pattern);
 }
 
-TEST_CASE_METHOD(setUp, "variable, wildcard and wildcard") {
+TEST_CASE_METHOD(setUp, "wildcard and wildcard") {
     query = "pattern a(_,_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator5(lexer);
@@ -92,12 +92,52 @@ TEST_CASE_METHOD(setUp, "variable, wildcard and wildcard") {
     requireTrue(*clause == *pattern);
 }
 
-TEST_CASE_METHOD(setUp, "variable, wildcard and variable name with wildcard") {
+TEST_CASE_METHOD(setUp, "wildcard and variable name with wildcard") {
     query = "pattern a(_,_\"x\"_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator6(lexer);
     clause = pcp->parse(tokenValidator6, declarationList);
     pattern = std::make_unique<Pattern>(std::move(wildcard1), std::move(exprWildcardVarName), "a");
     requireTrue(*clause == *pattern);
+}
+
+TEST_CASE_METHOD(setUp, "invalid LHS constant and variable name with wildcard") {
+    query = "pattern a(\"1\",_\"x\"_)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    TokenValidator tokenValidator7(lexer);
+    requireThrow([&tokenValidator7]() {
+        std::vector<Synonym> dl = setUp().declarationList;
+        setUp().pcp->parse(tokenValidator7, dl);
+    });
+}
+
+TEST_CASE_METHOD(setUp, "invalid LHS varName and variable name with wildcard") {
+    query = "pattern a(\"+x\",_\"x\"_)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    TokenValidator tokenValidator8(lexer);
+    requireThrow([&tokenValidator8]() {
+        std::vector<Synonym> dl = setUp().declarationList;
+        setUp().pcp->parse(tokenValidator8, dl);
+    });
+}
+
+TEST_CASE_METHOD(setUp, "ident and invalid RHS expr 1") {
+    query = "pattern a(\"x\",_\"+x\"_)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    TokenValidator tokenValidator9(lexer);
+    requireThrow([&tokenValidator9]() {
+        std::vector<Synonym> dl = setUp().declarationList;
+        setUp().pcp->parse(tokenValidator9, dl);
+    });
+}
+
+TEST_CASE_METHOD(setUp, "ident and invalid RHS expr 2") {
+    query = "pattern a(\"x\",_\"x+\"_)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    TokenValidator tokenValidator10(lexer);
+    requireThrow([&tokenValidator10]() {
+        std::vector<Synonym> dl = setUp().declarationList;
+        setUp().pcp->parse(tokenValidator10, dl);
+    });
 }
 
