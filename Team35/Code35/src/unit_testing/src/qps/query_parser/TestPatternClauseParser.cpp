@@ -6,6 +6,7 @@
 #include "commons/lexer/LexerFactory.h"
 #include "qps/pql/Ident.h"
 #include "qps/pql/Expression.h"
+#include "qps/query_exceptions/SyntaxException.h"
 
 class setUp {
 public:
@@ -105,7 +106,7 @@ TEST_CASE_METHOD(setUp, "invalid LHS constant and variable name with wildcard") 
     query = "pattern a(\"1\",_\"x\"_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator7(lexer);
-    requireThrow([&tokenValidator7]() {
+    requireThrowAs<SyntaxException>([&tokenValidator7]() {
         std::vector<Synonym> dl = setUp().declarationList;
         setUp().pcp->parse(tokenValidator7, dl);
     });
@@ -115,7 +116,7 @@ TEST_CASE_METHOD(setUp, "invalid LHS varName and variable name with wildcard") {
     query = "pattern a(\"+x\",_\"x\"_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator8(lexer);
-    requireThrow([&tokenValidator8]() {
+    requireThrowAs<SyntaxException>([&tokenValidator8]() {
         std::vector<Synonym> dl = setUp().declarationList;
         setUp().pcp->parse(tokenValidator8, dl);
     });
@@ -125,7 +126,7 @@ TEST_CASE_METHOD(setUp, "ident and invalid RHS expr 1") {
     query = "pattern a(\"x\",_\"+x\"_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator9(lexer);
-    requireThrow([&tokenValidator9]() {
+    requireThrowAs<SyntaxException>([&tokenValidator9]() {
         std::vector<Synonym> dl = setUp().declarationList;
         setUp().pcp->parse(tokenValidator9, dl);
     });
@@ -135,7 +136,7 @@ TEST_CASE_METHOD(setUp, "ident and invalid RHS expr 2") {
     query = "pattern a(\"x\",_\"x+\"_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator10(lexer);
-    requireThrow([&tokenValidator10]() {
+    requireThrowAs<SyntaxException>([&tokenValidator10]() {
         std::vector<Synonym> dl = setUp().declarationList;
         setUp().pcp->parse(tokenValidator10, dl);
     });

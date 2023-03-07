@@ -9,6 +9,11 @@ void requireFalse(bool b);
 void requireNotThrow(const std::function<void()> &f);
 void requireThrow(const std::function<void()> &f);
 
+template<typename E>
+void requireThrowAs(const std::function<void()> &f) {
+    REQUIRE_THROWS_AS(f(), E);
+}
+
 template<typename T>
 void requireEqual(T a, T b) {
     REQUIRE(a == b);

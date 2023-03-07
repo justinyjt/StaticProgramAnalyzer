@@ -560,7 +560,17 @@ TEST_CASE_METHOD(setUpStcp, "invalid Modifies, statement and statement, semantic
     query = "such that Modifies(s,s1)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator3(lexer);
-    requireThrow([&tokenValidator3]() {
+    requireThrowAs<SemanticException>([&tokenValidator3]() {
+        std::vector<Synonym> dl = setUpStcp().declarationList;
+        setUpStcp().stcp->parse(tokenValidator3, dl);
+    });
+}
+
+TEST_CASE_METHOD(setUpStcp, "invalid Modifies, wildcard and statement, semantic error") {
+    query = "such that Modifies(_,s1)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    TokenValidator tokenValidator3(lexer);
+    requireThrowAs<SemanticException>([&tokenValidator3]() {
         std::vector<Synonym> dl = setUpStcp().declarationList;
         setUpStcp().stcp->parse(tokenValidator3, dl);
     });
@@ -570,7 +580,17 @@ TEST_CASE_METHOD(setUpStcp, "invalid Follows, statement and variable, semantic e
     query = "such that Parent(s,v)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator4(lexer);
-    requireThrow([&tokenValidator4]() {
+    requireThrowAs<SemanticException>([&tokenValidator4]() {
+        std::vector<Synonym> dl = setUpStcp().declarationList;
+        setUpStcp().stcp->parse(tokenValidator4, dl);
+    });
+}
+
+TEST_CASE_METHOD(setUpStcp, "invalid Follows, variable and statement, semantic error") {
+    query = "such that Parent(v,s)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    TokenValidator tokenValidator4(lexer);
+    requireThrowAs<SemanticException>([&tokenValidator4]() {
         std::vector<Synonym> dl = setUpStcp().declarationList;
         setUpStcp().stcp->parse(tokenValidator4, dl);
     });
