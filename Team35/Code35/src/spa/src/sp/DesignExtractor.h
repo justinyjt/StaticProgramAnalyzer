@@ -19,6 +19,8 @@ class DesignExtractor {
 
     void addConstantSetToPKB();
 
+    void addProcSetToPKB();
+
     void addStmtUsesPairSetToPKB();
 
     void addStmtModifiesPairSetToPKB();
@@ -38,6 +40,7 @@ class DesignExtractor {
  private:
     ENT_SET varNameSet_;
     ENT_SET constSet_;
+    ENT_SET procSet_;
     STMT_SET stmtSet_;
     STMT_SET assignSet_;
     STMT_SET printSet_;
