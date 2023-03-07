@@ -2,7 +2,7 @@
 //#include "../TestHelper.h"
 //#include "qps/QueryEvaluator.h"
 //#include "qps/clause/TwoArgClause/StmtEntClause.h"
-//#include "qps/clause/Pattern.h"
+//#include "qps/clause/TwoArgClause/Pattern.h"
 //#include "qps/clause/Clause.h"
 //#include "qps/pql/StatementNumber.h"
 //#include "qps/pql/Expression.h"
