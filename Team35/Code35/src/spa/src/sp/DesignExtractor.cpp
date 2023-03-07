@@ -9,7 +9,7 @@
 #include "commons/ASTNode.h"
 
 DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
-        pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(),
+        pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(), procSet_(),
         stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
         stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(),
         containerStmtLst_(), stmtCnt_(0), assignPat_(), curProc_(), callGraph_() {}
@@ -22,6 +22,7 @@ std::unique_ptr<ASTNode> DesignExtractor::extractProgram(std::unique_ptr<ASTNode
     }
     addVarNameSetToPKB();
     addConstantSetToPKB();
+    addProcSetToPKB();
     addStmtUsesPairSetToPKB();
     addStmtModifiesPairSetToPKB();
     addStmtFollowPairSetToPKB();
@@ -36,6 +37,7 @@ void DesignExtractor::extractProc(const std::unique_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::Procedure);
     curProc_ = node->getLabel();
     const std::unique_ptr<ASTNode> &nodeC = node->getChildren().front();
+    procSet_.insert(node->getLabel());
     extractStmtLst(nodeC);
 }
 
@@ -255,6 +257,10 @@ void DesignExtractor::addConstantSetToPKB() {
     pkbWriter_->addEntities(Entity::Constant, constSet_);
 }
 
+void DesignExtractor::addProcSetToPKB() {
+    pkbWriter_->addEntities(Entity::Procedure, procSet_);
+}
+
 void DesignExtractor::addStmtUsesPairSetToPKB() {
     pkbWriter_->addStmtEntityRelationships(StmtNameRelationship::Uses, stmtUsePairSet_);
 }
@@ -289,7 +295,7 @@ void DesignExtractor::addStmtTypesToPKB() {
 
 void DesignExtractor::addCallsToPKB() {
     pkbWriter_->addEntityEntityRelationships(NameNameRelationship::Calls, callGraph_.getImmediateCalls());
-    pkbWriter_->addEntityEntityRelationships(NameNameRelationship::CallsT, callGraph_.getTransitiveCalls());
+    pkbWriter_->addEntityEntityRelationships(NameNameRelationship::CallsStar, callGraph_.getTransitiveCalls());
 }
 
 std::unordered_map<STMT_NUM, std::string> DesignExtractor::getAssignPatMap() {

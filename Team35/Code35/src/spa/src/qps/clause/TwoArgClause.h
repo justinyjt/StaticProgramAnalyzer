@@ -22,7 +22,6 @@ class TwoArgClause : public Clause {
     const std::unique_ptr<PQLToken> second;
 
     TwoArgClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second);
-    bool operator==(const Clause &rhs) const override = 0;
     virtual void validateArgs() = 0;
 
  protected:
