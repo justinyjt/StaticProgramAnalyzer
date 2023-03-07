@@ -16,17 +16,93 @@ CFGraph::CFGraph(const CFGraph &graph, STMT_NUM min_stmt_num, STMT_NUM max_stmt_
     proc_name_(std::move(proc_name)) {}
 
 STMT_SET CFGraph::getPredecessors(STMT_NUM stmt_num, bool isTransitive) const {
-    return STMT_SET();
-}
-
-STMT_SET CFGraph::getSuccessors(STMT_NUM stmt_num, bool isTransitive) const {
+    bool stmt_num_out_of_range = (stmt_num < min_stmt_num_ || stmt_num > max_stmt_num_);
+    assert(!stmt_num_out_of_range);
     CFGraphNodeData node_data = makeNodeData(stmt_num);
-    if (!this->hasNode(node_data)) {
+    if (stmt_num_out_of_range || !this->hasNode(node_data)) {
         return {};
     }
 
+    Index node_index = this->getNodeIndex(node_data);
+
+    STMT_SET predecessors;
+
+    if (!isTransitive) {
+        for (Index predecessor_index : this->getIncomingNodes(node_index)) {
+            if (!isIndexDummyNode(predecessor_index)) {
+                predecessors.insert(this->getStmtNumFromIndex(predecessor_index));
+            } else {
+                for (Index predecessor_of_dummy_index : this->getDummyNodePredecessors(predecessor_index)) {
+                    predecessors.insert(this->getStmtNumFromIndex(predecessor_of_dummy_index));
+                }
+            }
+        }
+        return predecessors;
+    }
+    IndexQueue frontier;
+    IndexSet visited;
+    frontier.push(node_index);
+
+    while (!frontier.empty()) {
+        Index index = frontier.front();
+        frontier.pop();
+        visited.insert(index);
+        for (Index predecessor_index : this->getOutgoingNodes(index)) {
+            if (visited.find(predecessor_index) == visited.end()) {
+                frontier.push(predecessor_index);
+            }
+            if (!isIndexDummyNode(predecessor_index)) {
+                predecessors.insert(this->getStmtNumFromIndex(predecessor_index));
+            }
+        }
+    }
+
+    return predecessors;
+}
+
+STMT_SET CFGraph::getSuccessors(STMT_NUM stmt_num, bool isTransitive) const {
+    bool stmt_num_out_of_range = (stmt_num < min_stmt_num_ || stmt_num > max_stmt_num_);
+    assert(!stmt_num_out_of_range);
+    CFGraphNodeData node_data = makeNodeData(stmt_num);
+    if (stmt_num_out_of_range || !this->hasNode(node_data)) {
+        return {};
+    }
+
+    Index node_index = this->getNodeIndex(node_data);
+
     STMT_SET successors;
-    return STMT_SET();
+
+    if (!isTransitive) {
+        for (Index successor_index : this->getOutgoingNodes(node_index)) {
+            if (!isIndexDummyNode(successor_index)) {
+                successors.insert(this->getStmtNumFromIndex(successor_index));
+            } else {
+                for (Index successor_of_dummy_node_index : this->getDummyNodeSuccessors(successor_index)) {
+                    successors.insert(this->getStmtNumFromIndex(successor_of_dummy_node_index));
+                }
+            }
+        }
+        return successors;
+    }
+    IndexQueue frontier;
+    IndexSet visited;
+    frontier.push(node_index);
+
+    while (!frontier.empty()) {
+        Index index = frontier.front();
+        frontier.pop();
+        visited.insert(index);
+        for (Index successor_index : this->getOutgoingNodes(index)) {
+            if (visited.find(successor_index) == visited.end()) {
+                frontier.push(successor_index);
+            }
+            if (!isIndexDummyNode(successor_index)) {
+                successors.insert(this->getStmtNumFromIndex(successor_index));
+            }
+        }
+    }
+
+    return successors;
 }
 
 STMT_STMT_SET CFGraph::getPairwiseCFG(bool isTransitive) const {
@@ -78,5 +154,45 @@ STMT_NUM CFGraph::getMinStmtNum() const {
 
 ENT_NAME CFGraph::getProcName() const {
     return proc_name_;
+}
+
+bool CFGraph::isIndexDummyNode(Index index) const {
+    assert(this->isIndexValid(index));
+    return this->getNode(index).isDummy();
+}
+
+STMT_NUM CFGraph::getStmtNumFromIndex(Index index) const {
+    assert(this->isIndexValid(index));
+    return this->getNode(index).getStmtNum();
+}
+
+IndexList CFGraph::getDummyNodePredecessors(Index index) const {
+    assert(this->isIndexValid(index));
+    assert(this->isIndexDummyNode(index));
+    IndexList predecessors;
+    for (Index predecessor_index : this->getIncomingNodes(index)) {
+        if (!this->isIndexDummyNode(predecessor_index)) {
+            predecessors.push_back(predecessor_index);
+        } else {
+            IndexList dummy_predecessors = this->getDummyNodePredecessors(predecessor_index);
+            predecessors.insert(predecessors.end(), dummy_predecessors.begin(), dummy_predecessors.end());
+        }
+    }
+    return predecessors;
+}
+
+IndexList CFGraph::getDummyNodeSuccessors(Index index) const {
+    assert(this->isIndexValid(index));
+    assert(this->isIndexDummyNode(index));
+    IndexList successors;
+    for (Index successor_index : this->getOutgoingNodes(index)) {
+        if (!this->isIndexDummyNode(successor_index)) {
+            successors.push_back(successor_index);
+        } else {
+            IndexList dummy_successors = this->getDummyNodeSuccessors(successor_index);
+            successors.insert(successors.end(), dummy_successors.begin(), dummy_successors.end());
+        }
+    }
+    return successors;
 }
 }  // namespace CFG

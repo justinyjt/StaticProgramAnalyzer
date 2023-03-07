@@ -22,5 +22,10 @@ class CFGraph : public Graph<CFGraphNodeData> {
     STMT_NUM max_stmt_num_;
     STMT_NUM min_stmt_num_;
     ENT_NAME proc_name_;
+
+    bool isIndexDummyNode(Index index) const;
+    STMT_NUM getStmtNumFromIndex(Index index) const;
+    IndexList getDummyNodePredecessors(Index index) const;
+    IndexList getDummyNodeSuccessors(Index index) const;
 };
 }  // namespace CFG

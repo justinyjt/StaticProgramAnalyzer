@@ -39,6 +39,10 @@ class Graph {
         return nodeToIndex.find(node) != nodeToIndex.end();
     }
 
+    bool isIndexValid(Index index) const {
+        return index < nodes.size();
+    }
+
     bool isCyclic() const {
         std::vector<bool> visited(nodes.size(), false);
         std::vector<bool> recursion_stack(nodes.size(), false);
