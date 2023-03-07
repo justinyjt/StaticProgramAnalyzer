@@ -36,7 +36,7 @@ std::unique_ptr<ASTNode> DesignExtractor::extractProgram(std::unique_ptr<ASTNode
 void DesignExtractor::extractProc(const std::unique_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::Procedure);
     const std::unique_ptr<ASTNode> &nodeC = node->getChildren().front();
-    procSet_.insert(nodeC->getLabel());
+    procSet_.insert(node->getLabel());
     extractStmtLst(nodeC);
 }
 
