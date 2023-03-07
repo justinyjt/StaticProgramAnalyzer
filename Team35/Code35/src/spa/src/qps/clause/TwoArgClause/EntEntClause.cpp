@@ -16,7 +16,7 @@ std::unique_ptr<Result> EntEntClause::evaluate(PKBReader* db) {
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // Uses/Modifies(f, _) -> str[]
         {
         }
-        case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::SYNONYM):  // Uses/Mod("f", v) -> str[] 
+        case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::SYNONYM):  // Uses/Mod("f", v) -> str[]
         {
         }
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::IDENT):  // Uses/Modifies("f", "x") -> bool
@@ -28,10 +28,10 @@ std::unique_ptr<Result> EntEntClause::evaluate(PKBReader* db) {
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::SYNONYM):  // Calls(_, f) -> str[]
         {
         }
-        case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::IDENT):  // Calls(_, "f") -> bool 
+        case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::IDENT):  // Calls(_, "f") -> bool
         {
         }
-        case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::WILDCARD):  // Calls(_, _) -> bool 
+        case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::WILDCARD):  // Calls(_, _) -> bool
         {
         }
         default:
@@ -64,7 +64,7 @@ void ModifiesP::validateArgs() {
 
 
 Calls::Calls(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :
-                EntEntClause(std::move(first), std::move(second), 
+                EntEntClause(std::move(first), std::move(second),
                     isTransitive ? NameNameRelationship::CallsStar : NameNameRelationship::Calls) {
     validateArgs();
 }
