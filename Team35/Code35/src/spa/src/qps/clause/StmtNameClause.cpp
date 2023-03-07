@@ -1,9 +1,9 @@
-#include "UsesModifies.h"
+#include "StmtNameClause.h"
 
-UsesModifies::UsesModifies(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second,
+StmtNameClause::StmtNameClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second,
         StmtNameRelationship rs) : TwoArgClause(std::move(first), std::move(second)), rs(rs) {}
 
-std::unique_ptr<Result> UsesModifies::evaluate(PKBReader* db) {
+std::unique_ptr<Result> StmtNameClause::evaluate(PKBReader* db) {
     /* <stmt SYNONYM | STMT_NUM>, <var SYNONYM | IDENT | _ > */
 
     switch (getPairEnum()) {
@@ -57,13 +57,13 @@ std::unique_ptr<Result> UsesModifies::evaluate(PKBReader* db) {
             throw std::runtime_error("");
     }}
 
-bool UsesModifies::operator==(const Clause &rhs) const {
-    const auto* pRhs = dynamic_cast<const UsesModifies*>(&rhs);
+bool StmtNameClause::operator==(const Clause &rhs) const {
+    const auto* pRhs = dynamic_cast<const StmtNameClause*>(&rhs);
     return pRhs != nullptr && rs == pRhs->rs && TwoArgClause::equal(*pRhs);
 }
 
 UsesS::UsesS(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second) :
-                UsesModifies(std::move(first), std::move(second), StmtNameRelationship::Uses) {
+                StmtNameClause(std::move(first), std::move(second), StmtNameRelationship::Uses) {
     validateArgs();
 }
 
@@ -78,7 +78,7 @@ void UsesS::validateArgs() {
 }
 
 ModifiesS::ModifiesS(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second) :
-                UsesModifies(std::move(first), std::move(second), StmtNameRelationship::Modifies) {
+                StmtNameClause(std::move(first), std::move(second), StmtNameRelationship::Modifies) {
     validateArgs();
 }
 

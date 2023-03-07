@@ -1,12 +1,12 @@
 #pragma once
 
-#include "ParentFollows.h"
+#include "StmtStmtClause.h"
 #include <unordered_set>
 
-ParentFollows::ParentFollows(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second,
+StmtStmtClause::StmtStmtClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second,
         StmtStmtRelationship rs) : TwoArgClause(std::move(first), std::move(second)), rs(rs) {}
 
-std::unique_ptr<Result> ParentFollows::evaluate(PKBReader *db) {
+std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
     /* <stmt SYNONYM | _ | STMT_NUM> */
 
     switch (getPairEnum()) {
@@ -89,17 +89,17 @@ std::unique_ptr<Result> ParentFollows::evaluate(PKBReader *db) {
     }
 }
 
-bool ParentFollows::operator==(const Clause &rhs) const {
-    const auto *pRhs = dynamic_cast<const ParentFollows *>(&rhs);
+bool StmtStmtClause::operator==(const Clause &rhs) const {
+    const auto *pRhs = dynamic_cast<const StmtStmtClause *>(&rhs);
     return pRhs != nullptr && rs == pRhs->rs && TwoArgClause::equal(*pRhs);
 }
 
-void ParentFollows::validateArgs() {}
+void StmtStmtClause::validateArgs() {}
 
 Parent::Parent(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :
-    ParentFollows(std::move(first), std::move(second),
+    StmtStmtClause(std::move(first), std::move(second),
                 isTransitive ? StmtStmtRelationship::ParentStar : StmtStmtRelationship::Parent) {}
 
 Follows::Follows(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :
-    ParentFollows(std::move(first), std::move(second),
+    StmtStmtClause(std::move(first), std::move(second),
                 isTransitive ? StmtStmtRelationship::FollowsStar : StmtStmtRelationship::Follows) {}
