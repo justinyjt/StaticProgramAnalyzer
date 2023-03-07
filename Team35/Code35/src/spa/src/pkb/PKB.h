@@ -87,6 +87,7 @@ class PKB {
     // Entity related tables
     EntityTable<ENT_NAME> variableTable;
     EntityTable<ENT_NAME> constantTable;
+    EntityTable<ENT_NAME> procedureTable;
     EntityTable<STMT_NUM> assignStatementTable;
     EntityTable<STMT_NUM> ifStatementTable;
     EntityTable<STMT_NUM> whileStatementTable;
@@ -101,7 +102,7 @@ class PKB {
     RelationshipTable<ENT_NAME, ENT_NAME> modifiesNameNameTable;
     RelationshipTable<ENT_NAME, ENT_NAME> usesNameNameTable;
     RelationshipTable<ENT_NAME, ENT_NAME> callsNameNameTable;
-    RelationshipTable<ENT_NAME, ENT_NAME> callsTransitiveNameNameTable;
+    RelationshipTable<ENT_NAME, ENT_NAME> callsStarNameNameTable;
 
     RelationshipTable<STMT_NUM, STMT_NUM> followsTable;
     RelationshipTable<STMT_NUM, STMT_NUM> followsStarTable;

@@ -7,7 +7,7 @@ TEST_CASE("DE can extract assign pattern correctly", "[Design Extractor]") {
         std::unique_ptr<ASTNode> root =
             std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Program, std::nullopt));
         std::unique_ptr<ASTNode> proc =
-            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Procedure, std::nullopt));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Procedure, "main"));
         std::unique_ptr<ASTNode> stmtLst =
             std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::StmtLst, std::nullopt));
         std::unique_ptr<ASTNode> assign =
@@ -39,7 +39,7 @@ TEST_CASE("DE can extract assign pattern correctly", "[Design Extractor]") {
         std::unique_ptr<ASTNode> root =
             std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Program, std::nullopt));
         std::unique_ptr<ASTNode> proc =
-            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Procedure, std::nullopt));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Procedure, "main"));
         std::unique_ptr<ASTNode> stmtLst =
             std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::StmtLst, std::nullopt));
         std::unique_ptr<ASTNode> assign =
@@ -77,7 +77,7 @@ TEST_CASE("DE can extract assign pattern correctly", "[Design Extractor]") {
         std::unique_ptr<ASTNode> root =
             std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Program, std::nullopt));
         std::unique_ptr<ASTNode> proc =
-            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Procedure, std::nullopt));
+            std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::Procedure, "main"));
         std::unique_ptr<ASTNode> stmtLst =
             std::make_unique<ASTNode>(ASTNode(ASTNode::SyntaxType::StmtLst, std::nullopt));
         std::unique_ptr<ASTNode> assign =

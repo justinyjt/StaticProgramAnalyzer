@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "commons/ASTNode.h"
+#include "CallGraph.h"
 #include "pkb/PKBWriter.h"
 
 class DesignExtractor {
@@ -15,19 +16,31 @@ class DesignExtractor {
     std::unique_ptr<ASTNode> extractProgram(std::unique_ptr<ASTNode>);
 
     void addVarNameSetToPKB();
+
     void addConstantSetToPKB();
+
+    void addProcSetToPKB();
+
     void addStmtUsesPairSetToPKB();
+
     void addStmtModifiesPairSetToPKB();
+
     void addStmtFollowPairSetToPKB();
+
     void addStmtParentPairSetToPKB();
+
     void addPatternsToPKB();
+
     void addStmtTypesToPKB();
+
+    void addCallsToPKB();
 
     std::unordered_map<STMT_NUM, std::string> getAssignPatMap();
 
  private:
     ENT_SET varNameSet_;
     ENT_SET constSet_;
+    ENT_SET procSet_;
     STMT_SET stmtSet_;
     STMT_SET assignSet_;
     STMT_SET printSet_;
@@ -49,22 +62,35 @@ class DesignExtractor {
     std::vector<STMT_NUM> containerStmtLst_;
     STMT_NUM stmtCnt_;
     std::string assignPat_;
+    CallGraph callGraph_;
 
     void extractProc(const std::unique_ptr<ASTNode> &);
+
     void extractAssign(const std::unique_ptr<ASTNode> &);
+
     void extractRead(const std::unique_ptr<ASTNode> &);
+
     void extractPrint(const std::unique_ptr<ASTNode> &);
+
     void extractIf(const std::unique_ptr<ASTNode> &);
+
     void extractWhile(const std::unique_ptr<ASTNode> &);
+
     void extractStmtLst(const std::unique_ptr<ASTNode> &);
 
     void extractCondExpr(const std::unique_ptr<ASTNode> &);
+
     std::string extractLeftAssign(const std::unique_ptr<ASTNode> &);
+
     std::string extractRightAssign(const std::unique_ptr<ASTNode> &);
 
     void updateStmtSet();
+
     void updateParentsPairSet(const std::unique_ptr<std::vector<STMT_NUM>> &lst);
+
     void updateFollowsPairSet(const std::unique_ptr<std::vector<STMT_NUM>> &lst);
+
     void updateStmtUsesPairSet(STMT_NUM stmt, std::string varName);
+
     void updateStmtModsPairSet(STMT_NUM stmt, std::string varName);
 };
