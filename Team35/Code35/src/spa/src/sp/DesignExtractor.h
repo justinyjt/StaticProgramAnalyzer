@@ -59,6 +59,7 @@ class DesignExtractor {
     std::vector<STMT_NUM> containerStmtLst_;
     STMT_NUM stmtCnt_;
     std::string assignPat_;
+    ENT_NAME curProc_;
     CallGraph callGraph_;
 
     void extractProc(const std::unique_ptr<ASTNode> &);
@@ -72,6 +73,8 @@ class DesignExtractor {
     void extractIf(const std::unique_ptr<ASTNode> &);
 
     void extractWhile(const std::unique_ptr<ASTNode> &);
+
+    void extractCall(const std::unique_ptr<ASTNode>&);
 
     void extractStmtLst(const std::unique_ptr<ASTNode> &);
 

@@ -119,6 +119,16 @@ unique_ptr<ASTNode> Parser::parseWhile() {
     return std::move(cur);
 }
 
+unique_ptr<ASTNode> Parser::parseCall() {
+    scanner_.match(Token::Tag::Call);
+    unique_ptr<ASTNode> cur = std::make_unique<ASTNode>(ASTNode::SyntaxType::Call, std::nullopt);
+
+    cur->addChild(parseName());
+
+    scanner_.match(Token::Tag::SemiColon);
+    return std::move(cur);
+}
+
 unique_ptr<ASTNode> Parser::parseCondExpr() {
     if (scanner_.peek(Token::Tag::LParen) && scanner_.isCondExprSeparatedByLogicalOperator()) {
         scanner_.match(Token::Tag::LParen);
