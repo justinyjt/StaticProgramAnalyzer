@@ -5,34 +5,52 @@
 #include "qps/query_exceptions/SemanticException.h"
 #include "qps/clause/SingleSynonymSelectClause.h"
 #include "qps/clause/BooleanSelectClause.h"
+#include "qps/query_exceptions/SyntaxException.h"
 
-std::unique_ptr<SelectClause> SelectionParser::parse(TokenValidator& tokenValidator, std::vector<Synonym>& synonyms) {
-    tokenValidator.validateAndConsumeTokenType(Token::Tag::Select);
+SelectionParser::SelectionParser(PQLTokenScanner &pqlTokenScanner, std::vector<Synonym>& synonyms) :
+    pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
 
-    if (tokenValidator.isNextTokenType(Token::Tag::Bool) && !isSynonymDeclared("BOOLEAN", synonyms)) {  // BOOLEAN
-        tokenValidator.validateAndConsumeTokenType(Token::Tag::Bool);
+std::unique_ptr<SelectClause> SelectionParser::parse() {
+    pqlTokenScanner.matchAndValidate(Token::Tag::Select);
+
+    if (pqlTokenScanner.peek(Token::Tag::Bool) && !isSynonymDeclared("BOOLEAN")) {  // BOOLEAN
+        pqlTokenScanner.match(Token::Tag::Bool);
         return std::move(std::make_unique<BooleanSelectClause>());
-    } else if (tokenValidator.isNextTokenValidName()) {  // single synonym
-        std::unique_ptr<Token> selectedSynonym = tokenValidator.validateAndConsumeSynonymToken();
-
-        // check whether synonym is declared
-        for (auto synonym : synonyms) {
-            if (selectedSynonym->getLexeme() == synonym.str()) {
-                std::unique_ptr<SelectClause> selectClause = std::make_unique<SingleSynonymSelectClause>(synonym);
-                return std::move(selectClause);
-            }
-        }
-        throw SemanticException();
+    } else if (isName(pqlTokenScanner.peekLexeme())) {  // single synonym
+        return std::move(parseSelect());
     } else {
-        throw SemanticException();
+        throw SyntaxException();
     }
 }
 
-bool SelectionParser::isSynonymDeclared(std::string selectedSynonym, std::vector<Synonym>& synonyms) {
+std::unique_ptr<SelectClause> SelectionParser::parseSelect() {
+    for (auto synonym : synonyms) {
+        if (pqlTokenScanner.peekLexeme() == synonym.str()) {
+            std::unique_ptr<SelectClause> selectClause = std::make_unique<SingleSynonymSelectClause>(synonym);
+            pqlTokenScanner.next();
+            return std::move(selectClause);
+        }
+    }
+    throw SemanticException();
+}
+
+bool SelectionParser::isSynonymDeclared(std::string selectedSynonym) {
     for (auto synonym : synonyms) {
         if (selectedSynonym == synonym.str()) {
             return true;
         }
     }
     return false;
+}
+
+bool SelectionParser::isName(std::string input) {
+    if (!isalpha(input[0])) {
+        return false;
+    }
+    for (char c : input) {
+        if (!isalpha(c) && !isdigit(c)) {
+            return false;
+        }
+    }
+    return true;
 }

@@ -9,9 +9,17 @@
 #include "qps/query_parser/clause_parser/TokenValidator.h"
 #include "qps/clause/Clause.h"
 #include "qps/clause/SelectClause.h"
+#include "commons/token_scanner/TokenScanner.h"
+#include "commons/token_scanner/PQLTokenScanner.h"
 
 class SelectionParser {
  public:
-    std::unique_ptr<SelectClause> parse(TokenValidator& tokenValidator, std::vector<Synonym>& synonyms);
-    bool isSynonymDeclared(std::string selectedSynonym, std::vector<Synonym>& synonyms);
+    explicit SelectionParser(PQLTokenScanner &pqlTokenScanner, std::vector<Synonym>& synonyms);
+    std::unique_ptr<SelectClause> parse();
+    std::unique_ptr<SelectClause> parseSelect();
+    bool isSynonymDeclared(std::string selectedSynonym);
+    bool isName(std::string input);
+private:
+    PQLTokenScanner &pqlTokenScanner;
+    std::vector<Synonym>& synonyms;
 };

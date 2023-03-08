@@ -9,11 +9,15 @@
 #include "qps/pql/Synonym.h"
 #include "commons/lexer/Lexer.h"
 #include "TokenValidator.h"
+#include "commons/token_scanner/TokenScanner.h"
 
 class ClauseParser {
  public:
-    std::vector<std::unique_ptr<Clause>> parse(TokenValidator &tokenValidator, std::vector<Synonym>& synonyms);
+    ClauseParser(PQLTokenScanner &pqlTokenScanner, std::vector<Synonym> &synonyms);
+    std::vector<std::unique_ptr<Clause>> parse();
  private:
-    std::unique_ptr<PatternClauseParser> patternClauseParser;
-    std::unique_ptr<SuchThatClauseParser> suchThatClauseParser;
+    PatternClauseParser patternClauseParser;
+    SuchThatClauseParser suchThatClauseParser;
+    PQLTokenScanner& pqlTokenScanner;
+    std::vector<Synonym>& synonyms;
 };
