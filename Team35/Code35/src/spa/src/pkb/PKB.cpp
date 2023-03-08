@@ -141,8 +141,8 @@ bool PKB::addRelationshipToTable(StmtStmtRelationship tableType, STMT_STMT stmtS
     return table.insertPair(stmtStmt.first, stmtStmt.second);
 }
 
-bool PKB::addPattern(STMT_NUM stmtNum, std::string pattern) {
-    return patternTable.addPattern(stmtNum, pattern);
+bool PKB::addPattern(STMT_NUM stmtNum, ASSIGN_PAT &&pattern) {
+    return patternTable.addPattern(stmtNum, std::move(pattern));
 }
 
 ENT_SET PKB::getEntByStmtKey(StmtNameRelationship tableType, STMT_NUM stmt) const {

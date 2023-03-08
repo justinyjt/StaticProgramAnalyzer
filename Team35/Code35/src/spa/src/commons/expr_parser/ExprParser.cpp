@@ -7,7 +7,7 @@ using std::unique_ptr;
 
 ExprParser::ExprParser(TokenScanner *scanner) { scanner_ = scanner; }
 
-std::unique_ptr<ExprNode> ExprParser::parseExpr() {
+ASSIGN_PAT_RIGHT ExprParser::parseExpr() {
     unique_ptr<ExprNode> firstOp = parseTerm();
     if (scanner_->match(Token::Tag::Plus)) {
         unique_ptr<ExprNode> op = std::make_unique<ExprNode>(ASTNode::SyntaxType::Plus, "+");

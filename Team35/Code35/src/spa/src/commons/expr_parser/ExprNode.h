@@ -13,10 +13,12 @@ class ExprNode : public ASTNode {
     [[nodiscard]] std::string toString() const;
 
     // Override the == operator to compare two expressions
-    bool operator==(const ExprNode& other) const;
+    bool operator==(const ExprNode &other) const;
 
     // Override the != operator to compare two expressions
-    bool operator!=(const ExprNode& other) const;
+    bool operator!=(const ExprNode &other) const;
+
+    bool contains(const ExprNode &other) const;
 };
 
 

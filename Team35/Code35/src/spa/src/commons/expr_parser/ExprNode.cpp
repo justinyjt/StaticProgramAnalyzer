@@ -20,8 +20,8 @@ bool ExprNode::operator==(const ExprNode &other) const {
     }
 
     for (size_t i = 0; i < getChildren().size(); ++i) {
-        auto thisChild = dynamic_cast<const ExprNode*>(getChildren()[i].get());
-        auto otherChild = dynamic_cast<const ExprNode*>(other.getChildren()[i].get());
+        auto thisChild = dynamic_cast<const ExprNode *>(getChildren()[i].get());
+        auto otherChild = dynamic_cast<const ExprNode *>(other.getChildren()[i].get());
 
         if (thisChild == nullptr || otherChild == nullptr || *thisChild != *otherChild) {
             return false;
@@ -31,6 +31,20 @@ bool ExprNode::operator==(const ExprNode &other) const {
     return true;
 }
 
-bool ExprNode::operator!=(const ExprNode& other) const {
+bool ExprNode::operator!=(const ExprNode &other) const {
     return !(*this == other);
+}
+
+bool ExprNode::contains(const ExprNode &other) const {
+    if (*this == other) {
+        return true;
+    } else {
+        for (size_t i = 0; i < this->getChildren().size(); ++i) {
+            auto thisChild = dynamic_cast<const ExprNode *>(getChildren()[i].get());
+            if (thisChild->contains(other)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
