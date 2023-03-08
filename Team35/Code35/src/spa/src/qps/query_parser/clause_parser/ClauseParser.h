@@ -10,14 +10,15 @@
 #include "commons/lexer/Lexer.h"
 #include "TokenValidator.h"
 #include "commons/token_scanner/TokenScanner.h"
+#include "commons/SynonymHash.h"
 
 class ClauseParser {
  public:
-    ClauseParser(PQLTokenScanner &pqlTokenScanner, std::vector<Synonym> &synonyms);
+    ClauseParser(PQLTokenScanner& pqlTokenScanner, std::unordered_map<std::string, Synonym::DesignEntity>& synonyms);
     std::vector<std::unique_ptr<Clause>> parse();
  private:
     PatternClauseParser patternClauseParser;
     SuchThatClauseParser suchThatClauseParser;
     PQLTokenScanner& pqlTokenScanner;
-    std::vector<Synonym>& synonyms;
+    std::unordered_map<std::string, Synonym::DesignEntity>& synonyms;
 };

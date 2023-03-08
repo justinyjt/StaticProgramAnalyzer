@@ -11,15 +11,15 @@
 #include "qps/clause/SelectClause.h"
 #include "commons/token_scanner/TokenScanner.h"
 #include "commons/token_scanner/PQLTokenScanner.h"
+#include "commons/SynonymHash.h"
 
 class SelectionParser {
  public:
-    explicit SelectionParser(PQLTokenScanner &pqlTokenScanner, std::vector<Synonym>& synonyms);
+    explicit SelectionParser(PQLTokenScanner &pqlTokenScanner, std::unordered_map<std::string, Synonym::DesignEntity>& synonyms);
     std::unique_ptr<SelectClause> parse();
     std::unique_ptr<SelectClause> parseSelect();
-    bool isSynonymDeclared(std::string selectedSynonym);
     bool isName(std::string input);
 private:
     PQLTokenScanner &pqlTokenScanner;
-    std::vector<Synonym>& synonyms;
+    std::unordered_map<std::string, Synonym::DesignEntity>& synonyms;
 };

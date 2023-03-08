@@ -9,15 +9,17 @@
 #include "commons/lexer/exception/LexerException.h"
 #include "qps/query_exceptions/SyntaxException.h"
 #include "commons/token_scanner/PQLTokenScanner.h"
+#include "commons/SynonymHash.h"
 
 std::vector<std::unique_ptr<Clause>> QueryParser::parse(std::string &query) {
     std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     try {
         // pass tokenList and parse declaration
-        std::vector<Synonym> declarationList;
+        std::unordered_map<std::string, Synonym::DesignEntity> declarationList;
+        // std::vector<Synonym> declarationList;
         DeclarationParser declarationParser(pqlTokenScanner, declarationList);
-        std::vector<Synonym> synonyms = declarationParser.parse();
+        std::unordered_map<std::string, Synonym::DesignEntity> synonyms = declarationParser.parse();
         // parse select using list of found synonyms
         SelectionParser selectionParser(pqlTokenScanner, synonyms);
         std::unique_ptr<Clause> selectClause = selectionParser.parse();

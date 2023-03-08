@@ -10,10 +10,11 @@
 #include "commons/lexer/Lexer.h"
 #include "qps/query_parser/clause_parser/TokenValidator.h"
 #include "commons/token_scanner/PQLTokenScanner.h"
+#include "commons/SynonymHash.h"
 
 class SuchThatClauseParser {
  public:
-    explicit SuchThatClauseParser(PQLTokenScanner &pqlTokenScanner, std::vector<Synonym>& synonyms);
+    explicit SuchThatClauseParser(PQLTokenScanner& pqlTokenScanner, std::unordered_map<std::string, Synonym::DesignEntity>& synonyms);
     std::unique_ptr<Clause> parse();
     std::unique_ptr<Clause> parseRelationship();
     std::unique_ptr<Clause> parseUsesModifies(std::string& relationship);
@@ -27,5 +28,5 @@ class SuchThatClauseParser {
     bool isName(std::string input);
 private:
     PQLTokenScanner &pqlTokenScanner;
-    std::vector<Synonym>& synonyms;
+    std::unordered_map<std::string, Synonym::DesignEntity>& synonyms;
 };

@@ -1,11 +1,12 @@
 #include "DeclarationParser.h"
 #include "qps/query_exceptions/SyntaxException.h"
 #include "qps/query_exceptions/SemanticException.h"
+#include "qps/query_parser/SemanticValidator.h"
 
-DeclarationParser::DeclarationParser(PQLTokenScanner &pqlTokenScanner, std::vector<Synonym>& synonyms) :
+DeclarationParser::DeclarationParser(PQLTokenScanner &pqlTokenScanner, std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
         pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
 
-std::vector<Synonym> DeclarationParser::parse() {
+std::unordered_map<std::string, Synonym::DesignEntity> DeclarationParser::parse() {
 
     // check for next declaration
     while (true) {
@@ -17,9 +18,13 @@ std::vector<Synonym> DeclarationParser::parse() {
 
         // check if there are multiple declarations of the same type
         while (true) {
-            std::unique_ptr<Synonym> synonym = parseSynonym(de);
+            std::string synonym = parseSynonym(de);
 
-            validateAndAddSynonym(std::move(synonym));
+            if (!SemanticValidator::isDeclared(synonyms, synonym)) {
+                synonyms.insert({synonym, de});
+            } else {
+                throw SemanticException();
+            }
 
             if (pqlTokenScanner.match(Token::Tag::SemiColon)) {
                 break;
@@ -78,10 +83,10 @@ Synonym::DesignEntity DeclarationParser::parseDesignEntity() {
     }
 }
 
-std::unique_ptr<Synonym> DeclarationParser::parseSynonym(Synonym::DesignEntity de) {
-    std::unique_ptr<Synonym> synonym;
-    if (isValidName(pqlTokenScanner.peekLexeme())) {
-        synonym = std::make_unique<Synonym>(de, pqlTokenScanner.peekLexeme());
+std::string DeclarationParser::parseSynonym(Synonym::DesignEntity de) {
+    std::string synonym;
+    if (isName(pqlTokenScanner.peekLexeme())) {
+        synonym = pqlTokenScanner.peekLexeme();
         pqlTokenScanner.next();
         return synonym;
     } else {
@@ -89,7 +94,7 @@ std::unique_ptr<Synonym> DeclarationParser::parseSynonym(Synonym::DesignEntity d
     }
 }
 
-bool DeclarationParser::isValidName(std::string input) {
+bool DeclarationParser::isName(std::string input) {
 
     // check syntax validity
     if (!isalpha(input[0])) {
@@ -101,18 +106,4 @@ bool DeclarationParser::isValidName(std::string input) {
         }
     }
     return true;
-}
-
-void DeclarationParser::validateAndAddSynonym(std::unique_ptr<Synonym> synonym) {
-    bool isDeclared = false;
-    for (const Synonym& s : synonyms) {
-        if (synonym->str() == s.str()) {
-            isDeclared = true;
-        }
-    }
-    if (!isDeclared) {
-        synonyms.emplace_back(*synonym);
-    } else {
-        throw SemanticException();
-    }
 }

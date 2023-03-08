@@ -6,14 +6,15 @@
 #include "qps/clause/SingleSynonymSelectClause.h"
 #include "qps/clause/BooleanSelectClause.h"
 #include "qps/query_exceptions/SyntaxException.h"
+#include "qps/query_parser/SemanticValidator.h"
 
-SelectionParser::SelectionParser(PQLTokenScanner &pqlTokenScanner, std::vector<Synonym>& synonyms) :
+SelectionParser::SelectionParser(PQLTokenScanner &pqlTokenScanner, std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
     pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
 
 std::unique_ptr<SelectClause> SelectionParser::parse() {
     pqlTokenScanner.matchAndValidate(Token::Tag::Select);
 
-    if (pqlTokenScanner.peek(Token::Tag::Bool) && !isSynonymDeclared("BOOLEAN")) {  // BOOLEAN
+    if (pqlTokenScanner.peek(Token::Tag::Bool) && !SemanticValidator::isDeclared(synonyms, "BOOLEAN")) {  // BOOLEAN
         pqlTokenScanner.match(Token::Tag::Bool);
         return std::move(std::make_unique<BooleanSelectClause>());
     } else if (isName(pqlTokenScanner.peekLexeme())) {  // single synonym
@@ -24,23 +25,12 @@ std::unique_ptr<SelectClause> SelectionParser::parse() {
 }
 
 std::unique_ptr<SelectClause> SelectionParser::parseSelect() {
-    for (auto synonym : synonyms) {
-        if (pqlTokenScanner.peekLexeme() == synonym.str()) {
-            std::unique_ptr<SelectClause> selectClause = std::make_unique<SingleSynonymSelectClause>(synonym);
-            pqlTokenScanner.next();
-            return std::move(selectClause);
-        }
-    }
-    throw SemanticException();
-}
-
-bool SelectionParser::isSynonymDeclared(std::string selectedSynonym) {
-    for (auto synonym : synonyms) {
-        if (selectedSynonym == synonym.str()) {
-            return true;
-        }
-    }
-    return false;
+    std::string selected = pqlTokenScanner.peekLexeme();
+    Synonym::DesignEntity de = SemanticValidator::getDesignEntity(synonyms, selected);
+    Synonym selectedSynonym(de, selected);
+    std::unique_ptr<SelectClause> selectClause = std::make_unique<SingleSynonymSelectClause>(selectedSynonym);
+    pqlTokenScanner.next();
+    return std::move(selectClause);
 }
 
 bool SelectionParser::isName(std::string input) {
