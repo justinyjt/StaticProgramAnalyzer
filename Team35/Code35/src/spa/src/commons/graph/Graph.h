@@ -17,6 +17,11 @@ class Graph {
 
     ~Graph() = default;
 
+    bool operator==(const Graph &other) const {
+        return nodes == other.nodes && nodeToIndex == other.nodeToIndex &&
+            outgoingAdjList == other.outgoingAdjList && incomingAdjList == other.incomingAdjList;
+    }
+
     void addEdge(const T &from, const T &to) {
         Index fromIndex = addNode(from);
         Index toIndex = addNode(to);
