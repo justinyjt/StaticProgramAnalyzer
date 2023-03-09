@@ -17,7 +17,7 @@ template<typename T>
 class Graph {
  public:
     Graph() : nodes(), nodeToIndex(), outgoingAdjList(), incomingAdjList() {}
-    ~Graph() = default;
+    virtual ~Graph() = default;
 
     bool operator==(const Graph &other) const {
         return nodes == other.nodes && nodeToIndex == other.nodeToIndex &&

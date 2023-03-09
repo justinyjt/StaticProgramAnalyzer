@@ -11,6 +11,9 @@ class CFGraph : public Graph<CFGraphNodeData> {
  public:
     static CFGraphNodeData end_node_data;
     CFGraph();
+    ~CFGraph() override = default;
+    CFGraph(const CFGraph &graph) = delete;
+    CFGraph &operator=(const CFGraph &graph) = delete;
     CFGraph(const CFGraph &graph, STMT_NUM min_stmt_num, STMT_NUM max_stmt_num, ENT_NAME proc_name);
     STMT_SET getPredecessors(STMT_NUM stmt_num, bool isTransitive) const;
     STMT_SET getSuccessors(STMT_NUM stmt_num, bool isTransitive) const;
