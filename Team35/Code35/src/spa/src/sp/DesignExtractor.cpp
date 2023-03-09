@@ -14,7 +14,7 @@ DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
         stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(),
         containerStmtLst_(), stmtCnt_(0) {}
 
-std::unique_ptr<ASTNode> DesignExtractor::extractProgram(std::unique_ptr<ASTNode> root) {
+std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode> root) {
     root_ = std::move(root);
     assert(root_->getSyntaxType() == ASTNode::SyntaxType::Program);
     for (const auto &child : root_->getChildren()) {
@@ -27,16 +27,17 @@ std::unique_ptr<ASTNode> DesignExtractor::extractProgram(std::unique_ptr<ASTNode
     addStmtFollowPairSetToPKB();
     addStmtParentPairSetToPKB();
     addStmtTypesToPKB();
+    addPatternsToPKB();
     return std::move(root_);
 }
 
-void DesignExtractor::extractProc(const std::unique_ptr<ASTNode> &node) {
+void DesignExtractor::extractProc(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::Procedure);
-    const std::unique_ptr<ASTNode> &nodeC = node->getChildren().front();
+    const std::shared_ptr<ASTNode> &nodeC = node->getChildren().front();
     extractStmtLst(nodeC);
 }
 
-void DesignExtractor::extractStmtLst(const std::unique_ptr<ASTNode> &node) {
+void DesignExtractor::extractStmtLst(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::StmtLst);
     std::unique_ptr<std::vector<STMT_NUM>> childStmtLstPtr = std::make_unique<std::vector<STMT_NUM>>();
 
@@ -93,18 +94,20 @@ void DesignExtractor::updateParentsPairSet(const std::unique_ptr<std::vector<STM
     }
 }
 
-void DesignExtractor::extractAssign(const std::unique_ptr<ASTNode> &node) {
+void DesignExtractor::extractAssign(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::Assign);
     const auto &lAssign = node->getChildren().front();
-    const auto &rAssign = node->getChildren().back();
+    auto rAssign = node->getChildren().back();
 
     ASSIGN_PAT_LEFT lAssignPat = extractLeftAssign(lAssign);
-    ASSIGN_PAT_RIGHT rAssignPat = ASSIGN_PAT_RIGHT(dynamic_cast<ExprNode *>(rAssign.get()));
-    ASSIGN_PAT assignPat = std::make_pair(lAssignPat, std::move(rAssignPat));
-    addPatternToPKB(stmtCnt_, std::move(assignPat));
+    ASSIGN_PAT_RIGHT rAssignPat = std::dynamic_pointer_cast<ExprNode>(rAssign);
+    ASSIGN_PAT assignPat = std::make_pair(lAssignPat, rAssignPat);
+    assignPatMap_.emplace(stmtCnt_, std::move(assignPat));
+    extractRightAssign(rAssign);
+
 }
 
-std::string DesignExtractor::extractLeftAssign(const std::unique_ptr<ASTNode> &node) {
+std::string DesignExtractor::extractLeftAssign(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::Variable);
     std::string varName = node->getLabel();
     varNameSet_.insert(varName);
@@ -113,7 +116,7 @@ std::string DesignExtractor::extractLeftAssign(const std::unique_ptr<ASTNode> &n
     return varName;
 }
 
-void DesignExtractor::extractRightAssign(const std::unique_ptr<ASTNode> &node) {
+void DesignExtractor::extractRightAssign(const std::shared_ptr<ASTNode> &node) {
     std::string label = node->getLabel();
     switch (node->getSyntaxType()) {
         case ASTNode::SyntaxType::Variable:
@@ -130,11 +133,10 @@ void DesignExtractor::extractRightAssign(const std::unique_ptr<ASTNode> &node) {
             extractRightAssign(lChild);
             extractRightAssign(rChild);
             return;
-            break;
     }
 }
 
-void DesignExtractor::extractRead(const std::unique_ptr<ASTNode> &node) {
+void DesignExtractor::extractRead(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::Read);
     const auto &child = node->getChildren().front();
     assert(child->getSyntaxType() == ASTNode::SyntaxType::Variable);
@@ -144,7 +146,7 @@ void DesignExtractor::extractRead(const std::unique_ptr<ASTNode> &node) {
     readSet_.insert(stmtCnt_);
 }
 
-void DesignExtractor::extractPrint(const std::unique_ptr<ASTNode> &node) {
+void DesignExtractor::extractPrint(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::Print);
     const auto &child = node->getChildren().front();
     assert(child->getSyntaxType() == ASTNode::SyntaxType::Variable);
@@ -154,7 +156,7 @@ void DesignExtractor::extractPrint(const std::unique_ptr<ASTNode> &node) {
     printSet_.insert(stmtCnt_);
 }
 
-void DesignExtractor::extractCondExpr(const std::unique_ptr<ASTNode> &node) {
+void DesignExtractor::extractCondExpr(const std::shared_ptr<ASTNode> &node) {
     std::string label = node->getLabel();
     switch (node->getSyntaxType()) {
         case ASTNode::SyntaxType::Variable:
@@ -178,7 +180,7 @@ void DesignExtractor::extractCondExpr(const std::unique_ptr<ASTNode> &node) {
     }
 }
 
-void DesignExtractor::extractIf(const std::unique_ptr<ASTNode> &node) {
+void DesignExtractor::extractIf(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::If);
     containerStmtLst_.push_back(stmtCnt_);
     ifSet_.insert(stmtCnt_);
@@ -195,7 +197,7 @@ void DesignExtractor::extractIf(const std::unique_ptr<ASTNode> &node) {
     containerStmtLst_.pop_back();
 }
 
-void DesignExtractor::extractWhile(const std::unique_ptr<ASTNode> &node) {
+void DesignExtractor::extractWhile(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::While);
     containerStmtLst_.push_back(stmtCnt_);
     whileSet_.insert(stmtCnt_);
@@ -255,8 +257,8 @@ void DesignExtractor::addStmtParentPairSetToPKB() {
     pkbWriter_->addStmtStmtRelationships(StmtStmtRelationship::ParentStar, stmtParentStarPairSet_);
 }
 
-void DesignExtractor::addPatternToPKB(STMT_NUM num, ASSIGN_PAT pat) {
-    pkbWriter_->addPattern(num, std::move(pat));
+void DesignExtractor::addPatternsToPKB() {
+    pkbWriter_->addPatterns(assignPatMap_);
 }
 
 void DesignExtractor::addStmtTypesToPKB() {
@@ -267,4 +269,8 @@ void DesignExtractor::addStmtTypesToPKB() {
     pkbWriter_->addStatements(StmtType::If, ifSet_);
     pkbWriter_->addStatements(StmtType::While, whileSet_);
     pkbWriter_->addStatements(StmtType::None, stmtSet_);
+}
+
+std::unordered_map<STMT_NUM, ASSIGN_PAT> DesignExtractor::getAssignPatMap() {
+    return this->assignPatMap_;
 }

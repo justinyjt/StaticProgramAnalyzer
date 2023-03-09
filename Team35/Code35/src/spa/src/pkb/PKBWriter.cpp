@@ -48,9 +48,12 @@ bool PKBWriter::addStmtStmtRelationships(StmtStmtRelationship tableType, STMT_ST
 }
 
 
-bool PKBWriter::addPattern(STMT_NUM num, ASSIGN_PAT pattern) {
-    if (!pkb.addPattern(num, std::move(pattern))) {
-        return false;
+bool PKBWriter::addPatterns(std::unordered_map<STMT_NUM, ASSIGN_PAT> patMap) {
+    std::unordered_map<STMT_NUM, ASSIGN_PAT>::iterator p;
+    for (p = patMap.begin(); p != patMap.end(); ++p) {
+        if (!pkb.addPattern(p->first, p->second)) {
+            return false;
+        }
     }
     return true;
 }

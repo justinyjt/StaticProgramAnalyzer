@@ -8,17 +8,17 @@ using std::unique_ptr;
 ExprParser::ExprParser(TokenScanner *scanner) { scanner_ = scanner; }
 
 ASSIGN_PAT_RIGHT ExprParser::parseExpr() {
-    unique_ptr<ExprNode> firstOp = parseTerm();
+    ASSIGN_PAT_RIGHT firstOp = parseTerm();
     if (scanner_->match(Token::Tag::Plus)) {
-        unique_ptr<ExprNode> op = std::make_unique<ExprNode>(ASTNode::SyntaxType::Plus, "+");
-        unique_ptr<ExprNode> secondOp = parseExpr();
+        ASSIGN_PAT_RIGHT op = std::make_shared<ExprNode>(ASTNode::SyntaxType::Plus, "+");
+        ASSIGN_PAT_RIGHT secondOp = parseExpr();
         op->addChild(std::move(firstOp));
         op->addChild(std::move(secondOp));
 
         return std::move(op);
     } else if (scanner_->match(Token::Tag::Minus)) {
-        unique_ptr<ExprNode> op = std::make_unique<ExprNode>(ASTNode::SyntaxType::Minus, "-");
-        unique_ptr<ExprNode> secondOp = parseExpr();
+        ASSIGN_PAT_RIGHT op = std::make_unique<ExprNode>(ASTNode::SyntaxType::Minus, "-");
+        ASSIGN_PAT_RIGHT secondOp = parseExpr();
         op->addChild(std::move(firstOp));
         op->addChild(std::move(secondOp));
 
@@ -28,25 +28,25 @@ ASSIGN_PAT_RIGHT ExprParser::parseExpr() {
     }
 }
 
-std::unique_ptr<ExprNode> ExprParser::parseTerm() {
-    unique_ptr<ExprNode> firstOp = parseFactor();
+ASSIGN_PAT_RIGHT ExprParser::parseTerm() {
+    ASSIGN_PAT_RIGHT firstOp = parseFactor();
     if (scanner_->match(Token::Tag::Multiply)) {
-        unique_ptr<ExprNode> op = std::make_unique<ExprNode>(ASTNode::SyntaxType::Multiply, "*");
-        unique_ptr<ExprNode> secondOp = parseTerm();
+        ASSIGN_PAT_RIGHT op = std::make_shared<ExprNode>(ASTNode::SyntaxType::Multiply, "*");
+        ASSIGN_PAT_RIGHT secondOp = parseTerm();
         op->addChild(std::move(firstOp));
         op->addChild(std::move(secondOp));
 
         return std::move(op);
     } else if (scanner_->match(Token::Tag::Divide)) {
-        unique_ptr<ExprNode> op = std::make_unique<ExprNode>(ASTNode::SyntaxType::Divide, "/");
-        unique_ptr<ExprNode> secondOp = parseTerm();
+        ASSIGN_PAT_RIGHT op = std::make_shared<ExprNode>(ASTNode::SyntaxType::Divide, "/");
+        ASSIGN_PAT_RIGHT secondOp = parseTerm();
         op->addChild(std::move(firstOp));
         op->addChild(std::move(secondOp));
 
         return std::move(op);
     } else if (scanner_->match(Token::Tag::Modulo)) {
-        unique_ptr<ExprNode> op = std::make_unique<ExprNode>(ASTNode::SyntaxType::Modulo, "%");
-        unique_ptr<ExprNode> secondOp = parseTerm();
+        ASSIGN_PAT_RIGHT op = std::make_shared<ExprNode>(ASTNode::SyntaxType::Modulo, "%");
+        ASSIGN_PAT_RIGHT secondOp = parseTerm();
         op->addChild(std::move(firstOp));
         op->addChild(std::move(secondOp));
 
@@ -56,8 +56,8 @@ std::unique_ptr<ExprNode> ExprParser::parseTerm() {
     }
 }
 
-std::unique_ptr<ExprNode> ExprParser::parseFactor() {
-    unique_ptr<ExprNode> cur;
+ASSIGN_PAT_RIGHT ExprParser::parseFactor() {
+    ASSIGN_PAT_RIGHT cur;
     if (scanner_->peek(Token::Tag::Name)) {
         cur = parseName();
     } else if (scanner_->peek(Token::Tag::Integer)) {
@@ -70,18 +70,18 @@ std::unique_ptr<ExprNode> ExprParser::parseFactor() {
     return std::move(cur);
 }
 
-std::unique_ptr<ExprNode> ExprParser::parseName() {
+ASSIGN_PAT_RIGHT ExprParser::parseName() {
     assert(scanner_->peek(Token::Tag::Name));
-    unique_ptr<ExprNode> cur =
-            std::make_unique<ExprNode>(ASTNode::SyntaxType::Variable, scanner_->peekLexeme());
+    ASSIGN_PAT_RIGHT cur =
+            std::make_shared<ExprNode>(ASTNode::SyntaxType::Variable, scanner_->peekLexeme());
     scanner_->match(Token::Tag::Name);
     return std::move(cur);
 }
 
-std::unique_ptr<ExprNode> ExprParser::parseInteger() {
+ASSIGN_PAT_RIGHT ExprParser::parseInteger() {
     assert(scanner_->peek(Token::Tag::Integer));
-    unique_ptr<ExprNode> cur =
-            std::make_unique<ExprNode>(ASTNode::SyntaxType::Constant, scanner_->peekLexeme());
+    ASSIGN_PAT_RIGHT cur =
+            std::make_shared<ExprNode>(ASTNode::SyntaxType::Constant, scanner_->peekLexeme());
     scanner_->match(Token::Tag::Integer);
     return std::move(cur);
 }

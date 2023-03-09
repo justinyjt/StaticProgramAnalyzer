@@ -19,7 +19,7 @@ class PKBWriter {
 
     bool addEntityEntityRelationships(NameNameRelationship tableType, ENT_ENT_SET set);
 
-    bool addPattern(STMT_NUM num, ASSIGN_PAT pattern);
+    bool addPatterns(std::unordered_map<STMT_NUM, ASSIGN_PAT> patMap);
 
  private:
     PKB &pkb;

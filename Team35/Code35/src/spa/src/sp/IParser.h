@@ -8,6 +8,7 @@
 
 class IParser {
  public:
-    virtual std::unique_ptr<ASTNode> Parse() = 0;
+    virtual std::shared_ptr<ASTNode> Parse() = 0;
+
     virtual ~IParser() = default;
 };

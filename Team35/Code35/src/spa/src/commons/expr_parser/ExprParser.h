@@ -17,11 +17,11 @@ class ExprParser {
  private:
     TokenScanner *scanner_;
 
-    std::unique_ptr<ExprNode> parseTerm();
+    ASSIGN_PAT_RIGHT parseTerm();
 
-    std::unique_ptr<ExprNode> parseFactor();
+    ASSIGN_PAT_RIGHT parseFactor();
 
-    std::unique_ptr<ExprNode> parseName();
+    ASSIGN_PAT_RIGHT parseName();
 
-    std::unique_ptr<ExprNode> parseInteger();
+    ASSIGN_PAT_RIGHT parseInteger();
 };

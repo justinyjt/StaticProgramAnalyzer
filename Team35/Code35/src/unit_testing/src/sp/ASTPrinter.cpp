@@ -2,7 +2,7 @@
 
 ASTPrinter::ASTPrinter() : res_() {}
 
-std::string ASTPrinter::printAST(const std::unique_ptr<ASTNode> &node) {
+std::string ASTPrinter::printAST(const std::shared_ptr<ASTNode> &node) {
     std::string res;
     if (node->getSyntaxType() == ASTNode::SyntaxType::Program) {
         for (auto &child : node->getChildren()) {
@@ -37,13 +37,14 @@ std::string ASTPrinter::printAST(const std::unique_ptr<ASTNode> &node) {
         const auto &cond = node->getChildren().at(0);
         const auto &thenStmt = node->getChildren().at(1);
         const auto &elseStmt = node->getChildren().at(2);
-        res.append("if (" + printAST(cond) + ") then {\n" + printAST(thenStmt) + "} else {\n" + printAST(elseStmt) + "}\n");
+        res.append("if (" + printAST(cond) + ") then {\n" + printAST(thenStmt) + "} else {\n" + printAST(elseStmt) +
+                   "}\n");
     } else if (node->getSyntaxType() == ASTNode::SyntaxType::While) {
         const auto &cond = node->getChildren().at(0);
         const auto &thenStmt = node->getChildren().at(1);
         res.append("while (" + printAST(cond) + ") {\n" + printAST(thenStmt) + "}\n");
     } else if (node->getSyntaxType() == ASTNode::SyntaxType::Variable
-        || node->getSyntaxType() == ASTNode::SyntaxType::Constant) {
+               || node->getSyntaxType() == ASTNode::SyntaxType::Constant) {
         return node->getLabel();
     } else { //binary operations
         if (node->getLabel() == "!") {

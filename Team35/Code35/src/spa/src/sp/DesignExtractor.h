@@ -12,7 +12,7 @@ class DesignExtractor {
  public:
     explicit DesignExtractor(std::unique_ptr<PKBWriter>);
 
-    std::unique_ptr<ASTNode> extractProgram(std::unique_ptr<ASTNode>);
+    std::shared_ptr<ASTNode> extractProgram(std::shared_ptr<ASTNode>);
 
     void addVarNameSetToPKB();
 
@@ -26,9 +26,11 @@ class DesignExtractor {
 
     void addStmtParentPairSetToPKB();
 
-    void addPatternToPKB(STMT_NUM num, ASSIGN_PAT pat);
+    void addPatternsToPKB();
 
     void addStmtTypesToPKB();
+
+    std::unordered_map<STMT_NUM, ASSIGN_PAT> getAssignPatMap();
 
 
  private:
@@ -51,29 +53,29 @@ class DesignExtractor {
     std::unordered_map<STMT_NUM, ASSIGN_PAT> assignPatMap_;
 
     std::unique_ptr<PKBWriter> pkbWriter_;
-    std::unique_ptr<ASTNode> root_;
+    std::shared_ptr<ASTNode> root_;
     std::vector<STMT_NUM> containerStmtLst_;
     STMT_NUM stmtCnt_;
 
-    void extractProc(const std::unique_ptr<ASTNode> &);
+    void extractProc(const std::shared_ptr<ASTNode> &);
 
-    void extractAssign(const std::unique_ptr<ASTNode> &);
+    void extractAssign(const std::shared_ptr<ASTNode> &);
 
-    void extractRead(const std::unique_ptr<ASTNode> &);
+    void extractRead(const std::shared_ptr<ASTNode> &);
 
-    void extractPrint(const std::unique_ptr<ASTNode> &);
+    void extractPrint(const std::shared_ptr<ASTNode> &);
 
-    void extractIf(const std::unique_ptr<ASTNode> &);
+    void extractIf(const std::shared_ptr<ASTNode> &);
 
-    void extractWhile(const std::unique_ptr<ASTNode> &);
+    void extractWhile(const std::shared_ptr<ASTNode> &);
 
-    void extractStmtLst(const std::unique_ptr<ASTNode> &);
+    void extractStmtLst(const std::shared_ptr<ASTNode> &);
 
-    void extractCondExpr(const std::unique_ptr<ASTNode> &);
+    void extractCondExpr(const std::shared_ptr<ASTNode> &);
 
-    std::string extractLeftAssign(const std::unique_ptr<ASTNode> &);
+    std::string extractLeftAssign(const std::shared_ptr<ASTNode> &);
 
-    void extractRightAssign(const std::unique_ptr<ASTNode> &);
+    void extractRightAssign(const std::shared_ptr<ASTNode> &);
 
     void updateStmtSet();
 

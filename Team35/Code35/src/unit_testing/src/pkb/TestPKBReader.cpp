@@ -417,11 +417,13 @@ TEST_CASE("12. Test PKB Pattern Matching") {
     PKBReader *pkbReaderPtr = &pkbReader;
     ASSIGN_PAT_RIGHT first_right = MockExprMaker::makePatternRight("y + 1");
     ASSIGN_PAT_RIGHT second_right = MockExprMaker::makePatternRight("y");
-    ASSIGN_PAT first("x", std::move(first_right));
-    ASSIGN_PAT second("x", std::move(second_right));
+    ASSIGN_PAT first("x", first_right);
+    ASSIGN_PAT second("x", second_right);
+    std::unordered_map<STMT_NUM, ASSIGN_PAT> patMap;
 
-    pkbWriterPtr->addPattern(1, std::move(first));
-    pkbWriterPtr->addPattern(2, std::move(second));
+    patMap.emplace(1, first);
+    patMap.emplace(2, second);
+    pkbWriterPtr->addPatterns(patMap);
 
     SECTION("Test Existing Partial Match") {
         STMT_SET expected = {1, 2};

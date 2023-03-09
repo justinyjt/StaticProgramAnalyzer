@@ -3,7 +3,17 @@
 #include "ExprNode.h"
 
 std::string ExprNode::toString() const {
-    return this->getLabel();
+    if (this->getChildren().size() > 0) {
+        std::string label;
+        auto firstChild = dynamic_cast<const ExprNode *>(getChildren()[0].get());
+        label += firstChild->toString();
+        label += this->getLabel();
+        auto secondChild = dynamic_cast<const ExprNode *>(getChildren()[1].get());
+        label += secondChild->toString();
+        return label;
+    } else {
+        return this->getLabel();
+    }
 }
 
 bool ExprNode::operator==(const ExprNode &other) const {

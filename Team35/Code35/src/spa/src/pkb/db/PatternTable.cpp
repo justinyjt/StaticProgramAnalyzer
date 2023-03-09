@@ -4,8 +4,8 @@
 #include "commons/lexer/Lexer.h"
 #include "commons/lexer/LexerFactory.h"
 
-bool PatternTable::addPattern(STMT_NUM stmt, ASSIGN_PAT &&pattern) {
-    stmtPatternMap.insert({stmt, std::move(pattern)});
+bool PatternTable::addPattern(STMT_NUM stmt, ASSIGN_PAT pattern) {
+    stmtPatternMap.insert({stmt, pattern});
     return true;
 }
 

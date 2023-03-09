@@ -9,30 +9,40 @@
 #include "commons/token/Token.h"
 #include "commons/token_scanner/SimpleTokenScanner.h"
 
-using std::unique_ptr;
+using std::shared_ptr;
 
 class Parser : public IParser {
  public:
     explicit Parser(TokenLst token_lst);
-    unique_ptr<ASTNode> Parse() override;
+
+    shared_ptr<ASTNode> Parse() override;
 
  private:
     SimpleTokenScanner scanner_;
 
-    unique_ptr<ASTNode> parseProc();
-    unique_ptr<ASTNode> parseStmtLst();
-    unique_ptr<ASTNode> parseStmt();
+    shared_ptr<ASTNode> parseProc();
 
-    unique_ptr<ASTNode> parseAssign();
-    unique_ptr<ASTNode> parseRead();
-    unique_ptr<ASTNode> parsePrint();
-    unique_ptr<ASTNode> parseIf();
-    unique_ptr<ASTNode> parseWhile();
+    shared_ptr<ASTNode> parseStmtLst();
 
-    unique_ptr<ASTNode> parseCondExpr();
-    unique_ptr<ASTNode> parseRelExpr();
-    unique_ptr<ASTNode> parseRelFactor();
-    unique_ptr<ASTNode> parseExpr();
+    shared_ptr<ASTNode> parseStmt();
 
-    unique_ptr<ASTNode> parseName();
+    shared_ptr<ASTNode> parseAssign();
+
+    shared_ptr<ASTNode> parseRead();
+
+    shared_ptr<ASTNode> parsePrint();
+
+    shared_ptr<ASTNode> parseIf();
+
+    shared_ptr<ASTNode> parseWhile();
+
+    shared_ptr<ASTNode> parseCondExpr();
+
+    shared_ptr<ASTNode> parseRelExpr();
+
+    shared_ptr<ASTNode> parseRelFactor();
+
+    shared_ptr<ASTNode> parseExpr();
+
+    shared_ptr<ASTNode> parseName();
 };
