@@ -10,6 +10,7 @@
 #include "qps/query_exceptions/SemanticException.h"
 #include "qps/pql/Ident.h"
 #include "qps/query_parser/SemanticValidator.h"
+#include "qps/clause/EntEntClause.h"
 
 SuchThatClauseParser::SuchThatClauseParser(PQLTokenScanner& pqlTokenScanner, std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
     pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
@@ -39,6 +40,14 @@ std::unique_ptr<Clause> SuchThatClauseParser::parseRelationship() {
             pqlTokenScanner.next();
         }
         return std::move(parseStmtStmt(relationship));
+    } else if (pqlTokenScanner.peek(Token::Tag::Calls)) {
+        relationship += pqlTokenScanner.peekLexeme();
+        pqlTokenScanner.next();
+        if (pqlTokenScanner.peek(Token::Tag::Star)) {
+            relationship += "T";
+            pqlTokenScanner.next();
+        }
+        return std::move(parseEntEnt(relationship));
     } else {
         throw SyntaxException();
     }
@@ -113,15 +122,31 @@ std::unique_ptr<Clause> SuchThatClauseParser::parseStmtStmt(std::string& relatio
     return std::move(createClause(std::move(arg1), std::move(arg2), relationship));
 }
 
+std::unique_ptr<Clause> SuchThatClauseParser::parseEntEnt(std::string& relationship) {
+    std::unique_ptr<PQLToken> arg1;
+    std::unique_ptr<PQLToken> arg2;
+
+    pqlTokenScanner.matchAndValidate(Token::Tag::LParen);
+    arg1 = parseEntRef();
+
+    pqlTokenScanner.matchAndValidate(Token::Tag::Comma);
+    arg2 = parseEntRef();
+
+    pqlTokenScanner.matchAndValidate(Token::Tag::RParen);
+    return std::move(createClause(std::move(arg1), std::move(arg2), relationship));
+}
+
 std::unique_ptr<PQLToken> SuchThatClauseParser::parseEntRef() {
+    if (!isEntRef()) {
+        throw SyntaxException();
+    }
     switch (pqlTokenScanner.peekTag()) {
         case Token::Tag::Underscore: {
             std::unique_ptr<Wildcard> w = std::make_unique<Wildcard>();
             pqlTokenScanner.next();
             return w;
         }
-        case Token::Tag::Name: {
-            // need semantic validator here
+        case Token::Tag::Name: case Token::Tag::Bool: {
             std::string synonym = pqlTokenScanner.peekLexeme();
             Synonym::DesignEntity de = SemanticValidator::getDesignEntity(synonyms, synonym);
             pqlTokenScanner.next();
@@ -134,18 +159,21 @@ std::unique_ptr<PQLToken> SuchThatClauseParser::parseEntRef() {
             return i;
         }
         default:
-            throw SyntaxException();
+            assert(false);
     }
 }
 
 std::unique_ptr<PQLToken> SuchThatClauseParser::parseStmtRef() {
+    if (!isStmtRef()) {
+        throw SyntaxException();
+    }
     switch (pqlTokenScanner.peekTag()) {
         case Token::Tag::Underscore: {
             std::unique_ptr<Wildcard> w = std::make_unique<Wildcard>();
             pqlTokenScanner.next();
             return w;
         }
-        case Token::Tag::Name: {
+        case Token::Tag::Name: case Token::Tag::Bool: {
             // need semantic validator here
             std::string synonym = pqlTokenScanner.peekLexeme();
             Synonym::DesignEntity de = SemanticValidator::getDesignEntity(synonyms, synonym);
@@ -159,7 +187,7 @@ std::unique_ptr<PQLToken> SuchThatClauseParser::parseStmtRef() {
             return s;
         }
         default:
-            throw SyntaxException();
+            assert(false);
     }
 }
 
@@ -170,8 +198,14 @@ std::unique_ptr<Clause> SuchThatClauseParser::createClause(std::unique_ptr<PQLTo
     if (relationship == "ModifiesS") {
         std::unique_ptr<ModifiesS> m = std::make_unique<ModifiesS>(std::move(token1), std::move(token2));
         return std::move(m);
+    } else if (relationship == "ModifiesP") {
+        std::unique_ptr<ModifiesP> m = std::make_unique<ModifiesP>(std::move(token1), std::move(token2));
+        return std::move(m);
     } else if (relationship == "UsesS") {
         std::unique_ptr<UsesS> u = std::make_unique<UsesS>(std::move(token1), std::move(token2));
+        return std::move(u);
+    } else if (relationship == "UsesP") {
+        std::unique_ptr<UsesP> u = std::make_unique<UsesP>(std::move(token1), std::move(token2));
         return std::move(u);
     } else if (relationship == "Follows") {
         std::unique_ptr<Follows> f = std::make_unique<Follows>(std::move(token1), std::move(token2), false);
@@ -184,6 +218,12 @@ std::unique_ptr<Clause> SuchThatClauseParser::createClause(std::unique_ptr<PQLTo
         return std::move(p);
     } else if (relationship == "ParentT") {
         std::unique_ptr<Parent> p = std::make_unique<Parent>(std::move(token1), std::move(token2), true);
+        return std::move(p);
+    } else if (relationship == "Calls") {
+        std::unique_ptr<Calls> p = std::make_unique<Calls>(std::move(token1), std::move(token2), false);
+        return std::move(p);
+    } else if (relationship == "CallsT") {
+        std::unique_ptr<Calls> p = std::make_unique<Calls>(std::move(token1), std::move(token2), true);
         return std::move(p);
     }
     throw SyntaxException();

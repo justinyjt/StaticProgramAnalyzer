@@ -2,7 +2,7 @@
 //#include "../TestHelper.h"
 //#include "qps/QueryEvaluator.h"
 //#include "qps/clause/UsesModifies.h"
-//#include "qps/clause/Pattern.h"
+//#include "qps/clause/AssignPattern.h"
 //#include "qps/clause/Clause.h"
 //#include "qps/pql/StatementNumber.h"
 //#include "qps/pql/Expression.h"
@@ -53,7 +53,7 @@
 //
 //// x = x + 1
 //// assign a, Select a pattern a (_, \"x + 1\")
-//TEST_CASE("Query Evaluator Pattern") {
+//TEST_CASE("Query Evaluator AssignPattern") {
 //
 //    std::string query = "";
 //
@@ -64,7 +64,7 @@
 //    // Perform evaluation
 //    Synonym syn(Synonym::DesignEntity::ASSIGN, "a");
 //    std::vector<std::unique_ptr<Clause>> clauses;
-//    clauses.push_back(std::make_unique<Pattern>(Wildcard(), Expression("x + 1")));
+//    clauses.push_back(std::make_unique<AssignPattern>(Wildcard(), Expression("x + 1")));
 //    std::unique_ptr<Result> evalResult = qe.evaluate(syn, clauses);
 //    evalResult->output(resultList);
 //    requireEqual(resultList.front(), std::string("1"));

@@ -7,19 +7,25 @@
 #include "qps/pql/Ident.h"
 #include "qps/pql/Expression.h"
 #include "qps/query_exceptions/SyntaxException.h"
+#include "qps/clause/WhilePattern.h"
+#include "qps/clause/IfPattern.h"
 
 class setUp {
 public:
     setUp() {
         // Set up code
         query = "";
-        declarationList.emplace_back(Synonym::DesignEntity::PROCEDURE, "p");
-        declarationList.emplace_back(Synonym::DesignEntity::ASSIGN, "a");
-        declarationList.emplace_back(Synonym::DesignEntity::VARIABLE, "v");
-        declarationList.emplace_back(Synonym::DesignEntity::CONSTANT, "c");
+        declarationList.insert({"p", Synonym::DesignEntity::PROCEDURE});
+        declarationList.insert({"a", Synonym::DesignEntity::ASSIGN});
+        declarationList.insert({"w", Synonym::DesignEntity::WHILE});
+        declarationList.insert({"ifs", Synonym::DesignEntity::IF});
+        declarationList.insert({"v", Synonym::DesignEntity::VARIABLE});
+        declarationList.insert({"c", Synonym::DesignEntity::CONSTANT});
 
         synonymProcedure = std::make_unique<Synonym>(Synonym::DesignEntity::PROCEDURE, "p");
         synonymAssign = std::make_unique<Synonym>(Synonym::DesignEntity::ASSIGN, "a");
+        synonymWhile = std::make_unique<Synonym>(Synonym::DesignEntity::WHILE, "w");
+        synonymIf = std::make_unique<Synonym>(Synonym::DesignEntity::IF, "ifs");
         synonymVariable = std::make_unique<Synonym>(Synonym::DesignEntity::VARIABLE, "v");
         synonymConstant = std::make_unique<Synonym>(Synonym::DesignEntity::CONSTANT, "c");
 
@@ -37,10 +43,12 @@ public:
 
     // Declarations
     std::string query;
-    std::vector<Synonym> declarationList;
+    std::unordered_map<std::string, Synonym::DesignEntity> declarationList;
 
     std::unique_ptr<Synonym> synonymProcedure;
     std::unique_ptr<Synonym> synonymAssign;
+    std::unique_ptr<Synonym> synonymWhile;
+    std::unique_ptr<Synonym> synonymIf;
     std::unique_ptr<Synonym> synonymVariable;
     std::unique_ptr<Synonym> synonymConstant;
 
@@ -52,93 +60,118 @@ public:
     std::unique_ptr<Wildcard> wildcard2;
 
     std::unique_ptr<Clause> clause;
-    std::unique_ptr<Pattern> pattern;
-    std::unique_ptr<PatternClauseParser> pcp;
+    std::unique_ptr<AssignPattern> patternAssign;
+    std::unique_ptr<WhilePattern> patternWhile;
+    std::unique_ptr<IfPattern> patternIf;
     std::unique_ptr<ILexer> lexer;
 };
 
 TEST_CASE_METHOD(setUp, "variable, wildcard") {
     query = "pattern a(v, _)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator1(lexer);
-    clause = pcp->parse(tokenValidator1, declarationList);
-    pattern = std::make_unique<Pattern>(std::move(synonymVariable), std::move(wildcard1), "a");
-    requireTrue(*clause == *pattern);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    PatternClauseParser pcp(pqlTokenScanner, declarationList);
+    clause = pcp.parse();
+    patternAssign = std::make_unique<AssignPattern>(std::move(synonymVariable), std::move(wildcard1), "a");
+    requireTrue(*clause == *patternAssign);
 }
 
 TEST_CASE_METHOD(setUp, "variable, variable name and wildcard") {
     query = "pattern a(v,_\"x\"_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator2(lexer);
-    clause = pcp->parse(tokenValidator2, declarationList);
-    pattern = std::make_unique<Pattern>(std::move(synonymVariable), std::move(exprWildcardVarName),  "a");
-    requireTrue(*clause == *pattern);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    PatternClauseParser pcp(pqlTokenScanner, declarationList);
+    clause = pcp.parse();
+    patternAssign = std::make_unique<AssignPattern>(std::move(synonymVariable), std::move(exprWildcardVarName), "a");
+    requireTrue(*clause == *patternAssign);
 }
 
 TEST_CASE_METHOD(setUp, "variable, constant value and wildcard") {
     query = "pattern a(v,_\"1\"_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator3(lexer);
-    clause = pcp->parse(tokenValidator3, declarationList);
-    pattern = std::make_unique<Pattern>(std::move(synonymVariable), std::move(exprWildcardConstValue), "a");
-    requireTrue(*clause == *pattern);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    PatternClauseParser pcp(pqlTokenScanner, declarationList);
+    clause = pcp.parse();
+    patternAssign = std::make_unique<AssignPattern>(std::move(synonymVariable), std::move(exprWildcardConstValue), "a");
+    requireTrue(*clause == *patternAssign);
 }
 
 TEST_CASE_METHOD(setUp, "wildcard and wildcard") {
     query = "pattern a(_,_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator5(lexer);
-    clause = pcp->parse(tokenValidator5, declarationList);
-    pattern = std::make_unique<Pattern>(std::move(wildcard1), std::move(wildcard2), "a");
-    requireTrue(*clause == *pattern);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    PatternClauseParser pcp(pqlTokenScanner, declarationList);
+    clause = pcp.parse();
+    patternAssign = std::make_unique<AssignPattern>(std::move(wildcard1), std::move(wildcard2), "a");
+    requireTrue(*clause == *patternAssign);
 }
 
 TEST_CASE_METHOD(setUp, "wildcard and variable name with wildcard") {
     query = "pattern a(_,_\"x\"_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator6(lexer);
-    clause = pcp->parse(tokenValidator6, declarationList);
-    pattern = std::make_unique<Pattern>(std::move(wildcard1), std::move(exprWildcardVarName), "a");
-    requireTrue(*clause == *pattern);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    PatternClauseParser pcp(pqlTokenScanner, declarationList);
+    clause = pcp.parse();
+    patternAssign = std::make_unique<AssignPattern>(std::move(wildcard1), std::move(exprWildcardVarName), "a");
+    requireTrue(*clause == *patternAssign);
 }
 
 TEST_CASE_METHOD(setUp, "invalid LHS constant and variable name with wildcard") {
     query = "pattern a(\"1\",_\"x\"_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator7(lexer);
-    requireThrowAs<SyntaxException>([&tokenValidator7]() {
-        std::vector<Synonym> dl = setUp().declarationList;
-        setUp().pcp->parse(tokenValidator7, dl);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    PatternClauseParser pcp(pqlTokenScanner, declarationList);
+    requireThrowAs<SyntaxException>([&pcp]() {
+        pcp.parse();
     });
 }
 
 TEST_CASE_METHOD(setUp, "invalid LHS varName and variable name with wildcard") {
     query = "pattern a(\"+x\",_\"x\"_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator8(lexer);
-    requireThrowAs<SyntaxException>([&tokenValidator8]() {
-        std::vector<Synonym> dl = setUp().declarationList;
-        setUp().pcp->parse(tokenValidator8, dl);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    PatternClauseParser pcp(pqlTokenScanner, declarationList);
+    requireThrowAs<SyntaxException>([&pcp]() {
+        pcp.parse();
     });
 }
 
 TEST_CASE_METHOD(setUp, "ident and invalid RHS expr 1") {
-    query = "pattern a(\"x\",_\"+x\"_)";
+    query = "pattern a(\"x\",_\"x+\"_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator9(lexer);
-    requireThrowAs<SyntaxException>([&tokenValidator9]() {
-        std::vector<Synonym> dl = setUp().declarationList;
-        setUp().pcp->parse(tokenValidator9, dl);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    PatternClauseParser pcp(pqlTokenScanner, declarationList);
+    requireThrowAs<SyntaxException>([&pcp]() {
+        pcp.parse();
     });
 }
 
 TEST_CASE_METHOD(setUp, "ident and invalid RHS expr 2") {
     query = "pattern a(\"x\",_\"x+\"_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator10(lexer);
-    requireThrowAs<SyntaxException>([&tokenValidator10]() {
-        std::vector<Synonym> dl = setUp().declarationList;
-        setUp().pcp->parse(tokenValidator10, dl);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    PatternClauseParser pcp(pqlTokenScanner, declarationList);
+    requireThrowAs<SyntaxException>([&pcp]() {
+        pcp.parse();
     });
 }
 
+TEST_CASE_METHOD(setUp, "while pattern, variable") {
+    query = "pattern w(v, _)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    PatternClauseParser pcp(pqlTokenScanner, declarationList);
+    clause = pcp.parse();
+    patternWhile = std::make_unique<WhilePattern>(std::move(synonymVariable), "w");
+    requireTrue(*clause == *patternWhile);
+}
+
+TEST_CASE_METHOD(setUp, "if pattern, variable") {
+    query = "pattern ifs(v, _, _)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    PatternClauseParser pcp(pqlTokenScanner, declarationList);
+    clause = pcp.parse();
+    patternIf = std::make_unique<IfPattern>(std::move(synonymVariable), "ifs");
+    requireTrue(*clause == *patternIf);
+}

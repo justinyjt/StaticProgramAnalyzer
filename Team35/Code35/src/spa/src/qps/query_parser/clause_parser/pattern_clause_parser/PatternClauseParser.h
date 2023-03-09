@@ -31,6 +31,7 @@ class PatternClauseParser {
     Synonym::DesignEntity parsePatternSynonym();
     bool isName(std::string input);
     bool isConstant(std::string input);
+    bool isEntRef();
     bool isValidExpr();
 private:
     PQLTokenScanner& pqlTokenScanner;

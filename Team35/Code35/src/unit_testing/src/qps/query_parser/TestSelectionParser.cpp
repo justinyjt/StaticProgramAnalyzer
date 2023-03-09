@@ -6,12 +6,12 @@
 
 TEST_CASE("Selection parser") {
     std::string query = "Select s";
-    SelectionParser sp;
+    std::unordered_map<std::string, Synonym::DesignEntity> declarationList;
+    declarationList.insert({"s", Synonym::DesignEntity::STMT});
     std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator(lexer);
-    std::vector<Synonym> synonyms;
-    synonyms.emplace_back(Synonym(Synonym::DesignEntity::STMT, "s"));
-    std::unique_ptr<SelectClause> sc = sp.parse(tokenValidator, synonyms);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SelectionParser sp(pqlTokenScanner, declarationList);
+    std::unique_ptr<SelectClause> sc = sp.parse();
     Synonym s(Synonym::DesignEntity::STMT, "s");
     requireTrue(*sc == *std::make_unique<SingleSynonymSelectClause>(s));
 }

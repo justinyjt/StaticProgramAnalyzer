@@ -83,13 +83,16 @@ std::unique_ptr<Clause> PatternClauseParser::parseIf(std::string patternSynonym)
 }
 
 std::unique_ptr<PQLToken> PatternClauseParser::parseEntRef() {
+    if (!isEntRef()) {
+        throw SyntaxException();
+    }
     switch (pqlTokenScanner.peekTag()) {
         case Token::Tag::Underscore: {
             std::unique_ptr<Wildcard> w = std::make_unique<Wildcard>();
             pqlTokenScanner.next();
             return w;
         }
-        case Token::Tag::Name: {
+        case Token::Tag::Name: case Token::Tag::Bool: {
             // need semantic validator here
             std::string synonym = pqlTokenScanner.peekLexeme();
             Synonym::DesignEntity de = SemanticValidator::getDesignEntity(synonyms, synonym);
@@ -107,7 +110,7 @@ std::unique_ptr<PQLToken> PatternClauseParser::parseEntRef() {
             throw SyntaxException();
         }
         default:
-            throw SyntaxException();
+            assert(false);
     }
 }
 
@@ -155,6 +158,11 @@ Synonym::DesignEntity PatternClauseParser::parsePatternSynonym() {
         return de;
     }
     throw SemanticException();
+}
+
+bool PatternClauseParser::isEntRef() {
+    return pqlTokenScanner.peek(Token::Tag::Underscore) || isName(pqlTokenScanner.peekLexeme()) ||
+           pqlTokenScanner.peek(Token::Tag::String) && isName(pqlTokenScanner.peekLexeme());
 }
 
 bool PatternClauseParser::isValidExpr() {

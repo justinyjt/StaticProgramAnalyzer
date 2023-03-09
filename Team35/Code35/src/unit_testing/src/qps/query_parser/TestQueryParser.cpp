@@ -25,7 +25,7 @@ TEST_CASE("1. Query parser") {
     std::unique_ptr<Wildcard> w = std::make_unique<Wildcard>();
     std::unique_ptr<Expression> expr = std::make_unique<Expression>("x", true);
 
-    std::unique_ptr<Pattern> pattern = std::make_unique<Pattern>(std::move(w), std::move(expr), "a");
+    std::unique_ptr<AssignPattern> pattern = std::make_unique<AssignPattern>(std::move(w), std::move(expr), "a");
 
     std::unique_ptr<Clause> c2 = std::move(clauses[2]);
     requireTrue(*c2 == *pattern);
