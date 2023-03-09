@@ -52,7 +52,7 @@ ENT_ENT_SET CallGraph::getImmediateCalls() {
     for (int i = 0; i < this->getNoOfNodes(); i++) {
         ENT_NAME caller = this->getNode(i);
         ENT_SET callees = this->getCallEntities(i);
-        for (auto callee : callees) {
+        for (const auto &callee : callees) {
             result.emplace(caller, callee);
         }
     }
