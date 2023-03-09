@@ -14,7 +14,7 @@
 
 /*
 Base class for any Clause with 2 arguments:
-Pattern | Follows | FollowsT | Parent | ParentT | UsesS | UsesP | ModifiesS | ModifiesP
+AssignPattern | Follows | FollowsT | Parent | ParentT | UsesS | UsesP | ModifiesS | ModifiesP
 */
 class TwoArgClause : public Clause {
  public:

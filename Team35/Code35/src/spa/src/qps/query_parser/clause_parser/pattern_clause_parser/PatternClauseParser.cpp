@@ -1,6 +1,6 @@
 #include <string>
 #include "PatternClauseParser.h"
-#include "qps/clause/Pattern.h"
+#include "qps/clause/AssignPattern.h"
 #include "qps/pql/Synonym.h"
 #include "qps/pql/Wildcard.h"
 #include "qps/pql/Expression.h"
@@ -10,6 +10,8 @@
 #include "qps/query_exceptions/SemanticException.h"
 #include "commons/token_scanner/TokenScanner.h"
 #include "qps/query_parser/SemanticValidator.h"
+#include "qps/clause/WhilePattern.h"
+#include "qps/clause/IfPattern.h"
 
 PatternClauseParser::PatternClauseParser(PQLTokenScanner& pqlTokenScanner, std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
         pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
@@ -62,7 +64,8 @@ std::unique_ptr<Clause> PatternClauseParser::parseWhile(std::string patternSynon
     pqlTokenScanner.matchAndValidate(Token::Tag::Underscore);
     pqlTokenScanner.matchAndValidate(Token::Tag::RParen);
 
-    throw std::runtime_error("");
+    std::unique_ptr<Clause> w = std::make_unique<WhilePattern>(std::move(arg1), patternSynonym);
+    return std::move(w);
 }
 
 std::unique_ptr<Clause> PatternClauseParser::parseIf(std::string patternSynonym) {
@@ -75,7 +78,8 @@ std::unique_ptr<Clause> PatternClauseParser::parseIf(std::string patternSynonym)
     pqlTokenScanner.matchAndValidate(Token::Tag::Underscore);
     pqlTokenScanner.matchAndValidate(Token::Tag::RParen);
 
-    throw std::runtime_error("");
+    std::unique_ptr<Clause> i = std::make_unique<IfPattern>(std::move(arg1), patternSynonym);
+    return std::move(i);
 }
 
 std::unique_ptr<PQLToken> PatternClauseParser::parseEntRef() {
@@ -139,7 +143,7 @@ std::unique_ptr<Clause> PatternClauseParser::createClause(std::unique_ptr<PQLTok
                                                           const std::string& patternStr) {
     // entRef - variable synonyms, _ , string
     // _ , exact match, partial match
-    std::unique_ptr<Clause> a = std::make_unique<Pattern>(std::move(token1), std::move(token2), patternStr);
+    std::unique_ptr<Clause> a = std::make_unique<AssignPattern>(std::move(token1), std::move(token2), patternStr);
     return std::move(a);
 }
 

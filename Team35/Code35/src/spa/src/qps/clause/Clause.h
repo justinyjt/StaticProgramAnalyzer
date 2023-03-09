@@ -15,7 +15,7 @@ Base class for clause in PQL (suchthat-cl, pattern-cl)
             /     \
    SelectClause   TwoArgClause
                   /         \
-            Pattern  Modifies/Uses/Parent/Follows
+            AssignPattern  Modifies/Uses/Parent/Follows
 */
 class Clause {
  public:

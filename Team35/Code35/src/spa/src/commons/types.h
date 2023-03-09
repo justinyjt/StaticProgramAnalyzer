@@ -25,6 +25,10 @@ enum class StmtType {
     Print, Read, Assign, Call, While, If, None
 };
 
+enum class EntType {
+    Procedure, Variable, Constant
+};
+
 enum class StmtNameRelationship {
     Modifies, Uses, Calls, Reads, Prints, None
 };
