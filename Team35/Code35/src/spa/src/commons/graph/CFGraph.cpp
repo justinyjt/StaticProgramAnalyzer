@@ -7,13 +7,20 @@
 namespace CFG {
 CFGraphNodeData CFGraph::end_node_data = makeDummyNodeData(0);
 
-CFGraph::CFGraph() : Graph<CFGraphNodeData>(), min_stmt_num_(), max_stmt_num_(), proc_name_() {}
+CFGraph::CFGraph() : Graph<CFGraphNodeData>(),
+                     min_stmt_num_(),
+                     max_stmt_num_(),
+                     proc_name_(),
+                     pairwise_control_flow_transitive_(std::nullopt),
+                     pairwise_control_flow_non_transitive_(std::nullopt) {}
 
 CFGraph::CFGraph(const CFGraph &graph, STMT_NUM min_stmt_num, STMT_NUM max_stmt_num, ENT_NAME proc_name) :
     Graph<CFGraphNodeData>(graph),
     max_stmt_num_(max_stmt_num),
     min_stmt_num_(min_stmt_num),
-    proc_name_(std::move(proc_name)) {}
+    proc_name_(std::move(proc_name)),
+    pairwise_control_flow_transitive_(graph.pairwise_control_flow_transitive_),
+    pairwise_control_flow_non_transitive_(graph.pairwise_control_flow_non_transitive_) {}
 
 STMT_SET CFGraph::getPredecessors(STMT_NUM stmt_num, bool isTransitive) const {
     bool stmt_num_out_of_range = (stmt_num < min_stmt_num_ || stmt_num > max_stmt_num_);
@@ -70,6 +77,11 @@ STMT_SET CFGraph::getSuccessors(STMT_NUM stmt_num, bool isTransitive) const {
 
     Index node_index = this->getNodeIndex(node_data);
 
+    return this->getSuccessorsByIndex(node_index, isTransitive);
+}
+
+STMT_SET CFGraph::getSuccessorsByIndex(Index node_index, bool isTransitive) const {
+    assert(this->isIndexValid(node_index));
     STMT_SET successors;
 
     if (!isTransitive) {
@@ -105,8 +117,31 @@ STMT_SET CFGraph::getSuccessors(STMT_NUM stmt_num, bool isTransitive) const {
     return successors;
 }
 
-STMT_STMT_SET CFGraph::getPairwiseCFG(bool isTransitive) const {
-    return STMT_STMT_SET();
+const STMT_STMT_SET &CFGraph::getPairwiseControlFlow(bool isTransitive) {
+    // memoization
+    if (isTransitive && this->pairwise_control_flow_transitive_.has_value()) {
+        return this->pairwise_control_flow_transitive_.value();
+    }
+
+    if (!isTransitive && this->pairwise_control_flow_non_transitive_.has_value()) {
+        return this->pairwise_control_flow_non_transitive_.value();
+    }
+
+    std::optional<STMT_STMT_SET> *pairwise_control_flow =
+        isTransitive ? &this->pairwise_control_flow_transitive_ : &this->pairwise_control_flow_non_transitive_;
+
+    *pairwise_control_flow = STMT_STMT_SET();
+    for (Index node_index = 0; node_index < this->getNoOfNodes(); ++node_index) {
+        if (isIndexDummyNode(node_index)) {
+            continue;
+        }
+        STMT_NUM stmt_num = this->getStmtNumFromIndex(node_index);
+        for (STMT_NUM successor : this->getSuccessorsByIndex(node_index, isTransitive)) {
+            (*pairwise_control_flow)->emplace(stmt_num, successor);
+        }
+    }
+
+    return pairwise_control_flow->value();
 }
 
 bool CFGraph::isReachable(STMT_NUM stmt1, STMT_NUM stmt2) const {

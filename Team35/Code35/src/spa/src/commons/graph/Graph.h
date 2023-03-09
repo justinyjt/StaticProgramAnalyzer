@@ -54,7 +54,7 @@ class Graph {
         return false;
     }
 
-    int getNoOfNodes() {
+    int getNoOfNodes() const {
         return nodes.size();
     }
 
