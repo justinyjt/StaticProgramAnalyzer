@@ -8,8 +8,8 @@ namespace CFG {
 CFGraphNodeData CFGraph::end_node_data = makeDummyNodeData(0);
 
 CFGraph::CFGraph() : Graph<CFGraphNodeData>(),
-                     min_stmt_num_(),
-                     max_stmt_num_(),
+                     min_stmt_num_(0),
+                     max_stmt_num_(0),
                      proc_name_(),
                      pairwise_control_flow_transitive_(std::nullopt),
                      pairwise_control_flow_non_transitive_(std::nullopt) {}
