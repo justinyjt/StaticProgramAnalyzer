@@ -17,6 +17,8 @@ const EntityTable<ENT_NAME> &PKB::getEntityTable(Entity entityType) const {
             return variableTable;
         case Entity::Constant:
             return constantTable;
+        case Entity::Procedure:
+            return procedureTable;
         default:
             assert(false);
     }
@@ -75,8 +77,8 @@ const RelationshipTable<ENT_NAME, ENT_NAME> &PKB::getNameNameRelationshipTable(N
             return usesNameNameTable;
         case NameNameRelationship::Calls:
             return callsNameNameTable;
-        case NameNameRelationship::CallsT:
-            return callsTransitiveNameNameTable;
+        case NameNameRelationship::CallsStar:
+            return callsStarNameNameTable;
         default:
             assert(false);
     }

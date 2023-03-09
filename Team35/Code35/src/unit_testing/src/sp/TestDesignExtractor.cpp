@@ -8,7 +8,7 @@ TEST_CASE("DE can extract assign pattern correctly", "[Design Extractor]") {
         std::shared_ptr<ASTNode> root =
                 std::make_shared<ASTNode>(ASTNode::SyntaxType::Program, std::nullopt);
         std::shared_ptr<ASTNode> proc =
-                std::make_shared<ASTNode>(ASTNode::SyntaxType::Procedure, std::nullopt);
+                std::make_shared<ASTNode>(ASTNode::SyntaxType::Procedure, "main");
         std::shared_ptr<ASTNode> stmtLst =
                 std::make_shared<ASTNode>(ASTNode::SyntaxType::StmtLst, std::nullopt);
         std::shared_ptr<ExprNode> assign =
@@ -42,7 +42,7 @@ TEST_CASE("DE can extract assign pattern correctly", "[Design Extractor]") {
         std::shared_ptr<ASTNode> root =
                 std::make_shared<ASTNode>(ASTNode::SyntaxType::Program, std::nullopt);
         std::shared_ptr<ASTNode> proc =
-                std::make_shared<ASTNode>(ASTNode::SyntaxType::Procedure, std::nullopt);
+                std::make_shared<ASTNode>(ASTNode::SyntaxType::Procedure, "main");
         std::shared_ptr<ASTNode> stmtLst =
                 std::make_shared<ASTNode>(ASTNode::SyntaxType::StmtLst, std::nullopt);
         std::shared_ptr<ExprNode> assign =
@@ -82,7 +82,7 @@ TEST_CASE("DE can extract assign pattern correctly", "[Design Extractor]") {
         std::shared_ptr<ASTNode> root =
                 std::make_shared<ASTNode>(ASTNode::SyntaxType::Program, std::nullopt);
         std::shared_ptr<ASTNode> proc =
-                std::make_shared<ASTNode>(ASTNode::SyntaxType::Procedure, std::nullopt);
+                std::make_shared<ASTNode>(ASTNode::SyntaxType::Procedure, "main");
         std::shared_ptr<ASTNode> stmtLst =
                 std::make_shared<ASTNode>(ASTNode::SyntaxType::StmtLst, std::nullopt);
         std::shared_ptr<ExprNode> assign =

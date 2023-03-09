@@ -1,6 +1,7 @@
 #ifndef TEAM35_CODE35_SRC_SPA_SRC_COMMONS_TYPES_H_
 #define TEAM35_CODE35_SRC_SPA_SRC_COMMONS_TYPES_H_
 
+#include <memory>
 #include <string>
 #include <unordered_set>
 #include <utility>
@@ -35,7 +36,7 @@ enum class StmtNameRelationship {
 };
 
 enum class NameNameRelationship {
-    Uses, Modifies, Calls, CallsT, None
+    Uses, Modifies, Calls, CallsStar, None
 };
 
 enum class StmtStmtRelationship {
@@ -43,7 +44,7 @@ enum class StmtStmtRelationship {
 };
 
 enum class Entity {
-    Variable, Constant
+    Variable, Constant, Procedure
 };
 
 #endif  // TEAM35_CODE35_SRC_SPA_SRC_COMMONS_TYPES_H_

@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "commons/ASTNode.h"
+#include "CallGraph.h"
 #include "pkb/PKBWriter.h"
 
 class DesignExtractor {
@@ -17,6 +18,8 @@ class DesignExtractor {
     void addVarNameSetToPKB();
 
     void addConstantSetToPKB();
+
+    void addProcSetToPKB();
 
     void addStmtUsesPairSetToPKB();
 
@@ -30,12 +33,14 @@ class DesignExtractor {
 
     void addStmtTypesToPKB();
 
-    std::unordered_map<STMT_NUM, ASSIGN_PAT> getAssignPatMap();
+    void addCallsToPKB();
 
+    std::unordered_map<STMT_NUM, ASSIGN_PAT> getAssignPatMap();
 
  private:
     ENT_SET varNameSet_;
     ENT_SET constSet_;
+    ENT_SET procSet_;
     STMT_SET stmtSet_;
     STMT_SET assignSet_;
     STMT_SET printSet_;
@@ -56,6 +61,7 @@ class DesignExtractor {
     std::shared_ptr<ASTNode> root_;
     std::vector<STMT_NUM> containerStmtLst_;
     STMT_NUM stmtCnt_;
+    CallGraph callGraph_;
 
     void extractProc(const std::shared_ptr<ASTNode> &);
 
