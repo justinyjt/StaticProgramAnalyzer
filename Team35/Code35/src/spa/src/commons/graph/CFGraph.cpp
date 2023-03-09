@@ -10,10 +10,10 @@ CFGraphNodeData CFGraph::end_node_data = makeDummyNodeData(0);
 CFGraph::CFGraph() : Graph<CFGraphNodeData>(), min_stmt_num_(), max_stmt_num_(), proc_name_() {}
 
 CFGraph::CFGraph(const CFGraph &graph, STMT_NUM min_stmt_num, STMT_NUM max_stmt_num, ENT_NAME proc_name) :
-    Graph<CFGraphNodeData>(graph),
-    max_stmt_num_(max_stmt_num),
-    min_stmt_num_(min_stmt_num),
-    proc_name_(std::move(proc_name)) {}
+        Graph<CFGraphNodeData>(graph),
+        max_stmt_num_(max_stmt_num),
+        min_stmt_num_(min_stmt_num),
+        proc_name_(std::move(proc_name)) {}
 
 STMT_SET CFGraph::getPredecessors(STMT_NUM stmt_num, bool isTransitive) const {
     return STMT_SET();
@@ -41,5 +41,18 @@ STMT_NUM CFGraph::getMinStmtNum() const {
 
 ENT_NAME CFGraph::getProcName() const {
     return proc_name_;
+}
+
+bool CFGraph::operator==(const CFGraph &other) const {
+    if (this->max_stmt_num_ != other.max_stmt_num_) {
+        return false;
+    }
+    if (this->min_stmt_num_ != other.min_stmt_num_) {
+        return false;
+    }
+    if (this->proc_name_ != other.proc_name_) {
+        return false;
+    }
+    return true;
 }
 }  // namespace CFG
