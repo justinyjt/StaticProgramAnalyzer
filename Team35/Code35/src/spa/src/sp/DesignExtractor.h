@@ -93,7 +93,7 @@ class DesignExtractor {
 
     void updateFollowsPairSet(const std::unique_ptr<std::vector<STMT_NUM>> &lst);
 
-    void updateStmtUsesPairSet(STMT_NUM stmt, std::string varName);
+    void updateStmtUsesPairSet(STMT_NUM stmt, const std::string &varName);
 
-    void updateStmtModsPairSet(STMT_NUM stmt, std::string varName);
+    void updateStmtModsPairSet(STMT_NUM stmt, const std::string &varName);
 };
