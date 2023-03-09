@@ -15,26 +15,6 @@ class DesignExtractor {
 
     std::shared_ptr<ASTNode> extractProgram(std::shared_ptr<ASTNode>);
 
-    void addVarNameSetToPKB();
-
-    void addConstantSetToPKB();
-
-    void addProcSetToPKB();
-
-    void addStmtUsesPairSetToPKB();
-
-    void addStmtModifiesPairSetToPKB();
-
-    void addStmtFollowPairSetToPKB();
-
-    void addStmtParentPairSetToPKB();
-
-    void addPatternsToPKB();
-
-    void addStmtTypesToPKB();
-
-    void addCallsToPKB();
-
     std::unordered_map<STMT_NUM, ASSIGN_PAT> getAssignPatMap();
 
  private:
@@ -64,6 +44,26 @@ class DesignExtractor {
     ENT_NAME curProc_;
 
     CallGraph callGraph_;
+
+    void addVarNameSetToPKB();
+
+    void addConstantSetToPKB();
+
+    void addProcSetToPKB();
+
+    void addStmtUsesPairSetToPKB();
+
+    void addStmtModifiesPairSetToPKB();
+
+    void addStmtFollowPairSetToPKB();
+
+    void addStmtParentPairSetToPKB();
+
+    void addPatternsToPKB();
+
+    void addStmtTypesToPKB();
+
+    void addCallsToPKB();
 
     void extractProc(const std::shared_ptr<ASTNode> &);
 
