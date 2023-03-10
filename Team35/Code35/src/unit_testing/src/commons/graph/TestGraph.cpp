@@ -187,7 +187,7 @@ TEST_CASE("2. test isCyclic() method") {
     }
 }
 
-TEST_CASE("3. test == operator") {
+TEST_CASE("3. test == and != operator") {
     SECTION("3.1. test line graph") {
         TestGraphHelper<int> g1;
         TestGraphHelper<int> g2;
@@ -198,6 +198,7 @@ TEST_CASE("3. test == operator") {
         }
 
         requireTrue(g1 == g2);
+        requireFalse(g1 != g2);
     }
 
     SECTION("3.2. test line graph loop back") {
@@ -213,6 +214,7 @@ TEST_CASE("3. test == operator") {
         g2.addEdge(10, 1);
 
         requireTrue(g1 == g2);
+        requireFalse(g1 != g2);
     }
 
     SECTION("3.3. test clique graph size 4") {
@@ -246,5 +248,87 @@ TEST_CASE("3. test == operator") {
         g2.addEdge(4, 3);
 
         requireTrue(g1 == g2);
+        requireFalse(g1 != g2);
+    }
+
+    SECTION("3.4. test inequality 1") {
+        TestGraphHelper<int> g1;
+        TestGraphHelper<int> g2;
+
+        g1.addEdge(1, 2);
+        g1.addEdge(1, 3);
+        g1.addEdge(1, 4);
+        g1.addEdge(2, 3);
+        g1.addEdge(2, 1);
+        g1.addEdge(2, 4);
+        g1.addEdge(3, 1);
+        g1.addEdge(3, 2);
+        g1.addEdge(3, 4);
+        g1.addEdge(4, 1);
+        g1.addEdge(4, 2);
+        g1.addEdge(4, 3);
+
+        g2.addEdge(1, 2);
+        g2.addEdge(1, 3);
+        g2.addEdge(1, 4);
+        g2.addEdge(2, 3);
+        g2.addEdge(2, 1);
+        g2.addEdge(2, 4);
+        g2.addEdge(3, 1);
+        g2.addEdge(3, 2);
+        g2.addEdge(3, 4);
+        g2.addEdge(4, 1);
+        g2.addEdge(4, 2);
+        g2.addEdge(4, 3);
+        g2.addEdge(5, 6);
+
+        requireFalse(g1 == g2);
+        requireTrue(g1 != g2);
+    }
+
+    SECTION("3.5. test inequality 2") {
+        TestGraphHelper<int> g1;
+        TestGraphHelper<int> g2;
+
+        g1.addEdge(1, 2);
+        g1.addEdge(1, 3);
+        g1.addEdge(1, 4);
+        g1.addEdge(2, 3);
+        g1.addEdge(2, 1);
+        g1.addEdge(2, 4);
+        g1.addEdge(3, 1);
+        g1.addEdge(3, 2);
+        g1.addEdge(3, 4);
+        g1.addEdge(4, 1);
+        g1.addEdge(4, 2);
+        g1.addEdge(4, 3);
+
+        g2.addEdge(1, 2);
+        g2.addEdge(1, 3);
+        g2.addEdge(1, 4);
+        g2.addEdge(2, 3);
+        g2.addEdge(2, 1);
+        g2.addEdge(2, 4);
+        g2.addEdge(3, 1);
+        g2.addEdge(3, 2);
+        g2.addEdge(3, 4);
+        g2.addEdge(4, 1);
+        g2.addEdge(4, 2);
+        g2.addEdge(4, 3);
+        g2.addEdge(5, 6);
+        g2.addEdge(5, 7);
+        g2.addEdge(5, 8);
+        g2.addEdge(6, 7);
+        g2.addEdge(6, 5);
+        g2.addEdge(6, 8);
+        g2.addEdge(7, 5);
+        g2.addEdge(7, 6);
+        g2.addEdge(7, 8);
+        g2.addEdge(8, 5);
+        g2.addEdge(8, 6);
+        g2.addEdge(8, 7);
+
+        requireFalse(g1 == g2);
+        requireTrue(g1 != g2);
     }
 }

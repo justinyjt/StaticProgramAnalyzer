@@ -22,6 +22,10 @@ class Graph {
             outgoingAdjList == other.outgoingAdjList && incomingAdjList == other.incomingAdjList;
     }
 
+    bool operator!=(const Graph &other) const {
+        return !(*this == other);
+    }
+
     void addEdge(const T &from, const T &to) {
         Index fromIndex = addNode(from);
         Index toIndex = addNode(to);
