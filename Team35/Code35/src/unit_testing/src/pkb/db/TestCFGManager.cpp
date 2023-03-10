@@ -151,3 +151,20 @@ TEST_CASE("4. Test storage and retrieval in CFGManager") {
         requireEqual(manager.getCFG(6), four);
     }
 }
+
+TEST_CASE("5. Test storage and invalid retrieval in CFGManager") {
+    CFG::CFGManager manager;
+    CFG::CFGraph def;
+    CFG::CFGraph one(def, 1, 2, "one");
+    CFG::CFGraph two(def, 3, 3, "two");
+    CFG::CFGraph three(def, 4, 4, "three");
+    CFG::CFGraph four(def, 5, 6, "four");
+    std::vector<CFG::CFGraph> test = {one, two, three, four};
+
+    manager.setGraphs(std::move(test));
+    SECTION("Retrieval of procedure names with invalid index") {
+        requireFalse(manager.isValidStmtNum(0));
+        requireFalse(manager.isValidStmtNum(7));
+    }
+
+}

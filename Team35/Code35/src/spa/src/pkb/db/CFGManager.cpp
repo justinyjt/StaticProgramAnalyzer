@@ -1,5 +1,7 @@
 #include "CFGManager.h"
 
+#include <cassert>
+
 namespace CFG {
 CFGManager::CFGManager() {}
 
@@ -25,11 +27,17 @@ int CFGManager::getIndex(STMT_NUM num) {
 
 const CFGraph &CFGManager::getCFG(STMT_NUM num) {
     int index = this->getIndex(num);
+    assert(index != -1);
     return graphs_[index];
 }
 
 ENT_NAME CFGManager::getProcName(STMT_NUM num) {
     int index = this->getIndex(num);
+    assert(index != -1);
     return graphs_[index].getProcName();
+}
+
+bool CFGManager::isValidStmtNum(STMT_NUM num) {
+    return this->getIndex(num) != -1;
 }
 }  // namespace CFG

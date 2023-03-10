@@ -20,5 +20,7 @@ class CFGManager {
     const CFGraph &getCFG(STMT_NUM num);
 
     ENT_NAME getProcName(STMT_NUM num);
+
+    bool isValidStmtNum(STMT_NUM num);
 };
 }  // namespace CFG
