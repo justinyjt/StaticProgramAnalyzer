@@ -890,3 +890,86 @@ TEST_CASE("6. test getPairwiseControlFlow() method, non-transitive closure") {
         requireEqual(static_cast<int>(result.count(std::make_pair(1, 6))), 1);
     }
 }
+
+TEST_CASE("7. test == / != operator") {
+    SECTION("7.1. empty graphs") {
+        CFG::CFGraph graph1;
+        CFG::CFGraph graph2;
+        requireTrue(graph1 == graph2);
+        requireFalse(graph1 != graph2);
+    }
+
+    SECTION("7.2. graph with one node, self-loop") {
+        CFG::CFGraph graph1;
+        graph1.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(1));
+        CFG::CFGraph graph2;
+        graph2.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(1));
+        requireTrue(graph1 == graph2);
+        requireFalse(graph1 != graph2);
+    }
+
+    SECTION("7.3. graph with two nodes") {
+        CFG::CFGraph graph1;
+        graph1.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        CFG::CFGraph graph2;
+        graph2.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        requireTrue(graph1 == graph2);
+        requireFalse(graph1 != graph2);
+    }
+
+    SECTION("7.4. graph with two nodes and a loop") {
+        CFG::CFGraph graph1;
+        graph1.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        graph1.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(1));
+        CFG::CFGraph graph2;
+        graph2.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        graph2.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(1));
+        requireTrue(graph1 == graph2);
+        requireFalse(graph1 != graph2);
+    }
+
+    SECTION("7.5. cycle graph") {
+        CFG::CFGraph graph1;
+        graph1.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        graph1.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(3));
+        graph1.addEdge(CFG::makeNodeData(3), CFG::makeNodeData(1));
+        CFG::CFGraph graph2;
+        graph2.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        graph2.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(3));
+        graph2.addEdge(CFG::makeNodeData(3), CFG::makeNodeData(1));
+        requireTrue(graph1 == graph2);
+        requireFalse(graph1 != graph2);
+    }
+
+    SECTION("7.6. tree graph, size 3") {
+        CFG::CFGraph graph1;
+        graph1.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        graph1.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(3));
+        CFG::CFGraph graph2;
+        graph2.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        graph2.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(3));
+        requireTrue(graph1 == graph2);
+        requireFalse(graph1 != graph2);
+    }
+
+    SECTION("7.7. tree graph with other data members") {
+        CFG::CFGraph graph1(CFG::CFGraph(), 1, 2, "main");
+        graph1.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        graph1.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(3));
+        CFG::CFGraph graph2(CFG::CFGraph(), 1, 2, "main");
+        graph2.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        graph2.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(3));
+        requireTrue(graph1 == graph2);
+        requireFalse(graph1 != graph2);
+    }
+
+    SECTION("7.8. tree graph with other data members - not same") {
+        CFG::CFGraph graph1(CFG::CFGraph(), 1, 2, "main");
+        graph1.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        CFG::CFGraph graph2(CFG::CFGraph(), 1, 2, "main");
+        graph2.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        graph2.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(3));
+        requireTrue(graph1 != graph2);
+        requireFalse(graph1 == graph2);
+    }
+}
