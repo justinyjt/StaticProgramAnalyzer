@@ -1,6 +1,6 @@
 #include <string>
 #include "PatternClauseParser.h"
-#include "qps/clause/Pattern.h"
+#include "qps/clause/TwoArgClause/Pattern.h"
 #include "qps/pql/Synonym.h"
 #include "qps/pql/Wildcard.h"
 #include "qps/pql/Expression.h"
