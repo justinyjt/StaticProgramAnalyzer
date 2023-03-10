@@ -15,6 +15,9 @@ class CFGraph : public Graph<CFGraphNodeData> {
     CFGraph(CFGraph &&graph) = default;
     CFGraph &operator=(CFGraph &&graph) = default;
 
+    bool operator==(const CFGraph &graph) const;
+    bool operator!=(const CFGraph &graph) const;
+
     static CFGraphNodeData end_node_data;
     CFGraph();
     ~CFGraph() override = default;

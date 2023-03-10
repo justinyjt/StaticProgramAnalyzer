@@ -221,4 +221,13 @@ IndexList CFGraph::getDummyNodeSuccessors(Index index) const {
     }
     return successors;
 }
+
+bool CFGraph::operator==(const CFGraph &graph) const {
+    return Graph<CFGraphNodeData>::operator==(graph) && this->proc_name_ == graph.proc_name_ &&
+        this->min_stmt_num_ == graph.min_stmt_num_ && this->max_stmt_num_ == graph.max_stmt_num_;
+}
+
+bool CFGraph::operator!=(const CFGraph &graph) const {
+    return !(*this == graph);
+}
 }  // namespace CFG
