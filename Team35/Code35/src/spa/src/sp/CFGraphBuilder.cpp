@@ -45,7 +45,8 @@ void CFGraphBuilder::addStmt(STMT_NUM stmt_num) {
 
 /**
  * Adds a loop back to a node to the control flow graph. Moves the last visited node to the new node. This assumes that
- * stmt_num is already added to the graph and assumes that there is a last visited node.
+ * stmt_num is already added to the graph and assumes that there is a last visited node. Adds a dummy node to the
+ * control flow graph after the loop.
  * @param stmt_num Statement number of the node to loop back to.
  */
 void CFGraphBuilder::addLoop(STMT_NUM stmt_num) {
