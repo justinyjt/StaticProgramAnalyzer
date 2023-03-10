@@ -26,6 +26,11 @@ inline void requireEqual(T a, T b) {
 }
 
 template<typename T>
+inline void requireEqualRef(T &a, T &b) {
+    REQUIRE(a == b);
+}
+
+template<typename T>
 inline void requireNotEqual(T a, T b) {
     REQUIRE(a != b);
 }

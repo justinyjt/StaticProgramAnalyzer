@@ -52,6 +52,7 @@ void CFGraphBuilder::addStmt(STMT_NUM stmt_num) {
 void CFGraphBuilder::addLoop(STMT_NUM stmt_num) {
     assert(isLastVisitedNodeExist());
     CFGraphNodeData node_data = makeNodeData(stmt_num);
+    assert(this->cf_graph_.hasNode(node_data));
     this->addNode(node_data);
     this->addDummyNode(stmt_num);
 }
@@ -64,7 +65,7 @@ void CFGraphBuilder::addLoop(STMT_NUM stmt_num) {
 void CFGraphBuilder::linkToDummyNode(STMT_NUM stmt_num) {
     assert(isLastVisitedNodeExist());
     CFGraphNodeData dummy_node_data = makeDummyNodeData(stmt_num);
-    this->addNode(dummy_node_data);
+    this->cf_graph_.addEdge(this->last_visited_node_data_.value(), dummy_node_data);
 }
 
 /**
@@ -94,5 +95,17 @@ void CFGraphBuilder::setMaxStmtNum(STMT_NUM max_stmt_num) {
 
 void CFGraphBuilder::setMinStmtNum(STMT_NUM min_stmt_num) {
     this->min_stmt_num_ = min_stmt_num;
+}
+
+bool CFGraphBuilder::operator==(const CFGraphBuilder &builder) const {
+    return this->cf_graph_ == builder.cf_graph_ &&
+        this->last_visited_node_data_ == builder.last_visited_node_data_ &&
+        this->proc_name_ == builder.proc_name_ &&
+        this->min_stmt_num_ == builder.min_stmt_num_ &&
+        this->max_stmt_num_ == builder.max_stmt_num_;
+}
+
+bool CFGraphBuilder::operator!=(const CFGraphBuilder &builder) const {
+    return !(*this == builder);
 }
 }  // namespace CFG

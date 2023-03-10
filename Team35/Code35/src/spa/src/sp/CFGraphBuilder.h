@@ -9,6 +9,8 @@ class CFGraphBuilder {
  public:
     CFGraphBuilder();
     ~CFGraphBuilder() = default;
+    bool operator==(const CFGraphBuilder &builder) const;
+    bool operator!=(const CFGraphBuilder &builder) const;
     void addStmt(STMT_NUM stmt_num);
     void addLoop(STMT_NUM stmt_num);
     void linkToDummyNode(STMT_NUM stmt_num);
