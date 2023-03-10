@@ -61,6 +61,8 @@ class DesignExtractor {
     std::shared_ptr<ASTNode> root_;
     std::vector<STMT_NUM> containerStmtLst_;
     STMT_NUM stmtCnt_;
+    ENT_NAME curProc_;
+
     CallGraph callGraph_;
 
     void extractProc(const std::shared_ptr<ASTNode> &);
@@ -77,9 +79,11 @@ class DesignExtractor {
 
     void extractStmtLst(const std::shared_ptr<ASTNode> &);
 
+    void extractCall(const std::shared_ptr<ASTNode> &);
+
     void extractCondExpr(const std::shared_ptr<ASTNode> &);
 
-    std::string extractLeftAssign(const std::shared_ptr<ASTNode> &);
+    ENT_NAME extractLeftAssign(const std::shared_ptr<ASTNode> &);
 
     void extractRightAssign(const std::shared_ptr<ASTNode> &);
 

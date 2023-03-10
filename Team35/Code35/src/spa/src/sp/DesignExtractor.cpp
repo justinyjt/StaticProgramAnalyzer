@@ -11,8 +11,9 @@
 DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
         pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(), procSet_(),
         stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
-        stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(), callGraph_(),
-        containerStmtLst_(), stmtCnt_(0) {}
+        stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(),
+        containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_() {}
+
 
 std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode> root) {
     root_ = std::move(root);
@@ -36,6 +37,7 @@ std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode
 void DesignExtractor::extractProc(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::Procedure);
     const std::shared_ptr<ASTNode> &nodeC = node->getChildren().front();
+    curProc_ = node->getLabel();
     procSet_.insert(node->getLabel());
     extractStmtLst(nodeC);
 }
@@ -62,6 +64,9 @@ void DesignExtractor::extractStmtLst(const std::shared_ptr<ASTNode> &node) {
                 break;
             case ASTNode::SyntaxType::While:
                 extractWhile(child);
+                break;
+            case ASTNode::SyntaxType::Call:
+                extractCall(child);
                 break;
             default:
                 break;
@@ -109,7 +114,7 @@ void DesignExtractor::extractAssign(const std::shared_ptr<ASTNode> &node) {
     extractRightAssign(rAssign);
 }
 
-std::string DesignExtractor::extractLeftAssign(const std::shared_ptr<ASTNode> &node) {
+ENT_NAME DesignExtractor::extractLeftAssign(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::Variable);
     std::string varName = node->getLabel();
     varNameSet_.insert(varName);
@@ -211,6 +216,15 @@ void DesignExtractor::extractWhile(const std::shared_ptr<ASTNode> &node) {
     extractStmtLst(whileStmtLst);
 
     containerStmtLst_.pop_back();
+}
+
+void DesignExtractor::extractCall(const std::shared_ptr<ASTNode> &node) {
+    assert(node->getSyntaxType() == ASTNode::SyntaxType::Call);
+    const auto &child = node->getChildren().front();
+    assert(child->getSyntaxType() == ASTNode::SyntaxType::Variable);
+
+    ENT_NAME calleeName = child->getLabel();
+    callGraph_.addCallRelationship(curProc_, calleeName);
 }
 
 void DesignExtractor::updateStmtSet() {

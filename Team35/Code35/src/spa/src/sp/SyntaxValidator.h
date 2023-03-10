@@ -21,11 +21,14 @@ class SyntaxValidator {
     bool validateProc();
     bool validateStmtLst();
     bool validateStmt();
+
     bool validateAssign();
     bool validateRead();
     bool validatePrint();
     bool validateIf();
     bool validateWhile();
+    bool validateCall();
+
     bool validateCondExpr();
     bool validateRelExpr();
     bool validateExpr();

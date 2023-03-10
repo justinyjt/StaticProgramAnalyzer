@@ -12,15 +12,17 @@ class ASTNode {
         Program,
         Procedure,
         StmtLst,
+        Variable,
+        Constant,
+
         Assign,
         Read,
         Print,
-        Variable,
-        Constant,
         If,
         While,
         Else,
         Then,
+        Call,
 
         // logical operators
         LogicalAnd,

@@ -45,4 +45,12 @@ class Parser : public IParser {
     shared_ptr<ASTNode> parseExpr();
 
     shared_ptr<ASTNode> parseName();
+
+    shared_ptr<ASTNode> parseCall();
+
+    shared_ptr<ASTNode> parseTerm();
+
+    shared_ptr<ASTNode> parseFactor();
+
+    shared_ptr<ASTNode> parseInteger();
 };
