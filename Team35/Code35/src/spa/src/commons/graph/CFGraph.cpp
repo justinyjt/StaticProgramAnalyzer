@@ -23,10 +23,8 @@ CFGraph::CFGraph(const CFGraph &graph, STMT_NUM min_stmt_num, STMT_NUM max_stmt_
     pairwise_control_flow_non_transitive_(graph.pairwise_control_flow_non_transitive_) {}
 
 STMT_SET CFGraph::getPredecessors(STMT_NUM stmt_num, bool isTransitive) const {
-    bool stmt_num_out_of_range = (stmt_num < min_stmt_num_ || stmt_num > max_stmt_num_);
-    assert(!stmt_num_out_of_range);
     CFGraphNodeData node_data = makeNodeData(stmt_num);
-    if (stmt_num_out_of_range || !this->hasNode(node_data)) {
+    if (!this->hasNode(node_data)) {
         return {};
     }
 
@@ -54,7 +52,7 @@ STMT_SET CFGraph::getPredecessors(STMT_NUM stmt_num, bool isTransitive) const {
         Index index = frontier.front();
         frontier.pop();
         visited.insert(index);
-        for (Index predecessor_index : this->getOutgoingNodes(index)) {
+        for (Index predecessor_index : this->getIncomingNodes(index)) {
             if (visited.find(predecessor_index) == visited.end()) {
                 frontier.push(predecessor_index);
             }
@@ -68,10 +66,8 @@ STMT_SET CFGraph::getPredecessors(STMT_NUM stmt_num, bool isTransitive) const {
 }
 
 STMT_SET CFGraph::getSuccessors(STMT_NUM stmt_num, bool isTransitive) const {
-    bool stmt_num_out_of_range = (stmt_num < min_stmt_num_ || stmt_num > max_stmt_num_);
-    assert(!stmt_num_out_of_range);
     CFGraphNodeData node_data = makeNodeData(stmt_num);
-    if (stmt_num_out_of_range || !this->hasNode(node_data)) {
+    if (!this->hasNode(node_data)) {
         return {};
     }
 
@@ -145,11 +141,6 @@ const STMT_STMT_SET &CFGraph::getPairwiseControlFlow(bool isTransitive) {
 }
 
 bool CFGraph::isReachable(STMT_NUM stmt1, STMT_NUM stmt2) const {
-    bool stmt_num_out_of_range =
-        (stmt1 < min_stmt_num_ || stmt1 > max_stmt_num_ || stmt2 < min_stmt_num_ || stmt2 > max_stmt_num_);
-    if (stmt_num_out_of_range) {
-        return false;
-    }
     CFGraphNodeData node_data1 = makeNodeData(stmt1);
     CFGraphNodeData node_data2 = makeNodeData(stmt2);
     if (!this->hasNode(node_data1) || !this->hasNode(node_data2)) {

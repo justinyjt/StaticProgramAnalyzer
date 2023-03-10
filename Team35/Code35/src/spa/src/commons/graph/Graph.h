@@ -13,6 +13,10 @@ typedef std::vector<Index> IndexList;
 typedef std::unordered_set<Index> IndexSet;
 typedef std::queue<Index> IndexQueue;
 
+/**
+ * A directed unweighted graph with nodes of type T. The nodes are unique by value. It is possible that one node is
+ * connected to another node multiple times, or connected to itself.
+ */
 template<typename T>
 class Graph {
  public:
@@ -29,10 +33,14 @@ class Graph {
     }
 
     void addEdge(const T &from, const T &to) {
-        Index fromIndex = addNode(from);
-        Index toIndex = addNode(to);
+        Index fromIndex = addNodeHelper(from);
+        Index toIndex = addNodeHelper(to);
         outgoingAdjList[fromIndex].push_back(toIndex);
         incomingAdjList[toIndex].push_back(fromIndex);
+    }
+
+    void addNode(const T &node) {
+        addNodeHelper(node);
     }
 
     bool hasNode(const T &node) const {
@@ -95,7 +103,7 @@ class Graph {
     std::vector<std::vector<Index>> outgoingAdjList;
     std::vector<std::vector<Index>> incomingAdjList;
 
-    Index addNode(const T &node) {
+    Index addNodeHelper(const T &node) {
         if (nodeToIndex.find(node) != nodeToIndex.end()) {
             return nodeToIndex[node];
         }
