@@ -8,7 +8,7 @@
 class PatternTable {
     std::unordered_map<STMT_NUM, ASSIGN_PAT> stmtPatternMap;
  public:
-    bool addPattern(STMT_NUM stmt, ASSIGN_PAT pattern);
+    void addPattern(STMT_NUM stmt, ASSIGN_PAT pattern);
 
     STMT_SET getExactPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;
 

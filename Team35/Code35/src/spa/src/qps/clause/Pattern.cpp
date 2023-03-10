@@ -21,7 +21,7 @@ std::unique_ptr<Result> Pattern::evaluate(PKBReader *db) {
         std::unique_ptr<ILexer> lxr =
                 LexerFactory::createLexer(input, LexerFactory::LexerType::Expression);
         TokenScanner scanner(std::move(lxr));
-        ExprParser parser(&scanner);
+        ExprParser parser(scanner);
         ASSIGN_PAT_RIGHT pattern = parser.parseExpr();
         bool hasWildcard = dynamic_cast<Expression &>(*second).hasWildcard;
         if (!hasWildcard) {  // exact

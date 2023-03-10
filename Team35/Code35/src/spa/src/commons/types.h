@@ -26,7 +26,6 @@ typedef std::shared_ptr<ExprNode> ASSIGN_PAT_RIGHT;
 typedef ENT_NAME ASSIGN_PAT_LEFT;
 typedef std::pair<ASSIGN_PAT_LEFT, ASSIGN_PAT_RIGHT> ASSIGN_PAT;
 
-
 enum class StmtType {
     Print, Read, Assign, Call, While, If, None
 };

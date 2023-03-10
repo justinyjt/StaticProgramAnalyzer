@@ -20,6 +20,3 @@ class ExprNode : public ASTNode {
 
     bool contains(const ExprNode &other) const;
 };
-
-
-

@@ -7,9 +7,4 @@
 class MockExprMaker {
  public:
     static ASSIGN_PAT_RIGHT makePatternRight(std::string);
-
-
 };
-
-
-

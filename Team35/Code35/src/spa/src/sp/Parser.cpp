@@ -233,7 +233,7 @@ shared_ptr<ASTNode> Parser::parseRelFactor() {
 }
 
 shared_ptr<ASTNode> Parser::parseExpr() {
-    std::shared_ptr<ExprParser> exprParser = std::make_shared<ExprParser>(&scanner_);
+    std::shared_ptr<ExprParser> exprParser = std::make_shared<ExprParser>(scanner_);
     return std::move(exprParser->parseExpr());
 }
 
