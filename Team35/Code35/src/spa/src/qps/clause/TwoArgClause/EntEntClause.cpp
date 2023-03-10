@@ -14,8 +14,8 @@ std::unique_ptr<Result> EntEntClause::evaluate(PKBReader* db) {
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::IDENT):  // Uses/Modifies(f, "x") -> str[]
         {
-            ENT_NAME syn = (dynamic_cast<Ident &>(*second)).s;
-            ENT_SET set = db->getRelationshipByVal(rs, syn);
+            ENT_NAME entName = (dynamic_cast<Ident &>(*second)).s;
+            ENT_SET set = db->getRelationshipByVal(rs, entName);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), set);
             return std::move(result);
         }
@@ -27,23 +27,23 @@ std::unique_ptr<Result> EntEntClause::evaluate(PKBReader* db) {
         }
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::SYNONYM):  // Uses/Mod("f", v) -> str[]
         {
-            ENT_NAME syn = (dynamic_cast<Ident &>(*first)).s;
-            ENT_SET set = db->getRelationshipByKey(rs, syn);
+            ENT_NAME entName = (dynamic_cast<Ident &>(*first)).s;
+            ENT_SET set = db->getRelationshipByKey(rs, entName);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), set);
             return std::move(result);
         }
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::IDENT):  // Uses/Modifies("f", "x") -> bool
         {
-            ENT_NAME firstSyn = (dynamic_cast<Ident &>(*first)).s;
-            ENT_NAME secondSyn = (dynamic_cast<Ident &>(*second)).s;
-            bool b = db->isRelationshipExists(rs, firstSyn, secondSyn);
+            ENT_NAME firstEnt = (dynamic_cast<Ident &>(*first)).s;
+            ENT_NAME secondEnt = (dynamic_cast<Ident &>(*second)).s;
+            bool b = db->isRelationshipExists(rs, firstEnt, secondEnt);
             std::unique_ptr<Result> result = std::make_unique<BoolResult>(b);
             return std::move(result);
         }
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::WILDCARD):  // Uses/Modifies("f", _) -> bool
         {
-            ENT_NAME syn = (dynamic_cast<Ident &>(*first)).s;
-            ENT_SET s = db->getRelationshipByKey(rs, syn);
+            ENT_NAME entName = (dynamic_cast<Ident &>(*first)).s;
+            ENT_SET s = db->getRelationshipByKey(rs, entName);
             std::unique_ptr<Result> result = std::make_unique<BoolResult>(!s.empty());
             return std::move(result);
         }
