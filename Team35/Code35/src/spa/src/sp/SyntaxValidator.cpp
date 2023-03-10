@@ -54,6 +54,8 @@ bool SyntaxValidator::validateStmt() {
         return validateIf();
     } else if (scanner_.peek(Token::Tag::While)) {
         return validateWhile();
+    } else if (scanner_.peek(Token::Tag::Call)) {
+        return validateCall();
     } else {
         return false;
     }
@@ -140,6 +142,17 @@ bool SyntaxValidator::validateWhile() {
     }
 
     return validateStmtLst();
+}
+
+bool SyntaxValidator::validateCall() {
+    assert(scanner_.peek(Token::Tag::Call));
+    scanner_.next();
+
+    if (!validateName()) {
+        return false;
+    }
+
+    return scanner_.match(Token::Tag::SemiColon);
 }
 
 bool SyntaxValidator::validateExpr() {

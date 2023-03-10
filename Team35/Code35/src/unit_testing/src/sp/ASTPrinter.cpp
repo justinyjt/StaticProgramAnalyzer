@@ -42,6 +42,10 @@ std::string ASTPrinter::printAST(const std::unique_ptr<ASTNode> &node) {
         const auto &cond = node->getChildren().at(0);
         const auto &thenStmt = node->getChildren().at(1);
         res.append("while (" + printAST(cond) + ") {\n" + printAST(thenStmt) + "}\n");
+    } else if (node->getSyntaxType() == ASTNode::SyntaxType::Call) {
+        const auto& child = node->getChildren().front();
+        res.append("call " + printAST(child));
+        res.append(";\n");
     } else if (node->getSyntaxType() == ASTNode::SyntaxType::Variable
         || node->getSyntaxType() == ASTNode::SyntaxType::Constant) {
         return node->getLabel();
