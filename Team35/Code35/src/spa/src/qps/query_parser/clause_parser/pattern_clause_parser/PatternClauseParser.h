@@ -6,7 +6,7 @@
 #include <utility>
 
 #include "qps/clause/Clause.h"
-#include "qps/clause/AssignPattern.h"
+#include "qps/clause/TwoArgClause/AssignPattern.h"
 #include "qps/pql/Synonym.h"
 #include "qps/pql/Wildcard.h"
 #include "commons/token/Token.h"

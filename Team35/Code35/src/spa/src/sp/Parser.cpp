@@ -50,9 +50,11 @@ unique_ptr<ASTNode> Parser::parseStmt() {
         return std::move(parsePrint());
     } else if (scanner_.peek(Token::Tag::If)) {
         return std::move(parseIf());
-    } else {
-        assert(scanner_.peek(Token::Tag::While));
+    } else if (scanner_.peek(Token::Tag::While)) {
         return std::move(parseWhile());
+    } else {
+        assert(scanner_.peek(Token::Tag::Call));
+        return std::move(parseCall());
     }
 }
 
@@ -116,6 +118,16 @@ unique_ptr<ASTNode> Parser::parseWhile() {
 
     cur->addChild(parseStmtLst());
 
+    return std::move(cur);
+}
+
+unique_ptr<ASTNode> Parser::parseCall() {
+    scanner_.match(Token::Tag::Call);
+    unique_ptr<ASTNode> cur = std::make_unique<ASTNode>(ASTNode::SyntaxType::Call, std::nullopt);
+
+    cur->addChild(parseName());
+
+    scanner_.match(Token::Tag::SemiColon);
     return std::move(cur);
 }
 

@@ -2,31 +2,31 @@
 #include <memory>
 #include <utility>
 
-#include "qps/clause/TwoArgClause/TwoArgClause.h"
+#include "TwoArgClause.h"
 
 class EntEntClause : public TwoArgClause {
-public:
+ public:
     const NameNameRelationship rs;
     EntEntClause(std::unique_ptr<PQLToken>, std::unique_ptr<PQLToken>, NameNameRelationship);
     std::unique_ptr<Result> evaluate(PKBReader *) override;
-protected:
+ protected:
     bool operator==(const Clause &rhs) const override;
 };
 
 class UsesP : public EntEntClause {
-public:
+ public:
     UsesP(std::unique_ptr<PQLToken>, std::unique_ptr<PQLToken>);
     void validateArgs() override;
 };
 
 class ModifiesP : public EntEntClause {
-public:
+ public:
     ModifiesP(std::unique_ptr<PQLToken>, std::unique_ptr<PQLToken>);
     void validateArgs() override;
 };
 
 class Calls : public EntEntClause {
-public:
+ public:
     Calls(std::unique_ptr<PQLToken>, std::unique_ptr<PQLToken>, bool isTransitive);
     void validateArgs() override;
 };

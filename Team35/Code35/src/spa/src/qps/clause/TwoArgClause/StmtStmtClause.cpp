@@ -1,18 +1,18 @@
 #pragma once
 
-#include "ParentFollows.h"
+#include "StmtStmtClause.h"
 #include <unordered_set>
 
-ParentFollows::ParentFollows(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second,
+StmtStmtClause::StmtStmtClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second,
         StmtStmtRelationship rs) : TwoArgClause(std::move(first), std::move(second)), rs(rs) {
     validateArgs();
 }
 
-std::unique_ptr<Result> ParentFollows::evaluate(PKBReader *db) {
+std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
     /* <stmt SYNONYM | _ | STMT_NUM> */
 
     switch (getPairEnum()) {
-        case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Parent/Follows(s1, s2) -> pair<int, int>[]
+        case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Parent/Follows(s1, s2) -> <int, int>[]
         {
             STMT_STMT_SET s = db->getAllRelationships(rs);
             STMT_SET filterSetByFirst = db->getStatements(getStmtType(dynamic_cast<Synonym&>(*first).de));
@@ -91,28 +91,28 @@ std::unique_ptr<Result> ParentFollows::evaluate(PKBReader *db) {
     }
 }
 
-bool ParentFollows::operator==(const Clause &rhs) const {
-    const auto *pRhs = dynamic_cast<const ParentFollows *>(&rhs);
+bool StmtStmtClause::operator==(const Clause &rhs) const {
+    const auto *pRhs = dynamic_cast<const StmtStmtClause *>(&rhs);
     return pRhs != nullptr && rs == pRhs->rs && TwoArgClause::equal(*pRhs);
 }
 
-void ParentFollows::validateArgs() {
+void StmtStmtClause::validateArgs() {
     Synonym* synonym1 = dynamic_cast<Synonym*>(first.get());
     Synonym* synonym2 = dynamic_cast<Synonym*>(second.get());
     if (synonym1 != nullptr && (synonym1->de == Synonym::DesignEntity::PROCEDURE
-        || synonym1->de == Synonym::DesignEntity::VARIABLE
-        || synonym1->de == Synonym::DesignEntity::CONSTANT) ||
-    synonym2 != nullptr && (synonym2->de == Synonym::DesignEntity::PROCEDURE
-        || synonym2->de == Synonym::DesignEntity::VARIABLE
-        || synonym2->de == Synonym::DesignEntity::CONSTANT)) {
+                                || synonym1->de == Synonym::DesignEntity::VARIABLE
+                                || synonym1->de == Synonym::DesignEntity::CONSTANT) ||
+        synonym2 != nullptr && (synonym2->de == Synonym::DesignEntity::PROCEDURE
+                                || synonym2->de == Synonym::DesignEntity::VARIABLE
+                                || synonym2->de == Synonym::DesignEntity::CONSTANT)) {
         throw SemanticException();
     }
 }
 
 Parent::Parent(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :
-    ParentFollows(std::move(first), std::move(second),
+    StmtStmtClause(std::move(first), std::move(second),
                 isTransitive ? StmtStmtRelationship::ParentStar : StmtStmtRelationship::Parent) {}
 
 Follows::Follows(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :
-    ParentFollows(std::move(first), std::move(second),
+    StmtStmtClause(std::move(first), std::move(second),
                 isTransitive ? StmtStmtRelationship::FollowsStar : StmtStmtRelationship::Follows) {}

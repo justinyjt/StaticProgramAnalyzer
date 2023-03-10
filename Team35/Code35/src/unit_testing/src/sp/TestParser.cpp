@@ -652,3 +652,27 @@ TEST_CASE("Parser can parse while... correctly", "[Parser]") {
         REQUIRE(printer.printAST(root) == "procedure main {\nwhile (x>0) {\nread x;\nread x;\nread x;\n}\n}\n");
     }
 }
+
+TEST_CASE("Parser can parse call correctly", "[Parser]") {
+    SECTION("Parser can parse one call stmt: call main;") {
+        Token EoF(Token::Tag::EndOfFile);
+        Token Proc(Token::Tag::Procedure);
+        Token ProcName("main", Token::Tag::Name);
+        Token LBrace(Token::Tag::LBrace);
+        Token RBrace(Token::Tag::RBrace);
+        Token Semi(Token::Tag::SemiColon);
+        Token CallStmt(Token::Tag::Call);
+        Token VarName("main", Token::Tag::Name);
+        std::deque<Token> tokens = { EoF, RBrace, Semi, VarName, CallStmt, LBrace, ProcName, Proc };
+
+        std::deque<std::unique_ptr<Token>> tokenLst;
+        convertDequeReverse(tokens, tokenLst);
+
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<ASTNode> root = parser->Parse();
+
+        ASTPrinter printer;
+
+        REQUIRE(printer.printAST(root) == "procedure main {\ncall main;\n}\n");
+    }
+}
