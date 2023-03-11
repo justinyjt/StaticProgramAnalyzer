@@ -105,8 +105,8 @@ TEST_CASE("3. test isCondExprSeparatedByLogicalOperator method") {
         requireFalse(scanner.isCondExprSeparatedByLogicalOperator());
     }
 
-    SECTION(
-        "3.3. isCondExprSeparatedByLogicalOperator method returns true for valid conditional expression, nested parentheses") {
+    SECTION("3.3. isCondExprSeparatedByLogicalOperator method returns true for valid conditional expression, "
+            "nested parentheses") {
         std::vector<Token>
             tokens = {eof, rParen, constant, lParen, logicalAnd, rParen, rParen, constant, lParen, lParen};
         std::unique_ptr<ILexer> lexer = std::make_unique<MockLexer>(tokens);

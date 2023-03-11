@@ -1,6 +1,8 @@
 #pragma once
 
+#include <memory>
 #include <string>
+
 #include "commons/ASTNode.h"
 
 class ASTPrinter {

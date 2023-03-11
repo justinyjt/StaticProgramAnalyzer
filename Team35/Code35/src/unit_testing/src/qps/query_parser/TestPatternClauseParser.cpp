@@ -8,7 +8,7 @@
 #include "qps/pql/Expression.h"
 
 class setUp {
-public:
+ public:
     setUp() {
         // Set up code
         query = "";
@@ -70,7 +70,7 @@ TEST_CASE_METHOD(setUp, "variable, variable name and wildcard") {
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     TokenValidator tokenValidator2(lexer);
     clause = pcp->parse(tokenValidator2, declarationList);
-    pattern = std::make_unique<Pattern>(std::move(synonymVariable), std::move(exprWildcardVarName),  "a");
+    pattern = std::make_unique<Pattern>(std::move(synonymVariable), std::move(exprWildcardVarName), "a");
     requireTrue(*clause == *pattern);
 }
 

@@ -84,7 +84,6 @@ TEST_CASE("Test join: true and table") {
     requireTrue(*expectedResult == *(Result::join(*boolResult, *tableResult2)));
 }
 
-
 TEST_CASE("Test join: false and table") {
     std::unique_ptr<BoolResult> boolResult = std::make_unique<BoolResult>(false);
 
@@ -119,7 +118,6 @@ TEST_CASE("Test join: 2 common columns") {
 
     requireTrue(*expectedResult == *(Result::join(*tableResult1, *tableResult2)));
 }
-
 
 TEST_CASE("Test join: no common columns, 2x2") {
     std::list<std::string> header1 = {"s", "v"};
@@ -215,7 +213,7 @@ TEST_CASE("Test output") {
     row.push_back("1");
     outputRows.push_back(row);
     std::unique_ptr<TableResult> outputTable = std::make_unique<TableResult>(outputHeaders, outputRows);
-    requireTrue(*outputTable==*resultTable);
+    requireTrue(*outputTable == *resultTable);
 }
 
 TEST_CASE("Test output selected does not match") {
@@ -233,7 +231,7 @@ TEST_CASE("Test output selected does not match") {
     std::string col = "c";
     resultTable->output(result);
 
-    requireTrue(*outputTable==*(Result::join(*boolResult, *tableResult2)));
+    requireTrue(*outputTable == *(Result::join(*boolResult, *tableResult2)));
 }
 
 TEST_CASE("Test output empty") {
