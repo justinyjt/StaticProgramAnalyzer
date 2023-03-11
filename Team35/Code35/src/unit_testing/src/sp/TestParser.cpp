@@ -263,11 +263,11 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
         Token GreaterThan(">", Token::Tag::GreaterThan);
         Token ConstVal("0", Token::Tag::Integer);
         std::deque<Token> tokens = {
-                EoF, RBrace,
-                RBrace, LBrace, Else,
-                RBrace, LBrace, Then,
-                RParen, ConstVal, GreaterThan, VarName, LParen, If,
-                LBrace, ProcName, Proc
+            EoF, RBrace,
+            RBrace, LBrace, Else,
+            RBrace, LBrace, Then,
+            RParen, ConstVal, GreaterThan, VarName, LParen, If,
+            LBrace, ProcName, Proc
         };
 
         std::deque<std::unique_ptr<Token>> tokenLst;
@@ -296,11 +296,11 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
         Token GreaterThan(">", Token::Tag::GreaterThan);
         Token ConstVal("0", Token::Tag::Integer);
         std::deque<Token> tokens = {
-                EoF, RBrace,
-                RBrace, LBrace, Else,
-                RBrace, LBrace, Then,
-                RParen, RParen, ConstVal, Plus, ConstVal, LParen, GreaterThan, VarName, LParen, If,
-                LBrace, ProcName, Proc};
+            EoF, RBrace,
+            RBrace, LBrace, Else,
+            RBrace, LBrace, Then,
+            RParen, RParen, ConstVal, Plus, ConstVal, LParen, GreaterThan, VarName, LParen, If,
+            LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDequeReverse(tokens, tokenLst);
@@ -328,11 +328,11 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
         Token GreaterThan(">", Token::Tag::GreaterThan);
         Token ConstVal("0", Token::Tag::Integer);
         std::deque<Token> tokens = {
-                EoF, RBrace,
-                RBrace, LBrace, Else,
-                RBrace, LBrace, Then,
-                RParen, RParen, ConstVal, GreaterThan, VarName, LParen, LogicalNot, LParen, If,
-                LBrace, ProcName, Proc};
+            EoF, RBrace,
+            RBrace, LBrace, Else,
+            RBrace, LBrace, Then,
+            RParen, RParen, ConstVal, GreaterThan, VarName, LParen, LogicalNot, LParen, If,
+            LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDequeReverse(tokens, tokenLst);
@@ -360,12 +360,12 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
         Token GreaterThan(">", Token::Tag::GreaterThan);
         Token ConstVal("0", Token::Tag::Integer);
         std::deque<Token> tokens = {
-                EoF, RBrace,
-                RBrace, LBrace, Else,
-                RBrace, LBrace, Then,
-                RParen, RParen, ConstVal, GreaterThan, VarName, LParen, LogicalAnd, RParen, ConstVal, GreaterThan,
-                VarName, LParen, LParen, If,
-                LBrace, ProcName, Proc};
+            EoF, RBrace,
+            RBrace, LBrace, Else,
+            RBrace, LBrace, Then,
+            RParen, RParen, ConstVal, GreaterThan, VarName, LParen, LogicalAnd, RParen, ConstVal, GreaterThan,
+            VarName, LParen, LParen, If,
+            LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDequeReverse(tokens, tokenLst);
@@ -394,15 +394,15 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
         Token GreaterThan(">", Token::Tag::GreaterThan);
         Token ConstVal("0", Token::Tag::Integer);
         std::deque<Token> tokens = {
-                EoF, RBrace,
-                RBrace, LBrace, Else,
-                RBrace, LBrace, Then,
-                RParen,
-                RParen, ConstVal, GreaterThan, VarName, LParen, LogicalOr,
-                RParen, RParen, ConstVal, GreaterThan, VarName, LParen, LogicalAnd, RParen, ConstVal, GreaterThan,
-                VarName, LParen, LParen,
-                LParen, If,
-                LBrace, ProcName, Proc};
+            EoF, RBrace,
+            RBrace, LBrace, Else,
+            RBrace, LBrace, Then,
+            RParen,
+            RParen, ConstVal, GreaterThan, VarName, LParen, LogicalOr,
+            RParen, RParen, ConstVal, GreaterThan, VarName, LParen, LogicalAnd, RParen, ConstVal, GreaterThan,
+            VarName, LParen, LParen,
+            LParen, If,
+            LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDequeReverse(tokens, tokenLst);
@@ -434,11 +434,11 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
         Token ConstVal("0", Token::Tag::Integer);
 
         std::deque<Token> tokens = {
-                EoF, RBrace,
-                RBrace, LBrace, Else,
-                RBrace, Semi, VarName, ReadStmt, LBrace, Then,
-                RParen, ConstVal, GreaterThan, VarName, LParen, If,
-                LBrace, ProcName, Proc};
+            EoF, RBrace,
+            RBrace, LBrace, Else,
+            RBrace, Semi, VarName, ReadStmt, LBrace, Then,
+            RParen, ConstVal, GreaterThan, VarName, LParen, If,
+            LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDequeReverse(tokens, tokenLst);
@@ -468,11 +468,11 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
         Token ConstVal("0", Token::Tag::Integer);
 
         std::deque<Token> tokens = {
-                EoF, RBrace,
-                RBrace, Semi, VarName, ReadStmt, LBrace, Else,
-                RBrace, LBrace, Then,
-                RParen, ConstVal, GreaterThan, VarName, LParen, If,
-                LBrace, ProcName, Proc};
+            EoF, RBrace,
+            RBrace, Semi, VarName, ReadStmt, LBrace, Else,
+            RBrace, LBrace, Then,
+            RParen, ConstVal, GreaterThan, VarName, LParen, If,
+            LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDequeReverse(tokens, tokenLst);
@@ -502,11 +502,11 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
         Token ConstVal("0", Token::Tag::Integer);
 
         std::deque<Token> tokens = {
-                EoF, RBrace,
-                RBrace, Semi, VarName, ReadStmt, LBrace, Else,
-                RBrace, Semi, VarName, ReadStmt, LBrace, Then,
-                RParen, ConstVal, GreaterThan, VarName, LParen, If,
-                LBrace, ProcName, Proc};
+            EoF, RBrace,
+            RBrace, Semi, VarName, ReadStmt, LBrace, Else,
+            RBrace, Semi, VarName, ReadStmt, LBrace, Then,
+            RParen, ConstVal, GreaterThan, VarName, LParen, If,
+            LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDequeReverse(tokens, tokenLst);
@@ -536,11 +536,11 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
         Token ConstVal("0", Token::Tag::Integer);
 
         std::deque<Token> tokens = {
-                EoF, RBrace,
-                RBrace, Semi, VarName, ReadStmt, LBrace, Else,
-                RBrace, Semi, VarName, ReadStmt, Semi, VarName, ReadStmt, Semi, VarName, ReadStmt, LBrace, Then,
-                RParen, ConstVal, GreaterThan, VarName, LParen, If,
-                LBrace, ProcName, Proc};
+            EoF, RBrace,
+            RBrace, Semi, VarName, ReadStmt, LBrace, Else,
+            RBrace, Semi, VarName, ReadStmt, Semi, VarName, ReadStmt, Semi, VarName, ReadStmt, LBrace, Then,
+            RParen, ConstVal, GreaterThan, VarName, LParen, If,
+            LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDequeReverse(tokens, tokenLst);
@@ -550,7 +550,7 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) ==
-                "procedure main {\nif (x>0) then {\nread x;\nread x;\nread x;\n} else {\nread x;\n}\n}\n");
+            "procedure main {\nif (x>0) then {\nread x;\nread x;\nread x;\n} else {\nread x;\n}\n}\n");
     }
 
     SECTION("Parser can parse nested if: if(x>0)then{if(x>0)then{read x;}else{read x;}}else{read x;}") {
@@ -571,15 +571,15 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
         Token ConstVal("0", Token::Tag::Integer);
 
         std::deque<Token> tokens = {
-                EoF, RBrace,
-                RBrace, Semi, VarName, ReadStmt, LBrace, Else,
-                RBrace,
-                RBrace, Semi, VarName, ReadStmt, LBrace, Else,
-                RBrace, Semi, VarName, ReadStmt, LBrace, Then,
-                RParen, ConstVal, GreaterThan, VarName, LParen, If,
-                Then,
-                RParen, ConstVal, GreaterThan, VarName, LParen, If,
-                LBrace, ProcName, Proc};
+            EoF, RBrace,
+            RBrace, Semi, VarName, ReadStmt, LBrace, Else,
+            RBrace,
+            RBrace, Semi, VarName, ReadStmt, LBrace, Else,
+            RBrace, Semi, VarName, ReadStmt, LBrace, Then,
+            RParen, ConstVal, GreaterThan, VarName, LParen, If,
+            Then,
+            RParen, ConstVal, GreaterThan, VarName, LParen, If,
+            LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDequeReverse(tokens, tokenLst);
@@ -588,8 +588,8 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
-        REQUIRE(printer.printAST(root) ==
-                "procedure main {\nif (x>0) then {\nif (x>0) then {\nread x;\n} else {\nread x;\n}\n} else {\nread x;\n}\n}\n");
+        REQUIRE(printer.printAST(root) == "procedure main {\nif (x>0) then {\nif (x>0) then {\nread x;\n} "
+                                          "else {\nread x;\n}\n} else {\nread x;\n}\n}\n");
     }
 }
 
@@ -610,10 +610,10 @@ TEST_CASE("Parser can parse while... correctly", "[Parser]") {
         Token ConstVal("0", Token::Tag::Integer);
 
         std::deque<Token> tokens = {
-                EoF, RBrace,
-                RBrace, Semi, VarName, ReadStmt, LBrace,
-                RParen, ConstVal, GreaterThan, VarName, LParen, While,
-                LBrace, ProcName, Proc};
+            EoF, RBrace,
+            RBrace, Semi, VarName, ReadStmt, LBrace,
+            RParen, ConstVal, GreaterThan, VarName, LParen, While,
+            LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDequeReverse(tokens, tokenLst);
@@ -641,10 +641,10 @@ TEST_CASE("Parser can parse while... correctly", "[Parser]") {
         Token ConstVal("0", Token::Tag::Integer);
 
         std::deque<Token> tokens = {
-                EoF, RBrace,
-                RBrace, Semi, VarName, ReadStmt, Semi, VarName, ReadStmt, Semi, VarName, ReadStmt, LBrace,
-                RParen, ConstVal, GreaterThan, VarName, LParen, While,
-                LBrace, ProcName, Proc};
+            EoF, RBrace,
+            RBrace, Semi, VarName, ReadStmt, Semi, VarName, ReadStmt, Semi, VarName, ReadStmt, LBrace,
+            RParen, ConstVal, GreaterThan, VarName, LParen, While,
+            LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDequeReverse(tokens, tokenLst);

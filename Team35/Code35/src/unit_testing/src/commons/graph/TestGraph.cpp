@@ -102,24 +102,24 @@ TEST_CASE("1. test addEdge() method") {
 
         requireFalse(g.isCyclic());
         requireFalse(g.hasNode(0));
-        requireEqual((int) g.getOutgoingNodesPublic(1).size(), 1);
-        requireEqual((int) g.getOutgoingNodesPublic(2).size(), 6);
-        requireEqual((int) g.getOutgoingNodesPublic(3).size(), 1);
-        requireEqual((int) g.getOutgoingNodesPublic(4).size(), 1);
-        requireEqual((int) g.getOutgoingNodesPublic(5).size(), 1);
-        requireEqual((int) g.getOutgoingNodesPublic(6).size(), 1);
-        requireEqual((int) g.getOutgoingNodesPublic(7).size(), 1);
-        requireEqual((int) g.getOutgoingNodesPublic(8).size(), 1);
-        requireEqual((int) g.getOutgoingNodesPublic(9).size(), 1);
-        requireEqual((int) g.getOutgoingNodesPublic(10).size(), 1);
-        requireEqual((int) g.getOutgoingNodesPublic(11).size(), 1);
-        requireEqual((int) g.getOutgoingNodesPublic(12).size(), 1);
-        requireEqual((int) g.getOutgoingNodesPublic(13).size(), 1);
-        requireEqual((int) g.getOutgoingNodesPublic(14).size(), 1);
-        requireEqual((int) g.getOutgoingNodesPublic(15).size(), 1);
-        requireEqual((int) g.getIncomingNodesPublic(15).size(), 6);
-        requireEqual((int) g.getOutgoingNodesPublic(16).size(), 0);
-        requireEqual((int) g.getIncomingNodesPublic(16).size(), 1);
+        requireEqual(static_cast<int>(g.getOutgoingNodesPublic(1).size()), 1);
+        requireEqual(static_cast<int>(g.getOutgoingNodesPublic(2).size()), 6);
+        requireEqual(static_cast<int>(g.getOutgoingNodesPublic(3).size()), 1);
+        requireEqual(static_cast<int>(g.getOutgoingNodesPublic(4).size()), 1);
+        requireEqual(static_cast<int>(g.getOutgoingNodesPublic(5).size()), 1);
+        requireEqual(static_cast<int>(g.getOutgoingNodesPublic(6).size()), 1);
+        requireEqual(static_cast<int>(g.getOutgoingNodesPublic(7).size()), 1);
+        requireEqual(static_cast<int>(g.getOutgoingNodesPublic(8).size()), 1);
+        requireEqual(static_cast<int>(g.getOutgoingNodesPublic(9).size()), 1);
+        requireEqual(static_cast<int>(g.getOutgoingNodesPublic(10).size()), 1);
+        requireEqual(static_cast<int>(g.getOutgoingNodesPublic(11).size()), 1);
+        requireEqual(static_cast<int>(g.getOutgoingNodesPublic(12).size()), 1);
+        requireEqual(static_cast<int>(g.getOutgoingNodesPublic(13).size()), 1);
+        requireEqual(static_cast<int>(g.getOutgoingNodesPublic(14).size()), 1);
+        requireEqual(static_cast<int>(g.getOutgoingNodesPublic(15).size()), 1);
+        requireEqual(static_cast<int>(g.getIncomingNodesPublic(15).size()), 6);
+        requireEqual(static_cast<int>(g.getOutgoingNodesPublic(16).size()), 0);
+        requireEqual(static_cast<int>(g.getIncomingNodesPublic(16).size()), 1);
         requireEqual(g.getNoOfNodes(), 16);
 
         for (int i = 1; i <= 16; ++i) {

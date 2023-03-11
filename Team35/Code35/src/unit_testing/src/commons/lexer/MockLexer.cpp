@@ -1,5 +1,7 @@
 #include "MockLexer.h"
 
+#include <memory>
+
 MockLexer::MockLexer(const std::vector<Token> &tokens) : tokenLst_(tokens) {}
 
 void MockLexer::reset() {}

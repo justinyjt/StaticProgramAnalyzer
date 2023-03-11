@@ -26,7 +26,7 @@ inline void requireEqual(T a, T b) {
 }
 
 template<typename T>
-inline void requireEqualRef(T &a, T &b) {
+inline void requireEqualRef(const T &a, const T &b) {
     REQUIRE(a == b);
 }
 

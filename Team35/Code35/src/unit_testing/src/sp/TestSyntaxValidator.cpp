@@ -582,7 +582,6 @@ TEST_CASE("SV can validate if clauses") {
         SyntaxValidator sv(std::move(lexPtr));
         requireTrue(sv.validateProgram());
     }
-
 }
 
 TEST_CASE("SV can validate while clauses") {
