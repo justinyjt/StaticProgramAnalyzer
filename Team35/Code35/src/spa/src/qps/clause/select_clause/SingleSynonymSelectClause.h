@@ -2,7 +2,7 @@
 #include <memory>
 #include <utility>
 
-#include "qps/clause/SelectClause.h"
+#include "SelectClause.h"
 #include "qps/pql/Synonym.h"
 
 class SingleSynonymSelectClause : public SelectClause {

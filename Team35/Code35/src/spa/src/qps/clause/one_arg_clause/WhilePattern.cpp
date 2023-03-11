@@ -8,7 +8,6 @@ WhilePattern::WhilePattern(std::unique_ptr<PQLToken> first,
 }
 
 std::unique_ptr<Result> WhilePattern::evaluate(PKBReader *db) {
-
     throw std::runtime_error("WhilePattern.cpp");
 }
 

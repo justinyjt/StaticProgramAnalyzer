@@ -13,7 +13,7 @@
 Base class for clause in PQL (suchthat-cl, pattern-cl)
                 Clause
               /       \ 
-   SelectClause     TwoArgClause
+   select_clause     TwoArgClause
                  /       |        \ 
            Pattern StmtNameClause StmtStmtClause
                          |              |

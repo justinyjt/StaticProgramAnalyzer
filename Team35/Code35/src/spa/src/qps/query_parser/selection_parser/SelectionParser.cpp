@@ -3,12 +3,13 @@
 
 #include "SelectionParser.h"
 #include "qps/query_exceptions/SemanticException.h"
-#include "qps/clause/SingleSynonymSelectClause.h"
-#include "qps/clause/BooleanSelectClause.h"
+#include "qps/clause/select_clause/SingleSynonymSelectClause.h"
+#include "qps/clause/select_clause/BooleanSelectClause.h"
 #include "qps/query_exceptions/SyntaxException.h"
 #include "qps/query_parser/SemanticValidator.h"
 
-SelectionParser::SelectionParser(PQLTokenScanner &pqlTokenScanner, std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
+SelectionParser::SelectionParser(PQLTokenScanner &pqlTokenScanner,
+                                 std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
     pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
 
 std::unique_ptr<SelectClause> SelectionParser::parse() {
@@ -23,7 +24,7 @@ std::unique_ptr<SelectClause> SelectionParser::parse() {
         }
         pqlTokenScanner.match(Token::Tag::Bool);
         return std::move(std::make_unique<BooleanSelectClause>());
-    } else if (pqlTokenScanner.peek(Token::Tag::Name)) {  // single synonym
+    } else if (pqlTokenScanner.peekSynonym()) {  // single synonym
         return std::move(parseSelect());
     } else {
         throw SyntaxException();
@@ -37,16 +38,4 @@ std::unique_ptr<SelectClause> SelectionParser::parseSelect() {
     std::unique_ptr<SelectClause> selectClause = std::make_unique<SingleSynonymSelectClause>(selectedSynonym);
     pqlTokenScanner.next();
     return std::move(selectClause);
-}
-
-bool SelectionParser::isName(std::string input) {
-    if (!isalpha(input[0])) {
-        return false;
-    }
-    for (char c : input) {
-        if (!isalpha(c) && !isdigit(c)) {
-            return false;
-        }
-    }
-    return true;
 }

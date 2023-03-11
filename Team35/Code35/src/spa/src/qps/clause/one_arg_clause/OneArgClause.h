@@ -17,13 +17,13 @@ Base class for any Clause with 2 arguments:
 WhilePattern |
 */
 class OneArgClause : public Clause {
-public:
+ public:
     const std::unique_ptr<PQLToken> first;
 
-    OneArgClause(std::unique_ptr<PQLToken> first);
+    explicit OneArgClause(std::unique_ptr<PQLToken> first);
     virtual void validateArgs() = 0;
 
-protected:
+ protected:
     bool equal(const OneArgClause& rhs) const;
     EntType getEntType(Synonym::DesignEntity type);
 };

@@ -1,5 +1,4 @@
 #include "PQLTokenScanner.h"
-#include "qps/query_exceptions/SyntaxException.h"
 
 PQLTokenScanner::PQLTokenScanner(std::unique_ptr<ILexer> lex) : TokenScanner(std::move(lex)) {}
 
@@ -9,6 +8,64 @@ int PQLTokenScanner::peekDesignEntity() const {
     return peek(Token::Tag::Statement) || peek(Token::Tag::Read) || peek(Token::Tag::Print) || peek(Token::Tag::Call)
            || peek(Token::Tag::While) || peek(Token::Tag::If) || peek(Token::Tag::Assign) || peek(Token::Tag::Constant)
            || peek(Token::Tag::Procedure) || peek(Token::Tag::Variable);
+}
+
+// for expression with string
+int PQLTokenScanner::peekIdent() const {
+    std::string input = peekLexeme();
+    if (peek(Token::Tag::String)) {
+        if (!isalpha(input[0])) {
+            return false;
+        }
+        for (char c : input) {
+            if (!isalpha(c) && !isdigit(c)) {
+                return false;
+            }
+        }
+        return true;
+    } else {
+        return false;
+    }
+}
+
+int PQLTokenScanner::peekSynonym() const {
+    // check for names that can also be keywords
+    if (peek(Token::Tag::String)) {
+        return false;
+    }
+    std::string input = peekLexeme();
+    if (!isalpha(input[0])) {
+        return false;
+    }
+    for (char c : input) {
+        if (!isalpha(c) && !isdigit(c)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+// for expression with constant
+int PQLTokenScanner::peekConstant() const {
+    std::string next = peekLexeme();
+    if (peek(Token::Tag::String)) {
+        std::string input = peekLexeme();
+        std::string::const_iterator it = input.begin();
+        while (it != input.end() && std::isdigit(*it)) ++it;
+        return !input.empty() && it == input.end();
+    } else {
+        return false;
+    }
+}
+
+bool PQLTokenScanner::peekStmtRef() {
+    return peek(Token::Tag::Integer) || peek(Token::Tag::Underscore) ||
+           peek(Token::Tag::Bool) || peekSynonym();
+}
+
+bool PQLTokenScanner::peekEntRef() {
+    return peek(Token::Tag::Underscore) || peekSynonym() ||
+           peek(Token::Tag::Bool) || peekIdent();
 }
 
 void PQLTokenScanner::matchAndValidate(Token::Tag tag) {

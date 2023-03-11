@@ -2,7 +2,7 @@
 #include "../../TestHelper.h"
 #include "qps/query_parser/selection_parser/SelectionParser.h"
 #include "commons/lexer/LexerFactory.h"
-#include "qps/clause/SingleSynonymSelectClause.h"
+#include "qps/clause/select_clause/SingleSynonymSelectClause.h"
 
 TEST_CASE("Selection parser") {
     std::string query = "Select s";

@@ -3,11 +3,11 @@
 #include "qps/query_exceptions/SemanticException.h"
 #include "qps/query_parser/SemanticValidator.h"
 
-DeclarationParser::DeclarationParser(PQLTokenScanner &pqlTokenScanner, std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
+DeclarationParser::DeclarationParser(PQLTokenScanner &pqlTokenScanner,
+                                     std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
         pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
 
 std::unordered_map<std::string, Synonym::DesignEntity> DeclarationParser::parse() {
-
     // check for next declaration
     while (true) {
         if (pqlTokenScanner.peek(Token::Tag::Select) || pqlTokenScanner.peek(Token::Tag::EndOfFile)) {
@@ -85,25 +85,11 @@ Synonym::DesignEntity DeclarationParser::parseDesignEntity() {
 
 std::string DeclarationParser::parseSynonym(Synonym::DesignEntity de) {
     std::string synonym;
-    if (pqlTokenScanner.peek(Token::Tag::Name) || pqlTokenScanner.peek(Token::Tag::Bool)) {
+    if (pqlTokenScanner.peekSynonym()) {
         synonym = pqlTokenScanner.peekLexeme();
         pqlTokenScanner.next();
         return synonym;
     } else {
         throw SyntaxException();
     }
-}
-
-bool DeclarationParser::isName(std::string input) {
-
-    // check syntax validity
-    if (!isalpha(input[0])) {
-        return false;
-    }
-    for (char c : input) {
-        if (!isalpha(c) && !isdigit(c)) {
-            return false;
-        }
-    }
-    return true;
 }

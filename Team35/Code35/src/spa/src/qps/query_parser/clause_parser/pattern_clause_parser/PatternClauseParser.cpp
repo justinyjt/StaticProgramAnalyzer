@@ -4,16 +4,16 @@
 #include "qps/pql/Synonym.h"
 #include "qps/pql/Wildcard.h"
 #include "qps/pql/Expression.h"
-#include "qps/pql/StatementNumber.h"
 #include "qps/pql/Ident.h"
 #include "qps/query_exceptions/SyntaxException.h"
 #include "qps/query_exceptions/SemanticException.h"
 #include "commons/token_scanner/TokenScanner.h"
 #include "qps/query_parser/SemanticValidator.h"
-#include "qps/clause/WhilePattern.h"
-#include "qps/clause/IfPattern.h"
+#include "qps/clause/one_arg_clause/WhilePattern.h"
+#include "qps/clause/one_arg_clause/IfPattern.h"
 
-PatternClauseParser::PatternClauseParser(PQLTokenScanner& pqlTokenScanner, std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
+PatternClauseParser::PatternClauseParser(PQLTokenScanner& pqlTokenScanner,
+                                         std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
         pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
 
 std::unique_ptr<Clause> PatternClauseParser::parse() {
@@ -25,14 +25,14 @@ std::unique_ptr<Clause> PatternClauseParser::parsePattern() {
     // validate and return type
     Synonym::DesignEntity de;
     std::string pattern = pqlTokenScanner.peekLexeme();
-    if (pqlTokenScanner.peek(Token::Tag::Name)) {
+    if (pqlTokenScanner.peekSynonym()) {
         de = parsePatternSynonym();
     } else {
         throw SyntaxException();
     }
 
     // if pattern is ASSIGN, call parseAssign
-    switch(de) {
+    switch (de) {
         case Synonym::DesignEntity::ASSIGN:
             return parseAssign(pattern);
         case Synonym::DesignEntity::WHILE:
@@ -83,34 +83,25 @@ std::unique_ptr<Clause> PatternClauseParser::parseIf(std::string patternSynonym)
 }
 
 std::unique_ptr<PQLToken> PatternClauseParser::parseEntRef() {
-    if (!isEntRef()) {
+    if (!pqlTokenScanner.peekEntRef()) {
         throw SyntaxException();
     }
-    switch (pqlTokenScanner.peekTag()) {
-        case Token::Tag::Underscore: {
-            std::unique_ptr<Wildcard> w = std::make_unique<Wildcard>();
-            pqlTokenScanner.next();
-            return w;
-        }
-        case Token::Tag::Name: case Token::Tag::Bool: {
-            // need semantic validator here
-            std::string synonym = pqlTokenScanner.peekLexeme();
-            Synonym::DesignEntity de = SemanticValidator::getDesignEntity(synonyms, synonym);
-            pqlTokenScanner.next();
-            std::unique_ptr<Synonym> s = std::make_unique<Synonym>(de, synonym);
-            return std::move(s);
-        }
-        case Token::Tag::String: {
-            std::string ent = pqlTokenScanner.peekLexeme();
-            if (isName(ent)) {
-                std::unique_ptr<Ident> i = std::make_unique<Ident>(pqlTokenScanner.peekLexeme());
-                pqlTokenScanner.next();
-                return i;
-            }
-            throw SyntaxException();
-        }
-        default:
-            assert(false);
+    if (pqlTokenScanner.peekSynonym()) {
+        std::string synonym = pqlTokenScanner.peekLexeme();
+        Synonym::DesignEntity de = SemanticValidator::getDesignEntity(synonyms, synonym);
+        pqlTokenScanner.next();
+        std::unique_ptr<Synonym> s = std::make_unique<Synonym>(de, synonym);
+        return std::move(s);
+    } else if (pqlTokenScanner.peek(Token::Tag::Underscore)) {
+        std::unique_ptr<Wildcard> w = std::make_unique<Wildcard>();
+        pqlTokenScanner.next();
+        return w;
+    } else if (pqlTokenScanner.peek(Token::Tag::String)) {
+        std::unique_ptr<Ident> i = std::make_unique<Ident>(pqlTokenScanner.peekLexeme());
+        pqlTokenScanner.next();
+        return i;
+    } else {
+        assert(false);
     }
 }
 
@@ -160,31 +151,7 @@ Synonym::DesignEntity PatternClauseParser::parsePatternSynonym() {
     throw SemanticException();
 }
 
-bool PatternClauseParser::isEntRef() {
-    return pqlTokenScanner.peek(Token::Tag::Underscore) || pqlTokenScanner.peek(Token::Tag::Name) ||
-           pqlTokenScanner.peek(Token::Tag::Bool) ||
-           pqlTokenScanner.peek(Token::Tag::String) && isName(pqlTokenScanner.peekLexeme());
-}
-
 bool PatternClauseParser::isValidExpr() {
     return pqlTokenScanner.peek(Token::Tag::String) &&
-        isName(pqlTokenScanner.peekLexeme()) || isConstant(pqlTokenScanner.peekLexeme());
-}
-
-bool PatternClauseParser::isName(std::string input) {
-    if (!isalpha(input[0])) {
-        return false;
-    }
-    for (char c : input) {
-        if (!isalpha(c) && !isdigit(c)) {
-            return false;
-        }
-    }
-    return true;
-}
-
-bool PatternClauseParser::isConstant(std::string input) {
-    std::string::const_iterator it = input.begin();
-    while (it != input.end() && std::isdigit(*it)) ++it;
-    return !input.empty() && it == input.end();
+                   pqlTokenScanner.peekIdent() || pqlTokenScanner.peekConstant();
 }

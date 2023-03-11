@@ -4,7 +4,8 @@
 #include "commons/token/Token.h"
 #include "qps/query_exceptions/SyntaxException.h"
 
-ClauseParser::ClauseParser(PQLTokenScanner& pqlTokenScanner, std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
+ClauseParser::ClauseParser(PQLTokenScanner& pqlTokenScanner,
+                           std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
         pqlTokenScanner(pqlTokenScanner), synonyms(synonyms), suchThatClauseParser(pqlTokenScanner, synonyms),
         patternClauseParser(pqlTokenScanner, synonyms) {}
 
