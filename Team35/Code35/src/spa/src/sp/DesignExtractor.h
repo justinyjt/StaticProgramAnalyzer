@@ -15,26 +15,6 @@ class DesignExtractor {
 
     std::shared_ptr<ASTNode> extractProgram(std::shared_ptr<ASTNode>);
 
-    void addVarNameSetToPKB();
-
-    void addConstantSetToPKB();
-
-    void addProcSetToPKB();
-
-    void addStmtUsesPairSetToPKB();
-
-    void addStmtModifiesPairSetToPKB();
-
-    void addStmtFollowPairSetToPKB();
-
-    void addStmtParentPairSetToPKB();
-
-    void addPatternsToPKB();
-
-    void addStmtTypesToPKB();
-
-    void addCallsToPKB();
-
     std::unordered_map<STMT_NUM, ASSIGN_PAT> getAssignPatMap();
 
  private:
@@ -65,6 +45,26 @@ class DesignExtractor {
 
     CallGraph callGraph_;
 
+    void addVarNameSetToPKB();
+
+    void addConstantSetToPKB();
+
+    void addProcSetToPKB();
+
+    void addStmtUsesPairSetToPKB();
+
+    void addStmtModifiesPairSetToPKB();
+
+    void addStmtFollowPairSetToPKB();
+
+    void addStmtParentPairSetToPKB();
+
+    void addPatternsToPKB();
+
+    void addStmtTypesToPKB();
+
+    void addCallsToPKB();
+
     void extractProc(const std::shared_ptr<ASTNode> &);
 
     void extractAssign(const std::shared_ptr<ASTNode> &);
@@ -93,7 +93,7 @@ class DesignExtractor {
 
     void updateFollowsPairSet(const std::unique_ptr<std::vector<STMT_NUM>> &lst);
 
-    void updateStmtUsesPairSet(STMT_NUM stmt, std::string varName);
+    void updateStmtUsesPairSet(STMT_NUM stmt, const std::string &varName);
 
-    void updateStmtModsPairSet(STMT_NUM stmt, std::string varName);
+    void updateStmtModsPairSet(STMT_NUM stmt, const std::string &varName);
 };

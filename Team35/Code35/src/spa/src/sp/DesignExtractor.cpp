@@ -9,11 +9,10 @@
 #include "commons/ASTNode.h"
 
 DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
-        pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(), procSet_(),
-        stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
-        stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(),
-        containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_() {}
-
+    pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(), procSet_(),
+    stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
+    stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(),
+    containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_() {}
 
 std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode> root) {
     root_ = std::move(root);
@@ -233,14 +232,14 @@ void DesignExtractor::updateStmtSet() {
     }
 }
 
-void DesignExtractor::updateStmtUsesPairSet(STMT_NUM stmt, std::string varName) {
+void DesignExtractor::updateStmtUsesPairSet(STMT_NUM stmt, const std::string &varName) {
     stmtUsePairSet_.insert(STMT_ENT(stmt, varName));
     for (STMT_NUM itr : containerStmtLst_) {
         stmtUsePairSet_.insert(STMT_ENT(itr, varName));
     }
 }
 
-void DesignExtractor::updateStmtModsPairSet(STMT_NUM stmt, std::string varName) {
+void DesignExtractor::updateStmtModsPairSet(STMT_NUM stmt, const std::string &varName) {
     stmtModPairSet_.insert(STMT_ENT(stmt, varName));
     for (STMT_NUM itr : containerStmtLst_) {
         stmtModPairSet_.insert(STMT_ENT(itr, varName));
@@ -290,7 +289,6 @@ void DesignExtractor::addStmtTypesToPKB() {
     pkbWriter_->addStatements(StmtType::While, whileSet_);
     pkbWriter_->addStatements(StmtType::None, stmtSet_);
 }
-
 
 std::unordered_map<STMT_NUM, ASSIGN_PAT> DesignExtractor::getAssignPatMap() {
     return this->assignPatMap_;
