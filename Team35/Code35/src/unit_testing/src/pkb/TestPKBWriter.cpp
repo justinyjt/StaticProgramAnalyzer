@@ -54,7 +54,9 @@ TEST_CASE("Test Pkb adding a statement, error with repeated stmtNo", "[pkb][stat
         entSetConstant.emplace("1");
         REQUIRE(pkbWriterPtr->addEntities(Entity::Constant, entSetConstant));
         REQUIRE(!pkbWriterPtr->addEntities(Entity::Constant, entSetConstant));
-    }SECTION("Test Pkb adding repeated variable statement, with error") {
+    }
+
+    SECTION("Test Pkb adding repeated variable statement, with error") {
         ENT_SET entSetVariable;
         entSetVariable.emplace("x");
         REQUIRE(pkbWriterPtr->addEntities(Entity::Constant, entSetVariable));
@@ -134,6 +136,7 @@ TEST_CASE("Test Pkb adding multiple Statement-Entity relationships", "[pkb][rela
         stmtEntSet.insert(std::make_pair(3, "z"));
         REQUIRE(pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Uses, stmtEntSet));
     }
+    
         // can use same parameters because adding to different table
     SECTION("Test Pkb adding multiple Statement-Name Modifies relationships") {
         STMT_ENT_SET stmtEntSet;
