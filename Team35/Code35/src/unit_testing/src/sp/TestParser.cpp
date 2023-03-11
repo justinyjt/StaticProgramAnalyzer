@@ -7,12 +7,12 @@ std::unique_ptr<Token> transform(const Token &token) {
     return std::make_unique<Token>(token);
 }
 
-void convertDequeReverse(const std::deque<Token> &va, std::deque<unique_ptr<Token>> &vb) {
+void convertDequeReverse(const std::deque<Token> &va, std::deque<std::unique_ptr<Token>> &vb) {
     vb.clear();
     std::transform(va.begin(), va.end(), std::front_inserter(vb), transform);
 }
 
-void convertDeque(const std::deque<Token> &va, std::deque<unique_ptr<Token>> &vb) {
+void convertDeque(const std::deque<Token> &va, std::deque<std::unique_ptr<Token>> &vb) {
     vb.clear();
     std::transform(va.begin(), va.end(), std::back_inserter(vb), transform);
 }
@@ -26,7 +26,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
 
@@ -45,7 +45,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
 
@@ -68,7 +68,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
 
@@ -96,7 +96,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
 
@@ -126,7 +126,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
 
@@ -161,7 +161,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
 
@@ -192,7 +192,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nx=y%123/456;\ny=456;\n}\n");
@@ -216,7 +216,7 @@ TEST_CASE("Parser can parse read correctly", "[Parser]") {
         tokens.clear();
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nread x;\n}\n");
@@ -239,7 +239,7 @@ TEST_CASE("Parser can parse print correctly", "[Parser]") {
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
 
@@ -262,11 +262,11 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
         Token VarName("x", Token::Tag::Name);
         Token GreaterThan(">", Token::Tag::GreaterThan);
         Token ConstVal("0", Token::Tag::Integer);
-        std::deque<Token> tokens = { 
+        std::deque<Token> tokens = {
             EoF, RBrace,
-            RBrace, LBrace, Else, 
-            RBrace, LBrace, Then, 
-            RParen, ConstVal, GreaterThan, VarName, LParen, If, 
+            RBrace, LBrace, Else,
+            RBrace, LBrace, Then,
+            RParen, ConstVal, GreaterThan, VarName, LParen, If,
             LBrace, ProcName, Proc
         };
 
@@ -274,7 +274,7 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nif (x>0) then {\n} else {\n}\n}\n");
@@ -306,7 +306,7 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nif (x>0+0) then {\n} else {\n}\n}\n");
@@ -338,7 +338,7 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nif (!(x>0)) then {\n} else {\n}\n}\n");
@@ -363,14 +363,15 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
             EoF, RBrace,
             RBrace, LBrace, Else,
             RBrace, LBrace, Then,
-            RParen, RParen, ConstVal, GreaterThan, VarName, LParen, LogicalAnd, RParen, ConstVal, GreaterThan, VarName, LParen, LParen, If,
+            RParen, RParen, ConstVal, GreaterThan, VarName, LParen, LogicalAnd, RParen, ConstVal, GreaterThan,
+            VarName, LParen, LParen, If,
             LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nif ((x>0)&&(x>0)) then {\n} else {\n}\n}\n");
@@ -396,9 +397,10 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
             EoF, RBrace,
             RBrace, LBrace, Else,
             RBrace, LBrace, Then,
-            RParen, 
+            RParen,
             RParen, ConstVal, GreaterThan, VarName, LParen, LogicalOr,
-            RParen, RParen, ConstVal, GreaterThan, VarName, LParen, LogicalAnd, RParen, ConstVal, GreaterThan, VarName, LParen, LParen, 
+            RParen, RParen, ConstVal, GreaterThan, VarName, LParen, LogicalAnd, RParen, ConstVal, GreaterThan,
+            VarName, LParen, LParen,
             LParen, If,
             LBrace, ProcName, Proc};
 
@@ -406,7 +408,7 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nif (((x>0)&&(x>0))||(x>0)) then {\n} else {\n}\n}\n");
@@ -442,7 +444,7 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nif (x>0) then {\nread x;\n} else {\n}\n}\n");
@@ -476,7 +478,7 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nif (x>0) then {\n} else {\nread x;\n}\n}\n");
@@ -510,7 +512,7 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nif (x>0) then {\nread x;\n} else {\nread x;\n}\n}\n");
@@ -544,10 +546,11 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
-        REQUIRE(printer.printAST(root) == "procedure main {\nif (x>0) then {\nread x;\nread x;\nread x;\n} else {\nread x;\n}\n}\n");
+        REQUIRE(printer.printAST(root) ==
+            "procedure main {\nif (x>0) then {\nread x;\nread x;\nread x;\n} else {\nread x;\n}\n}\n");
     }
 
     SECTION("Parser can parse nested if: if(x>0)then{if(x>0)then{read x;}else{read x;}}else{read x;}") {
@@ -569,23 +572,24 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
 
         std::deque<Token> tokens = {
             EoF, RBrace,
-                RBrace, Semi, VarName, ReadStmt, LBrace, Else,
-                RBrace, 
-                    RBrace, Semi, VarName, ReadStmt, LBrace, Else,
-                    RBrace, Semi, VarName, ReadStmt, LBrace, Then,
-                    RParen, ConstVal, GreaterThan, VarName, LParen, If,
-                Then,
-                RParen, ConstVal, GreaterThan, VarName, LParen, If,
+            RBrace, Semi, VarName, ReadStmt, LBrace, Else,
+            RBrace,
+            RBrace, Semi, VarName, ReadStmt, LBrace, Else,
+            RBrace, Semi, VarName, ReadStmt, LBrace, Then,
+            RParen, ConstVal, GreaterThan, VarName, LParen, If,
+            Then,
+            RParen, ConstVal, GreaterThan, VarName, LParen, If,
             LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
-        REQUIRE(printer.printAST(root) =="procedure main {\nif (x>0) then {\nif (x>0) then {\nread x;\n} else {\nread x;\n}\n} else {\nread x;\n}\n}\n");
+        REQUIRE(printer.printAST(root) == "procedure main {\nif (x>0) then {\nif (x>0) then {\nread x;\n} "
+                                          "else {\nread x;\n}\n} else {\nread x;\n}\n}\n");
     }
 }
 
@@ -607,7 +611,7 @@ TEST_CASE("Parser can parse while... correctly", "[Parser]") {
 
         std::deque<Token> tokens = {
             EoF, RBrace,
-            RBrace, Semi, VarName, ReadStmt, LBrace, 
+            RBrace, Semi, VarName, ReadStmt, LBrace,
             RParen, ConstVal, GreaterThan, VarName, LParen, While,
             LBrace, ProcName, Proc};
 
@@ -615,7 +619,7 @@ TEST_CASE("Parser can parse while... correctly", "[Parser]") {
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nwhile (x>0) {\nread x;\n}\n}\n");
@@ -646,7 +650,7 @@ TEST_CASE("Parser can parse while... correctly", "[Parser]") {
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nwhile (x>0) {\nread x;\nread x;\nread x;\n}\n}\n");
@@ -663,13 +667,13 @@ TEST_CASE("Parser can parse call correctly", "[Parser]") {
         Token Semi(Token::Tag::SemiColon);
         Token CallStmt(Token::Tag::Call);
         Token VarName("main", Token::Tag::Name);
-        std::deque<Token> tokens = { EoF, RBrace, Semi, VarName, CallStmt, LBrace, ProcName, Proc };
+        std::deque<Token> tokens = {EoF, RBrace, Semi, VarName, CallStmt, LBrace, ProcName, Proc};
 
         std::deque<std::unique_ptr<Token>> tokenLst;
         convertDequeReverse(tokens, tokenLst);
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
-        std::unique_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
 

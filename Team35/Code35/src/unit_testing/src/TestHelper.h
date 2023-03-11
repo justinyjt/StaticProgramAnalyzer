@@ -4,10 +4,21 @@
 
 #include "catch.hpp"
 
-void requireTrue(bool b);
-void requireFalse(bool b);
-void requireNotThrow(const std::function<void()> &f);
-void requireThrow(const std::function<void()> &f);
+inline void requireTrue(bool b) {
+    REQUIRE(b);
+}
+
+inline void requireFalse(bool b) {
+    REQUIRE(!b);
+}
+
+inline void requireNotThrow(const std::function<void()> &f) {
+    REQUIRE_NOTHROW(f());
+}
+
+inline void requireThrow(const std::function<void()> &f) {
+    REQUIRE_THROWS(f());
+}
 
 template<typename E>
 void requireThrowAs(const std::function<void()> &f) {
@@ -15,11 +26,16 @@ void requireThrowAs(const std::function<void()> &f) {
 }
 
 template<typename T>
-void requireEqual(T a, T b) {
+inline void requireEqual(T a, T b) {
     REQUIRE(a == b);
 }
 
 template<typename T>
-void requireNotEqual(T a, T b) {
+inline void requireEqualRef(const T &a, const T &b) {
+    REQUIRE(a == b);
+}
+
+template<typename T>
+inline void requireNotEqual(T a, T b) {
     REQUIRE(a != b);
 }

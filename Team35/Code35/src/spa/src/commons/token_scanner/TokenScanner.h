@@ -20,11 +20,14 @@ class TokenScanner {
     Token::Tag peekTag() const;
     int isOffsetValid(uint32_t offset) const;
     void reset();
+    void saveState();
+    void restoreState();
     [[nodiscard]] TokenLst getTokenLst();
 
  private:
     std::unique_ptr<ILexer> lex_;
     std::deque<std::unique_ptr<Token>> token_lst_;
     uint32_t cur_idx_ = 0;
+    uint32_t saved_idx_ = 0;
     void initialise();
 };

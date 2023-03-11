@@ -11,7 +11,7 @@
 #include "qps/query_exceptions/SyntaxException.h"
 
 class setUpStcp {
-public:
+ public:
     setUpStcp() {
         // Set up code
         query = "";

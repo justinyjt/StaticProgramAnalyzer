@@ -3,6 +3,10 @@
 #include <list>
 #include <vector>
 
+#include "commons/expr_parser/ExprParser.h"
+#include "commons/lexer/LexerFactory.h"
+#include "commons/token_scanner/TokenScanner.h"
+
 AssignPattern::AssignPattern(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second,
                              std::string ident) : TwoArgClause(std::move(first), std::move(second)), ident(ident) {
     validateArgs();
@@ -13,8 +17,13 @@ std::unique_ptr<Result> AssignPattern::evaluate(PKBReader *db) {
     STMT_SET stmtSet2;
 
     if (second->tag == PQLToken::Tag::EXPR) {
-        std::string pattern = dynamic_cast<Expression&>(*second).str();
-        bool hasWildcard = dynamic_cast<Expression&>(*second).hasWildcard;
+        std::string input = dynamic_cast<Expression &>(*second).str();
+        std::unique_ptr<ILexer> lxr =
+                LexerFactory::createLexer(input, LexerFactory::LexerType::Expression);
+        TokenScanner scanner(std::move(lxr));
+        ExprParser parser(scanner);
+        ASSIGN_PAT_RIGHT pattern = parser.parseExpr();
+        bool hasWildcard = dynamic_cast<Expression &>(*second).hasWildcard;
         if (!hasWildcard) {  // exact
             stmtSet2 = db->getStmtWithExactPatternMatch(pattern);
         } else {  // partial
@@ -39,7 +48,7 @@ std::unique_ptr<Result> AssignPattern::evaluate(PKBReader *db) {
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::EXPR):  // a(v, _"x"_) -> pair<int, str>[]
         {
-            const std::string& synonymIdent = dynamic_cast<Synonym&>(*first).ident;
+            const std::string &synonymIdent = dynamic_cast<Synonym &>(*first).ident;
             std::vector<std::list<std::string>> vec;
             for (STMT_NUM s : stmtSet2) {  // for each statement, find entity that is modified
                 ENT_SET entSet = db->getRelationship(StmtNameRelationship::Modifies, s);
@@ -51,7 +60,7 @@ std::unique_ptr<Result> AssignPattern::evaluate(PKBReader *db) {
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // a(v, _) -> pair<int, str>[]
         {
-            const std::string& synonymIdent = dynamic_cast<Synonym&>(*first).ident;
+            const std::string &synonymIdent = dynamic_cast<Synonym &>(*first).ident;
             STMT_ENT_SET stmtEntSet = db->getAllRelationships(StmtNameRelationship::Modifies);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(this->ident, synonymIdent, stmtEntSet);
             return std::move(Result::join(*result, *filterSet));

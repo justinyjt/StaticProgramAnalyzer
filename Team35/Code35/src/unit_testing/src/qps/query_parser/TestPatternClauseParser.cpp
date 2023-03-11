@@ -11,7 +11,7 @@
 #include "qps/clause/one_arg_clause/IfPattern.h"
 
 class setUp {
-public:
+ public:
     setUp() {
         // Set up code
         query = "";
