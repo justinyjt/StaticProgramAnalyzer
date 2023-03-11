@@ -5,8 +5,8 @@
 #include "qps/pql/StatementNumber.h"
 #include "qps/query_exceptions/SyntaxException.h"
 #include "qps/pql/Wildcard.h"
-#include "qps/clause/UsesModifies.h"
-#include "qps/clause/ParentFollows.h"
+#include "qps/clause/TwoArgClause/StmtEntClause.h"
+#include "qps/clause/TwoArgClause/StmtStmtClause.h"
 #include "qps/query_exceptions/SemanticException.h"
 #include "qps/pql/Ident.h"
 

@@ -4,24 +4,24 @@
 
 #include "TwoArgClause.h"
 
-class ParentFollows : public TwoArgClause {
+class StmtStmtClause : public TwoArgClause {
     /* <SYNONYM | _ | STMT_NUM> */
  public:
     const StmtStmtRelationship rs;
-    ParentFollows(std::unique_ptr<PQLToken>, std::unique_ptr<PQLToken>, StmtStmtRelationship);
+    StmtStmtClause(std::unique_ptr<PQLToken>, std::unique_ptr<PQLToken>, StmtStmtRelationship);
     std::unique_ptr<Result> evaluate(PKBReader *) override;
     void validateArgs() override;
  protected:
     bool operator==(const Clause& rhs) const override;
 };
 
-class Parent : public ParentFollows {
+class Parent : public StmtStmtClause {
  public:
     Parent(std::unique_ptr<PQLToken>, std::unique_ptr<PQLToken>, bool isTransitive);
 };
 
 
-class Follows : public ParentFollows {
+class Follows : public StmtStmtClause {
  public:
     Follows(std::unique_ptr<PQLToken>, std::unique_ptr<PQLToken>, bool isTransitive);
 };

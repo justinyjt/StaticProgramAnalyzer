@@ -4,7 +4,7 @@
  * */
 #include "catch.hpp"
 #include "commons/token/Token.h"
-#include "MockLexer.h"
+#include "../commons/lexer/MockLexer.h"
 #include "../TestHelper.h"
 #include "sp/SyntaxValidator.h"
 
@@ -18,6 +18,7 @@ TEST_CASE("SyntaxValidator can validate very simple program correctly") {
 
         requireTrue(sv.validateProgram());
     }
+
     SECTION("SV can validate one empty procedure") {
         Token eof(Token::Tag::EndOfFile);
         Token proc(Token::Tag::Procedure);
@@ -32,6 +33,7 @@ TEST_CASE("SyntaxValidator can validate very simple program correctly") {
 
         requireTrue(sv.validateProgram());
     }
+
     SECTION("SV can validate one procedure with one print") {
         Token eof(Token::Tag::EndOfFile);
         Token proc(Token::Tag::Procedure);
@@ -49,6 +51,7 @@ TEST_CASE("SyntaxValidator can validate very simple program correctly") {
 
         requireTrue(sv.validateProgram());
     }
+
     SECTION("SV can validate one procedure with one read") {
         Token eof(Token::Tag::EndOfFile);
         Token proc(Token::Tag::Procedure);
@@ -77,7 +80,7 @@ TEST_CASE("SyntaxValidator can validate very simple program correctly") {
         Token callStmt(Token::Tag::Call);
         Token varName("x", Token::Tag::Name);
 
-        std::vector<Token> tokens = { eof, rBrace, semi, varName, callStmt, lBrace, procName, proc };
+        std::vector<Token> tokens = {eof, rBrace, semi, varName, callStmt, lBrace, procName, proc};
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
         SyntaxValidator sv(std::move(lexPtr));
