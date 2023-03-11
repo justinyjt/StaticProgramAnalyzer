@@ -2,6 +2,7 @@
 #include "pkb/PKBWriter.h"
 #include "catch.hpp"
 #include "../TestHelper.h"
+#include "../commons/expr_parser/MockExprMaker.h"
 
 TEST_CASE("1. Test PKB Read Entities", "[PKB][PKBReader][Entity]") {
     PKB pkb;
@@ -35,13 +36,13 @@ TEST_CASE("2. Read StmtName Relationship table", "[PKB][PKBReader][Relationship]
     PKBReader pkbReader(pkb);
     PKBWriter *pkbWriterPtr = &pkbWriter;
     PKBReader *pkbReaderPtr = &pkbReader;
-    STMT_ENT_SET usesSet = {std::make_pair(2, "a"),  std::make_pair(1, "b"), std::make_pair(2, "b")};
+    STMT_ENT_SET usesSet = {std::make_pair(2, "a"), std::make_pair(1, "b"), std::make_pair(2, "b")};
     STMT_ENT_SET modifiesSet = {};
     pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Uses, usesSet);
     pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Modifies, modifiesSet);
 
     SECTION("Read all Uses table") {
-        STMT_ENT_SET expectedResult = {std::make_pair(2, "a"),  std::make_pair(1, "b"), std::make_pair(2, "b")};
+        STMT_ENT_SET expectedResult = {std::make_pair(2, "a"), std::make_pair(1, "b"), std::make_pair(2, "b")};
         STMT_ENT_SET actualResult = pkbReaderPtr->getAllRelationships(StmtNameRelationship::Uses);
         requireTrue(actualResult == expectedResult);
     }
@@ -59,7 +60,7 @@ TEST_CASE("3. Read statements from StmtNameRelationship table", "[PKB][PKBReader
     PKBReader pkbReader(pkb);
     PKBWriter *pkbWriterPtr = &pkbWriter;
     PKBReader *pkbReaderPtr = &pkbReader;
-    STMT_ENT_SET usesSet = {std::make_pair(2, "a"),  std::make_pair(1, "b"), std::make_pair(2, "b")};
+    STMT_ENT_SET usesSet = {std::make_pair(2, "a"), std::make_pair(1, "b"), std::make_pair(2, "b")};
     STMT_ENT_SET modifiesSet = {};
     pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Uses, usesSet);
     pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Modifies, modifiesSet);
@@ -69,7 +70,7 @@ TEST_CASE("3. Read statements from StmtNameRelationship table", "[PKB][PKBReader
         STMT_SET actualResult = pkbReaderPtr->getRelationship(StmtNameRelationship::Uses, "non-existent");
         requireTrue(actualResult == expectedResult);
     }
-    
+
     SECTION("Read statement given variable in uses table") {
         STMT_SET expectedResult = {1, 2};
         STMT_SET actualResult = pkbReaderPtr->getRelationship(StmtNameRelationship::Uses, "b");
@@ -95,7 +96,7 @@ TEST_CASE("4. Read variables from StmtNameRelationship table", "[PKB][PKBReader]
     PKBReader pkbReader(pkb);
     PKBWriter *pkbWriterPtr = &pkbWriter;
     PKBReader *pkbReaderPtr = &pkbReader;
-    STMT_ENT_SET usesSet = {std::make_pair(2, "a"),  std::make_pair(1, "b"), std::make_pair(2, "b")};
+    STMT_ENT_SET usesSet = {std::make_pair(2, "a"), std::make_pair(1, "b"), std::make_pair(2, "b")};
     STMT_ENT_SET modifiesSet = {};
     pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Uses, usesSet);
     pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Modifies, modifiesSet);
@@ -124,11 +125,11 @@ TEST_CASE("5. Test isRelationshipExists") {
     PKBReader pkbReader(pkb);
     PKBWriter *pkbWriterPtr = &pkbWriter;
     PKBReader *pkbReaderPtr = &pkbReader;
-    STMT_ENT_SET usesSet = {std::make_pair(2, "a"),  std::make_pair(1, "b"), std::make_pair(2, "b")};
+    STMT_ENT_SET usesSet = {std::make_pair(2, "a"), std::make_pair(1, "b"), std::make_pair(2, "b")};
     STMT_ENT_SET modifiesSet = {};
     ENT_ENT_SET usesSet1 = {std::make_pair("main", "x"), std::make_pair("main", "y")};
     ENT_ENT_SET modifiesSet1 = {};
-    STMT_STMT_SET followsSet = {std::make_pair(2, 3),  std::make_pair(1, 2), std::make_pair(4, 5)};
+    STMT_STMT_SET followsSet = {std::make_pair(2, 3), std::make_pair(1, 2), std::make_pair(4, 5)};
     STMT_STMT_SET parentSet = {};
 
     pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Uses, usesSet);
@@ -166,12 +167,12 @@ TEST_CASE("5. Test isRelationshipExists") {
 
     SECTION("Return false for non-existent key variable") {
         requireFalse(pkbReaderPtr->isRelationshipExists(NameNameRelationship::Modifies,
-                                                   "notHere", "y"));
+                                                        "notHere", "y"));
     }
 
     SECTION("Return false for non-existent value variable") {
         requireFalse(pkbReaderPtr->isRelationshipExists(NameNameRelationship::Modifies,
-                                                   "main", "a"));
+                                                        "main", "a"));
     }
 
     SECTION("Check if relationship exists given valid arguments in StmtStmt Table") {
@@ -246,7 +247,9 @@ TEST_CASE("7. Read keys in a NameName Relationship table") {
         ENT_SET actualResult = pkbReaderPtr->getRelationshipByVal(NameNameRelationship::Modifies, "x");
         requireTrue(actualResult == expectedResult);
     }
-}TEST_CASE("8. Read values in a NameName Relationship table") {
+}
+
+TEST_CASE("8. Read values in a NameName Relationship table") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
@@ -281,8 +284,8 @@ TEST_CASE("9. Test getRelationshipByVal for statements") {
     PKBReader pkbReader(pkb);
     PKBWriter *pkbWriterPtr = &pkbWriter;
     PKBReader *pkbReaderPtr = &pkbReader;
-    STMT_STMT_SET followsSet = {std::make_pair(2, 3),  std::make_pair(3, 4), std::make_pair(5, 6)};
-    STMT_STMT_SET parentsSet = {std::make_pair(4, 5),  std::make_pair(4, 6)};
+    STMT_STMT_SET followsSet = {std::make_pair(2, 3), std::make_pair(3, 4), std::make_pair(5, 6)};
+    STMT_STMT_SET parentsSet = {std::make_pair(4, 5), std::make_pair(4, 6)};
     pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationship::Follows, followsSet);
     pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationship::Parent, parentsSet);
 
@@ -317,8 +320,8 @@ TEST_CASE("10. Test getRelationshipByKey for statements") {
     PKBReader pkbReader(pkb);
     PKBWriter *pkbWriterPtr = &pkbWriter;
     PKBReader *pkbReaderPtr = &pkbReader;
-    STMT_STMT_SET followsSet = {std::make_pair(2, 3),  std::make_pair(3, 4), std::make_pair(5, 6)};
-    STMT_STMT_SET parentsSet = {std::make_pair(4, 5),  std::make_pair(4, 6)};
+    STMT_STMT_SET followsSet = {std::make_pair(2, 3), std::make_pair(3, 4), std::make_pair(5, 6)};
+    STMT_STMT_SET parentsSet = {std::make_pair(4, 5), std::make_pair(4, 6)};
     pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationship::Follows, followsSet);
     pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationship::Parent, parentsSet);
 
@@ -412,34 +415,59 @@ TEST_CASE("12. Test PKB Pattern Matching") {
     PKBReader pkbReader(pkb);
     PKBWriter *pkbWriterPtr = &pkbWriter;
     PKBReader *pkbReaderPtr = &pkbReader;
+    ASSIGN_PAT_RIGHT first_right = MockExprMaker::makePatternRight("y + 1");
+    ASSIGN_PAT_RIGHT second_right = MockExprMaker::makePatternRight("y");
+    ASSIGN_PAT first("x", first_right);
+    ASSIGN_PAT second("x", second_right);
+    std::unordered_map<STMT_NUM, ASSIGN_PAT> patMap;
 
-    std::unordered_map<STMT_NUM, std::string> patternMap = {std::make_pair(1, "y + 1"), std::make_pair(2, "y")};
-    pkbWriterPtr->addPatterns(patternMap);
+    patMap.emplace(1, first);
+    patMap.emplace(2, second);
+    pkbWriterPtr->addPatterns(patMap);
 
     SECTION("Test Existing Partial Match") {
         STMT_SET expected = {1, 2};
-        std::string pattern = "y";
+        ASSIGN_PAT_RIGHT pattern = MockExprMaker::makePatternRight("y");
         STMT_SET actual = pkbReaderPtr->getStmtWithPartialPatternMatch(pattern);
         requireTrue(expected == actual);
     }
 
-    SECTION("Test Inexistent Partial Match") {
+    SECTION("Test non-existent Partial Match") {
         STMT_SET expected = {};
-        std::string pattern = "inexistent";
+        ASSIGN_PAT_RIGHT pattern = MockExprMaker::makePatternRight("nonexistent");
         STMT_SET actual = pkbReaderPtr->getStmtWithPartialPatternMatch(pattern);
         requireTrue(expected == actual);
     }
 
     SECTION("Test Valid Exact Match") {
         STMT_SET expected = {2};
-        std::string pattern = "y";
+        ASSIGN_PAT_RIGHT pattern = MockExprMaker::makePatternRight("y");
         STMT_SET actual = pkbReaderPtr->getStmtWithExactPatternMatch(pattern);
         requireTrue(expected == actual);
     }
 
-    SECTION("Test Inexistent Exact Match") {
+    SECTION("Test Valid Exact Match") {
+        STMT_SET expected = {1};
+        ASSIGN_PAT_RIGHT pattern = MockExprMaker::makePatternRight("y + 1");
+        STMT_SET actual = pkbReaderPtr->getStmtWithExactPatternMatch(pattern);
+        requireTrue(expected == actual);
+    }SECTION("Test Valid Exact Match with brackets") {
+        STMT_SET expected = {1};
+        ASSIGN_PAT_RIGHT pattern = MockExprMaker::makePatternRight("(y) + 1");
+        STMT_SET actual = pkbReaderPtr->getStmtWithExactPatternMatch(pattern);
+        requireTrue(expected == actual);
+    }
+
+    SECTION("Test Valid Exact Match with brackets complete") {
+        STMT_SET expected = {1};
+        ASSIGN_PAT_RIGHT pattern = MockExprMaker::makePatternRight("((y) + 1)");
+        STMT_SET actual = pkbReaderPtr->getStmtWithExactPatternMatch(pattern);
+        requireTrue(expected == actual);
+    }
+
+    SECTION("Test non-existent Exact Match") {
         STMT_SET expected = {};
-        std::string pattern = "x";
+        ASSIGN_PAT_RIGHT pattern = MockExprMaker::makePatternRight("x");
         STMT_SET actual = pkbReaderPtr->getStmtWithExactPatternMatch(pattern);
         requireTrue(expected == actual);
     }

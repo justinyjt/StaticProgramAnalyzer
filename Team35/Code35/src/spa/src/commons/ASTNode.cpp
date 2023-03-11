@@ -16,10 +16,10 @@ std::string ASTNode::getLabel() const {
     return this->label_.value();
 }
 
-void ASTNode::addChild(std::unique_ptr<ASTNode> newChild) {
+void ASTNode::addChild(std::shared_ptr<ASTNode> newChild) {
     this->children_.push_back(std::move(newChild));
 }
 
-const std::vector<std::unique_ptr<ASTNode> >& ASTNode::getChildren() const {
+const std::vector<std::shared_ptr<ASTNode> > &ASTNode::getChildren() const {
     return this->children_;
 }
