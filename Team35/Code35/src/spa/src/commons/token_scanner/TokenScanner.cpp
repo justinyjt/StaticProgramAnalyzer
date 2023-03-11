@@ -2,14 +2,17 @@
 
 #include <utility>
 
+/**
+ * Initialise the TokenScanner. Throws LexerException if the lexer detects an invalid token.
+ */
 TokenScanner::TokenScanner(std::unique_ptr<ILexer> lex) : lex_(std::move(lex)), token_lst_() {
     initialise();
-    token_lst_ = getTokenLst();
 }
 
-TokenScanner::TokenScanner(TokenLst token_lst) : lex_(nullptr), token_lst_(std::move(token_lst)) {
-    initialise();
-}
+/**
+ * Initialise the TokenScanner. Deprecated. Do not use.
+ */
+TokenScanner::TokenScanner(TokenLst token_lst) : lex_(nullptr), token_lst_(std::move(token_lst)) {}
 
 /**
  * Increment the current index by 1.
@@ -23,10 +26,21 @@ int TokenScanner::next() {
     return 1;
 }
 
+/**
+ * Check if the current token has the given tag.
+ * @param tag
+ * @return 0 if the current token does not have the given tag, 1 otherwise.
+ */
 int TokenScanner::peek(Token::Tag tag) const {
     return token_lst_[cur_idx_]->getTag() == tag;
 }
 
+/**
+ * Check if the current token has the given tag. If the current token has the given tag, the current index is
+ * incremented by 1.
+ * @param tag
+ * @return 0 if the current token does not have the given tag, 1 otherwise.
+ */
 int TokenScanner::match(Token::Tag tag) {
     if (peek(tag)) {
         if (tag != Token::Tag::EndOfFile) {
@@ -37,6 +51,12 @@ int TokenScanner::match(Token::Tag tag) {
     return 0;
 }
 
+/**
+ * Check if the token at the given offset has the given tag.
+ * @param tag
+ * @param offset
+ * @return 0 if the token at the given offset does not have the given tag or the offset is invalid, 1 otherwise.
+ */
 int TokenScanner::peekOffset(Token::Tag tag, uint32_t offset) const {
     if (!isOffsetValid(offset)) {
         return false;
@@ -44,16 +64,42 @@ int TokenScanner::peekOffset(Token::Tag tag, uint32_t offset) const {
     return (token_lst_[cur_idx_ + offset]->getTag() == tag);
 }
 
+/**
+ * Get the lexeme of the current token.
+ * @return the lexeme of the current token.
+ */
 Lexeme TokenScanner::peekLexeme() const {
     return token_lst_[cur_idx_]->getLexeme();
 }
 
+/**
+ * Check if the given offset is valid.
+ * @param offset
+ * @return 0 if the given offset is invalid, 1 otherwise.
+ */
 int TokenScanner::isOffsetValid(uint32_t offset) const {
     return (cur_idx_ + offset < token_lst_.size());
 }
 
+/**
+ * Reset the current index to 0.
+ */
 void TokenScanner::reset() {
-    initialise();
+    cur_idx_ = 0;
+}
+
+/**
+ * Save the current index.
+ */
+void TokenScanner::saveState() {
+    saved_idx_ = cur_idx_;
+}
+
+/**
+ * Restore the current index to the saved index. If the saved index is not set, the current index is set to 0.
+ */
+void TokenScanner::restoreState() {
+    cur_idx_ = saved_idx_;
 }
 
 /**
@@ -78,6 +124,11 @@ TokenLst TokenScanner::getTokenLst() {
     return std::move(token_lst);
 }
 
+/**
+ * Initialise the TokenScanner.
+ */
 void TokenScanner::initialise() {
+    token_lst_ = getTokenLst();
     cur_idx_ = 0;
+    saved_idx_ = 0;
 }
