@@ -12,15 +12,17 @@ class ASTNode {
         Program,
         Procedure,
         StmtLst,
+        Variable,
+        Constant,
+
         Assign,
         Read,
         Print,
-        Variable,
-        Constant,
         If,
         While,
         Else,
         Then,
+        Call,
 
         // logical operators
         LogicalAnd,
@@ -46,15 +48,19 @@ class ASTNode {
     ASTNode(SyntaxType syntaxType, std::optional<std::string> label);
 
     [[nodiscard]] SyntaxType getSyntaxType() const;
-    [[nodiscard]] std::string getLabel() const;
-    [[nodiscard]] const std::vector<std::unique_ptr<ASTNode>> &getChildren() const;
 
-    void addChild(std::unique_ptr<ASTNode>);
+    [[nodiscard]] std::string getLabel() const;
+
+    [[nodiscard]] const std::vector<std::shared_ptr<ASTNode>> &getChildren() const;
+
+    void addChild(std::shared_ptr<ASTNode>);
+
+    virtual ~ASTNode() = default;
 
  private:
     std::optional<std::string> label_;
     SyntaxType type_;
-    std::vector<std::unique_ptr<ASTNode> > children_;
+    std::vector<std::shared_ptr<ASTNode> > children_;
 };
 
 #endif  // TEAM35_CODE35_SRC_SPA_SRC_COMMONS_ASTNODE_H_

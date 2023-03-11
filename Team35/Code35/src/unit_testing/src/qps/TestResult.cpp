@@ -23,7 +23,7 @@ TEST_CASE("Test join: 1 common column") {
     resultRows.push_back({"x", "1", "2"});
     std::unique_ptr<TableResult> expectedResult = std::make_unique<TableResult>(resultHeader, resultRows);
 
-    requireTrue(*expectedResult == *(Result::join(tableResult1.get(), tableResult2.get())));
+    requireTrue(*expectedResult == *(Result::join(*tableResult1, *tableResult2)));
 }
 
 TEST_CASE("Test join: true and true") {
@@ -33,7 +33,7 @@ TEST_CASE("Test join: true and true") {
 
     std::unique_ptr<BoolResult> expectedResult = std::make_unique<BoolResult>(true);
 
-    requireTrue(*expectedResult == *(Result::join(boolResult1.get(), boolResult2.get())));
+    requireTrue(*expectedResult == *(Result::join(*boolResult1, *boolResult2)));
 }
 
 TEST_CASE("Test join: true and false") {
@@ -43,7 +43,7 @@ TEST_CASE("Test join: true and false") {
 
     std::unique_ptr<BoolResult> expectedResult = std::make_unique<BoolResult>(false);
 
-    requireTrue(*expectedResult == *(Result::join(boolResult1.get(), boolResult2.get())));
+    requireTrue(*expectedResult == *(Result::join(*boolResult1, *boolResult2)));
 }
 
 TEST_CASE("Test join: false and true") {
@@ -53,7 +53,7 @@ TEST_CASE("Test join: false and true") {
 
     std::unique_ptr<BoolResult> expectedResult = std::make_unique<BoolResult>(false);
 
-    requireTrue(*expectedResult == *(Result::join(boolResult1.get(), boolResult2.get())));
+    requireTrue(*expectedResult == *(Result::join(*boolResult1, *boolResult2)));
 }
 
 TEST_CASE("Test join: false and false") {
@@ -63,7 +63,7 @@ TEST_CASE("Test join: false and false") {
 
     std::unique_ptr<BoolResult> expectedResult = std::make_unique<BoolResult>(true);
 
-    requireTrue(*expectedResult == *(Result::join(boolResult1.get(), boolResult2.get())));
+    requireTrue(*expectedResult == *(Result::join(*boolResult1, *boolResult2)));
 }
 
 TEST_CASE("Test join: true and table") {
@@ -81,7 +81,7 @@ TEST_CASE("Test join: true and table") {
     resultRows.push_back({"1", "z"});
     std::unique_ptr<TableResult> expectedResult = std::make_unique<TableResult>(resultHeader, resultRows);
 
-    requireTrue(*expectedResult == *(Result::join(boolResult.get(), tableResult2.get())));
+    requireTrue(*expectedResult == *(Result::join(*boolResult, *tableResult2)));
 }
 
 
@@ -96,7 +96,7 @@ TEST_CASE("Test join: false and table") {
 
     std::unique_ptr<BoolResult> expectedResult = std::make_unique<BoolResult>(false);
 
-    requireTrue(*expectedResult == *(Result::join(boolResult.get(), tableResult2.get())));
+    requireTrue(*expectedResult == *(Result::join(*boolResult, *tableResult2)));
 }
 
 TEST_CASE("Test join: 2 common columns") {
@@ -117,7 +117,7 @@ TEST_CASE("Test join: 2 common columns") {
     std::vector<std::list<std::string>> expectedRows;
     std::unique_ptr<TableResult> expectedResult = std::make_unique<TableResult>(expectedHeader, expectedRows);
 
-    requireTrue(*expectedResult == *(Result::join(tableResult1.get(), tableResult2.get())));
+    requireTrue(*expectedResult == *(Result::join(*tableResult1, *tableResult2)));
 }
 
 
@@ -142,7 +142,7 @@ TEST_CASE("Test join: no common columns, 2x2") {
     resultRows.push_back({"1", "y", "2", "x"});
     std::unique_ptr<TableResult> expectedResult = std::make_unique<TableResult>(resultHeader, resultRows);
 
-    requireTrue(*expectedResult == *(Result::join(tableResult1.get(), tableResult2.get())));
+    requireTrue(*expectedResult == *(Result::join(*tableResult1, *tableResult2)));
 }
 
 TEST_CASE("Test join: no common columns, 1x2") {
@@ -166,7 +166,7 @@ TEST_CASE("Test join: no common columns, 1x2") {
     resultRows.push_back({"2", "2", "x"});
     std::unique_ptr<TableResult> expectedResult = std::make_unique<TableResult>(resultHeader, resultRows);
 
-    requireTrue(*expectedResult == *(Result::join(tableResult1.get(), tableResult2.get())));
+    requireTrue(*expectedResult == *(Result::join(*tableResult1, *tableResult2)));
 }
 
 TEST_CASE("Test join: no common columns, 3x2") {
@@ -188,7 +188,7 @@ TEST_CASE("Test join: no common columns, 3x2") {
     resultRows.push_back({"1", "2", "4", "x"});
     std::unique_ptr<TableResult> expectedResult = std::make_unique<TableResult>(resultHeader, resultRows);
 
-    requireTrue(*expectedResult == *(Result::join(tableResult1.get(), tableResult2.get())));
+    requireTrue(*expectedResult == *(Result::join(*tableResult1, *tableResult2)));
 }
 
 TEST_CASE("Test output") {
@@ -205,12 +205,17 @@ TEST_CASE("Test output") {
     rows2.push_back({"1", "2"});
     std::unique_ptr<TableResult> tableResult2 = std::make_unique<TableResult>(header2, rows2);
 
-    std::unique_ptr<Result> resultTable = Result::join(tableResult1.get(), tableResult2.get());
-    std::string col = "y";
-    resultTable->output(result, col);
-    std::list<std::string> expectedResult;
-    expectedResult.push_back("4");
-    requireEqual(expectedResult, result);
+    std::unique_ptr<Result> resultTable = Result::join(*tableResult1, *tableResult2);
+
+    std::list<std::string> outputHeaders = {"a", "y", "s"};
+    std::vector<std::list<std::string>> outputRows;
+    std::list<std::string> row;
+    row.push_back("1");
+    row.push_back("4");
+    row.push_back("1");
+    outputRows.push_back(row);
+    std::unique_ptr<TableResult> outputTable = std::make_unique<TableResult>(outputHeaders, outputRows);
+    requireTrue(*outputTable==*resultTable);
 }
 
 TEST_CASE("Test output selected does not match") {
@@ -223,11 +228,12 @@ TEST_CASE("Test output selected does not match") {
     rows2.push_back({"2", "x"});
     std::unique_ptr<TableResult> tableResult2 = std::make_unique<TableResult>(header2, rows2);
 
-    std::unique_ptr<Result> resultTable = Result::join(boolResult.get(), tableResult2.get());
+    std::unique_ptr<Result> resultTable = Result::join(*boolResult, *tableResult2);
+    std::unique_ptr<BoolResult> outputTable = std::make_unique<BoolResult>(false);
     std::string col = "c";
-    resultTable->output(result, col);
+    resultTable->output(result);
 
-    requireTrue(result.size() == 0);
+    requireTrue(*outputTable==*(Result::join(*boolResult, *tableResult2)));
 }
 
 TEST_CASE("Test output empty") {
@@ -237,7 +243,7 @@ TEST_CASE("Test output empty") {
     std::unique_ptr<TableResult> tableResult2 = std::make_unique<TableResult>(header2, rows2);
 
     std::string col = "a";
-    tableResult2->output(result, col);
+    tableResult2->output(result);
 
     requireTrue(result.size() == 0);
 }

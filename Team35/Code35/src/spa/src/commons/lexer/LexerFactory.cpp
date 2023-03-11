@@ -59,6 +59,7 @@ std::unique_ptr<ILexer> LexerFactory::createPqlLexer(Source source) {
         Keyword("if", Token::Tag::If),
         Keyword("call", Token::Tag::Call),
         Keyword("Select", Token::Tag::Select),
+        Keyword("BOOLEAN", Token::Tag::Bool),
         Keyword("Follows", Token::Tag::Follows),
         Keyword("Modifies", Token::Tag::Modifies),
         Keyword("Uses", Token::Tag::Uses),

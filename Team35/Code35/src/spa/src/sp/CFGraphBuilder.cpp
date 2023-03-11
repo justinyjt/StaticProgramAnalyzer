@@ -4,11 +4,11 @@
 
 namespace CFG {
 CFGraphBuilder::CFGraphBuilder()
-    : cf_graph_(),
-      last_visited_node_data_(std::nullopt),
-      proc_name_(),
-      min_stmt_num_(std::nullopt),
-      max_stmt_num_(std::nullopt) {}
+        : cf_graph_(),
+          last_visited_node_data_(CFGraph::start_node_data),
+          proc_name_(),
+          min_stmt_num_(std::nullopt),
+          max_stmt_num_(std::nullopt) {}
 
 /**
  * Builds the control flow graph. This put the end node as the last node in the graph, if there is a last visited node.
@@ -28,7 +28,7 @@ CFGraph CFGraphBuilder::build() {
  */
 void CFGraphBuilder::reset() {
     this->cf_graph_ = CFGraph();
-    this->last_visited_node_data_ = std::nullopt;
+    this->last_visited_node_data_ = CFGraph::start_node_data;
     this->proc_name_ = "";
     this->min_stmt_num_ = std::nullopt;
     this->max_stmt_num_ = std::nullopt;
@@ -45,24 +45,26 @@ void CFGraphBuilder::addStmt(STMT_NUM stmt_num) {
 
 /**
  * Adds a loop back to a node to the control flow graph. Moves the last visited node to the new node. This assumes that
- * stmt_num is already added to the graph and assumes that there is a last visited node.
+ * stmt_num is already added to the graph and assumes that there is a last visited node. Adds a dummy node to the
+ * control flow graph after the loop.
  * @param stmt_num Statement number of the node to loop back to.
  */
 void CFGraphBuilder::addLoop(STMT_NUM stmt_num) {
-    assert(isLastVisitedNodeExist());
     CFGraphNodeData node_data = makeNodeData(stmt_num);
+    assert(this->cf_graph_.hasNode(node_data));
     this->addNode(node_data);
+    this->addDummyNode(stmt_num);
 }
 
 /**
- * Adds a dummy node to the control flow graph. Does not move the last visited node to the new node. This assumes that
- * there is a last visited node.
- * @param stmt_num Statement number of the dummy node.
+ * Sets the last visited node to the node with the given statement number. This assumes that stmt_num is already added
+ * to the graph.
+ * @param stmt_num Statement number of the node to set as the last visited node.
  */
-void CFGraphBuilder::linkToDummyNode(STMT_NUM stmt_num) {
-    assert(isLastVisitedNodeExist());
-    CFGraphNodeData dummy_node_data = makeDummyNodeData(stmt_num);
-    this->addNode(dummy_node_data);
+void CFGraphBuilder::setLastVisitedStmt(STMT_NUM stmt_num) {
+    CFGraphNodeData node_data = makeNodeData(stmt_num);
+    assert(this->cf_graph_.hasNode(node_data));
+    this->setLastVisitedNode(node_data);
 }
 
 /**
@@ -74,12 +76,17 @@ void CFGraphBuilder::addDummyNode(STMT_NUM stmt_num) {
     this->addNode(dummy_node_data);
 }
 
-void CFGraphBuilder::setLastVisitedNode(const CFGraphNodeData &node_data) {
-    this->last_visited_node_data_ = node_data;
+/**
+ * Adds a node to the control flow graph. Moves the last visited node to the new node.
+ * @param node_data node data of the node to add.
+ */
+void CFGraphBuilder::addNode(const CFGraphNodeData &node_data) {
+    this->cf_graph_.addEdge(this->last_visited_node_data_, node_data);
+    setLastVisitedNode(node_data);
 }
 
-bool CFGraphBuilder::isLastVisitedNodeExist() const {
-    return this->last_visited_node_data_.has_value();
+void CFGraphBuilder::setLastVisitedNode(const CFGraphNodeData &node_data) {
+    this->last_visited_node_data_ = node_data;
 }
 
 void CFGraphBuilder::setProcName(ENT_NAME proc_name) {
@@ -92,5 +99,17 @@ void CFGraphBuilder::setMaxStmtNum(STMT_NUM max_stmt_num) {
 
 void CFGraphBuilder::setMinStmtNum(STMT_NUM min_stmt_num) {
     this->min_stmt_num_ = min_stmt_num;
+}
+
+bool CFGraphBuilder::operator==(const CFGraphBuilder &builder) const {
+    return this->cf_graph_ == builder.cf_graph_ &&
+           this->last_visited_node_data_ == builder.last_visited_node_data_ &&
+           this->proc_name_ == builder.proc_name_ &&
+           this->min_stmt_num_ == builder.min_stmt_num_ &&
+           this->max_stmt_num_ == builder.max_stmt_num_;
+}
+
+bool CFGraphBuilder::operator!=(const CFGraphBuilder &builder) const {
+    return !(*this == builder);
 }
 }  // namespace CFG

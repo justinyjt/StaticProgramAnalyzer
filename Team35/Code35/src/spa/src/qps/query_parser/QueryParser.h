@@ -4,6 +4,7 @@
 #include <memory>
 #include <utility>
 #include <string>
+
 #include "qps/clause/Clause.h"
 #include "qps/pql/Synonym.h"
 #include "commons/lexer/Lexer.h"

@@ -10,6 +10,7 @@ bool PKBWriter::addEntities(Entity entity, ENT_SET entitySet) {
     }
     return true;
 }
+
 bool PKBWriter::addStatements(StmtType tableType, STMT_SET stmtSet) {
     for (auto stmt : stmtSet) {
         if (!pkb.addStatementToTable(tableType, stmt)) {
@@ -47,12 +48,9 @@ bool PKBWriter::addStmtStmtRelationships(StmtStmtRelationship tableType, STMT_ST
 }
 
 
-bool PKBWriter::addPatterns(std::unordered_map<STMT_NUM, std::string> patternMap) {
-    std::unordered_map<STMT_NUM , std::string>:: iterator p;
-    for (p = patternMap.begin(); p != patternMap.end(); p++) {
-        if (!pkb.addPattern(p->first, p -> second)) {
-            return false;
-        }
+void PKBWriter::addPatterns(std::unordered_map<STMT_NUM, ASSIGN_PAT> patMap) {
+    std::unordered_map<STMT_NUM, ASSIGN_PAT>::iterator p;
+    for (p = patMap.begin(); p != patMap.end(); ++p) {
+        pkb.addPattern(p->first, p->second);
     }
-    return true;
 }

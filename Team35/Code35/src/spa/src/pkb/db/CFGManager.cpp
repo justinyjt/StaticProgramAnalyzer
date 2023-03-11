@@ -1,12 +1,13 @@
 #include "CFGManager.h"
 
 #include <cassert>
+#include <utility>
 
 namespace CFG {
 CFGManager::CFGManager() {}
 
 void CFGManager::setGraphs(std::vector<CFGraph> &&cfg) {
-    this->graphs_ = cfg;
+    this->graphs_ = std::move(cfg);
 }
 
 int CFGManager::getIndex(STMT_NUM num) {

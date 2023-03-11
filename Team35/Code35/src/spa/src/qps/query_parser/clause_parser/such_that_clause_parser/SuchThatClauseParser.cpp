@@ -2,13 +2,11 @@
 
 #include <utility>
 
-#include "qps/clause/Modifies.h"
 #include "qps/pql/StatementNumber.h"
 #include "qps/query_exceptions/SyntaxException.h"
 #include "qps/pql/Wildcard.h"
-#include "qps/clause/Uses.h"
-#include "qps/clause/Follows.h"
-#include "qps/clause/Parent.h"
+#include "qps/clause/TwoArgClause/StmtEntClause.h"
+#include "qps/clause/TwoArgClause/StmtStmtClause.h"
 #include "qps/query_exceptions/SemanticException.h"
 #include "qps/pql/Ident.h"
 
@@ -104,7 +102,7 @@ std::unique_ptr<Clause> SuchThatClauseParser::createClause(std::unique_ptr<Token
 }
 
 bool SuchThatClauseParser::isStmtRef(PQLToken& tok) {
-    const auto* synonym = dynamic_cast<const Synonym*>(&tok);
+    const auto* synonym = dynamic_cast<Synonym*>(&tok);
     return tok.tag == PQLToken::Tag::STMT_NUM ||
             tok.tag == PQLToken::Tag::WILDCARD ||
             synonym != nullptr && (synonym->de == Synonym::DesignEntity::STMT ||
@@ -117,7 +115,7 @@ bool SuchThatClauseParser::isStmtRef(PQLToken& tok) {
 }
 
 bool SuchThatClauseParser::isEntRef(PQLToken& tok) {
-    const auto* synonym = dynamic_cast<const Synonym*>(&tok);
+    const auto* synonym = dynamic_cast<Synonym*>(&tok);
     return tok.tag == PQLToken::Tag::IDENT ||
            tok.tag == PQLToken::Tag::WILDCARD ||
            synonym != nullptr && (synonym->de == Synonym::DesignEntity::VARIABLE ||

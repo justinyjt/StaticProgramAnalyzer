@@ -1,11 +1,13 @@
 #ifndef TEAM35_CODE35_SRC_SPA_SRC_COMMONS_TYPES_H_
 #define TEAM35_CODE35_SRC_SPA_SRC_COMMONS_TYPES_H_
 
+#include <memory>
 #include <string>
 #include <unordered_set>
 #include <utility>
 
 #include "PairHash.h"
+#include "commons/expr_parser/ExprNode.h"
 
 typedef std::string ENT_NAME;
 typedef int STMT_NUM;
@@ -20,6 +22,9 @@ typedef std::unordered_set<STMT_ENT, hash_pair> STMT_ENT_SET;
 typedef std::unordered_set<ENT_ENT, hash_pair> ENT_ENT_SET;
 typedef std::unordered_set<STMT_STMT, hash_pair> STMT_STMT_SET;
 
+typedef std::shared_ptr<ExprNode> ASSIGN_PAT_RIGHT;
+typedef ENT_NAME ASSIGN_PAT_LEFT;
+typedef std::pair<ASSIGN_PAT_LEFT, ASSIGN_PAT_RIGHT> ASSIGN_PAT;
 
 enum class StmtType {
     Print, Read, Assign, Call, While, If, None
@@ -30,7 +35,7 @@ enum class StmtNameRelationship {
 };
 
 enum class NameNameRelationship {
-    Uses, Modifies, Calls, CallsT, None
+    Uses, Modifies, Calls, CallsStar, None
 };
 
 enum class StmtStmtRelationship {
@@ -38,7 +43,7 @@ enum class StmtStmtRelationship {
 };
 
 enum class Entity {
-    Variable, Constant
+    Variable, Constant, Procedure
 };
 
 #endif  // TEAM35_CODE35_SRC_SPA_SRC_COMMONS_TYPES_H_

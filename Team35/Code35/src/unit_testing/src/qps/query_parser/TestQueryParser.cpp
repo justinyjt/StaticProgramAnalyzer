@@ -2,12 +2,12 @@
 #include "../../TestHelper.h"
 #include "qps/query_parser/declaration_parser/DeclarationParser.h"
 #include "qps/clause/Clause.h"
-#include "qps/clause/Modifies.h"
+#include "qps/clause/TwoArgClause/StmtEntClause.h"
+#include "qps/clause/TwoArgClause/StmtStmtClause.h"
 #include "qps/pql/StatementNumber.h"
 #include "qps/pql/Expression.h"
 #include "qps/query_parser/clause_parser/ClauseParser.h"
 #include "qps/query_parser/QueryParser.h"
-#include "qps/clause/Parent.h"
 
 TEST_CASE("1. Query parser") {
     std::string query = "variable v, x; assign a, b, c; read y; Select c such that Parent*(a,b) pattern a ( _ , _\"x\"_)";

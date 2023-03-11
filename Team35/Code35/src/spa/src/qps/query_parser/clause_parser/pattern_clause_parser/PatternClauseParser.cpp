@@ -1,6 +1,6 @@
 #include <string>
 #include "PatternClauseParser.h"
-#include "qps/clause/Pattern.h"
+#include "qps/clause/TwoArgClause/Pattern.h"
 #include "qps/pql/Synonym.h"
 #include "qps/pql/Wildcard.h"
 #include "qps/pql/Expression.h"
@@ -89,7 +89,7 @@ bool PatternClauseParser::isValidPatternSynonym(const std::string& next, std::ve
 }
 
 bool PatternClauseParser::isEntRef(PQLToken& tok) {
-    const auto* synonym = dynamic_cast<const Synonym*>(&tok);
+    const auto* synonym = dynamic_cast<Synonym*>(&tok);
     return tok.tag == PQLToken::Tag::IDENT ||
            tok.tag == PQLToken::Tag::WILDCARD ||
            synonym != nullptr && (synonym->de == Synonym::DesignEntity::VARIABLE ||

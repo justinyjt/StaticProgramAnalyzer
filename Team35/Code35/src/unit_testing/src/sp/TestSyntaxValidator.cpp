@@ -4,7 +4,7 @@
  * */
 #include "catch.hpp"
 #include "commons/token/Token.h"
-#include "MockLexer.h"
+#include "../commons/lexer/MockLexer.h"
 #include "../TestHelper.h"
 #include "sp/SyntaxValidator.h"
 
@@ -17,7 +17,9 @@ TEST_CASE("SyntaxValidator can validate very simple program correctly") {
         SyntaxValidator sv(std::move(lexPtr));
 
         requireTrue(sv.validateProgram());
-    }SECTION("SV can validate one empty procedure") {
+    }
+
+    SECTION("SV can validate one empty procedure") {
         Token eof(Token::Tag::EndOfFile);
         Token proc(Token::Tag::Procedure);
         Token procName("main", Token::Tag::Name);
@@ -30,7 +32,9 @@ TEST_CASE("SyntaxValidator can validate very simple program correctly") {
         SyntaxValidator sv(std::move(lexPtr));
 
         requireTrue(sv.validateProgram());
-    }SECTION("SV can validate one procedure with one print") {
+    }
+
+    SECTION("SV can validate one procedure with one print") {
         Token eof(Token::Tag::EndOfFile);
         Token proc(Token::Tag::Procedure);
         Token procName("main", Token::Tag::Name);
@@ -46,7 +50,9 @@ TEST_CASE("SyntaxValidator can validate very simple program correctly") {
         SyntaxValidator sv(std::move(lexPtr));
 
         requireTrue(sv.validateProgram());
-    }SECTION("SV can validate one procedure with one read") {
+    }
+
+    SECTION("SV can validate one procedure with one read") {
         Token eof(Token::Tag::EndOfFile);
         Token proc(Token::Tag::Procedure);
         Token procName("main", Token::Tag::Name);
@@ -57,6 +63,24 @@ TEST_CASE("SyntaxValidator can validate very simple program correctly") {
         Token varName("x", Token::Tag::Name);
 
         std::vector<Token> tokens = {eof, rBrace, semi, varName, readStmt, lBrace, procName, proc};
+        MockLexer lex(tokens);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
+        SyntaxValidator sv(std::move(lexPtr));
+
+        requireTrue(sv.validateProgram());
+    }
+
+    SECTION("SV can validate one procedure with one read") {
+        Token eof(Token::Tag::EndOfFile);
+        Token proc(Token::Tag::Procedure);
+        Token procName("main", Token::Tag::Name);
+        Token lBrace(Token::Tag::LBrace);
+        Token rBrace(Token::Tag::RBrace);
+        Token semi(Token::Tag::SemiColon);
+        Token callStmt(Token::Tag::Call);
+        Token varName("x", Token::Tag::Name);
+
+        std::vector<Token> tokens = {eof, rBrace, semi, varName, callStmt, lBrace, procName, proc};
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
         SyntaxValidator sv(std::move(lexPtr));

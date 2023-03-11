@@ -10,10 +10,6 @@
 #include "pkb/db/RelationshipTable.h"
 #include "pkb/db/PatternTable.h"
 
-typedef int PROC;
-
-class TNode;
-
 class PKB {
  public:
     const EntityTable<ENT_NAME> &getEntityTable(Entity entityType) const;
@@ -50,7 +46,7 @@ class PKB {
 
     bool addRelationshipToTable(StmtStmtRelationship tableType, STMT_STMT stmtStmt);
 
-    bool addPattern(STMT_NUM stmtNum, std::string pattern);
+    void addPattern(STMT_NUM stmt, ASSIGN_PAT pattern);
 
     ENT_SET getEntByStmtKey(StmtNameRelationship tableType, STMT_NUM stmt) const;
 
@@ -87,6 +83,7 @@ class PKB {
     // Entity related tables
     EntityTable<ENT_NAME> variableTable;
     EntityTable<ENT_NAME> constantTable;
+    EntityTable<ENT_NAME> procedureTable;
     EntityTable<STMT_NUM> assignStatementTable;
     EntityTable<STMT_NUM> ifStatementTable;
     EntityTable<STMT_NUM> whileStatementTable;
@@ -101,7 +98,7 @@ class PKB {
     RelationshipTable<ENT_NAME, ENT_NAME> modifiesNameNameTable;
     RelationshipTable<ENT_NAME, ENT_NAME> usesNameNameTable;
     RelationshipTable<ENT_NAME, ENT_NAME> callsNameNameTable;
-    RelationshipTable<ENT_NAME, ENT_NAME> callsTransitiveNameNameTable;
+    RelationshipTable<ENT_NAME, ENT_NAME> callsStarNameNameTable;
 
     RelationshipTable<STMT_NUM, STMT_NUM> followsTable;
     RelationshipTable<STMT_NUM, STMT_NUM> followsStarTable;
