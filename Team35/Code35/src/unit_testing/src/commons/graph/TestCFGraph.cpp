@@ -113,10 +113,10 @@ TEST_CASE("1. test CFGraph isReachable() method") {
         for (int i = 1; i <= 20; i++) {
             graph.addNode(CFG::makeNodeData(i));
         }
-        unsigned int seed;
+
         for (int i = 1; i <= 20; i++) {
             for (int j = 1; j <= 20; j++) {
-                if (i != j && rand_r(&seed) % 2 == 0) {
+                if (i != j && rand() % 2 == 0) {
                     graph.addEdge(CFG::makeNodeData(i), CFG::makeNodeData(j));
                 }
             }
