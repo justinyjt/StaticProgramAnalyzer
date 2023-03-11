@@ -4,11 +4,11 @@
 
 namespace CFG {
 CFGraphBuilder::CFGraphBuilder()
-    : cf_graph_(),
-      last_visited_node_data_(CFGraph::start_node_data),
-      proc_name_(),
-      min_stmt_num_(std::nullopt),
-      max_stmt_num_(std::nullopt) {}
+        : cf_graph_(),
+          last_visited_node_data_(CFGraph::start_node_data),
+          proc_name_(),
+          min_stmt_num_(std::nullopt),
+          max_stmt_num_(std::nullopt) {}
 
 /**
  * Builds the control flow graph. This put the end node as the last node in the graph, if there is a last visited node.
@@ -103,10 +103,10 @@ void CFGraphBuilder::setMinStmtNum(STMT_NUM min_stmt_num) {
 
 bool CFGraphBuilder::operator==(const CFGraphBuilder &builder) const {
     return this->cf_graph_ == builder.cf_graph_ &&
-        this->last_visited_node_data_ == builder.last_visited_node_data_ &&
-        this->proc_name_ == builder.proc_name_ &&
-        this->min_stmt_num_ == builder.min_stmt_num_ &&
-        this->max_stmt_num_ == builder.max_stmt_num_;
+           this->last_visited_node_data_ == builder.last_visited_node_data_ &&
+           this->proc_name_ == builder.proc_name_ &&
+           this->min_stmt_num_ == builder.min_stmt_num_ &&
+           this->max_stmt_num_ == builder.max_stmt_num_;
 }
 
 bool CFGraphBuilder::operator!=(const CFGraphBuilder &builder) const {

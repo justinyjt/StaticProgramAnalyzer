@@ -10,10 +10,6 @@
 #include "pkb/db/RelationshipTable.h"
 #include "pkb/db/PatternTable.h"
 
-typedef int PROC;
-
-class TNode;
-
 class PKB {
  public:
     const EntityTable<ENT_NAME> &getEntityTable(Entity entityType) const;

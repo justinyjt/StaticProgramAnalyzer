@@ -21,11 +21,12 @@ template<typename T>
 class Graph {
  public:
     Graph() : nodes(), nodeToIndex(), outgoingAdjList(), incomingAdjList() {}
+
     virtual ~Graph() = default;
 
     bool operator==(const Graph &other) const {
         return nodes == other.nodes && nodeToIndex == other.nodeToIndex &&
-            outgoingAdjList == other.outgoingAdjList && incomingAdjList == other.incomingAdjList;
+               outgoingAdjList == other.outgoingAdjList && incomingAdjList == other.incomingAdjList;
     }
 
     bool operator!=(const Graph &other) const {
