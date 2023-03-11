@@ -25,6 +25,7 @@ TEST_CASE("2. test addStmt") {
         cf_graph_builder.setProcName("proc");
         CFG::CFGraph cf_graph = cf_graph_builder.build();
         CFG::CFGraph cf_graph2(CFG::CFGraph(), 1, 2, "proc");
+        cf_graph2.addEdge(CFG::CFGraph::start_node_data, CFG::makeNodeData(1));
         cf_graph2.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
         cf_graph2.addEdge(CFG::makeNodeData(2), CFG::CFGraph::end_node_data);
         requireEqualRef(cf_graph, cf_graph2);
@@ -38,6 +39,7 @@ TEST_CASE("2. test addStmt") {
         cf_graph_builder.setProcName("proc");
         CFG::CFGraph cf_graph = cf_graph_builder.build();
         CFG::CFGraph cf_graph2(CFG::CFGraph(), 1, 2, "proc");
+        cf_graph2.addEdge(CFG::CFGraph::start_node_data, CFG::makeNodeData(1));
         cf_graph2.addEdge(CFG::makeNodeData(1), CFG::CFGraph::end_node_data);
         requireEqualRef(cf_graph, cf_graph2);
     }
@@ -54,6 +56,7 @@ TEST_CASE("4. test addDummyNode, not the start node") {
         cf_graph_builder.setProcName("proc");
         CFG::CFGraph cf_graph = cf_graph_builder.build();
         CFG::CFGraph cf_graph2(CFG::CFGraph(), 1, 3, "proc");
+        cf_graph2.addEdge(CFG::CFGraph::start_node_data, CFG::makeNodeData(1));
         cf_graph2.addEdge(CFG::makeNodeData(1), CFG::makeDummyNodeData(2));
         cf_graph2.addEdge(CFG::makeDummyNodeData(2), CFG::makeNodeData(3));
         cf_graph2.addEdge(CFG::makeNodeData(3), CFG::CFGraph::end_node_data);
@@ -69,6 +72,7 @@ TEST_CASE("4. test addDummyNode, not the start node") {
         cf_graph_builder.setProcName("proc");
         CFG::CFGraph cf_graph = cf_graph_builder.build();
         CFG::CFGraph cf_graph2(CFG::CFGraph(), 1, 2, "proc");
+        cf_graph2.addEdge(CFG::CFGraph::start_node_data, CFG::makeDummyNodeData(1));
         cf_graph2.addEdge(CFG::makeDummyNodeData(1), CFG::makeNodeData(2));
         cf_graph2.addEdge(CFG::makeNodeData(2), CFG::CFGraph::end_node_data);
         requireEqualRef(cf_graph, cf_graph2);
@@ -85,6 +89,7 @@ TEST_CASE("5. test addLoop() method") {
     cf_graph_builder.setProcName("proc");
     CFG::CFGraph cf_graph = cf_graph_builder.build();
     CFG::CFGraph cf_graph2(CFG::CFGraph(), 1, 2, "proc");
+    cf_graph2.addEdge(CFG::CFGraph::start_node_data, CFG::makeNodeData(1));
     cf_graph2.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
     cf_graph2.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(1));
     cf_graph2.addEdge(CFG::makeNodeData(1), CFG::makeDummyNodeData(1));
@@ -92,19 +97,21 @@ TEST_CASE("5. test addLoop() method") {
     requireEqualRef(cf_graph, cf_graph2);
 }
 
-TEST_CASE("6. test linkToDummyNode() method") {
+TEST_CASE("6. test setLastVisitedStmt method") {
     CFG::CFGraphBuilder cf_graph_builder;
     cf_graph_builder.addStmt(1);
     cf_graph_builder.addStmt(2);
-    cf_graph_builder.linkToDummyNode(3);
-    cf_graph_builder.setMaxStmtNum(2);
+    cf_graph_builder.setLastVisitedStmt(1);
+    cf_graph_builder.addStmt(3);
+    cf_graph_builder.setMaxStmtNum(3);
     cf_graph_builder.setMinStmtNum(1);
     cf_graph_builder.setProcName("proc");
     CFG::CFGraph cf_graph = cf_graph_builder.build();
-    CFG::CFGraph cf_graph2(CFG::CFGraph(), 1, 2, "proc");
+    CFG::CFGraph cf_graph2(CFG::CFGraph(), 1, 3, "proc");
+    cf_graph2.addEdge(CFG::CFGraph::start_node_data, CFG::makeNodeData(1));
     cf_graph2.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
-    cf_graph2.addEdge(CFG::makeNodeData(2), CFG::makeDummyNodeData(3));
-    cf_graph2.addEdge(CFG::makeNodeData(2), CFG::CFGraph::end_node_data);
+    cf_graph2.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(3));
+    cf_graph2.addEdge(CFG::makeNodeData(3), CFG::CFGraph::end_node_data);
     requireEqualRef(cf_graph, cf_graph2);
 }
 

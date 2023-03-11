@@ -5,6 +5,7 @@
 #include "CFGraphNodeData.h"
 
 namespace CFG {
+CFGraphNodeData CFGraph::start_node_data = makeDummyNodeData(-1);
 CFGraphNodeData CFGraph::end_node_data = makeDummyNodeData(0);
 
 CFGraph::CFGraph() : Graph<CFGraphNodeData>(),

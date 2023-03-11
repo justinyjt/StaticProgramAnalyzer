@@ -19,6 +19,7 @@ class CFGraph : public Graph<CFGraphNodeData> {
     bool operator!=(const CFGraph &graph) const;
 
     static CFGraphNodeData end_node_data;
+    static CFGraphNodeData start_node_data;
     CFGraph();
     ~CFGraph() override = default;
     CFGraph(const CFGraph &graph, STMT_NUM min_stmt_num, STMT_NUM max_stmt_num, ENT_NAME proc_name);
