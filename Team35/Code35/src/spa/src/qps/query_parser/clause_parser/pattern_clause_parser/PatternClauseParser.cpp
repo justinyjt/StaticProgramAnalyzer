@@ -25,7 +25,7 @@ std::unique_ptr<Clause> PatternClauseParser::parsePattern() {
     // validate and return type
     Synonym::DesignEntity de;
     std::string pattern = pqlTokenScanner.peekLexeme();
-    if (isName(pqlTokenScanner.peekLexeme())) {
+    if (pqlTokenScanner.peek(Token::Tag::Name)) {
         de = parsePatternSynonym();
     } else {
         throw SyntaxException();
@@ -161,7 +161,8 @@ Synonym::DesignEntity PatternClauseParser::parsePatternSynonym() {
 }
 
 bool PatternClauseParser::isEntRef() {
-    return pqlTokenScanner.peek(Token::Tag::Underscore) || isName(pqlTokenScanner.peekLexeme()) ||
+    return pqlTokenScanner.peek(Token::Tag::Underscore) || pqlTokenScanner.peek(Token::Tag::Name) ||
+           pqlTokenScanner.peek(Token::Tag::Bool) ||
            pqlTokenScanner.peek(Token::Tag::String) && isName(pqlTokenScanner.peekLexeme());
 }
 

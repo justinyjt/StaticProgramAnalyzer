@@ -14,10 +14,16 @@ SelectionParser::SelectionParser(PQLTokenScanner &pqlTokenScanner, std::unordere
 std::unique_ptr<SelectClause> SelectionParser::parse() {
     pqlTokenScanner.matchAndValidate(Token::Tag::Select);
 
-    if (pqlTokenScanner.peek(Token::Tag::Bool) && !SemanticValidator::isDeclared(synonyms, "BOOLEAN")) {  // BOOLEAN
+    if (pqlTokenScanner.peek(Token::Tag::Bool)) {  // BOOLEAN
+        if (!SemanticValidator::isDeclared(synonyms, "BOOLEAN")) {
+            pqlTokenScanner.match(Token::Tag::Bool);
+            return std::move(std::make_unique<BooleanSelectClause>());
+        } else {
+            return std::move(parseSelect());
+        }
         pqlTokenScanner.match(Token::Tag::Bool);
         return std::move(std::make_unique<BooleanSelectClause>());
-    } else if (isName(pqlTokenScanner.peekLexeme())) {  // single synonym
+    } else if (pqlTokenScanner.peek(Token::Tag::Name)) {  // single synonym
         return std::move(parseSelect());
     } else {
         throw SyntaxException();

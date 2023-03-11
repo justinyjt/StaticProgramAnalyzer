@@ -69,4 +69,11 @@ Calls::Calls(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, 
     validateArgs();
 }
 
-void Calls::validateArgs() {}
+void Calls::validateArgs() {
+    Synonym* synonym1 = dynamic_cast<Synonym*>(first.get());
+    Synonym* synonym2 = dynamic_cast<Synonym*>(second.get());
+    if ((synonym1 != nullptr && synonym1->de != Synonym::DesignEntity::PROCEDURE) ||
+        (synonym2 != nullptr && synonym2->de != Synonym::DesignEntity::PROCEDURE)) {
+        throw SemanticException();
+    }
+}

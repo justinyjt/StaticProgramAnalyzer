@@ -7,6 +7,8 @@
 #include "qps/pql/Ident.h"
 #include "qps/clause/TwoArgClause/StmtEntClause.h"
 #include "qps/clause/TwoArgClause/StmtStmtClause.h"
+#include "qps/clause/TwoArgClause/EntEntClause.h"
+#include "qps/query_exceptions/SyntaxException.h"
 
 class setUpStcp {
 public:

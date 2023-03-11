@@ -9,7 +9,7 @@
 #include "qps/clause/TwoArgClause/StmtStmtClause.h"
 #include "qps/pql/Ident.h"
 #include "qps/query_parser/SemanticValidator.h"
-#include "qps/clause/EntEntClause.h"
+#include "qps/clause/TwoArgClause/EntEntClause.h"
 
 SuchThatClauseParser::SuchThatClauseParser(PQLTokenScanner& pqlTokenScanner, std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
     pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
@@ -230,11 +230,12 @@ std::unique_ptr<Clause> SuchThatClauseParser::createClause(std::unique_ptr<PQLTo
 
 bool SuchThatClauseParser::isStmtRef() {
     return pqlTokenScanner.peek(Token::Tag::Integer) || pqlTokenScanner.peek(Token::Tag::Underscore) ||
-            isName(pqlTokenScanner.peekLexeme());
+            pqlTokenScanner.peek(Token::Tag::Bool) || pqlTokenScanner.peek(Token::Tag::Name);
 }
 
 bool SuchThatClauseParser::isEntRef() {
-    return pqlTokenScanner.peek(Token::Tag::Underscore) || isName(pqlTokenScanner.peekLexeme()) ||
+    return pqlTokenScanner.peek(Token::Tag::Underscore) || pqlTokenScanner.peek(Token::Tag::Name) ||
+            pqlTokenScanner.peek(Token::Tag::Bool) ||
            pqlTokenScanner.peek(Token::Tag::String) && isName(pqlTokenScanner.peekLexeme());
 }
 
