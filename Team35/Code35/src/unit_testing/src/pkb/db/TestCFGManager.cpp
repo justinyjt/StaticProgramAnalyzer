@@ -56,7 +56,6 @@ TEST_CASE("1. Test storage and retrieval in CFGManager") {
         requireEqualRef(manager.getCFG(14), test_three);
         requireEqualRef(manager.getCFG(15), test_three);
         requireEqualRef(manager.getCFG(16), test_four);
-
     }
 }
 
@@ -98,7 +97,6 @@ TEST_CASE("2. Test storage and retrieval in CFGManager") {
         requireEqualRef(manager.getCFG(8), test_three);
         requireEqualRef(manager.getCFG(9), test_three);
         requireEqualRef(manager.getCFG(10), test_three);
-
     }
 }
 
@@ -140,7 +138,6 @@ TEST_CASE("3. Test storage and retrieval in CFGManager") {
         requireEqualRef(manager.getCFG(8), test_three);
         requireEqualRef(manager.getCFG(9), test_three);
         requireEqualRef(manager.getCFG(10), test_three);
-
     }
 }
 
@@ -201,5 +198,4 @@ TEST_CASE("5. Test storage and invalid retrieval in CFGManager") {
         requireFalse(manager.isValidStmtNum(0));
         requireFalse(manager.isValidStmtNum(7));
     }
-
 }
