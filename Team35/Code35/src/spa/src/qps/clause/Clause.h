@@ -11,13 +11,13 @@
 
 /* 
 Base class for clause in PQL (suchthat-cl, pattern-cl)
-                Clause
-              /       \ 
-   select_clause     TwoArgClause
-                 /       |        \ 
-           Pattern StmtNameClause StmtStmtClause
-                         |              |
-                    Modifies/Uses Parent/Follows
+                             Clause
+              /                 |                                         \
+       select_clause       OneArgClause                               TwoArgClause
+       /    |    \          /        \                   /           |              |           \
+Boolean Single Tuple  IfPattern   WhilePattern   AssignPattern StmtNameClause StmtStmtClause EntEntClause
+                                                                     |              |            |
+                                                                Modifies/Uses Parent/Follows   Calls
 */
 class Clause {
  public:
