@@ -40,7 +40,7 @@ std::unique_ptr<Clause> PatternClauseParser::parsePattern() {
         case Synonym::DesignEntity::IF:
             return parseIf(pattern);
         default:
-            assert(false);
+            {}
     }
 }
 
