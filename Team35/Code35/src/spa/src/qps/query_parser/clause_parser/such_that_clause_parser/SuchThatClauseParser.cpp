@@ -81,9 +81,7 @@ std::unique_ptr<Clause> SuchThatClauseParser::parseUsesModifies(std::string& rel
                     stoi(pqlTokenScanner.peekLexeme()));
             relationship += "S";
             pqlTokenScanner.next();
-        } else {
-            assert(false);
-        }
+        } else {}
     } else {
         throw SyntaxException();
     }
@@ -141,9 +139,7 @@ std::unique_ptr<PQLToken> SuchThatClauseParser::parseEntRef() {
         std::unique_ptr<Ident> i = std::make_unique<Ident>(pqlTokenScanner.peekLexeme());
         pqlTokenScanner.next();
         return i;
-    } else {
-        assert(false);
-    }
+    } else {}
 }
 
 std::unique_ptr<PQLToken> SuchThatClauseParser::parseStmtRef() {
@@ -164,9 +160,7 @@ std::unique_ptr<PQLToken> SuchThatClauseParser::parseStmtRef() {
         std::unique_ptr<StatementNumber> s = std::make_unique<StatementNumber>(stoi(pqlTokenScanner.peekLexeme()));
         pqlTokenScanner.next();
         return s;
-    } else {
-        assert(false);
-    }
+    } else {}
 }
 
 std::unique_ptr<Clause> SuchThatClauseParser::createClause(std::unique_ptr<PQLToken> token1,

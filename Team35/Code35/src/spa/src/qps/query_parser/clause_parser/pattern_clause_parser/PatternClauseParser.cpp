@@ -100,9 +100,7 @@ std::unique_ptr<PQLToken> PatternClauseParser::parseEntRef() {
         std::unique_ptr<Ident> i = std::make_unique<Ident>(pqlTokenScanner.peekLexeme());
         pqlTokenScanner.next();
         return i;
-    } else {
-        assert(false);
-    }
+    } else {}
 }
 
 std::unique_ptr<PQLToken> PatternClauseParser::parseExpressionSpec() {

@@ -1,3 +1,7 @@
+#pragma once
+
+#include <stdexcept>
+
 #include "SemanticValidator.h"
 #include "qps/query_exceptions/SemanticException.h"
 

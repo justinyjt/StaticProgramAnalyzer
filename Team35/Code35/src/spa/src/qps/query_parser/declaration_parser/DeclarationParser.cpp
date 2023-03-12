@@ -74,7 +74,7 @@ Synonym::DesignEntity DeclarationParser::parseDesignEntity() {
                 de = Synonym::DesignEntity::PROCEDURE;
                 break;
             default:
-                assert(false);
+                break;
         }
         pqlTokenScanner.next();
         return de;
