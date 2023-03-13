@@ -83,11 +83,11 @@ bool PKBReader::isRelationshipExists(StmtStmtRelationship tableType, STMT_NUM ke
     return pkb.isStmtStmtPairExists(tableType, keyName, valName);
 }
 
-STMT_SET PKBReader::getStmtWithExactPatternMatch(std::string &pattern) const {
+STMT_SET PKBReader::getStmtWithExactPatternMatch(ASSIGN_PAT_RIGHT &pattern) const {
     return pkb.getPatternTable().getExactPatternMatch(pattern);
 }
 
-STMT_SET PKBReader::getStmtWithPartialPatternMatch(std::string &pattern) const {
+STMT_SET PKBReader::getStmtWithPartialPatternMatch(ASSIGN_PAT_RIGHT &pattern) const {
     return pkb.getPatternTable().getPartialPatternMatch(pattern);
 }
 

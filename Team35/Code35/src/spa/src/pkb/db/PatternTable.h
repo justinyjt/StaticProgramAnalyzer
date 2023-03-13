@@ -6,11 +6,13 @@
 #include "commons/types.h"
 
 class PatternTable {
-    std::unordered_map<STMT_NUM, std::string> stmtPatternMap;
+    std::unordered_map<STMT_NUM, ASSIGN_PAT> stmtPatternMap;
  public:
-    bool addPattern(STMT_NUM stmt, std::string pattern);
-    STMT_SET getExactPatternMatch(std::string pattern) const;
-    STMT_SET getPartialPatternMatch(std::string pattern) const;
+    void addPattern(STMT_NUM stmt, ASSIGN_PAT pattern);
+
+    STMT_SET getExactPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;
+
+    STMT_SET getPartialPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;
 };
 
 #endif  // TEAM35_CODE35_SRC_SPA_SRC_PKB_DB_PATTERNTABLE_H_

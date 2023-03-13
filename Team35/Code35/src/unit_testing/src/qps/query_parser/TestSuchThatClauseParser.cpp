@@ -9,7 +9,7 @@
 #include "qps/clause/TwoArgClause/StmtStmtClause.h"
 
 class setUpStcp {
-public:
+ public:
     setUpStcp() {
         // Set up code
         query = "";

@@ -27,15 +27,15 @@ ENT_ENT_SET CallGraph::getTransitiveCalls() {
     for (int i = 0; i < this->getNoOfNodes(); i++) {
         ENT_NAME caller = this->getNode(i);
         IndexQueue calleeQueue;
-        IndexList calleeIndices = this->getOutgoingNodes(i);
-        calleeQueue.insert(calleeQueue.begin(), calleeIndices.begin(), calleeIndices.end());
-        while (calleeQueue.size() > 0) {
+        calleeQueue.push(i);
+        while (!calleeQueue.empty()) {
             Index current = calleeQueue.front();
-            ENT_NAME callee = this->getNode(current);
-            result.emplace(caller, callee);
-            IndexList indices = this->getOutgoingNodes(current);
-            calleeQueue.insert(calleeQueue.end(), indices.begin(), indices.end());
-            calleeQueue.pop_front();
+            calleeQueue.pop();
+            for (Index calleeIndex : this->getOutgoingNodes(current)) {
+                ENT_NAME callee = this->getNode(calleeIndex);
+                result.emplace(caller, callee);
+                calleeQueue.push(calleeIndex);
+            }
         }
     }
     return result;
@@ -52,7 +52,7 @@ ENT_ENT_SET CallGraph::getImmediateCalls() {
     for (int i = 0; i < this->getNoOfNodes(); i++) {
         ENT_NAME caller = this->getNode(i);
         ENT_SET callees = this->getCallEntities(i);
-        for (auto callee : callees) {
+        for (const auto &callee : callees) {
             result.emplace(caller, callee);
         }
     }

@@ -5,8 +5,6 @@
 #include "commons/graph/Graph.h"
 #include "commons/types.h"
 
-typedef std::deque<Index> IndexQueue;
-
 class CallGraph : public Graph<ENT_NAME> {
  public:
     CallGraph();

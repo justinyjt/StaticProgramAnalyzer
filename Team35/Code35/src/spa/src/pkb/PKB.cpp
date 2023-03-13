@@ -1,15 +1,6 @@
 #include "PKB.h"
 
-#include <assert.h>
-#include <stdio.h>
-
-#include <iostream>
-#include <string>
-#include <vector>
-#include <unordered_set>
-#include <utility>
-
-#include "commons/TNode.h"
+#include <cassert>
 
 const EntityTable<ENT_NAME> &PKB::getEntityTable(Entity entityType) const {
     switch (entityType) {
@@ -143,8 +134,8 @@ bool PKB::addRelationshipToTable(StmtStmtRelationship tableType, STMT_STMT stmtS
     return table.insertPair(stmtStmt.first, stmtStmt.second);
 }
 
-bool PKB::addPattern(STMT_NUM stmtNum, std::string pattern) {
-    return patternTable.addPattern(stmtNum, pattern);
+void PKB::addPattern(STMT_NUM stmtNum, ASSIGN_PAT pattern) {
+    patternTable.addPattern(stmtNum, pattern);
 }
 
 ENT_SET PKB::getEntByStmtKey(StmtNameRelationship tableType, STMT_NUM stmt) const {
