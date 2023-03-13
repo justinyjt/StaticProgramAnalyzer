@@ -44,8 +44,6 @@ ENT_SET WithEntClause::getEntValuesFromSyn(Synonym syn, PKBReader* db) {
     }
 }
 
-
-
 std::unique_ptr<Result> WithEntClause::evaluate(PKBReader* db) {
     /* <SYNONYM | IDENT>, <SYNONYM | IDENT> */
 

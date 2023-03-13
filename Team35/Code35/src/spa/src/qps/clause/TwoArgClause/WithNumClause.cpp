@@ -45,8 +45,6 @@ STMT_SET WithNumClause::getNumValuesFromSyn(Synonym syn, PKBReader* db) {
     }
 }
 
-
-
 std::unique_ptr<Result> WithNumClause::evaluate(PKBReader* db) {
     /* <SYNONYM | NUM>, <SYNONYM | NUM> */
 
@@ -57,7 +55,7 @@ std::unique_ptr<Result> WithNumClause::evaluate(PKBReader* db) {
             Synonym syn2 = dynamic_cast<Synonym&>(*second);
             STMT_SET syn1Vals = getNumValuesFromSyn(syn1, db);
             STMT_SET syn2Vals = getNumValuesFromSyn(syn2, db);
-            STMT_STMT_SET resultSet = STMT_STMT_SET ();
+            STMT_STMT_SET resultSet;
             for (auto const& syn1Val : syn1Vals) {
                 for (auto const& syn2Val : syn2Vals) {
                     if (syn1Val == syn2Val) {
@@ -73,7 +71,7 @@ std::unique_ptr<Result> WithNumClause::evaluate(PKBReader* db) {
             Synonym syn1 = dynamic_cast<Synonym&>(*first);
             STMT_NUM num = (dynamic_cast<StatementNumber&>(*second)).n;
             STMT_SET syn1Vals = getNumValuesFromSyn(syn1, db);
-            STMT_SET resultSet = STMT_SET();
+            STMT_SET resultSet;
             for (auto const& syn1Val : syn1Vals) {
                 if (syn1Val == num) {
                     resultSet.emplace(syn1Val);
