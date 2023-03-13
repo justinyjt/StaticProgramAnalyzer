@@ -25,7 +25,7 @@ std::unique_ptr<Clause> PatternClauseParser::parsePattern() {
     // validate and return type
     Synonym::DesignEntity de;
     std::string pattern = pqlTokenScanner.peekLexeme();
-    if (pqlTokenScanner.peekSynonym()) {
+    if (pqlTokenScanner.isName()) {
         de = parsePatternSynonym();
     } else {
         throw SyntaxException();
@@ -86,7 +86,7 @@ std::unique_ptr<PQLToken> PatternClauseParser::parseEntRef() {
     if (!pqlTokenScanner.peekEntRef()) {
         throw SyntaxException();
     }
-    if (pqlTokenScanner.peekSynonym()) {
+    if (pqlTokenScanner.isName()) {
         std::string synonym = pqlTokenScanner.peekLexeme();
         Synonym::DesignEntity de = SemanticValidator::getDesignEntity(synonyms, synonym);
         pqlTokenScanner.next();

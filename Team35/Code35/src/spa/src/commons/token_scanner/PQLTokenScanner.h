@@ -14,7 +14,6 @@ class PQLTokenScanner : public TokenScanner {
     int peekDesignEntity() const;
     int peekIdent() const;
     int peekConstant() const;
-    int peekSynonym() const;
     bool peekStmtRef();
     bool peekEntRef();
     void matchAndValidate(Token::Tag tag);

@@ -85,7 +85,7 @@ Synonym::DesignEntity DeclarationParser::parseDesignEntity() {
 
 std::string DeclarationParser::parseSynonym(Synonym::DesignEntity de) {
     std::string synonym;
-    if (pqlTokenScanner.peekSynonym()) {
+    if (pqlTokenScanner.isName()) {
         synonym = pqlTokenScanner.peekLexeme();
         pqlTokenScanner.next();
         return synonym;

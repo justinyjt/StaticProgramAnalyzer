@@ -28,23 +28,6 @@ int PQLTokenScanner::peekIdent() const {
     }
 }
 
-int PQLTokenScanner::peekSynonym() const {
-    // check for names that can also be keywords
-    if (peek(Token::Tag::String)) {
-        return false;
-    }
-    std::string input = peekLexeme();
-    if (!isalpha(input[0])) {
-        return false;
-    }
-    for (char c : input) {
-        if (!isalpha(c) && !isdigit(c)) {
-            return false;
-        }
-    }
-    return true;
-}
-
 // for expression with constant
 int PQLTokenScanner::peekConstant() const {
     std::string next = peekLexeme();
@@ -60,11 +43,11 @@ int PQLTokenScanner::peekConstant() const {
 
 bool PQLTokenScanner::peekStmtRef() {
     return peek(Token::Tag::Integer) || peek(Token::Tag::Underscore) ||
-           peek(Token::Tag::Bool) || peekSynonym();
+           peek(Token::Tag::Bool) || isName();
 }
 
 bool PQLTokenScanner::peekEntRef() {
-    return peek(Token::Tag::Underscore) || peekSynonym() ||
+    return peek(Token::Tag::Underscore) || isName() ||
            peek(Token::Tag::Bool) || peekIdent();
 }
 

@@ -55,7 +55,7 @@ std::unique_ptr<Clause> SuchThatClauseParser::parseUsesModifies(std::string& rel
     std::unique_ptr<PQLToken> arg2;
     pqlTokenScanner.matchAndValidate(Token::Tag::LParen);
     if (pqlTokenScanner.peekStmtRef() || pqlTokenScanner.peekEntRef()) {
-        if (pqlTokenScanner.peekSynonym()) {
+        if (pqlTokenScanner.isName()) {
             std::string synonym = pqlTokenScanner.peekLexeme();
             Synonym::DesignEntity de = SemanticValidator::getDesignEntity(synonyms, synonym);
             arg1 = std::make_unique<Synonym>(de, synonym);
@@ -125,7 +125,7 @@ std::unique_ptr<PQLToken> SuchThatClauseParser::parseEntRef() {
     if (!pqlTokenScanner.peekEntRef()) {
         throw SyntaxException();
     }
-    if (pqlTokenScanner.peekSynonym()) {
+    if (pqlTokenScanner.isName()) {
         std::string synonym = pqlTokenScanner.peekLexeme();
         Synonym::DesignEntity de = SemanticValidator::getDesignEntity(synonyms, synonym);
         pqlTokenScanner.next();
@@ -146,7 +146,7 @@ std::unique_ptr<PQLToken> SuchThatClauseParser::parseStmtRef() {
     if (!pqlTokenScanner.peekStmtRef()) {
         throw SyntaxException();
     }
-    if (pqlTokenScanner.peekSynonym()) {
+    if (pqlTokenScanner.isName()) {
         std::string synonym = pqlTokenScanner.peekLexeme();
         Synonym::DesignEntity de = SemanticValidator::getDesignEntity(synonyms, synonym);
         pqlTokenScanner.next();

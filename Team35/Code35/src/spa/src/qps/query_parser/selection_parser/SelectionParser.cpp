@@ -24,7 +24,7 @@ std::unique_ptr<SelectClause> SelectionParser::parse() {
         }
         pqlTokenScanner.match(Token::Tag::Bool);
         return std::move(std::make_unique<BooleanSelectClause>());
-    } else if (pqlTokenScanner.peekSynonym()) {  // single synonym
+    } else if (pqlTokenScanner.isName()) {  // single synonym
         return std::move(parseSelect());
     } else {
         throw SyntaxException();
