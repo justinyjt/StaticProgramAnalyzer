@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include "WithEntClause.h"
 
 WithEntClause::WithEntClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second) : TwoArgClause(std::move(first), std::move(second)) {};
