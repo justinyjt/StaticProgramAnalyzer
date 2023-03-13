@@ -49,5 +49,4 @@ TEST_CASE("1. Test WithNumClause") {
         requireEqual(actualResult.idents, expectedResult.idents);
         requireEqual(actualResult.rows, expectedResult.rows);
     }
-
 }

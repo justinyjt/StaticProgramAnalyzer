@@ -1,6 +1,6 @@
-#include <cassert>
-
 #include "WithEntClause.h"
+
+#include <cassert>
 
 WithEntClause::WithEntClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second) : TwoArgClause(std::move(first), std::move(second)) {};
 
@@ -18,7 +18,7 @@ ENT_SET WithEntClause::getEntValuesFromSyn(Synonym syn, PKBReader* db) {
         case Synonym::DesignEntity::READ:
         {
             STMT_SET readStmts = db->getStatements(StmtType::Read);
-            ENT_SET readValues = std::unordered_set<ENT_NAME>();
+            ENT_SET readValues;
             for (auto const& readStmt : readStmts) {
                 ENT_SET modifiedVars = db->getRelationship(StmtNameRelationship::Modifies, readStmt);
                 for (auto const& modifiedVar : modifiedVars) {
@@ -30,7 +30,7 @@ ENT_SET WithEntClause::getEntValuesFromSyn(Synonym syn, PKBReader* db) {
         case Synonym::DesignEntity::PRINT:
         {
             STMT_SET printStmts = db->getStatements(StmtType::Print);
-            ENT_SET printValues = std::unordered_set<ENT_NAME>();
+            ENT_SET printValues;
             for (auto const& printStmt : printStmts) {
                 ENT_SET usedVars = db->getRelationship(StmtNameRelationship::Uses, printStmt);
                 for (auto const& usedVar : usedVars) {
@@ -56,7 +56,7 @@ std::unique_ptr<Result> WithEntClause::evaluate(PKBReader* db) {
             Synonym syn2 = dynamic_cast<Synonym&>(*second);
             ENT_SET syn1Vals = getEntValuesFromSyn(syn1, db);
             ENT_SET syn2Vals = getEntValuesFromSyn(syn2, db);
-            ENT_ENT_SET resultSet = ENT_ENT_SET();
+            ENT_ENT_SET resultSet;
             for (auto const& syn1Val : syn1Vals) {
                 for (auto const& syn2Val : syn2Vals) {
                     if (syn1Val == syn2Val) {
@@ -72,7 +72,7 @@ std::unique_ptr<Result> WithEntClause::evaluate(PKBReader* db) {
             Synonym syn1 = dynamic_cast<Synonym&>(*first);
             ENT_NAME ent = (dynamic_cast<Ident &>(*second)).s;
             ENT_SET syn1Vals = getEntValuesFromSyn(syn1, db);
-            ENT_SET resultSet = ENT_SET();
+            ENT_SET resultSet;
             for (auto const& syn1Val : syn1Vals) {
                 if (syn1Val == ent) {
                     resultSet.emplace(syn1Val);
