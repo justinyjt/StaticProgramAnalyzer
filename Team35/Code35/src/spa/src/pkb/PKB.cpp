@@ -170,6 +170,10 @@ ENT_ENT_SET PKB::getEntEntSet(NameNameRelationship tableType) const {
     return getNameNameRelationshipTable(tableType).getKeyValuePairs();
 }
 
+ENT_SET PKB::getKeysFrom(NameNameRelationship tableType) const {
+    return getNameNameRelationshipTable(tableType).getKeys();
+}
+
 bool PKB::isEntEntPairExists(NameNameRelationship tableType, ENT_NAME key, ENT_NAME val) const {
     return getNameNameRelationshipTable(tableType).containsPair(key, val);
 }

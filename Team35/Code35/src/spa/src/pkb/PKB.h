@@ -64,6 +64,8 @@ class PKB {
 
     ENT_ENT_SET getEntEntSet(NameNameRelationship tableType) const;
 
+    ENT_SET getKeysFrom(NameNameRelationship tableType) const;
+
     bool isEntEntPairExists(NameNameRelationship tableType, ENT_NAME key, ENT_NAME val) const;
 
     STMT_SET getStmtByStmtKey(StmtStmtRelationship tableType, STMT_NUM stmt) const;

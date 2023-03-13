@@ -29,6 +29,10 @@ class TableResult : public Result {
     TableResult(const std::string &ident1, const std::string &ident2,
                 STMT_STMT_SET &set);
 
+    // for 2 cols with ENT_ENT_SET
+    TableResult(const std::string &ident1, const std::string &ident2,
+                ENT_ENT_SET &set);
+
     // for 2 cols with vector<list<string>>
     TableResult(const std::string &ident1, const std::string &ident2,
                 const std::vector<std::list<std::string>> &vec);

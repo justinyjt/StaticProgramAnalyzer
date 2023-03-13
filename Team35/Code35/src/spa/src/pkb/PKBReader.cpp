@@ -45,6 +45,10 @@ ENT_ENT_SET PKBReader::getAllRelationships(NameNameRelationship tableType) const
     return pkb.getEntEntSet(tableType);
 }
 
+ENT_SET PKBReader::getKeys(NameNameRelationship tableType) const {
+    return pkb.getKeysFrom(tableType);
+}
+
 bool PKBReader::isRelationshipExists(NameNameRelationship tableType, ENT_NAME keyName, ENT_NAME valName) const {
     return pkb.isEntEntPairExists(tableType, keyName, valName);
 }
