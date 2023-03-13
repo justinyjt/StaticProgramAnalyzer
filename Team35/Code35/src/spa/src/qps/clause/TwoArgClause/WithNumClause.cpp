@@ -66,10 +66,10 @@ std::unique_ptr<Result> WithNumClause::evaluate(PKBReader* db) {
             std::unique_ptr<Result> res = std::make_unique<TableResult>(first->str(), second->str(), resultSet);
             return std::move(res);
         }
-        case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::IDENT):  // with syn.x = "x" -> syn_type[]
+        case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::STMT_NUM):  // with syn.x = "x" -> syn_type[]
         {
             Synonym syn1 = dynamic_cast<Synonym&>(*first);
-            STMT_NUM num = (dynamic_cast<StatementNumber &>(*second)).n;
+            STMT_NUM num = (dynamic_cast<StatementNumber&>(*second)).n;
             STMT_SET syn1Vals = getNumValuesFromSyn(syn1, db);
             STMT_SET resultSet = STMT_SET();
             for (auto const& syn1Val : syn1Vals) {
@@ -80,10 +80,10 @@ std::unique_ptr<Result> WithNumClause::evaluate(PKBReader* db) {
             std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), resultSet);
             return std::move(result);
         }
-        case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::IDENT):  // Uses/Modifies(1, "x") -> bool
+        case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::STMT_NUM):  // Uses/Modifies(1, "x") -> bool
         {
-            STMT_NUM num1 = (dynamic_cast<StatementNumber &>(*first)).n;
-            STMT_NUM num2 = (dynamic_cast<StatementNumber &>(*second)).n;
+            STMT_NUM num1 = (dynamic_cast<StatementNumber&>(*first)).n;
+            STMT_NUM num2 = (dynamic_cast<StatementNumber&>(*second)).n;
             std::unique_ptr<Result> result = std::make_unique<BoolResult>(num1 == num2);
             return std::move(result);
         }
