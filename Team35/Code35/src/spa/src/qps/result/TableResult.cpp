@@ -36,6 +36,19 @@ TableResult::TableResult(const std::string &ident1, const std::string &ident2,
     }
 }
 
+// for 2 cols with ENT_ENT_SET
+TableResult::TableResult(const std::string &ident1, const std::string &ident2,
+                         ENT_ENT_SET &set) : Result(Tag::TABLE) {
+    idents.push_back(ident1);
+    idents.push_back(ident2);
+    for (auto &p : set) {
+        rows.emplace_back(
+                std::initializer_list<std::string>
+                        {p.first, p.second});
+    }
+}
+
+
 // for 2 cols with vector<list<string>>
 TableResult::TableResult(const std::string &ident1, const std::string &ident2,
                          const std::vector<std::list<std::string>> &vec) : Result(Tag::TABLE) {

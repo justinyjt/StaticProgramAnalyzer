@@ -29,6 +29,10 @@ class PKBReader {
 
     ENT_ENT_SET getAllRelationships(NameNameRelationship tableType) const;
 
+    ENT_SET getKeyStmtByRelationship(NameNameRelationship tableType) const;
+    
+    ENT_SET getValueStmtByRelationship(NameNameRelationship tableType) const;
+
     bool isRelationshipExists(NameNameRelationship tableType, ENT_NAME keyName, ENT_NAME valName) const;
 
     STMT_SET getRelationshipByKey(StmtStmtRelationship tableType, STMT_NUM keyName) const;
