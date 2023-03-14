@@ -6,61 +6,74 @@
 
 TEST_CASE("Declaration parser; 1 design entity") {
     std::string query = "variable v;";
-    DeclarationParser dp;
+    std::unordered_map<std::string, Synonym::DesignEntity> declarationList;
     std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator(lexer);
-    std::vector<Synonym> declarationList = dp.parse(tokenValidator);
-    requireEqual(declarationList.at(0), Synonym(Synonym::DesignEntity::VARIABLE, "v"));
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    DeclarationParser dp(pqlTokenScanner, declarationList);
+    declarationList = dp.parse();
+    std::unordered_map<std::string, Synonym::DesignEntity> expected;
+    expected.insert({"v", Synonym::DesignEntity::VARIABLE});
+    requireEqual(declarationList, expected);
 }
 
 TEST_CASE("Declaration parser; 1 design entity of each type") {
     std::string query = "stmt s; read r; print pr; call cl; while w; "
                         "if ifs; assign a; variable v; constant c; procedure p;";
-    DeclarationParser dp;
+    std::unordered_map<std::string, Synonym::DesignEntity> declarationList;
     std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator(lexer);
-    std::vector<Synonym> declarationList = dp.parse(tokenValidator);
-    requireEqual(declarationList.at(0), Synonym(Synonym::DesignEntity::STMT, "s"));
-    requireEqual(declarationList.at(1), Synonym(Synonym::DesignEntity::READ, "r"));
-    requireEqual(declarationList.at(2), Synonym(Synonym::DesignEntity::PRINT, "pr"));
-    requireEqual(declarationList.at(3), Synonym(Synonym::DesignEntity::CALL, "cl"));
-    requireEqual(declarationList.at(4), Synonym(Synonym::DesignEntity::WHILE, "w"));
-    requireEqual(declarationList.at(5), Synonym(Synonym::DesignEntity::IF, "ifs"));
-    requireEqual(declarationList.at(6), Synonym(Synonym::DesignEntity::ASSIGN, "a"));
-    requireEqual(declarationList.at(7), Synonym(Synonym::DesignEntity::VARIABLE, "v"));
-    requireEqual(declarationList.at(8), Synonym(Synonym::DesignEntity::CONSTANT, "c"));
-    requireEqual(declarationList.at(9), Synonym(Synonym::DesignEntity::PROCEDURE, "p"));
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    DeclarationParser dp(pqlTokenScanner, declarationList);
+    declarationList = dp.parse();
+    std::unordered_map<std::string, Synonym::DesignEntity> expected;
+    expected.insert({"s", Synonym::DesignEntity::STMT});
+    expected.insert({"r", Synonym::DesignEntity::READ});
+    expected.insert({"pr", Synonym::DesignEntity::PRINT});
+    expected.insert({"cl", Synonym::DesignEntity::CALL});
+    expected.insert({"w", Synonym::DesignEntity::WHILE});
+    expected.insert({"ifs", Synonym::DesignEntity::IF});
+    expected.insert({"a", Synonym::DesignEntity::ASSIGN});
+    expected.insert({"v", Synonym::DesignEntity::VARIABLE});
+    expected.insert({"c", Synonym::DesignEntity::CONSTANT});
+    expected.insert({"p", Synonym::DesignEntity::PROCEDURE});
+    requireEqual(declarationList, expected);
 }
 
 TEST_CASE("Declaration parser; multiple design entity of each type") {
     std::string query = "stmt s1, s2; read r1, r2;";
-    DeclarationParser dp;
+    std::unordered_map<std::string, Synonym::DesignEntity> declarationList;
     std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator(lexer);
-    std::vector<Synonym> declarationList = dp.parse(tokenValidator);
-    requireEqual(declarationList.at(0), Synonym(Synonym::DesignEntity::STMT, "s1"));
-    requireEqual(declarationList.at(1), Synonym(Synonym::DesignEntity::STMT, "s2"));
-    requireEqual(declarationList.at(2), Synonym(Synonym::DesignEntity::READ, "r1"));
-    requireEqual(declarationList.at(3), Synonym(Synonym::DesignEntity::READ, "r2"));
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    DeclarationParser dp(pqlTokenScanner, declarationList);
+    declarationList = dp.parse();
+    std::unordered_map<std::string, Synonym::DesignEntity> expected;
+    expected.insert({"s1", Synonym::DesignEntity::STMT});
+    expected.insert({"s2", Synonym::DesignEntity::STMT});
+    expected.insert({"r1", Synonym::DesignEntity::READ});
+    expected.insert({"r2", Synonym::DesignEntity::READ});
+    requireEqual(declarationList, expected);
 }
 
 TEST_CASE("Declaration parser; same synonym names and terminals") {
     std::string query = "stmt stmt; assign pattern;";
-    DeclarationParser dp;
+    std::unordered_map<std::string, Synonym::DesignEntity> declarationList;
     std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator(lexer);
-    std::vector<Synonym> declarationList = dp.parse(tokenValidator);
-    requireEqual(declarationList.at(0), Synonym(Synonym::DesignEntity::STMT, "stmt"));
-    requireEqual(declarationList.at(1), Synonym(Synonym::DesignEntity::ASSIGN, "pattern"));
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    DeclarationParser dp(pqlTokenScanner, declarationList);
+    declarationList = dp.parse();
+    std::unordered_map<std::string, Synonym::DesignEntity> expected;
+    expected.insert({"stmt", Synonym::DesignEntity::STMT});
+    expected.insert({"pattern", Synonym::DesignEntity::ASSIGN});
+    requireEqual(declarationList, expected);
 }
 
 
 TEST_CASE("Declaration parser; multiple design entity of each type with repeats") {
     std::string query = "stmt s1, s1; read r1, r2;";
-    DeclarationParser dp;
+    std::unordered_map<std::string, Synonym::DesignEntity> declarationList;
     std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    TokenValidator tokenValidator(lexer);
-    requireThrow([&tokenValidator, &dp]() {
-        dp.parse(tokenValidator);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    DeclarationParser dp(pqlTokenScanner, declarationList);
+    requireThrow([&dp]() {
+        dp.parse();
     });
 }

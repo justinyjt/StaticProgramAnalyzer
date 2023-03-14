@@ -34,6 +34,7 @@ class Token {
         Follows,
         Modifies,
         Uses,
+        Calls,
         Parent,
         Pattern,
 
