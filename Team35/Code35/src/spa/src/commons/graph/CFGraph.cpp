@@ -151,9 +151,19 @@ bool CFGraph::isReachable(STMT_NUM stmt1, STMT_NUM stmt2, bool check_neighbor_on
     Index node_index2 = this->getNodeIndex(node_data2);
 
     if (check_neighbor_only) {
-        auto &outgoing_nodes = this->getOutgoingNodes(node_index1);
-        bool canReach = std::find(outgoing_nodes.begin(), outgoing_nodes.end(), node_index2) != outgoing_nodes.end();
-        return canReach;
+        for (Index successor_index : this->getOutgoingNodes(node_index1)) {
+            if (successor_index == node_index2) {
+                return true;
+            }
+            if (isIndexDummyNode(successor_index)) {
+                IndexList successors_of_dummy_node = this->getDummyNodeSuccessors(successor_index);
+                if (std::find(successors_of_dummy_node.begin(), successors_of_dummy_node.end(), node_index2) !=
+                    successors_of_dummy_node.end()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     IndexQueue frontier;

@@ -21,6 +21,8 @@ class CFGManager {
 
     bool isNextExists();
 
+    STMT_SET getConnectedStmts(STMT_NUM num, bool isAfter, bool isTransitive);
+
     bool isNextExistAfterStmtNum(STMT_NUM num, bool isTransitive);
 
     bool isNextExistBeforeStmtNum(STMT_NUM num, bool isTransitive);
@@ -31,7 +33,5 @@ class CFGManager {
     std::vector<CFGraph> graphs_;
 
     int getIndex(STMT_NUM num);
-
-    STMT_SET getConnectedStmts(STMT_NUM num, bool isAfter, bool isTransitive);
 };
 }  // namespace CFG
