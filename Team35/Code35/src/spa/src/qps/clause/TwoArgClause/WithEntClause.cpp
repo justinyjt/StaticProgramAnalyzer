@@ -10,7 +10,7 @@ ENT_SET WithEntClause::getEntValuesFromSyn(Synonym syn, PKBReader* db) {
             return db->getEntities(Entity::Procedure);
         }
         case Synonym::DesignEntity::CALL: {
-            return db->getKeys(NameNameRelationship::Calls);
+            return db->getKeyNameByRelationship(NameNameRelationship::Calls);
         }
         case Synonym::DesignEntity::VARIABLE: {
             return db->getEntities(Entity::Variable);

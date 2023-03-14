@@ -72,6 +72,27 @@ Lexeme TokenScanner::peekLexeme() const {
     return token_lst_[cur_idx_]->getLexeme();
 }
 
+Token::Tag TokenScanner::peekTag() const {
+    return token_lst_[cur_idx_]->getTag();
+}
+
+int TokenScanner::isName() const {
+    // check for names that can also be keywords
+    if (peek(Token::Tag::String)) {
+        return false;
+    }
+    std::string input = peekLexeme();
+    if (!isalpha(input[0])) {
+        return false;
+    }
+    for (char c : input) {
+        if (!isalpha(c) && !isdigit(c)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 /**
  * Check if the given offset is valid.
  * @param offset

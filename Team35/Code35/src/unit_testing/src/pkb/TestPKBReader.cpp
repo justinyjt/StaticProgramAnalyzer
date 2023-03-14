@@ -409,7 +409,7 @@ TEST_CASE("11. Test PKB Read Statements") {
     }
 }
 
-TEST_CASE("12. Test PKB Pattern Matching") {
+TEST_CASE("12. Test PKB AssignPattern Matching") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);

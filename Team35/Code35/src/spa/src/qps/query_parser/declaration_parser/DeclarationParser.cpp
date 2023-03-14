@@ -1,77 +1,95 @@
-#include <utility>
-
 #include "DeclarationParser.h"
-#include "commons/token/Token.h"
 #include "qps/query_exceptions/SyntaxException.h"
 #include "qps/query_exceptions/SemanticException.h"
+#include "qps/query_parser/SemanticValidator.h"
 
-std::vector<Synonym> DeclarationParser::parse(TokenValidator& tokenValidator) {
-    std::vector<Synonym> declarationList;
+DeclarationParser::DeclarationParser(PQLTokenScanner &pqlTokenScanner,
+                                     std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
+        pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
 
+std::unordered_map<std::string, Synonym::DesignEntity> DeclarationParser::parse() {
     // check for next declaration
     while (true) {
-        if (tokenValidator.isNextTokenType(Token::Tag::Select) || tokenValidator.isEof()) {
+        if (pqlTokenScanner.peek(Token::Tag::Select) || pqlTokenScanner.peek(Token::Tag::EndOfFile)) {
             break;
         }
-        Synonym::DesignEntity de = processDesignEntity(tokenValidator);
+
+        Synonym::DesignEntity de = parseDesignEntity();
 
         // check if there are multiple declarations of the same type
         while (true) {
-            std::unique_ptr<Token> synonym = tokenValidator.validateAndConsumeSynonymToken();
-            if (!isDeclared(synonym->getLexeme(), declarationList)) {
-                declarationList.emplace_back(de, synonym->getLexeme());
+            std::string synonym = parseSynonym(de);
+
+            if (!SemanticValidator::isDeclared(synonyms, synonym)) {
+                synonyms.insert({synonym, de});
             } else {
                 throw SemanticException();
             }
 
-            if (tokenValidator.isNextTokenType(Token::Tag::SemiColon)) {
-                tokenValidator.consumeNextToken();
+            if (pqlTokenScanner.match(Token::Tag::SemiColon)) {
                 break;
-            } else if (tokenValidator.isNextTokenType(Token::Tag::Comma)) {
-                tokenValidator.consumeNextToken();
+            } else if (pqlTokenScanner.match(Token::Tag::Comma)) {
+                continue;
             } else {
                 throw SyntaxException();
             }
         }
     }
-    return declarationList;
+    return synonyms;
 }
 
 // convert Token tag to Synonym design entity
-Synonym::DesignEntity DeclarationParser::processDesignEntity(TokenValidator& tokenValidator) {
-    std::unique_ptr<Token> designEntity = tokenValidator.validateAndConsumeDesignEntityToken();
-    switch (designEntity->getTag()) {
-        case Token::Tag::Statement:
-            return Synonym::DesignEntity::STMT;
-        case Token::Tag::Read:
-            return Synonym::DesignEntity::READ;
-        case Token::Tag::Print:
-            return Synonym::DesignEntity::PRINT;
-        case Token::Tag::Call:
-            return Synonym::DesignEntity::CALL;
-        case Token::Tag::While:
-            return Synonym::DesignEntity::WHILE;
-        case Token::Tag::If:
-            return Synonym::DesignEntity::IF;
-        case Token::Tag::Assign:
-            return Synonym::DesignEntity::ASSIGN;
-        case Token::Tag::Variable:
-            return Synonym::DesignEntity::VARIABLE;
-        case Token::Tag::Constant:
-            return Synonym::DesignEntity::CONSTANT;
-        case Token::Tag::Procedure:
-            return Synonym::DesignEntity::PROCEDURE;
-        default:
-            throw SyntaxException();
+Synonym::DesignEntity DeclarationParser::parseDesignEntity() {
+    if (pqlTokenScanner.peekDesignEntity()) {
+        Synonym::DesignEntity de;
+        switch (pqlTokenScanner.peekTag()) {
+            case Token::Tag::Statement:
+                de = Synonym::DesignEntity::STMT;
+                break;
+            case Token::Tag::Read:
+                de = Synonym::DesignEntity::READ;
+                break;
+            case Token::Tag::Print:
+                de = Synonym::DesignEntity::PRINT;
+                break;
+            case Token::Tag::Call:
+                de = Synonym::DesignEntity::CALL;
+                break;
+            case Token::Tag::While:
+                de = Synonym::DesignEntity::WHILE;
+                break;
+            case Token::Tag::If:
+                de = Synonym::DesignEntity::IF;
+                break;
+            case Token::Tag::Assign:
+                de = Synonym::DesignEntity::ASSIGN;
+                break;
+            case Token::Tag::Variable:
+                de = Synonym::DesignEntity::VARIABLE;
+                break;
+            case Token::Tag::Constant:
+                de = Synonym::DesignEntity::CONSTANT;
+                break;
+            case Token::Tag::Procedure:
+                de = Synonym::DesignEntity::PROCEDURE;
+                break;
+            default:
+                break;
+        }
+        pqlTokenScanner.next();
+        return de;
+    } else {
+        throw SyntaxException();
     }
 }
 
-bool DeclarationParser::isDeclared(const std::string& value, std::vector<Synonym>& declarationList) {
-    bool isDeclared = false;
-    for (const Synonym& s : declarationList) {
-        if (value == s.str()) {
-            isDeclared = true;
-        }
+std::string DeclarationParser::parseSynonym(Synonym::DesignEntity de) {
+    std::string synonym;
+    if (pqlTokenScanner.isName()) {
+        synonym = pqlTokenScanner.peekLexeme();
+        pqlTokenScanner.next();
+        return synonym;
+    } else {
+        throw SyntaxException();
     }
-    return isDeclared;
 }

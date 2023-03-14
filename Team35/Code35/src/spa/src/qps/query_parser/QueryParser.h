@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <utility>
+#include <unordered_map>
 #include <string>
 
 #include "qps/clause/Clause.h"
