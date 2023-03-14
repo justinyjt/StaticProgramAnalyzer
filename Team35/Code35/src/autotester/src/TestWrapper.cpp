@@ -46,7 +46,7 @@ void TestWrapper::parse(std::string filename) {
         if (!isProcessSuccess) {
             throw;
         }
-        // INCLUDE SourceProcessor's method here to parse, extract knowledge and store info into pkb
+        // INCLUDE SourceProcessor's method here to parse, extract knowledge and store info into PKB
     } catch (std::exception &e) {
         std::cout << e.what();
     }

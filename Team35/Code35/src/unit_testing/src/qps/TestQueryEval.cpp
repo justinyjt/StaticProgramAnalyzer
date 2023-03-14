@@ -9,9 +9,9 @@
 #include "qps/pql/Expression.h"
 #include "qps/pql/Wildcard.h"
 #include "pkb/PKBReader.h"
-#include "pkb/pkb.h"
+#include "pkb/PKB.h"
 
-pkb testPKB;
+PKB testPKB;
 
 class PKBReaderStub : public PKBReader {
     public:
