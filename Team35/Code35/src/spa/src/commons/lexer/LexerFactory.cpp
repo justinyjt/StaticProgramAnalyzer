@@ -2,99 +2,91 @@
 
 #include <cassert>
 #include <utility>
-#include <set>
 
 #include "Lexer.h"
 
-std::unique_ptr<ILexer> LexerFactory::createLexer(Source source, LexerFactory::LexerType lexer_type) {
+std::unique_ptr<ILexer> LexerFactory::createLexer(const Source &source, LexerFactory::LexerType lexer_type) {
     switch (lexer_type) {
-        case LexerFactory::LexerType::Simple:return std::move(createSimpleLexer(source));
-        case LexerFactory::LexerType::Pql:return std::move(createPqlLexer(source));
-        case LexerFactory::LexerType::Expression:return std::move(createExpressionLexer(source));
-        default:assert(false);
+        case LexerFactory::LexerType::Simple:
+            return std::move(createSimpleLexer(source));
+        case LexerFactory::LexerType::Pql:
+            return std::move(createPqlLexer(source));
+        case LexerFactory::LexerType::Expression:
+            return std::move(createExpressionLexer(source));
+        default:
+            assert(false);
     }
 }
 
-std::unique_ptr<ILexer> LexerFactory::createSimpleLexer(Source source) {
-    KeywordList keyword_list{
-        Keyword("procedure", Token::Tag::Procedure),
-        Keyword("while", Token::Tag::While),
-        Keyword("if", Token::Tag::If),
-        Keyword("then", Token::Tag::Then),
-        Keyword("else", Token::Tag::Else),
-        Keyword("call", Token::Tag::Call),
-        Keyword("read", Token::Tag::Read),
-        Keyword("print", Token::Tag::Print),
-    };
-    CharacterList character_list{
-        Character('(', Token::Tag::LParen),
-        Character(')', Token::Tag::RParen),
-        Character('{', Token::Tag::LBrace),
-        Character('}', Token::Tag::RBrace),
-        Character(';', Token::Tag::SemiColon),
-        Character(',', Token::Tag::Comma),
-        Character('+', Token::Tag::Plus),
-        Character('-', Token::Tag::Minus),
-        Character('*', Token::Tag::Multiply),
-        Character('/', Token::Tag::Divide),
-        Character('%', Token::Tag::Modulo),
-        Character('=', Token::Tag::Assignment),
-    };
-    std::unique_ptr<ILexer> lexer = std::make_unique<Lexer>(Lexer(std::move(source), keyword_list, character_list));
-    return std::move(lexer);
+std::unique_ptr<ILexer> LexerFactory::createSimpleLexer(const Source &source) {
+    Lexer::Builder builder;
+    builder.setSource(source).setIncludeOperator(true).setIncludeString(true)
+        .addKeyword(Keyword("procedure", Token::Tag::Procedure))
+        .addKeyword(Keyword("while", Token::Tag::While))
+        .addKeyword(Keyword("if", Token::Tag::If))
+        .addKeyword(Keyword("then", Token::Tag::Then))
+        .addKeyword(Keyword("else", Token::Tag::Else))
+        .addKeyword(Keyword("call", Token::Tag::Call))
+        .addKeyword(Keyword("read", Token::Tag::Read))
+        .addKeyword(Keyword("print", Token::Tag::Print))
+        .addCharacter(Character('(', Token::Tag::LParen))
+        .addCharacter(Character(')', Token::Tag::RParen))
+        .addCharacter(Character('{', Token::Tag::LBrace))
+        .addCharacter(Character('}', Token::Tag::RBrace))
+        .addCharacter(Character(';', Token::Tag::SemiColon))
+        .addCharacter(Character('+', Token::Tag::Plus))
+        .addCharacter(Character('-', Token::Tag::Minus))
+        .addCharacter(Character('*', Token::Tag::Multiply))
+        .addCharacter(Character('/', Token::Tag::Divide))
+        .addCharacter(Character('%', Token::Tag::Modulo))
+        .addCharacter(Character('=', Token::Tag::Assignment));
+    return builder.build();
 }
 
-std::unique_ptr<ILexer> LexerFactory::createPqlLexer(Source source) {
-    KeywordList keyword_list{
-        Keyword("procedure", Token::Tag::Procedure),
-        Keyword("call", Token::Tag::Call),
-        Keyword("read", Token::Tag::Read),
-        Keyword("print", Token::Tag::Print),
-        Keyword("call", Token::Tag::Call),
-        Keyword("variable", Token::Tag::Variable),
-        Keyword("constant", Token::Tag::Constant),
-        Keyword("stmt", Token::Tag::Statement),
-        Keyword("assign", Token::Tag::Assign),
-        Keyword("while", Token::Tag::While),
-        Keyword("if", Token::Tag::If),
-        Keyword("call", Token::Tag::Call),
-        Keyword("Select", Token::Tag::Select),
-        Keyword("BOOLEAN", Token::Tag::Bool),
-        Keyword("Follows", Token::Tag::Follows),
-        Keyword("Modifies", Token::Tag::Modifies),
-        Keyword("Uses", Token::Tag::Uses),
-        Keyword("Parent", Token::Tag::Parent),
-        Keyword("Calls", Token::Tag::Calls),
-        Keyword("pattern", Token::Tag::Pattern),
-        Keyword("such", Token::Tag::Such),
-        Keyword("that", Token::Tag::That),
-    };
-    CharacterList character_list{
-        Character('*', Token::Tag::Star),
-        Character('(', Token::Tag::LParen),
-        Character(')', Token::Tag::RParen),
-        Character(';', Token::Tag::SemiColon),
-        Character(',', Token::Tag::Comma),
-        Character('_', Token::Tag::Underscore),
-    };
-    std::unique_ptr<ILexer>
-        lexer = std::make_unique<Lexer>(Lexer(std::move(source), keyword_list, character_list, false));
-    return std::move(lexer);
+std::unique_ptr<ILexer> LexerFactory::createPqlLexer(const Source &source) {
+    Lexer::Builder builder;
+    builder.setSource(source).setIncludeOperator(false).setIncludeString(true)
+        .addKeyword(Keyword("procedure", Token::Tag::Procedure))
+        .addKeyword(Keyword("call", Token::Tag::Call))
+        .addKeyword(Keyword("read", Token::Tag::Read))
+        .addKeyword(Keyword("print", Token::Tag::Print))
+        .addKeyword(Keyword("call", Token::Tag::Call))
+        .addKeyword(Keyword("variable", Token::Tag::Variable))
+        .addKeyword(Keyword("constant", Token::Tag::Constant))
+        .addKeyword(Keyword("stmt", Token::Tag::Statement))
+        .addKeyword(Keyword("assign", Token::Tag::Assign))
+        .addKeyword(Keyword("while", Token::Tag::While))
+        .addKeyword(Keyword("if", Token::Tag::If))
+        .addKeyword(Keyword("call", Token::Tag::Call))
+        .addKeyword(Keyword("Select", Token::Tag::Select))
+        .addKeyword(Keyword("BOOLEAN", Token::Tag::Bool))
+        .addKeyword(Keyword("Follows", Token::Tag::Follows))
+        .addKeyword(Keyword("Modifies", Token::Tag::Modifies))
+        .addKeyword(Keyword("Uses", Token::Tag::Uses))
+        .addKeyword(Keyword("Parent", Token::Tag::Parent))
+        .addKeyword(Keyword("pattern", Token::Tag::Pattern))
+        .addKeyword(Keyword("such", Token::Tag::Such))
+        .addKeyword(Keyword("that", Token::Tag::That))
+        .addKeyword(Keyword("Calls", Token::Tag::Calls))
+        .addCharacter(Character('*', Token::Tag::Star))
+        .addCharacter(Character('(', Token::Tag::LParen))
+        .addCharacter(Character(')', Token::Tag::RParen))
+        .addCharacter(Character(';', Token::Tag::SemiColon))
+        .addCharacter(Character(',', Token::Tag::Comma))
+        .addCharacter(Character('_', Token::Tag::Underscore));
+    return builder.build();
 }
 
-std::unique_ptr<ILexer> LexerFactory::createExpressionLexer(Source source) {
-    KeywordList keyword_list{};
-    CharacterList character_list{
-        Character('(', Token::Tag::LParen),
-        Character(')', Token::Tag::RParen),
-        Character('+', Token::Tag::Plus),
-        Character('-', Token::Tag::Minus),
-        Character('*', Token::Tag::Multiply),
-        Character('/', Token::Tag::Divide),
-        Character('%', Token::Tag::Modulo),
-        Character('=', Token::Tag::Assignment),
-    };
-    std::unique_ptr<ILexer>
-        lexer = std::make_unique<Lexer>(Lexer(std::move(source), keyword_list, character_list, false));
-    return std::move(lexer);
+std::unique_ptr<ILexer> LexerFactory::createExpressionLexer(const Source &source) {
+    Lexer::Builder builder;
+    builder.setSource(source).setIncludeOperator(false).setIncludeString(false)
+        .addCharacter(Character('(', Token::Tag::LParen))
+        .addCharacter(Character(')', Token::Tag::RParen))
+        .addCharacter(Character('+', Token::Tag::Plus))
+        .addCharacter(Character('-', Token::Tag::Minus))
+        .addCharacter(Character('*', Token::Tag::Multiply))
+        .addCharacter(Character('/', Token::Tag::Divide))
+        .addCharacter(Character('%', Token::Tag::Modulo))
+        .addCharacter(Character('=', Token::Tag::Assignment));
+    return builder.build();
 }

@@ -39,3 +39,8 @@ template<typename T>
 inline void requireNotEqual(T a, T b) {
     REQUIRE(a != b);
 }
+
+template<typename T>
+inline void requireNotEqualRef(const T &a, const T &b) {
+    REQUIRE(a != b);
+}

@@ -8,6 +8,35 @@
 #include "commons/token/Integer.h"
 #include "commons/util/ConversionUtil.h"
 
+Lexer::Lexer::Builder &Lexer::Lexer::Builder::setIncludeOperator(bool include_operator) {
+    include_operator_ = include_operator;
+    return *this;
+}
+
+Lexer::Lexer::Builder &Lexer::Lexer::Builder::setIncludeString(bool include_string) {
+    include_string_ = include_string;
+    return *this;
+}
+
+Lexer::Lexer::Builder &Lexer::Lexer::Builder::setSource(const Source &source) {
+    source_ = source;
+    return *this;
+}
+
+Lexer::Lexer::Builder &Lexer::Lexer::Builder::addKeyword(const Keyword &keyword) {
+    keyword_list_.push_back(keyword);
+    return *this;
+}
+
+Lexer::Lexer::Builder &Lexer::Lexer::Builder::addCharacter(const Character &character) {
+    character_list_.push_back(character);
+    return *this;
+}
+
+std::unique_ptr<Lexer> Lexer::Lexer::Builder::build() {
+    return std::make_unique<Lexer>(source_, keyword_list_, character_list_, include_operator_, include_string_);
+}
+
 Lexer::Lexer(Source source,
              const KeywordList &keyword_list,
              const CharacterList &character_list,
@@ -76,7 +105,8 @@ std::unique_ptr<Token> Lexer::scan() {
                     return std::make_unique<Token>(">=", Token::Tag::GreaterThanEqualTo, getCurrentLineNumber());
                 }
                 return std::make_unique<Character>('>', Token::Tag::GreaterThan, getCurrentLineNumber());
-            default:break;
+            default:
+                break;
         }
         unreadChar();
     }
@@ -216,4 +246,17 @@ bool Lexer::isNewLine(char c) const {
 
 bool Lexer::isControlOrSpace(char c) const {
     return iscntrl(c) || isspace(c);
+}
+bool Lexer::operator==(const Lexer &rhs) const {
+    return this->source_ == rhs.source_ &&
+        this->current_position_ == rhs.current_position_ &&
+        this->current_line_ == rhs.current_line_ &&
+        this->keyword_map_ == rhs.keyword_map_ &&
+        this->character_map_ == rhs.character_map_ &&
+        this->include_operator_ == rhs.include_operator_ &&
+        this->include_string_ == rhs.include_string_;
+}
+
+bool Lexer::operator!=(const Lexer &rhs) const {
+    return !(rhs == *this);
 }
