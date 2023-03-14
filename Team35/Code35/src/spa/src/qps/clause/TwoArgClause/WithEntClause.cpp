@@ -79,6 +79,20 @@ std::unique_ptr<Result> WithEntClause::evaluate(PKBReader* db) {
             std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), resultSet);
             return std::move(result);
         }
+        case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::SYNONYM):  // with syn.x = "x" -> syn_type[]
+        {
+            Synonym syn2 = dynamic_cast<Synonym&>(*second);
+            ENT_NAME ent = (dynamic_cast<Ident &>(*first)).s;
+            ENT_SET syn2Vals = getEntValuesFromSyn(syn2, db);
+            ENT_SET resultSet;
+            for (auto const& syn2Val : syn2Vals) {
+                if (syn2Val == ent) {
+                    resultSet.emplace(syn2Val);
+                }
+            }
+            std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), resultSet);
+            return std::move(result);
+        }
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::IDENT):  // Uses/Modifies(1, "x") -> bool
         {
             ENT_NAME ent1 = (dynamic_cast<Ident &>(*first)).s;

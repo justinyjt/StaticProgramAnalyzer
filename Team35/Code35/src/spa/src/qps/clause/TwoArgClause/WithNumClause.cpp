@@ -80,6 +80,20 @@ std::unique_ptr<Result> WithNumClause::evaluate(PKBReader* db) {
             std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), resultSet);
             return std::move(result);
         }
+        case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::SYNONYM):  // with syn.x = "x" -> syn_type[]
+        {
+            Synonym syn2 = dynamic_cast<Synonym&>(*second);
+            STMT_NUM num = (dynamic_cast<StatementNumber&>(*first)).n;
+            STMT_SET syn2Vals = getNumValuesFromSyn(syn2, db);
+            STMT_SET resultSet;
+            for (auto const& syn2Val : syn2Vals) {
+                if (syn2Val == num) {
+                    resultSet.emplace(syn2Val);
+                }
+            }
+            std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), resultSet);
+            return std::move(result);
+        }
         case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::STMT_NUM):  // Uses/Modifies(1, "x") -> bool
         {
             STMT_NUM num1 = (dynamic_cast<StatementNumber&>(*first)).n;
