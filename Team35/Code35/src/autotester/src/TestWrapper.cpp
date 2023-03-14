@@ -8,10 +8,12 @@
 
 // implementation code of WrapperFactory - do NOT modify the next 5 lines
 AbstractWrapper *WrapperFactory::wrapper = 0;
+
 AbstractWrapper *WrapperFactory::createWrapper() {
     if (wrapper == 0) wrapper = new TestWrapper;
     return wrapper;
 }
+
 // Do not modify the following line
 volatile bool AbstractWrapper::GlobalStop = false;
 
@@ -44,7 +46,7 @@ void TestWrapper::parse(std::string filename) {
         if (!isProcessSuccess) {
             throw;
         }
-        // INCLUDE SourceProcessor's method here to parse, extract knowledge and store info into PKB
+        // INCLUDE SourceProcessor's method here to parse, extract knowledge and store info into pkb
     } catch (std::exception &e) {
         std::cout << e.what();
     }

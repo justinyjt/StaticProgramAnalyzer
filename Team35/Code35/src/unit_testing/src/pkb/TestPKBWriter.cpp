@@ -7,7 +7,7 @@
 /* Named Entity adding Tests */
 
 // ConstValue entity adding
-TEST_CASE("Test PKB adding a statement", "[pkb][statement]") {
+TEST_CASE("Test pkb adding a statement", "[pkb][statement]") {
     PKB p;
     PKBWriter pkbWriter(p);
     PKBWriter *pkbWriterPtr = &pkbWriter;

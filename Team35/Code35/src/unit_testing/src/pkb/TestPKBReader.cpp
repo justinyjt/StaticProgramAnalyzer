@@ -4,7 +4,7 @@
 #include "../TestHelper.h"
 #include "../commons/expr_parser/MockExprMaker.h"
 
-TEST_CASE("1. Test PKB Read Entities", "[PKB][PKBReader][Entity]") {
+TEST_CASE("1. Test pkb Read Entities", "[pkb][PKBReader][Entity]") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
@@ -30,7 +30,7 @@ TEST_CASE("1. Test PKB Read Entities", "[PKB][PKBReader][Entity]") {
     }
 }
 
-TEST_CASE("2. Read StmtName Relationship table", "[PKB][PKBReader][Relationship]") {
+TEST_CASE("2. Read StmtName Relationship table", "[pkb][PKBReader][Relationship]") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
@@ -54,7 +54,7 @@ TEST_CASE("2. Read StmtName Relationship table", "[PKB][PKBReader][Relationship]
     }
 }
 
-TEST_CASE("3. Read statements from StmtNameRelationship table", "[PKB][PKBReader][Relationship]") {
+TEST_CASE("3. Read statements from StmtNameRelationship table", "[pkb][PKBReader][Relationship]") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
@@ -90,7 +90,7 @@ TEST_CASE("3. Read statements from StmtNameRelationship table", "[PKB][PKBReader
     }
 }
 
-TEST_CASE("4. Read variables from StmtNameRelationship table", "[PKB][PKBReader][Relationship]") {
+TEST_CASE("4. Read variables from StmtNameRelationship table", "[pkb][PKBReader][Relationship]") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
@@ -117,7 +117,6 @@ TEST_CASE("4. Read variables from StmtNameRelationship table", "[PKB][PKBReader]
         requireTrue(actualResult == expectedResult);
     }
 }
-
 
 TEST_CASE("5. Test isRelationshipExists") {
     PKB pkb;
@@ -192,7 +191,7 @@ TEST_CASE("5. Test isRelationshipExists") {
     }
 }
 
-TEST_CASE("6. Read relationships in NameName table", "[PKB]") {
+TEST_CASE("6. Read relationships in NameName table", "[pkb]") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
@@ -350,7 +349,7 @@ TEST_CASE("10. Test getRelationshipByKey for statements") {
     }
 }
 
-TEST_CASE("11. Test PKB Read Statements") {
+TEST_CASE("11. Test pkb Read Statements") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
@@ -409,7 +408,7 @@ TEST_CASE("11. Test PKB Read Statements") {
     }
 }
 
-TEST_CASE("12. Test PKB AssignPattern Matching") {
+TEST_CASE("12. Test PKB Pattern Matching") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
