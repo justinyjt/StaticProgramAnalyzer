@@ -51,6 +51,10 @@ const RelationshipTable<STMT_NUM, ENT_NAME> &PKB::getStmtNameRelationshipTable(S
             return modifiesStmtNameTable;
         case StmtNameRelationship::Uses:
             return usesStmtNameTable;
+        case StmtNameRelationship::IfCondVarUses:
+            return ifCondUsesVarTable;
+        case StmtNameRelationship::WhileCondVarUses:
+            return whileCondUsesVarTable;
         default:
             assert(false);
     }
