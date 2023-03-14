@@ -1,8 +1,10 @@
 #include "PKBWriter.h"
 
+#include <utility>
+
 PKBWriter::PKBWriter(PKB &pkb) : pkb(pkb) {}
 
-bool PKBWriter::addEntities(Entity entity, ENT_SET entitySet) {
+bool PKBWriter::addEntities(Entity entity, const ENT_SET &entitySet) {
     for (auto ent : entitySet) {
         if (!pkb.addEntityToTable(entity, ent)) {
             return false;
@@ -11,7 +13,7 @@ bool PKBWriter::addEntities(Entity entity, ENT_SET entitySet) {
     return true;
 }
 
-bool PKBWriter::addStatements(StmtType tableType, STMT_SET stmtSet) {
+bool PKBWriter::addStatements(StmtType tableType, const STMT_SET &stmtSet) {
     for (auto stmt : stmtSet) {
         if (!pkb.addStatementToTable(tableType, stmt)) {
             return false;
@@ -20,7 +22,7 @@ bool PKBWriter::addStatements(StmtType tableType, STMT_SET stmtSet) {
     return true;
 }
 
-bool PKBWriter::addStmtEntityRelationships(StmtNameRelationship tableType, STMT_ENT_SET set) {
+bool PKBWriter::addStmtEntityRelationships(StmtNameRelationship tableType, const STMT_ENT_SET &set) {
     for (auto stmtEnt : set) {
         if (!pkb.addRelationshipToTable(tableType, stmtEnt)) {
             return false;
@@ -29,7 +31,7 @@ bool PKBWriter::addStmtEntityRelationships(StmtNameRelationship tableType, STMT_
     return true;
 }
 
-bool PKBWriter::addEntityEntityRelationships(NameNameRelationship tableType, ENT_ENT_SET set) {
+bool PKBWriter::addEntityEntityRelationships(NameNameRelationship tableType, const ENT_ENT_SET &set) {
     for (auto entEnt : set) {
         if (!pkb.addRelationshipToTable(tableType, entEnt)) {
             return false;
@@ -38,7 +40,7 @@ bool PKBWriter::addEntityEntityRelationships(NameNameRelationship tableType, ENT
     return true;
 }
 
-bool PKBWriter::addStmtStmtRelationships(StmtStmtRelationship tableType, STMT_STMT_SET stmtSet) {
+bool PKBWriter::addStmtStmtRelationships(StmtStmtRelationship tableType, const STMT_STMT_SET &stmtSet) {
     for (auto stmtStmt : stmtSet) {
         if (!pkb.addRelationshipToTable(tableType, stmtStmt)) {
             return false;
@@ -53,4 +55,10 @@ void PKBWriter::addPatterns(std::unordered_map<STMT_NUM, ASSIGN_PAT> patMap) {
     for (p = patMap.begin(); p != patMap.end(); ++p) {
         pkb.addPattern(p->first, p->second);
     }
+}
+
+void PKBWriter::addCallGraph(CallGraph &&callGraph) {
+    this->addEntityEntityRelationships(NameNameRelationship::Calls, callGraph.getImmediateCalls());
+    this->addEntityEntityRelationships(NameNameRelationship::CallsStar, callGraph.getTransitiveCalls());
+    pkb.addCallGraph(std::move(callGraph));
 }

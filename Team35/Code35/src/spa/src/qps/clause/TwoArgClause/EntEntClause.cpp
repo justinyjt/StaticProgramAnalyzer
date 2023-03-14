@@ -1,15 +1,15 @@
 #include "EntEntClause.h"
 
 EntEntClause::EntEntClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second,
-        NameNameRelationship rs) : TwoArgClause(std::move(first), std::move(second)), rs(rs) {}
+                           NameNameRelationship rs) : TwoArgClause(std::move(first), std::move(second)), rs(rs) {}
 
-std::unique_ptr<Result> EntEntClause::evaluate(PKBReader* db) {
+std::unique_ptr<Result> EntEntClause::evaluate(PKBReader *db) {
     /* <SYNONYM | IDENT | _ >, <SYNONYM | IDENT | _ > */
 
     switch (getPairEnum()) {
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Uses/Modifies(f, v) -> <str, str>[]
         {
-            if (first->str() == second->str()) { // Calls(p, p) cannot self call
+            if (first->str() == second->str()) {  // Calls(p, p) cannot self call
                 return std::move(std::make_unique<BoolResult>(false));
             }
             ENT_ENT_SET s = db->getAllRelationships(rs);
@@ -71,43 +71,43 @@ std::unique_ptr<Result> EntEntClause::evaluate(PKBReader* db) {
         }
         default:
             throw std::runtime_error("");
-    }}
+    }
+}
 
 bool EntEntClause::operator==(const Clause &rhs) const {
-    const auto* pRhs = dynamic_cast<const EntEntClause*>(&rhs);
+    const auto *pRhs = dynamic_cast<const EntEntClause *>(&rhs);
     return pRhs != nullptr && rs == pRhs->rs && TwoArgClause::equal(*pRhs);
 }
 
 UsesP::UsesP(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second) :
-                EntEntClause(std::move(first), std::move(second), NameNameRelationship::Uses) {
+        EntEntClause(std::move(first), std::move(second), NameNameRelationship::Uses) {
     validateArgs();
 }
 
 void UsesP::validateArgs() {
-    if (dynamic_cast<Wildcard*>(first.get()) != nullptr) throw SemanticException();
-
+    if (dynamic_cast<Wildcard *>(first.get()) != nullptr) throw SemanticException();
 }
 
 
 ModifiesP::ModifiesP(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second) :
-                EntEntClause(std::move(first), std::move(second), NameNameRelationship::Modifies) {
+        EntEntClause(std::move(first), std::move(second), NameNameRelationship::Modifies) {
     validateArgs();
 }
 
 void ModifiesP::validateArgs() {
-    if (dynamic_cast<Wildcard*>(first.get()) != nullptr) throw SemanticException();
+    if (dynamic_cast<Wildcard *>(first.get()) != nullptr) throw SemanticException();
 }
 
 
 Calls::Calls(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :
-                EntEntClause(std::move(first), std::move(second),
-                    isTransitive ? NameNameRelationship::CallsStar : NameNameRelationship::Calls) {
+        EntEntClause(std::move(first), std::move(second),
+                     isTransitive ? NameNameRelationship::CallsStar : NameNameRelationship::Calls) {
     validateArgs();
 }
 
 void Calls::validateArgs() {
-    Synonym* synonym1 = dynamic_cast<Synonym*>(first.get());
-    Synonym* synonym2 = dynamic_cast<Synonym*>(second.get());
+    Synonym *synonym1 = dynamic_cast<Synonym *>(first.get());
+    Synonym *synonym2 = dynamic_cast<Synonym *>(second.get());
     if ((synonym1 != nullptr && synonym1->de != Synonym::DesignEntity::PROCEDURE) ||
         (synonym2 != nullptr && synonym2->de != Synonym::DesignEntity::PROCEDURE)) {
         throw SemanticException();

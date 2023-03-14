@@ -1,6 +1,7 @@
 #include "PKB.h"
 
 #include <cassert>
+#include <utility>
 
 const EntityTable<ENT_NAME> &PKB::getEntityTable(Entity entityType) const {
     switch (entityType) {
@@ -138,6 +139,10 @@ void PKB::addPattern(STMT_NUM stmtNum, ASSIGN_PAT pattern) {
     patternTable.addPattern(stmtNum, pattern);
 }
 
+void PKB::addCallGraph(CallGraph &&callGraph) {
+    this->callGraph = std::move(callGraph);
+}
+
 ENT_SET PKB::getEntByStmtKey(StmtNameRelationship tableType, STMT_NUM stmt) const {
     return getStmtNameRelationshipTable(tableType).getValuesByKey(stmt);
 }
@@ -188,6 +193,10 @@ STMT_SET PKB::getStmtByStmtKey(StmtStmtRelationship tableType, STMT_NUM stmt) co
 
 STMT_SET PKB::getStmtByStmtVal(StmtStmtRelationship tableType, STMT_NUM stmt) const {
     return getStmtStmtRelationshipTable(tableType).getKeysByValue(stmt);
+}
+
+STMT_SET PKB::getStmtByProc(const ENT_NAME &procName) const {
+    return this->callGraph.getStmts(procName);
 }
 
 STMT_STMT_SET PKB::getStmtStmtSet(StmtStmtRelationship tableType) const {
