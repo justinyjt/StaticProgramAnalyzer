@@ -62,7 +62,7 @@ bool SyntaxValidator::validateStmt() {
 }
 
 bool SyntaxValidator::validateAssign() {
-    assert(scanner_.peek(Token::Tag::Name));
+    assert(scanner_.isName());
     scanner_.next();
 
     if (!scanner_.match(Token::Tag::Assignment) || !validateExpr()) {

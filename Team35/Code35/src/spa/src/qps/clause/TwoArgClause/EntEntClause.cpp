@@ -9,6 +9,9 @@ std::unique_ptr<Result> EntEntClause::evaluate(PKBReader* db) {
     switch (getPairEnum()) {
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Uses/Modifies(f, v) -> <str, str>[]
         {
+            if (first->str() == second->str()) { // Calls(p, p) cannot self call
+                return std::move(std::make_unique<BoolResult>(false));
+            }
             ENT_ENT_SET s = db->getAllRelationships(rs);
             return std::move(std::make_unique<TableResult>(first->str(), second->str(), s));
         }
@@ -82,6 +85,7 @@ UsesP::UsesP(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second) 
 
 void UsesP::validateArgs() {
     if (dynamic_cast<Wildcard*>(first.get()) != nullptr) throw SemanticException();
+
 }
 
 

@@ -11,28 +11,41 @@ std::unique_ptr<Result> SingleSynonymSelectClause::evaluate(PKBReader *db) {
     std::unique_ptr<Result> result;
 
     switch (syn.de) {
-        case Synonym::DesignEntity::VARIABLE:es = db->getEntities(Entity::Variable);
+        case Synonym::DesignEntity::PROCEDURE:
+            es = db->getEntities(Entity::Procedure);
             break;
-        case Synonym::DesignEntity::CONSTANT:es = db->getEntities(Entity::Constant);
+        case Synonym::DesignEntity::VARIABLE:
+            es = db->getEntities(Entity::Variable);
             break;
-        case Synonym::DesignEntity::STMT:ss = db->getStatements(StmtType::None);
+        case Synonym::DesignEntity::CONSTANT:
+            es = db->getEntities(Entity::Constant);
             break;
-        case Synonym::DesignEntity::READ:ss = db->getStatements(StmtType::Read);
+        case Synonym::DesignEntity::STMT:
+            ss = db->getStatements(StmtType::None);
             break;
-        case Synonym::DesignEntity::PRINT:ss = db->getStatements(StmtType::Print);
+        case Synonym::DesignEntity::READ:
+            ss = db->getStatements(StmtType::Read);
             break;
-        case Synonym::DesignEntity::CALL:ss = db->getStatements(StmtType::Call);
+        case Synonym::DesignEntity::PRINT:
+            ss = db->getStatements(StmtType::Print);
             break;
-        case Synonym::DesignEntity::WHILE:ss = db->getStatements(StmtType::While);
+        case Synonym::DesignEntity::CALL:
+            ss = db->getStatements(StmtType::Call);
             break;
-        case Synonym::DesignEntity::IF:ss = db->getStatements(StmtType::If);
+        case Synonym::DesignEntity::WHILE:
+            ss = db->getStatements(StmtType::While);
             break;
-        case Synonym::DesignEntity::ASSIGN:ss = db->getStatements(StmtType::Assign);
+        case Synonym::DesignEntity::IF:
+            ss = db->getStatements(StmtType::If);
             break;
-        default:assert(false);
+        case Synonym::DesignEntity::ASSIGN:
+            ss = db->getStatements(StmtType::Assign);
+            break;
+        default:
+            assert(false);
     }
 
-    if (syn.de == Synonym::DesignEntity::VARIABLE ||
+    if (syn.de == Synonym::DesignEntity::PROCEDURE || syn.de == Synonym::DesignEntity::VARIABLE ||
         syn.de == Synonym::DesignEntity::CONSTANT) {
         result = std::make_unique<TableResult>(syn.ident, es);
     } else {
