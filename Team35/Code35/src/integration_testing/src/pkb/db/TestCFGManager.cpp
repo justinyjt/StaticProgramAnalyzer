@@ -89,10 +89,10 @@ TEST_CASE("Test isNextExists in CFGManager with valid CFG") {
     }
 
     SECTION("Test is next exist by key") {
-        requireTrue(manager.isNextExistByKey(2, true));
+        requireTrue(manager.isNextExistAfterStmtNum(2, true));
         for (int i = 1; i < 19; ++i) {
-            requireTrue(manager.isNextExistByKey(i, true));
-            requireTrue(manager.isNextExistByKey(i, false));
+            requireTrue(manager.isNextExistAfterStmtNum(i, true));
+            requireTrue(manager.isNextExistAfterStmtNum(i, false));
             STMT_SET expected;
             if (i % 2 == 0) {
                 expected.emplace(i - 1);
@@ -103,8 +103,8 @@ TEST_CASE("Test isNextExists in CFGManager with valid CFG") {
             }
             requireEqual(expected, manager.getConnectedStmts(i, true, false));
         }
-        requireFalse(manager.isNextExistByKey(20, true));
-        requireFalse(manager.isNextExistByKey(20, false));
+        requireFalse(manager.isNextExistAfterStmtNum(20, true));
+        requireFalse(manager.isNextExistAfterStmtNum(20, false));
     }
 
 //    SECTION("Test is next exist by value") {

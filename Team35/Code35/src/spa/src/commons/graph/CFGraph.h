@@ -37,7 +37,7 @@ class CFGraph : public Graph<CFGraphNodeData> {
 
     const STMT_STMT_SET &getPairwiseControlFlow(bool isTransitive);
 
-    bool isReachable(STMT_NUM stmt1, STMT_NUM stmt2) const;
+    bool isReachable(STMT_NUM stmt1, STMT_NUM stmt2, bool check_neighbor_only = false) const;
 
     STMT_NUM getMaxStmtNum() const;
 

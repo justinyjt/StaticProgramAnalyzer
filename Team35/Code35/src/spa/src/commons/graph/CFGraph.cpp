@@ -16,12 +16,12 @@ CFGraph::CFGraph() : Graph<CFGraphNodeData>(),
                      pairwise_control_flow_non_transitive_(std::nullopt) {}
 
 CFGraph::CFGraph(const CFGraph &graph, STMT_NUM min_stmt_num, STMT_NUM max_stmt_num, ENT_NAME proc_name) :
-        Graph<CFGraphNodeData>(graph),
-        max_stmt_num_(max_stmt_num),
-        min_stmt_num_(min_stmt_num),
-        proc_name_(std::move(proc_name)),
-        pairwise_control_flow_transitive_(graph.pairwise_control_flow_transitive_),
-        pairwise_control_flow_non_transitive_(graph.pairwise_control_flow_non_transitive_) {}
+    Graph<CFGraphNodeData>(graph),
+    max_stmt_num_(max_stmt_num),
+    min_stmt_num_(min_stmt_num),
+    proc_name_(std::move(proc_name)),
+    pairwise_control_flow_transitive_(graph.pairwise_control_flow_transitive_),
+    pairwise_control_flow_non_transitive_(graph.pairwise_control_flow_non_transitive_) {}
 
 STMT_SET CFGraph::getPredecessors(STMT_NUM stmt_num, bool isTransitive) const {
     CFGraphNodeData node_data = makeNodeData(stmt_num);
@@ -125,7 +125,7 @@ const STMT_STMT_SET &CFGraph::getPairwiseControlFlow(bool isTransitive) {
     }
 
     std::optional<STMT_STMT_SET> *pairwise_control_flow =
-            isTransitive ? &(this->pairwise_control_flow_transitive_) : &(this->pairwise_control_flow_non_transitive_);
+        isTransitive ? &(this->pairwise_control_flow_transitive_) : &(this->pairwise_control_flow_non_transitive_);
 
     *pairwise_control_flow = STMT_STMT_SET();
     for (Index node_index = 0; node_index < this->getNoOfNodes(); ++node_index) {
@@ -141,7 +141,7 @@ const STMT_STMT_SET &CFGraph::getPairwiseControlFlow(bool isTransitive) {
     return pairwise_control_flow->value();
 }
 
-bool CFGraph::isReachable(STMT_NUM stmt1, STMT_NUM stmt2) const {
+bool CFGraph::isReachable(STMT_NUM stmt1, STMT_NUM stmt2, bool check_neighbor_only) const {
     CFGraphNodeData node_data1 = makeNodeData(stmt1);
     CFGraphNodeData node_data2 = makeNodeData(stmt2);
     if (!this->hasNode(node_data1) || !this->hasNode(node_data2)) {
@@ -149,6 +149,12 @@ bool CFGraph::isReachable(STMT_NUM stmt1, STMT_NUM stmt2) const {
     }
     Index node_index1 = this->getNodeIndex(node_data1);
     Index node_index2 = this->getNodeIndex(node_data2);
+
+    if (check_neighbor_only) {
+        auto &outgoing_nodes = this->getOutgoingNodes(node_index1);
+        bool canReach = std::find(outgoing_nodes.begin(), outgoing_nodes.end(), node_index2) != outgoing_nodes.end();
+        return canReach;
+    }
 
     IndexQueue frontier;
     IndexSet visited;
@@ -224,7 +230,7 @@ IndexList CFGraph::getDummyNodeSuccessors(Index index) const {
 
 bool CFGraph::operator==(const CFGraph &graph) const {
     return Graph<CFGraphNodeData>::operator==(graph) && this->proc_name_ == graph.proc_name_ &&
-           this->min_stmt_num_ == graph.min_stmt_num_ && this->max_stmt_num_ == graph.max_stmt_num_;
+        this->min_stmt_num_ == graph.min_stmt_num_ && this->max_stmt_num_ == graph.max_stmt_num_;
 }
 
 bool CFGraph::operator!=(const CFGraph &graph) const {

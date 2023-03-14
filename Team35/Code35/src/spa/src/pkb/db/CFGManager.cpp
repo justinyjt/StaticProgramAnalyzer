@@ -1,10 +1,12 @@
 #include "CFGManager.h"
 
+#include <algorithm>
 #include <cassert>
 #include <utility>
 
 namespace CFG {
-CFGManager::CFGManager() {}
+
+using std::any_of;
 
 void CFGManager::setGraphs(std::vector<CFGraph> &&cfg) {
     this->graphs_ = std::move(cfg);
@@ -14,7 +16,7 @@ int CFGManager::getIndex(STMT_NUM num) {
     int start = 0;
     int end = this->graphs_.size();
     while (start <= end) {
-        uint32_t mid = start + (end - start) / 2;
+        int mid = start + ((end - start) >> 1);
         if (this->graphs_[mid].getMaxStmtNum() >= num && this->graphs_[mid].getMinStmtNum() <= num) {
             return mid;
         } else if (this->graphs_[mid].getMaxStmtNum() < num) {
@@ -46,41 +48,34 @@ bool CFGManager::isNext(STMT_NUM first, STMT_NUM second, bool isTransitive) {
     if (!isValidStmtNum(first) || !isValidStmtNum(second)) {
         return false;
     }
+
+    if (this->getIndex(first) != this->getIndex(second)) {
+        return false;
+    }
+
     const CFGraph &curr = getCFG(first);
-    if (isTransitive) {
-        return curr.isReachable(first, second);
-    }
-    STMT_SET successors = curr.getSuccessors(first, isTransitive);
-    for (auto successor : successors) {
-        if (second == successor) {
-            return true;
-        }
-    }
-    return false;
+    return curr.isReachable(first, second, !isTransitive);
 }
 
 bool CFGManager::isNextExists() {
-    for (auto &curr : this->graphs_) {
-        if (curr.getMaxStmtNum() - curr.getMinStmtNum() > 1) {
-            return true;
-        }
-    }
-    return false;
+    return any_of(this->graphs_.begin(), this->graphs_.end(), [](const CFGraph &curr) {
+      return curr.getMaxStmtNum() - curr.getMinStmtNum() > 1;
+    });
 }
 
-STMT_SET CFGManager::getConnectedStmts(STMT_NUM num, bool isFirstArg, bool isTransitive) {
+STMT_SET CFGManager::getConnectedStmts(STMT_NUM num, bool isAfter, bool isTransitive) {
     const CFGraph &curr = getCFG(num);
-    if (isFirstArg) {
+    if (isAfter) {
         return curr.getSuccessors(num, isTransitive);
     }
     return curr.getPredecessors(num, isTransitive);
 }
 
-bool CFGManager::isNextExistByKey(STMT_NUM num, bool isTransitive) {
+bool CFGManager::isNextExistAfterStmtNum(STMT_NUM num, bool isTransitive) {
     return !getConnectedStmts(num, true, isTransitive).empty();
 }
 
-bool CFGManager::isNextExistByVal(STMT_NUM num, bool isTransitive) {
+bool CFGManager::isNextExistBeforeStmtNum(STMT_NUM num, bool isTransitive) {
     return !getConnectedStmts(num, false, isTransitive).empty();
 }
 
@@ -90,5 +85,6 @@ STMT_STMT_SET CFGManager::getValidNextPairs(bool isTransitive) {
         STMT_STMT_SET temp = curr.getPairwiseControlFlow(isTransitive);
         result.insert(temp.begin(), temp.end());
     }
+    return result;
 }
 }  // namespace CFG
