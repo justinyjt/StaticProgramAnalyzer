@@ -7,7 +7,7 @@
 ClauseParser::ClauseParser(PQLTokenScanner& pqlTokenScanner,
                            std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
         pqlTokenScanner(pqlTokenScanner), synonyms(synonyms), suchThatClauseParser(pqlTokenScanner, synonyms),
-        patternClauseParser(pqlTokenScanner, synonyms) {}
+        patternClauseParser(pqlTokenScanner, synonyms), withClauseParser(pqlTokenScanner, synonyms) {}
 
 std::vector<std::unique_ptr<Clause>> ClauseParser::parse() {
     std::vector<std::unique_ptr<Clause>> result;
@@ -18,6 +18,8 @@ std::vector<std::unique_ptr<Clause>> ClauseParser::parse() {
             result.push_back(suchThatClauseParser.parse());
         } else if (pqlTokenScanner.peek(Token::Tag::Pattern)) {
             result.push_back(patternClauseParser.parse());
+        } else if (pqlTokenScanner.peek(Token::Tag::With)) {
+            result.push_back(withClauseParser.parse());
         } else {
             throw SyntaxException();
         }

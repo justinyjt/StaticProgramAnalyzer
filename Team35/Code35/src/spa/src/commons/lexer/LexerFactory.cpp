@@ -68,6 +68,8 @@ std::unique_ptr<ILexer> LexerFactory::createPqlLexer(Source source) {
         Keyword("pattern", Token::Tag::Pattern),
         Keyword("such", Token::Tag::Such),
         Keyword("that", Token::Tag::That),
+        Keyword("with", Token::Tag::With),
+        Keyword("and", Token::Tag::And),
     };
     CharacterList character_list{
         Character('*', Token::Tag::Star),
@@ -76,6 +78,9 @@ std::unique_ptr<ILexer> LexerFactory::createPqlLexer(Source source) {
         Character(';', Token::Tag::SemiColon),
         Character(',', Token::Tag::Comma),
         Character('_', Token::Tag::Underscore),
+        Character('=', Token::Tag::Equal),
+        Character('.', Token::Tag::Dot),
+        Character('#', Token::Tag::Hex),
     };
     std::unique_ptr<ILexer>
         lexer = std::make_unique<Lexer>(Lexer(std::move(source), keyword_list, character_list, false));
