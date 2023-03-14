@@ -170,11 +170,11 @@ ENT_ENT_SET PKB::getEntEntSet(NameNameRelationship tableType) const {
     return getNameNameRelationshipTable(tableType).getKeyValuePairs();
 }
 
-ENT_SET PKB::getKeyStmtByRs(NameNameRelationship tableType) const {
+ENT_SET PKB::getKeyNameByRs(NameNameRelationship tableType) const {
     return getNameNameRelationshipTable(tableType).getKeys();
 }
 
-ENT_SET PKB::getValStmtByRs(NameNameRelationship tableType) const {
+ENT_SET PKB::getValNameByRs(NameNameRelationship tableType) const {
     return getNameNameRelationshipTable(tableType).getValues();
 }
 

@@ -24,7 +24,7 @@ std::unique_ptr<Result> EntEntClause::evaluate(PKBReader* db) {
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // Uses/Modifies(f, _) -> str[]
         {
-            ENT_SET keySet = db->getKeyStmtByRelationship(rs);
+            ENT_SET keySet = db->getKeyNameByRelationship(rs);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), keySet);
             return std::move(result);
         }
@@ -52,7 +52,7 @@ std::unique_ptr<Result> EntEntClause::evaluate(PKBReader* db) {
         }
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::SYNONYM):  // Calls(_, f) -> str[]
         {
-            ENT_SET callsProcSet = db->getValueStmtByRelationship(rs);
+            ENT_SET callsProcSet = db->getValueNameByRelationship(rs);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), callsProcSet);
             return std::move(result);
         }
