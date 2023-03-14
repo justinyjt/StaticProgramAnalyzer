@@ -14,7 +14,7 @@ class SuchThatClauseParser {
  public:
     explicit SuchThatClauseParser(PQLTokenScanner& pqlTokenScanner,
                                   std::unordered_map<std::string, Synonym::DesignEntity>& synonyms);
-    std::unique_ptr<Clause> parse();
+    std::vector<std::unique_ptr<Clause>> parse();
     std::unique_ptr<Clause> parseRelationship();
     std::unique_ptr<Clause> parseUsesModifies(std::string& relationship);
     std::unique_ptr<Clause> parseStmtStmt(std::string& relationship);

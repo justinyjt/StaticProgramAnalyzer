@@ -14,13 +14,19 @@ SuchThatClauseParser::SuchThatClauseParser(PQLTokenScanner& pqlTokenScanner,
                                            std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
     pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
 
-std::unique_ptr<Clause> SuchThatClauseParser::parse() {
+std::vector<std::unique_ptr<Clause>> SuchThatClauseParser::parse() {
+    std::vector<std::unique_ptr<Clause>> clauses;
     pqlTokenScanner.matchAndValidate(Token::Tag::Such);
     pqlTokenScanner.matchAndValidate(Token::Tag::That);
 
-    std::unique_ptr<Clause> clause = parseRelationship();
+    clauses.push_back(parseRelationship());
 
-    return clause;
+    while (pqlTokenScanner.peek(Token::Tag::And)) {
+        pqlTokenScanner.matchAndValidate(Token::Tag::And);
+        clauses.push_back(parseRelationship());
+    }
+
+    return clauses;
 }
 
 std::unique_ptr<Clause> SuchThatClauseParser::parseRelationship() {

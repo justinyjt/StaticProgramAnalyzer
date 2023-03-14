@@ -13,12 +13,18 @@ WithClauseParser::WithClauseParser(PQLTokenScanner& pqlTokenScanner,
                                            std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
         pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
 
-std::unique_ptr<Clause> WithClauseParser::parse() {
+std::vector<std::unique_ptr<Clause>> WithClauseParser::parse() {
+    std::vector<std::unique_ptr<Clause>> clauses;
     pqlTokenScanner.match(Token::Tag::With);
-    // parse attrCompare
-    std::unique_ptr<Clause> clause = parseWith();
 
-    return clause;
+    clauses.push_back(parseWith());
+
+    while (pqlTokenScanner.peek(Token::Tag::And)) {
+        pqlTokenScanner.matchAndValidate(Token::Tag::And);
+        clauses.push_back(parseWith());
+    }
+
+    return clauses;
 }
 
 std::unique_ptr<Clause> WithClauseParser::parseWith() {
@@ -112,10 +118,14 @@ std::unique_ptr<Clause> WithClauseParser::createClause(std::unique_ptr<PQLToken>
     if (entArgCount == 1 && numArgCount == 1) {
         throw SemanticException();
     } else if (entArgCount == 2) {
+        entArgCount = 0;
+        numArgCount = 0;
         // create WithEnt
         std::unique_ptr<WithEntClause> w = std::make_unique<WithEntClause>(std::move(token1), std::move(token2));
         return std::move(w);
     } else if (numArgCount == 2) {
+        entArgCount = 0;
+        numArgCount = 0;
         // create WithNum
         std::unique_ptr<WithNumClause> w = std::make_unique<WithNumClause>(std::move(token1), std::move(token2));
         return std::move(w);

@@ -15,11 +15,20 @@ std::vector<std::unique_ptr<Clause>> ClauseParser::parse() {
         if (pqlTokenScanner.peek(Token::Tag::EndOfFile)) {
             break;
         } else if (pqlTokenScanner.peek(Token::Tag::Such)) {
-            result.push_back(suchThatClauseParser.parse());
+            std::vector<std::unique_ptr<Clause>> clauses = suchThatClauseParser.parse();
+            for (std::unique_ptr<Clause> &clause : clauses) {
+                result.push_back(std::move(clause));
+            }
         } else if (pqlTokenScanner.peek(Token::Tag::Pattern)) {
-            result.push_back(patternClauseParser.parse());
+            std::vector<std::unique_ptr<Clause>> clauses = patternClauseParser.parse();
+            for (std::unique_ptr<Clause> &clause : clauses) {
+                result.push_back(std::move(clause));
+            }
         } else if (pqlTokenScanner.peek(Token::Tag::With)) {
-            result.push_back(withClauseParser.parse());
+            std::vector<std::unique_ptr<Clause>> clauses = withClauseParser.parse();
+            for (std::unique_ptr<Clause> &clause : clauses) {
+                result.push_back(std::move(clause));
+            }
         } else {
             throw SyntaxException();
         }

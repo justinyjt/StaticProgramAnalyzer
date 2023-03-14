@@ -18,7 +18,7 @@ class PatternClauseParser {
  public:
     PatternClauseParser(PQLTokenScanner& pqlTokenScanner,
                         std::unordered_map<std::string, Synonym::DesignEntity>& synonyms);
-    std::unique_ptr<Clause> parse();
+    std::vector<std::unique_ptr<Clause>>parse();
     std::unique_ptr<Clause> parsePattern();
     std::unique_ptr<Clause> parseAssign(std::string patternSynonym);
     std::unique_ptr<Clause> parseWhile(std::string patternSynonym);

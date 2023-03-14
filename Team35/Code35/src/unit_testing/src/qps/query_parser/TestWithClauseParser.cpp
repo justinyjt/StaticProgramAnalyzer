@@ -27,10 +27,10 @@ public:
         synonymVariable = std::make_unique<Synonym>(Synonym::DesignEntity::VARIABLE, "v");
         synonymConstant = std::make_unique<Synonym>(Synonym::DesignEntity::CONSTANT, "c");
 
-        // ident = std::make_unique<Ident>("x");
-        // ident2 = std::make_unique<Ident>("x");
-        // statementNumber1 = std::make_unique<StatementNumber>(1);
-        // statementNumber2 = std::make_unique<StatementNumber>(1);
+        ident1 = std::make_unique<Ident>("x");
+        ident2 = std::make_unique<Ident>("x");
+        statementNumber1 = std::make_unique<StatementNumber>(1);
+        statementNumber2 = std::make_unique<StatementNumber>(1);
         expr = std::make_unique<Expression>("x", false);
         exprWildcardVarName = std::make_unique<Expression>("x", true);
         exprWildcardConstValue = std::make_unique<Expression>("1", true);
@@ -64,7 +64,7 @@ public:
     std::unique_ptr<Wildcard> wildcard1;
     std::unique_ptr<Wildcard> wildcard2;
 
-    std::unique_ptr<Clause> clause;
+    std::vector<std::unique_ptr<Clause>> clause;
     std::unique_ptr<WithEntClause> withEntClause;
     std::unique_ptr<WithNumClause> withNumClause;
     std::unique_ptr<ILexer> lexer;
@@ -77,7 +77,7 @@ TEST_CASE_METHOD(setUpWcp, "ident, ident") {
     WithClauseParser wcp(pqlTokenScanner, declarationList);
     clause = wcp.parse();
     withEntClause = std::make_unique<WithEntClause>(std::move(ident1), std::move(ident2));
-    requireTrue(*clause == *withEntClause);
+    requireTrue(*clause.front() == *withEntClause);
 }
 
 TEST_CASE_METHOD(setUpWcp, "ident, int, semantic error") {
@@ -97,7 +97,7 @@ TEST_CASE_METHOD(setUpWcp, "ident, procedure.procName") {
     WithClauseParser wcp(pqlTokenScanner, declarationList);
     clause = wcp.parse();
     withEntClause = std::make_unique<WithEntClause>(std::move(ident1), std::move(synonymProcedure));
-    requireTrue(*clause == *withEntClause);
+    requireTrue(*clause.front() == *withEntClause);
 }
 
 TEST_CASE_METHOD(setUpWcp, "ident, procedure.value, semantic error") {
@@ -117,7 +117,7 @@ TEST_CASE_METHOD(setUpWcp, "int, constant") {
     WithClauseParser wcp(pqlTokenScanner, declarationList);
     clause = wcp.parse();
     withNumClause = std::make_unique<WithNumClause>(std::move(statementNumber1), std::move(statementNumber2));
-    requireTrue(*clause == *withNumClause);
+    requireTrue(*clause.front() == *withNumClause);
 }
 
 TEST_CASE_METHOD(setUpWcp, "procedure.procName, print.procName, semantic error") {
@@ -137,7 +137,7 @@ TEST_CASE_METHOD(setUpWcp, "procedure.procName, print.varName") {
     WithClauseParser wcp(pqlTokenScanner, declarationList);
     clause = wcp.parse();
     withEntClause = std::make_unique<WithEntClause>(std::move(synonymProcedure), std::move(synonymPrint));
-    requireTrue(*clause == *withEntClause);
+    requireTrue(*clause.front() == *withEntClause);
 }
 
 TEST_CASE_METHOD(setUpWcp, "print.stmt, constant.value") {
@@ -147,5 +147,5 @@ TEST_CASE_METHOD(setUpWcp, "print.stmt, constant.value") {
     WithClauseParser wcp(pqlTokenScanner, declarationList);
     clause = wcp.parse();
     withNumClause = std::make_unique<WithNumClause>(std::move(synonymPrint), std::move(synonymConstant));
-    requireTrue(*clause == *withNumClause);
+    requireTrue(*clause.front() == *withNumClause);
 }

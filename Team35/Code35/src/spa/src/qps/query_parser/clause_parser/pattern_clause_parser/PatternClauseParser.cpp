@@ -16,9 +16,18 @@ PatternClauseParser::PatternClauseParser(PQLTokenScanner& pqlTokenScanner,
                                          std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
         pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
 
-std::unique_ptr<Clause> PatternClauseParser::parse() {
+std::vector<std::unique_ptr<Clause>> PatternClauseParser::parse() {
+    std::vector<std::unique_ptr<Clause>> clauses;
     pqlTokenScanner.match(Token::Tag::Pattern);
-    return std::move(parsePattern());
+
+    clauses.push_back(parsePattern());
+
+    while (pqlTokenScanner.peek(Token::Tag::And)) {
+        pqlTokenScanner.matchAndValidate(Token::Tag::And);
+        clauses.push_back(parsePattern());
+    }
+
+    return clauses;
 }
 
 std::unique_ptr<Clause> PatternClauseParser::parsePattern() {
