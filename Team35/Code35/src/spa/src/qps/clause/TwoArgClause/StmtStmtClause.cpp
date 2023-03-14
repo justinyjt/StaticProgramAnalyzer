@@ -3,7 +3,7 @@
 #include <unordered_set>
 
 StmtStmtClause::StmtStmtClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second,
-        StmtStmtRelationship rs) : TwoArgClause(std::move(first), std::move(second)), rs(rs) {
+                               StmtStmtRelationship rs) : TwoArgClause(std::move(first), std::move(second)), rs(rs) {
     validateArgs();
 }
 
@@ -12,7 +12,7 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
     switch (getPairEnum()) {
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Parent/Follows(s1, s2) -> <int, int>[]
         {
-            if (first->str() == second->str()) { // Follows(s, s) or Parents(s, s) does not exist
+            if (first->str() == second->str()) {  // Follows(s, s) or Parents(s, s) does not exist
                 return std::move(std::make_unique<BoolResult>(false));
             }
             STMT_STMT_SET s = db->getAllRelationships(rs);
@@ -20,7 +20,7 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
             STMT_SET filterSetBySecond = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*second).de));
             std::unique_ptr<Result> intermediateResult1 = std::make_unique<TableResult>(first->str(), filterSetByFirst);
             std::unique_ptr<Result>
-                intermediateResult2 = std::make_unique<TableResult>(second->str(), filterSetBySecond);
+                    intermediateResult2 = std::make_unique<TableResult>(second->str(), filterSetBySecond);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), second->str(), s);
             std::unique_ptr<Result> joinedResult = Result::join(*result, *intermediateResult1);
             return std::move(Result::join(*joinedResult, *intermediateResult2));
@@ -98,8 +98,8 @@ bool StmtStmtClause::operator==(const Clause &rhs) const {
 }
 
 void StmtStmtClause::validateArgs() {
-    Synonym* synonym1 = dynamic_cast<Synonym*>(first.get());
-    Synonym* synonym2 = dynamic_cast<Synonym*>(second.get());
+    Synonym *synonym1 = dynamic_cast<Synonym *>(first.get());
+    Synonym *synonym2 = dynamic_cast<Synonym *>(second.get());
     if (synonym1 != nullptr && (synonym1->de == Synonym::DesignEntity::PROCEDURE
                                 || synonym1->de == Synonym::DesignEntity::VARIABLE
                                 || synonym1->de == Synonym::DesignEntity::CONSTANT) ||
@@ -111,9 +111,9 @@ void StmtStmtClause::validateArgs() {
 }
 
 Parent::Parent(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :
-    StmtStmtClause(std::move(first), std::move(second),
-                   isTransitive ? StmtStmtRelationship::ParentStar : StmtStmtRelationship::Parent) {}
+        StmtStmtClause(std::move(first), std::move(second),
+                       isTransitive ? StmtStmtRelationship::ParentStar : StmtStmtRelationship::Parent) {}
 
 Follows::Follows(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :
-    StmtStmtClause(std::move(first), std::move(second),
-                   isTransitive ? StmtStmtRelationship::FollowsStar : StmtStmtRelationship::Follows) {}
+        StmtStmtClause(std::move(first), std::move(second),
+                       isTransitive ? StmtStmtRelationship::FollowsStar : StmtStmtRelationship::Follows) {}
