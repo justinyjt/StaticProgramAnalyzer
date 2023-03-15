@@ -7,12 +7,16 @@
 #include "qps/clause/TwoArgClause/AssignPattern.h"
 #include "qps/query_parser/helper.h"
 
-std::unique_ptr<TwoArgClause> TwoArgClauseFactory::createAssignPatternClause(std::unique_ptr<PQLToken> token1, std::unique_ptr<PQLToken> token2, std::string patternStr) {
+std::unique_ptr<TwoArgClause> TwoArgClauseFactory::createAssignPatternClause(std::unique_ptr<PQLToken> token1,
+                                                                             std::unique_ptr<PQLToken> token2,
+                                                                             std::string patternStr) {
     std::unique_ptr<TwoArgClause> a = std::make_unique<AssignPattern>(std::move(token1), std::move(token2), patternStr);
     return std::move(a);
 }
 
-std::unique_ptr<TwoArgClause> TwoArgClauseFactory::createClause(std::unique_ptr<PQLToken> token1, std::unique_ptr<PQLToken> token2, std::string relationship) {
+std::unique_ptr<TwoArgClause> TwoArgClauseFactory::createClause(std::unique_ptr<PQLToken> token1,
+                                                                std::unique_ptr<PQLToken> token2,
+                                                                std::string relationship) {
     if (relationship == WITHENT_KEYWORD) {
         std::unique_ptr<WithEntClause> w = std::make_unique<WithEntClause>(std::move(token1), std::move(token2));
         return std::move(w);

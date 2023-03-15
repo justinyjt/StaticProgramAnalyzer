@@ -9,7 +9,7 @@
 #include "qps/clause/TwoArgClause/WithNumClause.h"
 
 class setUpWcp {
-public:
+ public:
     setUpWcp() {
         // Set up code
         query = "";

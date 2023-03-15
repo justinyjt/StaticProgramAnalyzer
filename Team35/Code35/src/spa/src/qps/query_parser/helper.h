@@ -1,5 +1,5 @@
-#ifndef SPA_HELPER_H
-#define SPA_HELPER_H
+#ifndef TEAM35_CODE35_SRC_SPA_SRC_QPS_QUERY_PARSER_HELPER_H_
+#define TEAM35_CODE35_SRC_SPA_SRC_QPS_QUERY_PARSER_HELPER_H_
 
 #define WITHENT_KEYWORD "WithEnt"
 #define WITHNUM_KEYWORD "WithNum"
@@ -14,12 +14,12 @@
 #define CALLS_KEYWORD "Calls"
 #define CALLSSTAR_KEYWORD "Calls*"
 
-#define PROCNAME_KEYWORD "procName*"
-#define VARNAME_KEYWORD "varName*"
+#define PROCNAME_KEYWORD "procName"
+#define VARNAME_KEYWORD "varName"
 #define VALUE_KEYWORD "value"
 #define STMT_KEYWORD "stmt"
 
 #define USES_MODIFIES_S_APPEND "S"
 #define USES_MODIFIES_P_APPEND "P"
 
-#endif //SPA_HELPER_H
+#endif  // TEAM35_CODE35_SRC_SPA_SRC_QPS_QUERY_PARSER_HELPER_H_

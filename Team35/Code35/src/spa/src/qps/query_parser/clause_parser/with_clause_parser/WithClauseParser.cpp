@@ -55,7 +55,7 @@ std::unique_ptr<Clause> WithClauseParser::parseWith() {
 
 std::unique_ptr<PQLToken> WithClauseParser::parseRef() {
     std::string cur = pqlTokenScanner.peekLexeme();
-    if (pqlTokenScanner.peek(Token::Tag::String)) {
+    if (pqlTokenScanner.peekIdent()) {
         std::unique_ptr<Ident> i = std::make_unique<Ident>(pqlTokenScanner.peekLexeme());
         pqlTokenScanner.next();
         entArgCount++;
@@ -87,7 +87,8 @@ std::unique_ptr<PQLToken> WithClauseParser::parseRef() {
             }
             throw SemanticException();
         } else if (attrName == VARNAME_KEYWORD) {
-            if (de == Synonym::DesignEntity::VARIABLE || de == Synonym::DesignEntity::READ || de == Synonym::DesignEntity::PRINT) {
+            if (de == Synonym::DesignEntity::VARIABLE || de == Synonym::DesignEntity::READ ||
+                de == Synonym::DesignEntity::PRINT) {
                 entArgCount++;
                 pqlTokenScanner.next();
                 std::unique_ptr<Synonym> s = std::make_unique<Synonym>(de, synonym);

@@ -8,15 +8,13 @@
 #include "commons/token_scanner/PQLTokenScanner.h"
 
 class QuerySyntaxValidator {
-public:
+ public:
     explicit QuerySyntaxValidator(std::unique_ptr<ILexer> lex);
     bool validateQuery();
     std::deque<std::unique_ptr<Token>> getTokenLst();
 
-private:
+ private:
     PQLTokenScanner scanner_;
-
-    // void reset();
 
     bool validateDeclarationLst();
     bool validateDeclaration();

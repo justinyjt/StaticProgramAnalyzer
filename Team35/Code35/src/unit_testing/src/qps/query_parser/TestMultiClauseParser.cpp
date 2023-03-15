@@ -18,7 +18,7 @@
 #include "qps/query_parser/QuerySyntaxValidator.h"
 
 class setUpMcp {
-public:
+ public:
     setUpMcp() {
         // Set up code
         query = "";
@@ -51,6 +51,7 @@ public:
         synonymConstant = std::make_unique<Synonym>(Synonym::DesignEntity::CONSTANT, "c");
 
         identStr = std::make_unique<Ident>("x");
+        expr = std::make_unique<Expression>("x", false);
         statementNumber1 = std::make_unique<StatementNumber>(1);
         statementNumber2 = std::make_unique<StatementNumber>(1);
         wildcard1 = std::make_unique<Wildcard>();
@@ -80,6 +81,7 @@ public:
     std::unique_ptr<Synonym> synonymConstant;
 
     std::unique_ptr<Ident> identStr;
+    std::unique_ptr<Expression> expr;
     std::unique_ptr<StatementNumber> statementNumber1;
     std::unique_ptr<StatementNumber> statementNumber2;
     std::unique_ptr<Wildcard> wildcard1;
@@ -235,4 +237,26 @@ TEST_CASE_METHOD(setUpMcp, "with, such that, syntax error") {
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     std::unique_ptr<QuerySyntaxValidator> sv = std::make_unique<QuerySyntaxValidator>(std::move(lexer));
     requireTrue(!sv->validateQuery());
+}
+
+TEST_CASE_METHOD(setUpMcp, "with clauses, such that clauses, pattern clauses") {
+    query = "with ifs.stmt# = a.stmt# and p.procName = cl.procName such that Modifies(s,v) and "
+            "Uses(s,v) pattern a(_, \"x\") and w(_, _)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    ClauseParser cp(pqlTokenScanner, declarationList);
+    clause = cp.parse();
+    expected.push_back(std::make_unique<WithNumClause>(std::move(synonymIf), std::move(synonymAssign)));
+    expected.push_back(std::make_unique<WithEntClause>(std::move(synonymProcedure), std::move(synonymCall)));
+    expected.push_back(std::make_unique<ModifiesS>(std::move(synonymStatement1), std::move(synonymVariable1)));
+    expected.push_back(std::make_unique<UsesS>(std::move(synonymStatement2), std::move(synonymVariable2)));
+    expected.push_back(std::make_unique<AssignPattern>(std::move(wildcard1), std::move(expr), "a"));
+    expected.push_back(std::make_unique<WhilePattern>(std::move(wildcard2), "w"));
+
+    requireTrue(*clause[0] == *expected[0]);
+    requireTrue(*clause[1] == *expected[1]);
+    requireTrue(*clause[2] == *expected[2]);
+    requireTrue(*clause[3] == *expected[3]);
+    requireTrue(*clause[4] == *expected[4]);
+    requireTrue(*clause[5] == *expected[5]);
 }

@@ -5,10 +5,6 @@
 
 QuerySyntaxValidator::QuerySyntaxValidator(std::unique_ptr<ILexer> lex) : scanner_(std::move(lex)) {}
 
-//void SyntaxValidator::reset() {
-//    scanner_.reset();
-//}
-
 bool QuerySyntaxValidator::validateQuery() {
     // validate declarationLst
     if (!validateDeclarationLst()) {
@@ -453,7 +449,6 @@ bool QuerySyntaxValidator::validateExpressionSpec() {
     }
 }
 
-//TODO: add multi elem check
 bool QuerySyntaxValidator::validateTuple() {
     if (validateElem()) {
         return true;

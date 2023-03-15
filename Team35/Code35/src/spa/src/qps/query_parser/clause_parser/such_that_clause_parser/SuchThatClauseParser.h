@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 #include <unordered_map>
 
 #include "qps/pql/Synonym.h"
