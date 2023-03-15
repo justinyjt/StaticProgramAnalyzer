@@ -58,3 +58,8 @@ jobs:
         shell: bash
         working-directory: Team35/Code35/build
         run: ./src/unit_testing/Release/unit_testing.exe
+
+      - name: Run Integration Test
+        shell: bash
+        working-directory: Team35/Code35/build
+        run: ./src/integration_testing/Release/integration_testing.exe
