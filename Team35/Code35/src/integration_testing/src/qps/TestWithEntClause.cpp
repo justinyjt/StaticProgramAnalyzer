@@ -72,7 +72,7 @@ TEST_CASE("1. Test WithEntClause") {
         std::unique_ptr<Synonym> arg1 = std::make_unique<Synonym>(Synonym::DesignEntity::PROCEDURE, "p");
         std::unique_ptr<Synonym> arg2 = std::make_unique<Synonym>(Synonym::DesignEntity::VARIABLE, "v");
         WithEntClause withEntClause = WithEntClause(std::move(arg1), std::move(arg2));
-        ENT_ENT_SET s = {std::make_pair("a", "a"), std::make_pair("b", "b")};
+        ENT_ENT_SET s = {std::make_pair("b", "b"), std::make_pair("a", "a")};
         TableResult expectedResult = TableResult("p", "v", s);
         TableResult actualResult = dynamic_cast<TableResult&>(*withEntClause.evaluate(pkbReaderPtr));
         requireEqual(actualResult.idents, expectedResult.idents);

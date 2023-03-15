@@ -71,6 +71,10 @@ STMT_SET PKBReader::getValueStmtByRelationship(StmtStmtRelationship tableType) c
     return pkb.getValStmtByRs(tableType);
 }
 
+STMT_SET PKBReader::getStmtByProc(const ENT_NAME &procName) const {
+    return pkb.getStmtByProc(procName);
+}
+
 ENT_SET PKBReader::getKeyNameByRelationship(NameNameRelationship tableType) const {
     return pkb.getKeyNameByRs(tableType);
 }
