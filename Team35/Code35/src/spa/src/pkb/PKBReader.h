@@ -46,6 +46,8 @@ class PKBReader {
 
     STMT_SET getStmtByRs(StmtStmtRelationship tableType) const;
 
+    STMT_SET getStmtByProc(const ENT_NAME &procName) const;
+
     bool isRelationshipExists(StmtStmtRelationship tableType, STMT_NUM keyName, STMT_NUM valName) const;
 
     STMT_SET getStmtWithExactPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;

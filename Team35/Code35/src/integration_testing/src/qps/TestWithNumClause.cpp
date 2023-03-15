@@ -13,7 +13,7 @@ TEST_CASE("1. Test WithNumClause") {
     PKBReader pkbReader(pkb);
     PKBWriter *pkbWriterPtr = &pkbWriter;
     PKBReader *pkbReaderPtr = &pkbReader;
-    STMT_SET setA = {1, 2, 3};
+    STMT_SET setA = {1, 3};
     STMT_SET setB = {2, 3};
     pkbWriterPtr->addStatements(StmtType::None, setA);
     pkbWriterPtr->addStatements(StmtType::Assign, setB);
@@ -24,7 +24,7 @@ TEST_CASE("1. Test WithNumClause") {
         std::unique_ptr<StatementNumber> arg2 = std::make_unique<StatementNumber>(2);
         WithNumClause withNumClause = WithNumClause(std::move(arg1), std::move(arg2));
         bool expectedResult = true;
-        BoolResult actualResult = dynamic_cast<BoolResult&>(*withNumClause.evaluate(pkbReaderPtr));
+        BoolResult actualResult = dynamic_cast<BoolResult &>(*withNumClause.evaluate(pkbReaderPtr));
         requireEqual(actualResult.b, expectedResult);
     }
 
@@ -34,7 +34,7 @@ TEST_CASE("1. Test WithNumClause") {
         WithNumClause withNumClause = WithNumClause(std::move(arg1), std::move(arg2));
         STMT_SET s = {2};
         TableResult expectedResult = TableResult("a", s);
-        TableResult actualResult = dynamic_cast<TableResult&>(*withNumClause.evaluate(pkbReaderPtr));
+        TableResult actualResult = dynamic_cast<TableResult &>(*withNumClause.evaluate(pkbReaderPtr));
         requireEqual(actualResult.idents, expectedResult.idents);
         requireEqual(actualResult.rows, expectedResult.rows);
     }
@@ -43,9 +43,9 @@ TEST_CASE("1. Test WithNumClause") {
         std::unique_ptr<Synonym> arg1 = std::make_unique<Synonym>(Synonym::DesignEntity::ASSIGN, "a");
         std::unique_ptr<Synonym> arg2 = std::make_unique<Synonym>(Synonym::DesignEntity::STMT, "s");
         WithNumClause withNumClause = WithNumClause(std::move(arg1), std::move(arg2));
-        STMT_STMT_SET s = {std::make_pair(2, 2), std::make_pair(3, 3)};
+        STMT_STMT_SET s = {std::make_pair(3, 3)};
         TableResult expectedResult = TableResult("a", "s", s);
-        TableResult actualResult = dynamic_cast<TableResult&>(*withNumClause.evaluate(pkbReaderPtr));
+        TableResult actualResult = dynamic_cast<TableResult &>(*withNumClause.evaluate(pkbReaderPtr));
         requireEqual(actualResult.idents, expectedResult.idents);
         requireEqual(actualResult.rows, expectedResult.rows);
     }
