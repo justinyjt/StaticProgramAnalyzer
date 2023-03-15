@@ -33,7 +33,11 @@ class CFGraph : public Graph<CFGraphNodeData> {
 
     STMT_SET getPredecessors(STMT_NUM stmt_num, bool isTransitive) const;
 
+    STMT_SET getAllPredecessors() const;
+
     STMT_SET getSuccessors(STMT_NUM stmt_num, bool isTransitive) const;
+
+    STMT_SET getAllSuccessors() const;
 
     const STMT_STMT_SET &getPairwiseControlFlow(bool isTransitive);
 
@@ -61,5 +65,7 @@ class CFGraph : public Graph<CFGraphNodeData> {
     IndexList getDummyNodeSuccessors(Index index) const;
 
     STMT_SET getSuccessorsByIndex(Index index, bool isTransitive) const;
+
+    STMT_SET getPredecessorsByIndex(Index index, bool isTransitive) const;
 };
 }  // namespace CFG

@@ -22,16 +22,6 @@ TEST_CASE("1. CFG with one line") {
 TEST_CASE("2. Test isNextExists in CFGManager with valid CFG") {
     CFG::CFGManager manager;
     CFG::CFGraphBuilder cf_graph_builder;
-    /**
-     * 1,
-     * 2,
-     * 3,
-     * 4,
-     * 5,
-     * 6,
-     * 7,
-     * 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
-     */
     cf_graph_builder.addStmt(1);
     cf_graph_builder.addStmt(2);
     cf_graph_builder.addDummyNode(1);
@@ -44,40 +34,7 @@ TEST_CASE("2. Test isNextExists in CFGManager with valid CFG") {
     cf_graph_builder.setLastVisitedStmt(4);
     cf_graph_builder.addStmt(6);
     cf_graph_builder.addDummyNode(4);
-    cf_graph_builder.addStmt(7);
-    cf_graph_builder.addStmt(8);
-    cf_graph_builder.addDummyNode(7);
-    cf_graph_builder.setLastVisitedStmt(7);
-    cf_graph_builder.addStmt(9);
-    cf_graph_builder.addDummyNode(7);
-    cf_graph_builder.addStmt(10);
-    cf_graph_builder.addStmt(11);
-    cf_graph_builder.addDummyNode(10);
-    cf_graph_builder.setLastVisitedStmt(10);
-    cf_graph_builder.addStmt(12);
-    cf_graph_builder.addDummyNode(10);
-    cf_graph_builder.addStmt(13);
-    cf_graph_builder.addStmt(14);
-    cf_graph_builder.addDummyNode(13);
-    cf_graph_builder.setLastVisitedStmt(13);
-    cf_graph_builder.addStmt(15);
-    cf_graph_builder.addDummyNode(13);
-    cf_graph_builder.addStmt(16);
-    cf_graph_builder.addStmt(17);
-    cf_graph_builder.addDummyNode(16);
-    cf_graph_builder.setLastVisitedStmt(16);
-    cf_graph_builder.addStmt(17);
-    cf_graph_builder.addDummyNode(16);
-
-    for (int i = 1; i < 20; ++i) {
-        cf_graph_builder.addStmt(i);
-        if (i % 2 == 0) {
-            cf_graph_builder.addDummyNode(i - 1);
-            cf_graph_builder.setLastVisitedStmt(i - 1);
-
-        }
-    }
-    cf_graph_builder.setMaxStmtNum(19);
+    cf_graph_builder.setMaxStmtNum(6);
     cf_graph_builder.setMinStmtNum(1);
     cf_graph_builder.setProcName("proc");
     CFG::CFGraph cf_graph = cf_graph_builder.build();
@@ -86,36 +43,58 @@ TEST_CASE("2. Test isNextExists in CFGManager with valid CFG") {
     manager.setGraphs(std::move(test));
     SECTION("Test is next exist") {
         requireTrue(manager.isNextExists());
+    }SECTION("Test get connected statements") {
+        {
+            STMT_SET expected;
+            expected.emplace(2);
+            expected.emplace(3);
+            requireEqual(expected, manager.getConnectedStmts(1, true, false));
+        }
+        {
+            STMT_SET expected;
+            expected.emplace(5);
+            expected.emplace(6);
+            requireEqual(expected, manager.getConnectedStmts(4, true, false));
+        }
+        {
+            STMT_SET expected;
+            expected.emplace(4);
+            requireEqual(expected, manager.getConnectedStmts(2, true, false));
+            requireEqual(expected, manager.getConnectedStmts(3, true, false));
+        }
+        {
+            STMT_SET expected;
+            requireEqual(expected, manager.getConnectedStmts(5, true, false));
+            requireEqual(expected, manager.getConnectedStmts(6, true, false));
+        }
+        requireFalse(manager.isNextExistAfterStmtNum(5, true));
+        requireFalse(manager.isNextExistAfterStmtNum(6, false));
     }
 
     SECTION("Test is next exist by key") {
+        requireTrue(manager.isNextExistAfterStmtNum(1, true));
         requireTrue(manager.isNextExistAfterStmtNum(2, true));
-        for (int i = 1; i < 19; ++i) {
-            requireTrue(manager.isNextExistAfterStmtNum(i, true));
-            requireTrue(manager.isNextExistAfterStmtNum(i, false));
-            STMT_SET expected;
-            if (i % 2 == 0) {
-                expected.emplace(i - 1);
+        requireTrue(manager.isNextExistAfterStmtNum(3, true));
+        requireTrue(manager.isNextExistAfterStmtNum(4, true));
+        requireFalse(manager.isNextExistAfterStmtNum(5, true));
+        requireFalse(manager.isNextExistAfterStmtNum(6, false));
 
-            } else {
-                expected.emplace(i + 1);
-                expected.emplace(i + 2);
-            }
-            requireEqual(expected, manager.getConnectedStmts(i, true, false));
-        }
-        requireFalse(manager.isNextExistAfterStmtNum(20, true));
-        requireFalse(manager.isNextExistAfterStmtNum(20, false));
     }
 
-//    SECTION("Test is next exist by value") {
-//        for (int i = 2; i < 20; ++i) {
-//            requireTrue(manager.isNextExistByVal(i, true));
-//            requireTrue(manager.isNextExistByVal(i, false));
-//        }
-//        requireFalse(manager.isNextExistByVal(1, true));
-//        requireFalse(manager.isNextExistByVal(1, false));
-//
-//    }
+    SECTION("Test is next exist by val") {
+        requireTrue(manager.isNextExistBeforeStmtNum(6, true));
+        requireTrue(manager.isNextExistBeforeStmtNum(5, true));
+        requireTrue(manager.isNextExistBeforeStmtNum(4, true));
+        requireTrue(manager.isNextExistBeforeStmtNum(3, true));
+        requireTrue(manager.isNextExistBeforeStmtNum(2, true));
+        requireFalse(manager.isNextExistBeforeStmtNum(1, true));
+        requireTrue(manager.isNextExistBeforeStmtNum(6, false));
+        requireTrue(manager.isNextExistBeforeStmtNum(5, false));
+        requireTrue(manager.isNextExistBeforeStmtNum(4, false));
+        requireTrue(manager.isNextExistBeforeStmtNum(3, false));
+        requireTrue(manager.isNextExistBeforeStmtNum(2, false));
+        requireFalse(manager.isNextExistBeforeStmtNum(1, false));
+    }
 }
 
 TEST_CASE("3. test isNext() method") {
@@ -183,5 +162,65 @@ TEST_CASE("3. test isNext() method") {
         requireTrue(manager.isNext(8, 9, false));
         requireTrue(manager.isNext(9, 7, false));
         requireTrue(manager.isNext(7, 10, false));
+    }
+}
+
+TEST_CASE("4. getValidNextPairs, getValidPredecessors, getValidSuccessors") {
+    /**
+     * if, stmt, while loop, stmt
+     */
+    CFG::CFGraphBuilder cf_graph_builder;
+    std::vector<CFG::CFGraph> test;
+    STMT_STMT_SET expected;
+    STMT_STMT_SET expectedT;
+    cf_graph_builder.addStmt(1);
+    cf_graph_builder.addStmt(2);
+    cf_graph_builder.addStmt(3);
+    cf_graph_builder.addLoop(1);
+    cf_graph_builder.setMaxStmtNum(3);
+    cf_graph_builder.setMinStmtNum(1);
+    cf_graph_builder.setProcName("proc");
+    CFG::CFGraph cf_graph = cf_graph_builder.build();
+    {
+        STMT_STMT_SET allPairs = cf_graph.getPairwiseControlFlow(false);
+        expected.insert(allPairs.begin(), allPairs.end());
+        STMT_STMT_SET allPairsT = cf_graph.getPairwiseControlFlow(true);
+        expectedT.insert(allPairsT.begin(), allPairsT.end());
+    }
+    test.emplace_back(std::move(cf_graph));
+    cf_graph_builder.reset();
+    cf_graph_builder.addStmt(4);
+    cf_graph_builder.addStmt(5);
+    cf_graph_builder.addDummyNode(4);
+    cf_graph_builder.setLastVisitedStmt(4);
+    cf_graph_builder.addStmt(6);
+    cf_graph_builder.addDummyNode(4);
+    cf_graph_builder.setMaxStmtNum(6);
+    cf_graph_builder.setMinStmtNum(4);
+    cf_graph_builder.setProcName("proc");
+    CFG::CFGraph cf_graph2 = cf_graph_builder.build();
+    {
+        STMT_STMT_SET allPairs = cf_graph2.getPairwiseControlFlow(false);
+        expected.insert(allPairs.begin(), allPairs.end());
+        STMT_STMT_SET allPairsT = cf_graph2.getPairwiseControlFlow(true);
+        expectedT.insert(allPairsT.begin(), allPairsT.end());
+    }
+    test.emplace_back(std::move(cf_graph2));
+    CFG::CFGManager manager;
+    manager.setGraphs(std::move(test));
+
+    SECTION("4.1 transitive and non-transitive getValidNextPairs") {
+        requireEqualRef(expected, manager.getValidNextPairs(false));
+        requireEqualRef(expectedT, manager.getValidNextPairs(true));
+    }
+
+    SECTION("4.2 predecessors") {
+        STMT_SET expectedPredecessors = {1, 2, 3, 4};
+        requireEqualRef(expectedPredecessors, manager.getValidPredecessors());
+    }
+
+    SECTION("4.2 successors") {
+        STMT_SET expectedSuccessors = {1, 2, 3, 5, 6};
+        requireEqualRef(expectedSuccessors, manager.getValidSuccessors());
     }
 }

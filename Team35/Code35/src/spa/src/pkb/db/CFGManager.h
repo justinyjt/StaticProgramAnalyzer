@@ -29,6 +29,10 @@ class CFGManager {
 
     STMT_STMT_SET getValidNextPairs(bool isTransitive);
 
+    STMT_SET getValidPredecessors();
+
+    STMT_SET getValidSuccessors();
+
  private:
     std::vector<CFGraph> graphs_;
 

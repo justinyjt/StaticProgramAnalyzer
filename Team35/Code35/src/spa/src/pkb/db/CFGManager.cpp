@@ -59,7 +59,7 @@ bool CFGManager::isNext(STMT_NUM first, STMT_NUM second, bool isTransitive) {
 
 bool CFGManager::isNextExists() {
     return any_of(this->graphs_.begin(), this->graphs_.end(), [](const CFGraph &curr) {
-      return curr.getMaxStmtNum() - curr.getMinStmtNum() > 1;
+        return curr.getMaxStmtNum() - curr.getMinStmtNum() > 1;
     });
 }
 
@@ -83,6 +83,24 @@ STMT_STMT_SET CFGManager::getValidNextPairs(bool isTransitive) {
     STMT_STMT_SET result;
     for (auto &curr : this->graphs_) {
         STMT_STMT_SET temp = curr.getPairwiseControlFlow(isTransitive);
+        result.insert(temp.begin(), temp.end());
+    }
+    return result;
+}
+
+STMT_SET CFGManager::getValidPredecessors() {
+    STMT_SET result;
+    for (auto &curr : this->graphs_) {
+        STMT_SET temp = curr.getAllPredecessors();
+        result.insert(temp.begin(), temp.end());
+    }
+    return result;
+}
+
+STMT_SET CFGManager::getValidSuccessors() {
+    STMT_SET result;
+    for (auto &curr : this->graphs_) {
+        STMT_SET temp = curr.getAllSuccessors();
         result.insert(temp.begin(), temp.end());
     }
     return result;
