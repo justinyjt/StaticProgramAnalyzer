@@ -31,7 +31,6 @@ std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode
     addPatternsToPKB();
     addCallsToPKB();
     return std::move(root_);
-
 }
 
 void DesignExtractor::extractProc(const std::shared_ptr<ASTNode> &node) {
