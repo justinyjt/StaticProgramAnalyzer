@@ -24,7 +24,7 @@ TEST_CASE("1. Test WithNumClause") {
         std::unique_ptr<StatementNumber> arg2 = std::make_unique<StatementNumber>(2);
         WithNumClause withNumClause = WithNumClause(std::move(arg1), std::move(arg2));
         bool expectedResult = true;
-        BoolResult actualResult = dynamic_cast<BoolResult&>(*withNumClause.evaluate(pkbReaderPtr));
+        BoolResult actualResult = dynamic_cast<BoolResult &>(*withNumClause.evaluate(pkbReaderPtr));
         requireEqual(actualResult.b, expectedResult);
     }
 
@@ -34,7 +34,7 @@ TEST_CASE("1. Test WithNumClause") {
         WithNumClause withNumClause = WithNumClause(std::move(arg1), std::move(arg2));
         STMT_SET s = {2};
         TableResult expectedResult = TableResult("a", s);
-        TableResult actualResult = dynamic_cast<TableResult&>(*withNumClause.evaluate(pkbReaderPtr));
+        TableResult actualResult = dynamic_cast<TableResult &>(*withNumClause.evaluate(pkbReaderPtr));
         requireEqual(actualResult.idents, expectedResult.idents);
         requireEqual(actualResult.rows, expectedResult.rows);
     }
@@ -45,7 +45,7 @@ TEST_CASE("1. Test WithNumClause") {
         WithNumClause withNumClause = WithNumClause(std::move(arg1), std::move(arg2));
         STMT_STMT_SET s = {std::make_pair(3, 3)};
         TableResult expectedResult = TableResult("a", "s", s);
-        TableResult actualResult = dynamic_cast<TableResult&>(*withNumClause.evaluate(pkbReaderPtr));
+        TableResult actualResult = dynamic_cast<TableResult &>(*withNumClause.evaluate(pkbReaderPtr));
         requireEqual(actualResult.idents, expectedResult.idents);
         requireEqual(actualResult.rows, expectedResult.rows);
     }
