@@ -5,7 +5,6 @@
 #include "qps/pql/Wildcard.h"
 #include "qps/pql/Expression.h"
 #include "qps/pql/Ident.h"
-#include "qps/query_exceptions/SyntaxException.h"
 #include "qps/query_exceptions/SemanticException.h"
 #include "commons/token_scanner/TokenScanner.h"
 #include "qps/query_parser/SemanticValidator.h"
@@ -23,7 +22,7 @@ std::vector<std::unique_ptr<Clause>> PatternClauseParser::parse() {
     clauses.push_back(parsePattern());
 
     while (pqlTokenScanner.peek(Token::Tag::And)) {
-        pqlTokenScanner.matchAndValidate(Token::Tag::And);
+        pqlTokenScanner.match(Token::Tag::And);
         clauses.push_back(parsePattern());
     }
 
@@ -32,69 +31,91 @@ std::vector<std::unique_ptr<Clause>> PatternClauseParser::parse() {
 
 std::unique_ptr<Clause> PatternClauseParser::parsePattern() {
     // validate and return type
+    assert(pqlTokenScanner.isName());
     Synonym::DesignEntity de;
     std::string pattern = pqlTokenScanner.peekLexeme();
-    if (pqlTokenScanner.isName()) {
-        de = parsePatternSynonym();
-    } else {
-        throw SyntaxException();
-    }
+    de = parsePatternSynonym();
 
-    // if pattern is ASSIGN, call parseAssign
-    switch (de) {
-        case Synonym::DesignEntity::ASSIGN:
+    pqlTokenScanner.saveState();
+    pqlTokenScanner.next();
+    pqlTokenScanner.match(Token::Tag::LParen);
+    pqlTokenScanner.next();
+    pqlTokenScanner.match(Token::Tag::Comma);
+    if (pqlTokenScanner.peek(Token::Tag::Underscore)) {
+        pqlTokenScanner.match(Token::Tag::Underscore);
+        if (pqlTokenScanner.peek(Token::Tag::String)) {  // _"expr"_ -> assign
+            pqlTokenScanner.restoreState();
             return parseAssign(pattern);
-        case Synonym::DesignEntity::WHILE:
-            return parseWhile(pattern);
-        case Synonym::DesignEntity::IF:
+        } else if (pqlTokenScanner.peek(Token::Tag::RParen)) {  // _) -> assign/while
+            // depends on de
+            pqlTokenScanner.restoreState();
+            switch (de) {
+                case Synonym::DesignEntity::ASSIGN:
+                    return parseAssign(pattern);
+                case Synonym::DesignEntity::WHILE:
+                    return parseWhile(pattern);
+                default:
+                {}
+            }
+        } else {  // _, -> if
+            pqlTokenScanner.restoreState();
             return parseIf(pattern);
-        default:
-            {}
-    }
+        }
+    } else if (pqlTokenScanner.peek(Token::Tag::String)) {  // "expr" -> assign
+        pqlTokenScanner.match(Token::Tag::String);
+        pqlTokenScanner.restoreState();
+        return parseAssign(pattern);
+    } else {}
 }
 
 std::unique_ptr<Clause> PatternClauseParser::parseAssign(std::string patternSynonym) {
-    pqlTokenScanner.matchAndValidate(Token::Tag::LParen);
+    if (SemanticValidator::getDesignEntity(synonyms, patternSynonym) != Synonym::DesignEntity::ASSIGN) {
+        throw SemanticException();
+    }
+    pqlTokenScanner.match(Token::Tag::LParen);
     std::unique_ptr<PQLToken> arg1;
     arg1 = parseEntRef();
-    pqlTokenScanner.matchAndValidate(Token::Tag::Comma);
+    pqlTokenScanner.match(Token::Tag::Comma);
     std::unique_ptr<PQLToken> arg2 = parseExpressionSpec();
-    pqlTokenScanner.matchAndValidate(Token::Tag::RParen);
+    pqlTokenScanner.match(Token::Tag::RParen);
 
     std::unique_ptr<Clause> clause = createClause(std::move(arg1), std::move(arg2), patternSynonym);
     return std::move(clause);
 }
 
 std::unique_ptr<Clause> PatternClauseParser::parseWhile(std::string patternSynonym) {
-    pqlTokenScanner.matchAndValidate(Token::Tag::LParen);
+    if (SemanticValidator::getDesignEntity(synonyms, patternSynonym) != Synonym::DesignEntity::WHILE) {
+        throw SemanticException();
+    }
+    pqlTokenScanner.match(Token::Tag::LParen);
     std::unique_ptr<PQLToken> arg1;
     arg1 = parseEntRef();
-    pqlTokenScanner.matchAndValidate(Token::Tag::Comma);
-    pqlTokenScanner.matchAndValidate(Token::Tag::Underscore);
-    pqlTokenScanner.matchAndValidate(Token::Tag::RParen);
+    pqlTokenScanner.match(Token::Tag::Comma);
+    pqlTokenScanner.match(Token::Tag::Underscore);
+    pqlTokenScanner.match(Token::Tag::RParen);
 
     std::unique_ptr<Clause> w = std::make_unique<WhilePattern>(std::move(arg1), patternSynonym);
     return std::move(w);
 }
 
 std::unique_ptr<Clause> PatternClauseParser::parseIf(std::string patternSynonym) {
-    pqlTokenScanner.matchAndValidate(Token::Tag::LParen);
+    if (SemanticValidator::getDesignEntity(synonyms, patternSynonym) != Synonym::DesignEntity::IF) {
+        throw SemanticException();
+    }
+    pqlTokenScanner.match(Token::Tag::LParen);
     std::unique_ptr<PQLToken> arg1;
     arg1 = parseEntRef();
-    pqlTokenScanner.matchAndValidate(Token::Tag::Comma);
-    pqlTokenScanner.matchAndValidate(Token::Tag::Underscore);
-    pqlTokenScanner.matchAndValidate(Token::Tag::Comma);
-    pqlTokenScanner.matchAndValidate(Token::Tag::Underscore);
-    pqlTokenScanner.matchAndValidate(Token::Tag::RParen);
+    pqlTokenScanner.match(Token::Tag::Comma);
+    pqlTokenScanner.match(Token::Tag::Underscore);
+    pqlTokenScanner.match(Token::Tag::Comma);
+    pqlTokenScanner.match(Token::Tag::Underscore);
+    pqlTokenScanner.match(Token::Tag::RParen);
 
     std::unique_ptr<Clause> i = std::make_unique<IfPattern>(std::move(arg1), patternSynonym);
     return std::move(i);
 }
 
 std::unique_ptr<PQLToken> PatternClauseParser::parseEntRef() {
-    if (!pqlTokenScanner.peekEntRef()) {
-        throw SyntaxException();
-    }
     if (pqlTokenScanner.isName()) {
         std::string synonym = pqlTokenScanner.peekLexeme();
         Synonym::DesignEntity de = SemanticValidator::getDesignEntity(synonyms, synonym);
@@ -119,24 +140,17 @@ std::unique_ptr<PQLToken> PatternClauseParser::parseExpressionSpec() {
             std::unique_ptr<Wildcard> w = std::make_unique<Wildcard>();
             return std::move(w);
         } else {
-            if (isValidExpr()) {
-                std::unique_ptr<Expression> e = std::make_unique<Expression>(pqlTokenScanner.peekLexeme(), true);
-                pqlTokenScanner.next();
-                pqlTokenScanner.matchAndValidate(Token::Tag::Underscore);
-                return std::move(e);
-            }
-            throw SyntaxException();
-        }
-    } else if (pqlTokenScanner.peek(Token::Tag::String)) {
-        if (isValidExpr()) {
-            std::unique_ptr<Expression> e = std::make_unique<Expression>(pqlTokenScanner.peekLexeme(), false);
+            std::unique_ptr<Expression> e = std::make_unique<Expression>(pqlTokenScanner.peekLexeme(), true);
             pqlTokenScanner.next();
+            pqlTokenScanner.match(Token::Tag::Underscore);
             return std::move(e);
         }
-        throw SyntaxException();
-    } else {
-        throw SyntaxException();
-    }
+    } else if (pqlTokenScanner.peek(Token::Tag::String)) {
+        std::unique_ptr<Expression> e = std::make_unique<Expression>(pqlTokenScanner.peekLexeme(), false);
+        pqlTokenScanner.next();
+        pqlTokenScanner.match(Token::Tag::Underscore);
+        return std::move(e);
+    } else {}
 }
 
 std::unique_ptr<Clause> PatternClauseParser::createClause(std::unique_ptr<PQLToken> token1,
@@ -156,9 +170,4 @@ Synonym::DesignEntity PatternClauseParser::parsePatternSynonym() {
         return de;
     }
     throw SemanticException();
-}
-
-bool PatternClauseParser::isValidExpr() {
-    return pqlTokenScanner.peek(Token::Tag::String) &&
-                   pqlTokenScanner.peekIdent() || pqlTokenScanner.peekConstant();
 }

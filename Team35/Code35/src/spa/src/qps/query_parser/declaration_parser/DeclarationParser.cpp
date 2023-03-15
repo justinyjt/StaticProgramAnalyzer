@@ -1,5 +1,4 @@
 #include "DeclarationParser.h"
-#include "qps/query_exceptions/SyntaxException.h"
 #include "qps/query_exceptions/SemanticException.h"
 #include "qps/query_parser/SemanticValidator.h"
 
@@ -30,9 +29,7 @@ std::unordered_map<std::string, Synonym::DesignEntity> DeclarationParser::parse(
                 break;
             } else if (pqlTokenScanner.match(Token::Tag::Comma)) {
                 continue;
-            } else {
-                throw SyntaxException();
-            }
+            } else {}
         }
     }
     return synonyms;
@@ -78,18 +75,13 @@ Synonym::DesignEntity DeclarationParser::parseDesignEntity() {
         }
         pqlTokenScanner.next();
         return de;
-    } else {
-        throw SyntaxException();
-    }
+    } else {}
 }
 
 std::string DeclarationParser::parseSynonym(Synonym::DesignEntity de) {
+    assert(pqlTokenScanner.isName());
     std::string synonym;
-    if (pqlTokenScanner.isName()) {
-        synonym = pqlTokenScanner.peekLexeme();
-        pqlTokenScanner.next();
-        return synonym;
-    } else {
-        throw SyntaxException();
-    }
+    synonym = pqlTokenScanner.peekLexeme();
+    pqlTokenScanner.next();
+    return synonym;
 }

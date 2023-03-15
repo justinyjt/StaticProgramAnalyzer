@@ -9,6 +9,7 @@
 #include "qps/clause/TwoArgClause/StmtStmtClause.h"
 #include "qps/clause/TwoArgClause/EntEntClause.h"
 #include "qps/query_exceptions/SyntaxException.h"
+#include "qps/query_parser/QuerySyntaxValidator.h"
 
 class setUpStcp {
  public:
@@ -680,21 +681,15 @@ TEST_CASE_METHOD(setUpStcp, "Calls*, procedure and procedure") {
 TEST_CASE_METHOD(setUpStcp, "Calls, int and procedure, syntax error") {
     query = "such that Calls(1,p1)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    PQLTokenScanner pqlTokenScanner(std::move(lexer));
-    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
-    requireThrowAs<SyntaxException>([&stcp]() {
-        stcp.parse();
-    });
+    std::unique_ptr<QuerySyntaxValidator> sv = std::make_unique<QuerySyntaxValidator>(std::move(lexer));
+    requireTrue(!sv->validateQuery());
 }
 
 TEST_CASE_METHOD(setUpStcp, "Calls, procedure and int, syntax error") {
     query = "such that Calls(p1,1)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    PQLTokenScanner pqlTokenScanner(std::move(lexer));
-    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
-    requireThrowAs<SyntaxException>([&stcp]() {
-        stcp.parse();
-    });
+    std::unique_ptr<QuerySyntaxValidator> sv = std::make_unique<QuerySyntaxValidator>(std::move(lexer));
+    requireTrue(!sv->validateQuery());
 }
 
 TEST_CASE_METHOD(setUpStcp, "Calls, stmt and procedure, semantic error") {
@@ -720,9 +715,6 @@ TEST_CASE_METHOD(setUpStcp, "Calls, ident and procedure, semantic error") {
 TEST_CASE_METHOD(setUpStcp, "Calls, invalid syntax ident and procedure, syntax error") {
     query = "such that Calls(\"+x\",p)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    PQLTokenScanner pqlTokenScanner(std::move(lexer));
-    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
-    requireThrowAs<SyntaxException>([&stcp]() {
-        stcp.parse();
-    });
+    std::unique_ptr<QuerySyntaxValidator> sv = std::make_unique<QuerySyntaxValidator>(std::move(lexer));
+    requireTrue(!sv->validateQuery());
 }

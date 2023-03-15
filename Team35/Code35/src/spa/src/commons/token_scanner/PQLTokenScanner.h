@@ -12,9 +12,6 @@ class PQLTokenScanner : public TokenScanner {
     explicit PQLTokenScanner(std::unique_ptr<ILexer> lex);
     explicit PQLTokenScanner(TokenLst token_lst);
     int peekDesignEntity() const;
+    int peekSuchThatClause() const;
     int peekIdent() const;
-    int peekConstant() const;
-    bool peekStmtRef();
-    bool peekEntRef();
-    void matchAndValidate(Token::Tag tag);
 };

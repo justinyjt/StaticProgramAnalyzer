@@ -2,7 +2,6 @@
 
 #include "WithClauseParser.h"
 #include "qps/pql/StatementNumber.h"
-#include "qps/query_exceptions/SyntaxException.h"
 #include "qps/pql/Ident.h"
 #include "qps/query_parser/SemanticValidator.h"
 #include "qps/query_exceptions/SemanticException.h"
@@ -20,7 +19,7 @@ std::vector<std::unique_ptr<Clause>> WithClauseParser::parse() {
     clauses.push_back(parseWith());
 
     while (pqlTokenScanner.peek(Token::Tag::And)) {
-        pqlTokenScanner.matchAndValidate(Token::Tag::And);
+        pqlTokenScanner.match(Token::Tag::And);
         clauses.push_back(parseWith());
     }
 
@@ -57,12 +56,8 @@ std::unique_ptr<PQLToken> WithClauseParser::parseRef() {
         // parse synonym
         Synonym::DesignEntity de;
         std::string synonym = pqlTokenScanner.peekLexeme();
-        if (pqlTokenScanner.isName()) {
-            de = SemanticValidator::getDesignEntity(synonyms, synonym);
-            pqlTokenScanner.next();
-        } else {
-            throw SyntaxException();
-        }
+        de = SemanticValidator::getDesignEntity(synonyms, synonym);
+        pqlTokenScanner.next();
 
         pqlTokenScanner.match(Token::Tag::Dot);
 
@@ -94,22 +89,17 @@ std::unique_ptr<PQLToken> WithClauseParser::parseRef() {
             throw SemanticException();
         } else if (attrName == "stmt") {
             pqlTokenScanner.next();
-            if (pqlTokenScanner.peek(Token::Tag::Hex)) {
-                if (de == Synonym::DesignEntity::STMT || de == Synonym::DesignEntity::READ ||
-                    de == Synonym::DesignEntity::PRINT || de == Synonym::DesignEntity::CALL ||
-                    de == Synonym::DesignEntity::WHILE || de == Synonym::DesignEntity::IF ||
-                    de == Synonym::DesignEntity::ASSIGN) {
-                    numArgCount++;
-                    pqlTokenScanner.next();
-                    std::unique_ptr<Synonym> s = std::make_unique<Synonym>(de, synonym);
-                    return std::move(s);
-                }
-                throw SemanticException();
+            if (de == Synonym::DesignEntity::STMT || de == Synonym::DesignEntity::READ ||
+                de == Synonym::DesignEntity::PRINT || de == Synonym::DesignEntity::CALL ||
+                de == Synonym::DesignEntity::WHILE || de == Synonym::DesignEntity::IF ||
+                de == Synonym::DesignEntity::ASSIGN) {
+                numArgCount++;
+                pqlTokenScanner.next();
+                std::unique_ptr<Synonym> s = std::make_unique<Synonym>(de, synonym);
+                return std::move(s);
             }
-            throw SyntaxException();
-        } else {
-            throw SyntaxException();
-        }
+            throw SemanticException();
+        } else {}
     }
 }
 

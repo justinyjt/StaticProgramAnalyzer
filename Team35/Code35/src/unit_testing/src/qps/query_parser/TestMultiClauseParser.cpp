@@ -15,6 +15,7 @@
 #include "qps/clause/TwoArgClause/WithEntClause.h"
 #include "qps/clause/TwoArgClause/WithNumClause.h"
 #include "qps/query_parser/clause_parser/ClauseParser.h"
+#include "qps/query_parser/QuerySyntaxValidator.h"
 
 class setUpMcp {
 public:
@@ -140,7 +141,7 @@ TEST_CASE_METHOD(setUpMcp, "such that clauses, modifiesS, usesS") {
     ClauseParser cp(pqlTokenScanner, declarationList);
     clause = cp.parse();
     expected.push_back(std::make_unique<ModifiesS>(std::move(synonymStatement1), std::move(synonymVariable1)));
-    expected.push_back(std::make_unique<UsesS>(std::move(synonymStatement1), std::move(synonymVariable1)));
+    expected.push_back(std::make_unique<UsesS>(std::move(synonymStatement2), std::move(synonymVariable2)));
     requireTrue(*clause[0] == *expected[0]);
     requireTrue(*clause[1] == *expected[1]);
 }
@@ -230,11 +231,8 @@ TEST_CASE_METHOD(setUpMcp, "with clauses, withNum, withEnt") {
 }
 
 TEST_CASE_METHOD(setUpMcp, "with, such that, syntax error") {
-    query = "with ifs.stmt# = a.stmt# and Modifies(s,v)";
+    query = "Select a with ifs.stmt# = a.stmt# and Modifies(1,v)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    PQLTokenScanner pqlTokenScanner(std::move(lexer));
-    ClauseParser cp(pqlTokenScanner, declarationList);
-    requireThrowAs<SyntaxException>([&cp]() {
-        cp.parse();
-    });
+    std::unique_ptr<QuerySyntaxValidator> sv = std::make_unique<QuerySyntaxValidator>(std::move(lexer));
+    requireTrue(!sv->validateQuery());
 }

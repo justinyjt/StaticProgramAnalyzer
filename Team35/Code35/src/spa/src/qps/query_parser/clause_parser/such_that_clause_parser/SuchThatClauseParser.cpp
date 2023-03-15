@@ -2,7 +2,6 @@
 
 #include "SuchThatClauseParser.h"
 #include "qps/pql/StatementNumber.h"
-#include "qps/query_exceptions/SyntaxException.h"
 #include "qps/pql/Wildcard.h"
 #include "qps/clause/TwoArgClause/StmtEntClause.h"
 #include "qps/clause/TwoArgClause/StmtStmtClause.h"
@@ -16,13 +15,13 @@ SuchThatClauseParser::SuchThatClauseParser(PQLTokenScanner& pqlTokenScanner,
 
 std::vector<std::unique_ptr<Clause>> SuchThatClauseParser::parse() {
     std::vector<std::unique_ptr<Clause>> clauses;
-    pqlTokenScanner.matchAndValidate(Token::Tag::Such);
-    pqlTokenScanner.matchAndValidate(Token::Tag::That);
+    pqlTokenScanner.match(Token::Tag::Such);
+    pqlTokenScanner.match(Token::Tag::That);
 
     clauses.push_back(parseRelationship());
 
     while (pqlTokenScanner.peek(Token::Tag::And)) {
-        pqlTokenScanner.matchAndValidate(Token::Tag::And);
+        pqlTokenScanner.match(Token::Tag::And);
         clauses.push_back(parseRelationship());
     }
 
@@ -51,50 +50,44 @@ std::unique_ptr<Clause> SuchThatClauseParser::parseRelationship() {
             pqlTokenScanner.next();
         }
         return std::move(parseEntEnt(relationship));
-    } else {
-        throw SyntaxException();
-    }
+    } else {}
 }
 
 std::unique_ptr<Clause> SuchThatClauseParser::parseUsesModifies(std::string& relationship) {
     std::unique_ptr<PQLToken> arg1;
     std::unique_ptr<PQLToken> arg2;
-    pqlTokenScanner.matchAndValidate(Token::Tag::LParen);
-    if (pqlTokenScanner.peekStmtRef() || pqlTokenScanner.peekEntRef()) {
-        if (pqlTokenScanner.isName()) {
-            std::string synonym = pqlTokenScanner.peekLexeme();
-            Synonym::DesignEntity de = SemanticValidator::getDesignEntity(synonyms, synonym);
-            arg1 = std::make_unique<Synonym>(de, synonym);
-            if (de == Synonym::DesignEntity::STMT || de == Synonym::DesignEntity::READ ||
-                de == Synonym::DesignEntity::PRINT || de == Synonym::DesignEntity::ASSIGN ||
-                de == Synonym::DesignEntity::CALL || de == Synonym::DesignEntity::WHILE ||
-                de == Synonym::DesignEntity::IF) {
-                relationship += "S";
-            } else {
-                relationship += "P";
-            }
-            pqlTokenScanner.next();
-        } else if (pqlTokenScanner.peek(Token::Tag::Underscore)) {
-            arg1 = std::make_unique<Wildcard>();
+    pqlTokenScanner.match(Token::Tag::LParen);
+    if (pqlTokenScanner.isName()) {
+        std::string synonym = pqlTokenScanner.peekLexeme();
+        Synonym::DesignEntity de = SemanticValidator::getDesignEntity(synonyms, synonym);
+        arg1 = std::make_unique<Synonym>(de, synonym);
+        if (de == Synonym::DesignEntity::STMT || de == Synonym::DesignEntity::READ ||
+            de == Synonym::DesignEntity::PRINT || de == Synonym::DesignEntity::ASSIGN ||
+            de == Synonym::DesignEntity::CALL || de == Synonym::DesignEntity::WHILE ||
+            de == Synonym::DesignEntity::IF) {
             relationship += "S";
-            pqlTokenScanner.next();
-        } else if (pqlTokenScanner.peek(Token::Tag::String)) {
-            arg1 = std::make_unique<Ident>(pqlTokenScanner.peekLexeme());
+        } else {
             relationship += "P";
-            pqlTokenScanner.next();
-        } else if (pqlTokenScanner.peek(Token::Tag::Integer)) {
-            arg1 = std::make_unique<StatementNumber>(
-                    stoi(pqlTokenScanner.peekLexeme()));
-            relationship += "S";
-            pqlTokenScanner.next();
-        } else {}
-    } else {
-        throw SyntaxException();
-    }
+        }
+        pqlTokenScanner.next();
+    } else if (pqlTokenScanner.peek(Token::Tag::Underscore)) {
+        arg1 = std::make_unique<Wildcard>();
+        relationship += "S";
+        pqlTokenScanner.next();
+    } else if (pqlTokenScanner.peek(Token::Tag::String)) {
+        arg1 = std::make_unique<Ident>(pqlTokenScanner.peekLexeme());
+        relationship += "P";
+        pqlTokenScanner.next();
+    } else if (pqlTokenScanner.peek(Token::Tag::Integer)) {
+        arg1 = std::make_unique<StatementNumber>(
+                stoi(pqlTokenScanner.peekLexeme()));
+        relationship += "S";
+        pqlTokenScanner.next();
+    } else {}
 
-    pqlTokenScanner.matchAndValidate(Token::Tag::Comma);
+    pqlTokenScanner.match(Token::Tag::Comma);
     arg2 = parseEntRef();
-    pqlTokenScanner.matchAndValidate(Token::Tag::RParen);
+    pqlTokenScanner.match(Token::Tag::RParen);
 
     return std::move(createClause(std::move(arg1), std::move(arg2), relationship));
 }
@@ -103,13 +96,13 @@ std::unique_ptr<Clause> SuchThatClauseParser::parseStmtStmt(std::string& relatio
     std::unique_ptr<PQLToken> arg1;
     std::unique_ptr<PQLToken> arg2;
 
-    pqlTokenScanner.matchAndValidate(Token::Tag::LParen);
+    pqlTokenScanner.match(Token::Tag::LParen);
     arg1 = parseStmtRef();
 
-    pqlTokenScanner.matchAndValidate(Token::Tag::Comma);
+    pqlTokenScanner.match(Token::Tag::Comma);
     arg2 = parseStmtRef();
 
-    pqlTokenScanner.matchAndValidate(Token::Tag::RParen);
+    pqlTokenScanner.match(Token::Tag::RParen);
     return std::move(createClause(std::move(arg1), std::move(arg2), relationship));
 }
 
@@ -117,20 +110,17 @@ std::unique_ptr<Clause> SuchThatClauseParser::parseEntEnt(std::string& relations
     std::unique_ptr<PQLToken> arg1;
     std::unique_ptr<PQLToken> arg2;
 
-    pqlTokenScanner.matchAndValidate(Token::Tag::LParen);
+    pqlTokenScanner.match(Token::Tag::LParen);
     arg1 = parseEntRef();
 
-    pqlTokenScanner.matchAndValidate(Token::Tag::Comma);
+    pqlTokenScanner.match(Token::Tag::Comma);
     arg2 = parseEntRef();
 
-    pqlTokenScanner.matchAndValidate(Token::Tag::RParen);
+    pqlTokenScanner.match(Token::Tag::RParen);
     return std::move(createClause(std::move(arg1), std::move(arg2), relationship));
 }
 
 std::unique_ptr<PQLToken> SuchThatClauseParser::parseEntRef() {
-    if (!pqlTokenScanner.peekEntRef()) {
-        throw SyntaxException();
-    }
     if (pqlTokenScanner.isName()) {
         std::string synonym = pqlTokenScanner.peekLexeme();
         Synonym::DesignEntity de = SemanticValidator::getDesignEntity(synonyms, synonym);
@@ -149,9 +139,6 @@ std::unique_ptr<PQLToken> SuchThatClauseParser::parseEntRef() {
 }
 
 std::unique_ptr<PQLToken> SuchThatClauseParser::parseStmtRef() {
-    if (!pqlTokenScanner.peekStmtRef()) {
-        throw SyntaxException();
-    }
     if (pqlTokenScanner.isName()) {
         std::string synonym = pqlTokenScanner.peekLexeme();
         Synonym::DesignEntity de = SemanticValidator::getDesignEntity(synonyms, synonym);
@@ -204,6 +191,5 @@ std::unique_ptr<Clause> SuchThatClauseParser::createClause(std::unique_ptr<PQLTo
     } else if (relationship == "CallsT") {
         std::unique_ptr<Calls> p = std::make_unique<Calls>(std::move(token1), std::move(token2), true);
         return std::move(p);
-    }
-    throw SyntaxException();
+    } else {}
 }
