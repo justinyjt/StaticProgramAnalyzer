@@ -24,9 +24,17 @@ class Graph {
 
     virtual ~Graph() = default;
 
+    Graph(Graph &&other) noexcept = default;
+
+    Graph &operator=(Graph &&other) noexcept = default;
+
+    Graph(const Graph &other) = default;
+
+    Graph &operator=(const Graph &other) = default;
+
     bool operator==(const Graph &other) const {
         return nodes == other.nodes && nodeToIndex == other.nodeToIndex &&
-               outgoingAdjList == other.outgoingAdjList && incomingAdjList == other.incomingAdjList;
+            outgoingAdjList == other.outgoingAdjList && incomingAdjList == other.incomingAdjList;
     }
 
     bool operator!=(const Graph &other) const {

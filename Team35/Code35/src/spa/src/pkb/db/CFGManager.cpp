@@ -12,7 +12,7 @@ void CFGManager::setGraphs(std::vector<CFGraph> &&cfg) {
 
 int CFGManager::getIndex(STMT_NUM num) {
     int start = 0;
-    int end = this->graphs_.size();
+    int end = this->graphs_.size() - 1;
     while (start <= end) {
         uint32_t mid = start + (end - start) / 2;
         if (this->graphs_[mid].getMaxStmtNum() >= num && this->graphs_[mid].getMinStmtNum() <= num) {

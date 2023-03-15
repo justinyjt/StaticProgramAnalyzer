@@ -14,9 +14,9 @@ class CFGraph : public Graph<CFGraphNodeData> {
 
     CFGraph &operator=(const CFGraph &graph) = delete;
 
-    CFGraph(CFGraph &&graph) = default;
+    CFGraph(CFGraph &&graph) noexcept = default;
 
-    CFGraph &operator=(CFGraph &&graph) = default;
+    CFGraph &operator=(CFGraph &&graph) noexcept = default;
 
     bool operator==(const CFGraph &graph) const;
 
