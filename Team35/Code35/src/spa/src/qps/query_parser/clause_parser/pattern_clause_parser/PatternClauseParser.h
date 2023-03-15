@@ -25,8 +25,6 @@ class PatternClauseParser {
     std::unique_ptr<Clause> parseIf(std::string patternSynonym);
     std::unique_ptr<PQLToken> parseEntRef();
     std::unique_ptr<PQLToken> parseExpressionSpec();
-    std::unique_ptr<Clause> createClause(std::unique_ptr<PQLToken> token1, std::unique_ptr<PQLToken> token2,
-                                            const std::string& patternStr);
     Synonym::DesignEntity parsePatternSynonym();
  private:
     PQLTokenScanner& pqlTokenScanner;

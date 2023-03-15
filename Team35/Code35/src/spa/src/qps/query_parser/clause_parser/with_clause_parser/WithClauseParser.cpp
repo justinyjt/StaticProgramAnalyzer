@@ -7,6 +7,8 @@
 #include "qps/query_exceptions/SemanticException.h"
 #include "qps/clause/TwoArgClause/WithEntClause.h"
 #include "qps/clause/TwoArgClause/WithNumClause.h"
+#include "qps/clause/TwoArgClause/TwoArgClauseFactory.h"
+#include "qps/query_parser/helper.h"
 
 WithClauseParser::WithClauseParser(PQLTokenScanner& pqlTokenScanner,
                                            std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
@@ -35,7 +37,20 @@ std::unique_ptr<Clause> WithClauseParser::parseWith() {
     pqlTokenScanner.match(Token::Tag::Equal);
 
     arg2 = parseRef();
-    return std::move(createClause(std::move(arg1), std::move(arg2)));
+
+    if (entArgCount == 1 && numArgCount == 1) {
+        throw SemanticException();
+    } else if (entArgCount == 2) {
+        entArgCount = 0;
+        numArgCount = 0;
+        // create WithEnt
+        return std::move(TwoArgClauseFactory::createClause(std::move(arg1), std::move(arg2), WITHENT_KEYWORD));
+    } else if (numArgCount == 2) {
+        entArgCount = 0;
+        numArgCount = 0;
+        // create WithNum
+        return std::move(TwoArgClauseFactory::createClause(std::move(arg1), std::move(arg2), WITHNUM_KEYWORD));
+    } else {}
 }
 
 std::unique_ptr<PQLToken> WithClauseParser::parseRef() {
@@ -63,7 +78,7 @@ std::unique_ptr<PQLToken> WithClauseParser::parseRef() {
 
         // parse attrName
         std::string attrName = pqlTokenScanner.peekLexeme();
-        if (attrName == "procName") {
+        if (attrName == PROCNAME_KEYWORD) {
             if (de == Synonym::DesignEntity::PROCEDURE || de == Synonym::DesignEntity::CALL) {
                 entArgCount++;
                 pqlTokenScanner.next();
@@ -71,7 +86,7 @@ std::unique_ptr<PQLToken> WithClauseParser::parseRef() {
                 return std::move(s);
             }
             throw SemanticException();
-        } else if (attrName == "varName") {
+        } else if (attrName == VARNAME_KEYWORD) {
             if (de == Synonym::DesignEntity::VARIABLE || de == Synonym::DesignEntity::READ || de == Synonym::DesignEntity::PRINT) {
                 entArgCount++;
                 pqlTokenScanner.next();
@@ -79,7 +94,7 @@ std::unique_ptr<PQLToken> WithClauseParser::parseRef() {
                 return std::move(s);
             }
             throw SemanticException();
-        } else if (attrName == "value") {
+        } else if (attrName == VALUE_KEYWORD) {
             if (de == Synonym::DesignEntity::CONSTANT) {
                 numArgCount++;
                 pqlTokenScanner.next();
@@ -87,7 +102,7 @@ std::unique_ptr<PQLToken> WithClauseParser::parseRef() {
                 return std::move(s);
             }
             throw SemanticException();
-        } else if (attrName == "stmt") {
+        } else if (attrName == STMT_KEYWORD) {
             pqlTokenScanner.next();
             if (de == Synonym::DesignEntity::STMT || de == Synonym::DesignEntity::READ ||
                 de == Synonym::DesignEntity::PRINT || de == Synonym::DesignEntity::CALL ||
@@ -101,23 +116,4 @@ std::unique_ptr<PQLToken> WithClauseParser::parseRef() {
             throw SemanticException();
         } else {}
     }
-}
-
-std::unique_ptr<Clause> WithClauseParser::createClause(std::unique_ptr<PQLToken> token1,
-                                                           std::unique_ptr<PQLToken> token2) {
-    if (entArgCount == 1 && numArgCount == 1) {
-        throw SemanticException();
-    } else if (entArgCount == 2) {
-        entArgCount = 0;
-        numArgCount = 0;
-        // create WithEnt
-        std::unique_ptr<WithEntClause> w = std::make_unique<WithEntClause>(std::move(token1), std::move(token2));
-        return std::move(w);
-    } else if (numArgCount == 2) {
-        entArgCount = 0;
-        numArgCount = 0;
-        // create WithNum
-        std::unique_ptr<WithNumClause> w = std::make_unique<WithNumClause>(std::move(token1), std::move(token2));
-        return std::move(w);
-    } else {}
 }

@@ -17,7 +17,6 @@ public:
     std::vector<std::unique_ptr<Clause>> parse();
     std::unique_ptr<Clause> parseWith();
     std::unique_ptr<PQLToken> parseRef();
-    std::unique_ptr<Clause> createClause(std::unique_ptr<PQLToken> token1, std::unique_ptr<PQLToken> token2);
 private:
     PQLTokenScanner &pqlTokenScanner;
     std::unordered_map<std::string, Synonym::DesignEntity>& synonyms;

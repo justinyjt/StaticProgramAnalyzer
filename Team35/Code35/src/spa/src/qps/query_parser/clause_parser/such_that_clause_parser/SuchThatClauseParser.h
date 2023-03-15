@@ -21,8 +21,6 @@ class SuchThatClauseParser {
     std::unique_ptr<Clause> parseEntEnt(std::string& relationship);
     std::unique_ptr<PQLToken> parseEntRef();
     std::unique_ptr<PQLToken> parseStmtRef();
-    std::unique_ptr<Clause> createClause(std::unique_ptr<PQLToken> token1, std::unique_ptr<PQLToken> token2,
-                         const std::string& relationship);
  private:
     PQLTokenScanner &pqlTokenScanner;
     std::unordered_map<std::string, Synonym::DesignEntity>& synonyms;

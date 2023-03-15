@@ -8,8 +8,8 @@
 #include "qps/query_exceptions/SemanticException.h"
 #include "commons/token_scanner/TokenScanner.h"
 #include "qps/query_parser/SemanticValidator.h"
-#include "qps/clause/one_arg_clause/WhilePattern.h"
-#include "qps/clause/one_arg_clause/IfPattern.h"
+#include "qps/clause/TwoArgClause/TwoArgClauseFactory.h"
+#include "qps/clause/one_arg_clause/OneArgClauseFactory.h"
 
 PatternClauseParser::PatternClauseParser(PQLTokenScanner& pqlTokenScanner,
                                          std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
@@ -79,8 +79,7 @@ std::unique_ptr<Clause> PatternClauseParser::parseAssign(std::string patternSyno
     std::unique_ptr<PQLToken> arg2 = parseExpressionSpec();
     pqlTokenScanner.match(Token::Tag::RParen);
 
-    std::unique_ptr<Clause> clause = createClause(std::move(arg1), std::move(arg2), patternSynonym);
-    return std::move(clause);
+    return std::move(TwoArgClauseFactory::createAssignPatternClause(std::move(arg1), std::move(arg2), patternSynonym));
 }
 
 std::unique_ptr<Clause> PatternClauseParser::parseWhile(std::string patternSynonym) {
@@ -94,8 +93,7 @@ std::unique_ptr<Clause> PatternClauseParser::parseWhile(std::string patternSynon
     pqlTokenScanner.match(Token::Tag::Underscore);
     pqlTokenScanner.match(Token::Tag::RParen);
 
-    std::unique_ptr<Clause> w = std::make_unique<WhilePattern>(std::move(arg1), patternSynonym);
-    return std::move(w);
+    return std::move(OneArgClauseFactory::createWhilePatternClause(std::move(arg1), patternSynonym));
 }
 
 std::unique_ptr<Clause> PatternClauseParser::parseIf(std::string patternSynonym) {
@@ -111,8 +109,7 @@ std::unique_ptr<Clause> PatternClauseParser::parseIf(std::string patternSynonym)
     pqlTokenScanner.match(Token::Tag::Underscore);
     pqlTokenScanner.match(Token::Tag::RParen);
 
-    std::unique_ptr<Clause> i = std::make_unique<IfPattern>(std::move(arg1), patternSynonym);
-    return std::move(i);
+    return std::move(OneArgClauseFactory::createIfPatternClause(std::move(arg1), patternSynonym));
 }
 
 std::unique_ptr<PQLToken> PatternClauseParser::parseEntRef() {
@@ -151,15 +148,6 @@ std::unique_ptr<PQLToken> PatternClauseParser::parseExpressionSpec() {
         pqlTokenScanner.match(Token::Tag::Underscore);
         return std::move(e);
     } else {}
-}
-
-std::unique_ptr<Clause> PatternClauseParser::createClause(std::unique_ptr<PQLToken> token1,
-                                                          std::unique_ptr<PQLToken> token2,
-                                                          const std::string& patternStr) {
-    // entRef - variable synonyms, _ , string
-    // _ , exact match, partial match
-    std::unique_ptr<Clause> a = std::make_unique<AssignPattern>(std::move(token1), std::move(token2), patternStr);
-    return std::move(a);
 }
 
 Synonym::DesignEntity PatternClauseParser::parsePatternSynonym() {

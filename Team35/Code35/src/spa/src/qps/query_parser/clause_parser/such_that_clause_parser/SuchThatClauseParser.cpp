@@ -4,10 +4,10 @@
 #include "qps/pql/StatementNumber.h"
 #include "qps/pql/Wildcard.h"
 #include "qps/clause/TwoArgClause/StmtEntClause.h"
-#include "qps/clause/TwoArgClause/StmtStmtClause.h"
 #include "qps/pql/Ident.h"
 #include "qps/query_parser/SemanticValidator.h"
-#include "qps/clause/TwoArgClause/EntEntClause.h"
+#include "qps/clause/TwoArgClause/TwoArgClauseFactory.h"
+#include "qps/query_parser/helper.h"
 
 SuchThatClauseParser::SuchThatClauseParser(PQLTokenScanner& pqlTokenScanner,
                                            std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
@@ -38,7 +38,7 @@ std::unique_ptr<Clause> SuchThatClauseParser::parseRelationship() {
         relationship += pqlTokenScanner.peekLexeme();
         pqlTokenScanner.next();
         if (pqlTokenScanner.peek(Token::Tag::Star)) {
-            relationship += "T";
+            relationship += pqlTokenScanner.peekLexeme();
             pqlTokenScanner.next();
         }
         return std::move(parseStmtStmt(relationship));
@@ -46,7 +46,7 @@ std::unique_ptr<Clause> SuchThatClauseParser::parseRelationship() {
         relationship += pqlTokenScanner.peekLexeme();
         pqlTokenScanner.next();
         if (pqlTokenScanner.peek(Token::Tag::Star)) {
-            relationship += "T";
+            relationship += pqlTokenScanner.peekLexeme();
             pqlTokenScanner.next();
         }
         return std::move(parseEntEnt(relationship));
@@ -65,23 +65,23 @@ std::unique_ptr<Clause> SuchThatClauseParser::parseUsesModifies(std::string& rel
             de == Synonym::DesignEntity::PRINT || de == Synonym::DesignEntity::ASSIGN ||
             de == Synonym::DesignEntity::CALL || de == Synonym::DesignEntity::WHILE ||
             de == Synonym::DesignEntity::IF) {
-            relationship += "S";
+            relationship += USES_MODIFIES_S_APPEND;
         } else {
-            relationship += "P";
+            relationship += USES_MODIFIES_P_APPEND;
         }
         pqlTokenScanner.next();
     } else if (pqlTokenScanner.peek(Token::Tag::Underscore)) {
         arg1 = std::make_unique<Wildcard>();
-        relationship += "S";
+        relationship += USES_MODIFIES_S_APPEND;
         pqlTokenScanner.next();
     } else if (pqlTokenScanner.peek(Token::Tag::String)) {
         arg1 = std::make_unique<Ident>(pqlTokenScanner.peekLexeme());
-        relationship += "P";
+        relationship += USES_MODIFIES_P_APPEND;
         pqlTokenScanner.next();
     } else if (pqlTokenScanner.peek(Token::Tag::Integer)) {
         arg1 = std::make_unique<StatementNumber>(
                 stoi(pqlTokenScanner.peekLexeme()));
-        relationship += "S";
+        relationship += USES_MODIFIES_S_APPEND;
         pqlTokenScanner.next();
     } else {}
 
@@ -89,7 +89,7 @@ std::unique_ptr<Clause> SuchThatClauseParser::parseUsesModifies(std::string& rel
     arg2 = parseEntRef();
     pqlTokenScanner.match(Token::Tag::RParen);
 
-    return std::move(createClause(std::move(arg1), std::move(arg2), relationship));
+    return std::move(TwoArgClauseFactory::createClause(std::move(arg1), std::move(arg2), relationship));
 }
 
 std::unique_ptr<Clause> SuchThatClauseParser::parseStmtStmt(std::string& relationship) {
@@ -103,7 +103,7 @@ std::unique_ptr<Clause> SuchThatClauseParser::parseStmtStmt(std::string& relatio
     arg2 = parseStmtRef();
 
     pqlTokenScanner.match(Token::Tag::RParen);
-    return std::move(createClause(std::move(arg1), std::move(arg2), relationship));
+    return std::move(TwoArgClauseFactory::createClause(std::move(arg1), std::move(arg2), relationship));
 }
 
 std::unique_ptr<Clause> SuchThatClauseParser::parseEntEnt(std::string& relationship) {
@@ -117,7 +117,7 @@ std::unique_ptr<Clause> SuchThatClauseParser::parseEntEnt(std::string& relations
     arg2 = parseEntRef();
 
     pqlTokenScanner.match(Token::Tag::RParen);
-    return std::move(createClause(std::move(arg1), std::move(arg2), relationship));
+    return std::move(TwoArgClauseFactory::createClause(std::move(arg1), std::move(arg2), relationship));
 }
 
 std::unique_ptr<PQLToken> SuchThatClauseParser::parseEntRef() {
@@ -153,43 +153,5 @@ std::unique_ptr<PQLToken> SuchThatClauseParser::parseStmtRef() {
         std::unique_ptr<StatementNumber> s = std::make_unique<StatementNumber>(stoi(pqlTokenScanner.peekLexeme()));
         pqlTokenScanner.next();
         return s;
-    } else {}
-}
-
-std::unique_ptr<Clause> SuchThatClauseParser::createClause(std::unique_ptr<PQLToken> token1,
-                                                           std::unique_ptr<PQLToken> token2,
-                                                           const std::string& relationship) {
-    // semantic checking
-    // and create
-    if (relationship == "ModifiesS") {
-        std::unique_ptr<ModifiesS> m = std::make_unique<ModifiesS>(std::move(token1), std::move(token2));
-        return std::move(m);
-    } else if (relationship == "ModifiesP") {
-        std::unique_ptr<ModifiesP> m = std::make_unique<ModifiesP>(std::move(token1), std::move(token2));
-        return std::move(m);
-    } else if (relationship == "UsesS") {
-        std::unique_ptr<UsesS> u = std::make_unique<UsesS>(std::move(token1), std::move(token2));
-        return std::move(u);
-    } else if (relationship == "UsesP") {
-        std::unique_ptr<UsesP> u = std::make_unique<UsesP>(std::move(token1), std::move(token2));
-        return std::move(u);
-    } else if (relationship == "Follows") {
-        std::unique_ptr<Follows> f = std::make_unique<Follows>(std::move(token1), std::move(token2), false);
-        return std::move(f);
-    } else if (relationship == "FollowsT") {
-        std::unique_ptr<Follows> f = std::make_unique<Follows>(std::move(token1), std::move(token2), true);
-        return std::move(f);
-    } else if (relationship == "Parent") {
-        std::unique_ptr<Parent> p = std::make_unique<Parent>(std::move(token1), std::move(token2), false);
-        return std::move(p);
-    } else if (relationship == "ParentT") {
-        std::unique_ptr<Parent> p = std::make_unique<Parent>(std::move(token1), std::move(token2), true);
-        return std::move(p);
-    } else if (relationship == "Calls") {
-        std::unique_ptr<Calls> p = std::make_unique<Calls>(std::move(token1), std::move(token2), false);
-        return std::move(p);
-    } else if (relationship == "CallsT") {
-        std::unique_ptr<Calls> p = std::make_unique<Calls>(std::move(token1), std::move(token2), true);
-        return std::move(p);
     } else {}
 }
