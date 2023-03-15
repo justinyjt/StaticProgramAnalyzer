@@ -1,6 +1,7 @@
 #include "PKB.h"
 
 #include <cassert>
+#include <utility>
 
 const EntityTable<ENT_NAME> &PKB::getEntityTable(Entity entityType) const {
     switch (entityType) {
@@ -50,6 +51,10 @@ const RelationshipTable<STMT_NUM, ENT_NAME> &PKB::getStmtNameRelationshipTable(S
             return modifiesStmtNameTable;
         case StmtNameRelationship::Uses:
             return usesStmtNameTable;
+        case StmtNameRelationship::IfCondVarUses:
+            return ifCondUsesVarTable;
+        case StmtNameRelationship::WhileCondVarUses:
+            return whileCondUsesVarTable;
         default:
             assert(false);
     }
@@ -138,6 +143,10 @@ void PKB::addPattern(STMT_NUM stmtNum, ASSIGN_PAT pattern) {
     patternTable.addPattern(stmtNum, pattern);
 }
 
+void PKB::addCallGraph(CallGraph &&callGraph) {
+    this->callGraph = std::move(callGraph);
+}
+
 ENT_SET PKB::getEntByStmtKey(StmtNameRelationship tableType, STMT_NUM stmt) const {
     return getStmtNameRelationshipTable(tableType).getValuesByKey(stmt);
 }
@@ -170,6 +179,14 @@ ENT_ENT_SET PKB::getEntEntSet(NameNameRelationship tableType) const {
     return getNameNameRelationshipTable(tableType).getKeyValuePairs();
 }
 
+ENT_SET PKB::getKeyNameByRs(NameNameRelationship tableType) const {
+    return getNameNameRelationshipTable(tableType).getKeys();
+}
+
+ENT_SET PKB::getValNameByRs(NameNameRelationship tableType) const {
+    return getNameNameRelationshipTable(tableType).getValues();
+}
+
 bool PKB::isEntEntPairExists(NameNameRelationship tableType, ENT_NAME key, ENT_NAME val) const {
     return getNameNameRelationshipTable(tableType).containsPair(key, val);
 }
@@ -180,6 +197,10 @@ STMT_SET PKB::getStmtByStmtKey(StmtStmtRelationship tableType, STMT_NUM stmt) co
 
 STMT_SET PKB::getStmtByStmtVal(StmtStmtRelationship tableType, STMT_NUM stmt) const {
     return getStmtStmtRelationshipTable(tableType).getKeysByValue(stmt);
+}
+
+STMT_SET PKB::getStmtByProc(const ENT_NAME &procName) const {
+    return this->callGraph.getStmts(procName);
 }
 
 STMT_STMT_SET PKB::getStmtStmtSet(StmtStmtRelationship tableType) const {

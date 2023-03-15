@@ -12,10 +12,10 @@ class LexerFactory {
         Pql,
         Expression,
     };
-    static std::unique_ptr<ILexer> createLexer(Source source, LexerType lexer_type);
+    static std::unique_ptr<ILexer> createLexer(const Source &source, LexerType lexer_type);
 
  private:
-    static std::unique_ptr<ILexer> createSimpleLexer(Source source);
-    static std::unique_ptr<ILexer> createPqlLexer(Source source);
-    static std::unique_ptr<ILexer> createExpressionLexer(Source source);
+    static std::unique_ptr<ILexer> createSimpleLexer(const Source &source);
+    static std::unique_ptr<ILexer> createPqlLexer(const Source &source);
+    static std::unique_ptr<ILexer> createExpressionLexer(const Source &source);
 };

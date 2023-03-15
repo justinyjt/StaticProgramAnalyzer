@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "commons/ASTNode.h"
-#include "CallGraph.h"
+#include "commons/graph/CallGraph.h"
 #include "pkb/PKBWriter.h"
 
 class DesignExtractor {

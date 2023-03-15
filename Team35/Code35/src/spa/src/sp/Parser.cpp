@@ -23,10 +23,9 @@ shared_ptr<ASTNode> Parser::Parse() {
 }
 
 shared_ptr<ASTNode> Parser::parseProc() {
-    assert(scanner_.peek(Token::Tag::Name));
+    assert(scanner_.isName());
     shared_ptr<ASTNode> cur = std::make_shared<ASTNode>(ASTNode::SyntaxType::Procedure, scanner_.peekLexeme());
-
-    scanner_.match(Token::Tag::Name);
+    scanner_.next();
     cur->addChild(parseStmtLst());
     return std::move(cur);
 }
@@ -248,8 +247,8 @@ shared_ptr<ASTNode> Parser::parseExpr() {
 }
 
 shared_ptr<ASTNode> Parser::parseName() {
-    assert(scanner_.peek(Token::Tag::Name));
+    assert(scanner_.isName());
     shared_ptr<ASTNode> cur = std::make_shared<ASTNode>(ASTNode::SyntaxType::Variable, scanner_.peekLexeme());
-    scanner_.match(Token::Tag::Name);
+    scanner_.next();
     return std::move(cur);
 }

@@ -20,11 +20,6 @@ inline void requireThrow(const std::function<void()> &f) {
     REQUIRE_THROWS(f());
 }
 
-template<typename E>
-void requireThrowAs(const std::function<void()> &f) {
-    REQUIRE_THROWS_AS(f(), E);
-}
-
 template<typename T>
 inline void requireEqual(T a, T b) {
     REQUIRE(a == b);
@@ -37,10 +32,5 @@ inline void requireEqualRef(const T &a, const T &b) {
 
 template<typename T>
 inline void requireNotEqual(T a, T b) {
-    REQUIRE(a != b);
-}
-
-template<typename T>
-inline void requireNotEqualRef(const T &a, const T &b) {
     REQUIRE(a != b);
 }
