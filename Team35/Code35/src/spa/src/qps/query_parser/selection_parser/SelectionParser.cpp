@@ -23,7 +23,7 @@ std::unique_ptr<SelectClause> SelectionParser::parse() {
         }
     } else if (pqlTokenScanner.isName()) {  // single synonym
         return std::move(parseSelect());
-    } else {}
+    }
 }
 
 std::unique_ptr<SelectClause> SelectionParser::parseSelect() {

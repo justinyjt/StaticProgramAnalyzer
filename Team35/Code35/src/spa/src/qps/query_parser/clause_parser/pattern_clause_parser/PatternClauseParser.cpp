@@ -65,7 +65,7 @@ std::unique_ptr<Clause> PatternClauseParser::parsePattern() {
         pqlTokenScanner.match(Token::Tag::String);
         pqlTokenScanner.restoreState();
         return parseAssign(pattern);
-    } else {}
+    }
 }
 
 std::unique_ptr<Clause> PatternClauseParser::parseAssign(std::string patternSynonym) {
@@ -127,7 +127,7 @@ std::unique_ptr<PQLToken> PatternClauseParser::parseEntRef() {
         std::unique_ptr<Ident> i = std::make_unique<Ident>(pqlTokenScanner.peekLexeme());
         pqlTokenScanner.next();
         return i;
-    } else {}
+    }
 }
 
 std::unique_ptr<PQLToken> PatternClauseParser::parseExpressionSpec() {
@@ -147,7 +147,7 @@ std::unique_ptr<PQLToken> PatternClauseParser::parseExpressionSpec() {
         pqlTokenScanner.next();
         pqlTokenScanner.match(Token::Tag::Underscore);
         return std::move(e);
-    } else {}
+    }
 }
 
 Synonym::DesignEntity PatternClauseParser::parsePatternSynonym() {

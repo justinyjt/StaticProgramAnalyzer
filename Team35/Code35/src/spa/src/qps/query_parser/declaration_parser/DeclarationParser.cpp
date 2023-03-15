@@ -31,7 +31,7 @@ std::unordered_map<std::string, Synonym::DesignEntity> DeclarationParser::parse(
                 break;
             } else if (pqlTokenScanner.match(Token::Tag::Comma)) {
                 continue;
-            } else {}
+            }
         }
     }
     return synonyms;
@@ -77,7 +77,7 @@ Synonym::DesignEntity DeclarationParser::parseDesignEntity() {
         }
         pqlTokenScanner.next();
         return de;
-    } else {}
+    }
 }
 
 std::string DeclarationParser::parseSynonym(Synonym::DesignEntity de) {

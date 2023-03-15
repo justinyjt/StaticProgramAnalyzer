@@ -53,5 +53,5 @@ std::unique_ptr<TwoArgClause> TwoArgClauseFactory::createClause(std::unique_ptr<
     } else if (relationship == CALLSSTAR_KEYWORD) {
         std::unique_ptr<Calls> p = std::make_unique<Calls>(std::move(token1), std::move(token2), true);
         return std::move(p);
-    } else {}
+    }
 }

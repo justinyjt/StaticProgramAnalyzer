@@ -50,7 +50,7 @@ std::unique_ptr<Clause> WithClauseParser::parseWith() {
         numArgCount = 0;
         // create WithNum
         return std::move(TwoArgClauseFactory::createClause(std::move(arg1), std::move(arg2), WITHNUM_KEYWORD));
-    } else {}
+    }
 }
 
 std::unique_ptr<PQLToken> WithClauseParser::parseRef() {
@@ -115,6 +115,6 @@ std::unique_ptr<PQLToken> WithClauseParser::parseRef() {
                 return std::move(s);
             }
             throw SemanticException();
-        } else {}
+        }
     }
 }
