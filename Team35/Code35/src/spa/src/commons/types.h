@@ -35,15 +35,15 @@ enum class EntType {
 };
 
 enum class StmtNameRelationship {
-    Modifies, Uses, Calls, IfCondVarUses, WhileCondVarUses, None
+    Modifies, Uses, Calls, IfCondVarUses, WhileCondVarUses
 };
 
 enum class NameNameRelationship {
-    Uses, Modifies, Calls, CallsStar, None
+    Uses, Modifies, Calls, CallsStar
 };
 
 enum class StmtStmtRelationship {
-    Parent, ParentStar, Follows, FollowsStar, None
+    Parent, ParentStar, Follows, FollowsStar
 };
 
 enum class Entity {
