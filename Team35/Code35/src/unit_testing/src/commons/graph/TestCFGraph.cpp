@@ -151,6 +151,44 @@ TEST_CASE("1. test CFGraph isReachable() method") {
             }
         }
     }
+
+    SECTION("1.13. check neighbor only") {
+        CFG::CFGraph graph;
+        graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        graph.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(3));
+        graph.addEdge(CFG::makeNodeData(3), CFG::makeNodeData(4));
+        requireTrue(graph.isReachable(1, 2, false));
+        requireTrue(graph.isReachable(1, 2, true));
+        requireTrue(graph.isReachable(1, 3, false));
+        requireFalse(graph.isReachable(1, 3, true));
+        requireTrue(graph.isReachable(1, 4, false));
+        requireFalse(graph.isReachable(1, 4, true));
+        requireTrue(graph.isReachable(2, 3, false));
+        requireTrue(graph.isReachable(2, 3, true));
+        requireTrue(graph.isReachable(2, 4, false));
+        requireFalse(graph.isReachable(2, 4, true));
+        requireTrue(graph.isReachable(3, 4, false));
+        requireTrue(graph.isReachable(3, 4, true));
+    }
+
+    SECTION("1.13. check neighbor only with dummy node") {
+        CFG::CFGraph graph;
+        graph.addEdge(CFG::makeNodeData(1), CFG::makeDummyNodeData(2));
+        graph.addEdge(CFG::makeDummyNodeData(2), CFG::makeNodeData(3));
+        graph.addEdge(CFG::makeNodeData(3), CFG::makeNodeData(4));
+        requireFalse(graph.isReachable(1, 2, false));
+        requireFalse(graph.isReachable(1, 2, true));
+        requireTrue(graph.isReachable(1, 3, false));
+        requireTrue(graph.isReachable(1, 3, true));
+        requireTrue(graph.isReachable(1, 4, false));
+        requireFalse(graph.isReachable(1, 4, true));
+        requireFalse(graph.isReachable(2, 3, false));
+        requireFalse(graph.isReachable(2, 3, true));
+        requireFalse(graph.isReachable(2, 4, false));
+        requireFalse(graph.isReachable(2, 4, true));
+        requireTrue(graph.isReachable(3, 4, false));
+        requireTrue(graph.isReachable(3, 4, true));
+    }
 }
 
 TEST_CASE("2. test CFGraph getPredecessors() method, transitive closure") {
