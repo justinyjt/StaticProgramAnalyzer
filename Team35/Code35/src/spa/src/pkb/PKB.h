@@ -104,6 +104,9 @@ class PKB {
     // Relationship related tables
     RelationshipTable<STMT_NUM, ENT_NAME> modifiesStmtNameTable;
     RelationshipTable<STMT_NUM, ENT_NAME> usesStmtNameTable;
+    RelationshipTable<STMT_NUM, ENT_NAME> ifCondUsesVarTable;
+    RelationshipTable<STMT_NUM, ENT_NAME> whileCondUsesVarTable;
+
     RelationshipTable<ENT_NAME, ENT_NAME> modifiesNameNameTable;
     RelationshipTable<ENT_NAME, ENT_NAME> usesNameNameTable;
     RelationshipTable<ENT_NAME, ENT_NAME> callsNameNameTable;
