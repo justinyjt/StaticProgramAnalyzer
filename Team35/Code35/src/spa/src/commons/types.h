@@ -35,7 +35,7 @@ enum class EntType {
 };
 
 enum class StmtNameRelationship {
-    Modifies, Uses, Calls, IfCondVarUses, WhileCondVarUses, ContainerCalls
+    Modifies, Uses, Calls, IfCondVarUses, WhileCondVarUses, ContainerProcedure
 };
 
 enum class NameNameRelationship {

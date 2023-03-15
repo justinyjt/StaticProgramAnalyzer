@@ -55,8 +55,8 @@ const RelationshipTable<STMT_NUM, ENT_NAME> &PKB::getStmtNameRelationshipTable(S
             return ifCondUsesVarTable;
         case StmtNameRelationship::WhileCondVarUses:
             return whileCondUsesVarTable;
-        case StmtNameRelationship::ContainerCalls:
-            return containerCallsTable;
+        case StmtNameRelationship::ContainerProcedure:
+            return containerProcedureTable;
         default:
             assert(false);
     }
