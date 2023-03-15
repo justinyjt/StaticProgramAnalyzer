@@ -974,3 +974,174 @@ TEST_CASE("7. test == / != operator") {
         requireFalse(graph1 == graph2);
     }
 }
+
+TEST_CASE("8. test getAllPredecessors() method") {
+    SECTION("8.1. empty graph") {
+        CFG::CFGraph graph;
+        graph.addEdge(CFG::CFGraph::start_node_data, CFG::CFGraph::end_node_data);
+        STMT_SET result = graph.getAllPredecessors();
+        requireEqual(static_cast<int>(result.size()), 0);
+    }
+
+    SECTION("8.2. graph with one node") {
+        CFG::CFGraph graph;
+        graph.addEdge(CFG::CFGraph::start_node_data, CFG::makeNodeData(1));
+        graph.addEdge(CFG::makeNodeData(1), CFG::CFGraph::end_node_data);
+        STMT_SET result = graph.getAllPredecessors();
+        requireEqual(static_cast<int>(result.size()), 0);
+    }
+
+    SECTION("8.3. graph with two nodes") {
+        CFG::CFGraph graph;
+        graph.addEdge(CFG::CFGraph::start_node_data, CFG::makeNodeData(1));
+        graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        graph.addEdge(CFG::makeNodeData(2), CFG::CFGraph::end_node_data);
+        STMT_SET result = graph.getAllPredecessors();
+        requireEqual(static_cast<int>(result.size()), 1);
+        requireEqual(static_cast<int>(result.count(1)), 1);
+    }
+
+    SECTION("8.4. graph with two nodes and a loop") {
+        CFG::CFGraph graph;
+        graph.addEdge(CFG::CFGraph::start_node_data, CFG::makeNodeData(1));
+        graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        graph.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(1));
+        graph.addEdge(CFG::makeNodeData(1), CFG::CFGraph::end_node_data);
+        STMT_SET result = graph.getAllPredecessors();
+        requireEqual(static_cast<int>(result.size()), 2);
+        requireEqual(static_cast<int>(result.count(1)), 1);
+        requireEqual(static_cast<int>(result.count(2)), 1);
+    }
+
+    SECTION("8.5. cycle graph") {
+        CFG::CFGraph graph;
+        graph.addEdge(CFG::CFGraph::start_node_data, CFG::makeNodeData(1));
+        graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        graph.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(3));
+        graph.addEdge(CFG::makeNodeData(3), CFG::makeNodeData(1));
+        graph.addEdge(CFG::makeNodeData(1), CFG::CFGraph::end_node_data);
+        STMT_SET result = graph.getAllPredecessors();
+        requireEqual(static_cast<int>(result.size()), 3);
+        requireEqual(static_cast<int>(result.count(1)), 1);
+        requireEqual(static_cast<int>(result.count(2)), 1);
+        requireEqual(static_cast<int>(result.count(3)), 1);
+    }
+
+    SECTION("8.6. fan-in fan-out graph") {
+        CFG::CFGraph graph;
+        graph.addEdge(CFG::CFGraph::start_node_data, CFG::makeNodeData(1));
+        graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(3));
+        graph.addEdge(CFG::makeNodeData(2), CFG::makeDummyNodeData(4));
+        graph.addEdge(CFG::makeNodeData(3), CFG::makeDummyNodeData(4));
+        graph.addEdge(CFG::makeDummyNodeData(4), CFG::CFGraph::end_node_data);
+        STMT_SET result = graph.getAllPredecessors();
+        requireEqual(static_cast<int>(result.size()), 1);
+        requireEqual(static_cast<int>(result.count(1)), 1);
+    }
+
+    SECTION("8.7. bigger fan-in fan-out graph") {
+        CFG::CFGraph graph;
+        graph.addEdge(CFG::CFGraph::start_node_data, CFG::makeNodeData(1));
+        graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(4));
+        graph.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(3));
+        graph.addEdge(CFG::makeNodeData(4), CFG::makeNodeData(5));
+        graph.addEdge(CFG::makeNodeData(3), CFG::makeDummyNodeData(1));
+        graph.addEdge(CFG::makeNodeData(5), CFG::makeDummyNodeData(1));
+        graph.addEdge(CFG::makeDummyNodeData(1), CFG::CFGraph::end_node_data);
+        STMT_SET result = graph.getAllPredecessors();
+        requireEqual(static_cast<int>(result.size()), 3);
+        requireEqual(static_cast<int>(result.count(1)), 1);
+        requireEqual(static_cast<int>(result.count(2)), 1);
+        requireEqual(static_cast<int>(result.count(3)), 0);
+        requireEqual(static_cast<int>(result.count(4)), 1);
+        requireEqual(static_cast<int>(result.count(5)), 0);
+    }
+}
+
+TEST_CASE("9. test getAllSuccessors() method") {
+    SECTION("9.1. empty graph") {
+        CFG::CFGraph graph;
+        graph.addEdge(CFG::CFGraph::start_node_data, CFG::CFGraph::end_node_data);
+        STMT_SET result = graph.getAllSuccessors();
+        requireEqual(static_cast<int>(result.size()), 0);
+    }
+
+    SECTION("9.2. graph with one node") {
+        CFG::CFGraph graph;
+        graph.addEdge(CFG::CFGraph::start_node_data, CFG::makeNodeData(1));
+        graph.addEdge(CFG::makeNodeData(1), CFG::CFGraph::end_node_data);
+        STMT_SET result = graph.getAllSuccessors();
+        requireEqual(static_cast<int>(result.size()), 0);
+    }
+
+    SECTION("9.3. graph with two nodes") {
+        CFG::CFGraph graph;
+        graph.addEdge(CFG::CFGraph::start_node_data, CFG::makeNodeData(1));
+        graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        graph.addEdge(CFG::makeNodeData(2), CFG::CFGraph::end_node_data);
+        STMT_SET result = graph.getAllSuccessors();
+        requireEqual(static_cast<int>(result.size()), 1);
+        requireEqual(static_cast<int>(result.count(2)), 1);
+    }
+
+    SECTION("9.4. graph with two nodes and a loop") {
+        CFG::CFGraph graph;
+        graph.addEdge(CFG::CFGraph::start_node_data, CFG::makeNodeData(1));
+        graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        graph.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(1));
+        graph.addEdge(CFG::makeNodeData(1), CFG::CFGraph::end_node_data);
+        STMT_SET result = graph.getAllSuccessors();
+        requireEqual(static_cast<int>(result.size()), 2);
+        requireEqual(static_cast<int>(result.count(1)), 1);
+        requireEqual(static_cast<int>(result.count(2)), 1);
+    }
+
+    SECTION("9.5. cycle graph") {
+        CFG::CFGraph graph;
+        graph.addEdge(CFG::CFGraph::start_node_data, CFG::makeNodeData(1));
+        graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        graph.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(3));
+        graph.addEdge(CFG::makeNodeData(3), CFG::makeNodeData(1));
+        graph.addEdge(CFG::makeNodeData(1), CFG::CFGraph::end_node_data);
+        STMT_SET result = graph.getAllSuccessors();
+        requireEqual(static_cast<int>(result.size()), 3);
+        requireEqual(static_cast<int>(result.count(1)), 1);
+        requireEqual(static_cast<int>(result.count(2)), 1);
+        requireEqual(static_cast<int>(result.count(3)), 1);
+    }
+
+    SECTION("9.6. fan-in fan-out graph") {
+        CFG::CFGraph graph;
+        graph.addEdge(CFG::CFGraph::start_node_data, CFG::makeNodeData(1));
+        graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(3));
+        graph.addEdge(CFG::makeNodeData(2), CFG::makeDummyNodeData(4));
+        graph.addEdge(CFG::makeNodeData(3), CFG::makeDummyNodeData(4));
+        graph.addEdge(CFG::makeDummyNodeData(4), CFG::CFGraph::end_node_data);
+        STMT_SET result = graph.getAllSuccessors();
+        requireEqual(static_cast<int>(result.size()), 2);
+        requireEqual(static_cast<int>(result.count(2)), 1);
+        requireEqual(static_cast<int>(result.count(3)), 1);
+    }
+
+    SECTION("9.7. bigger fan-in fan-out graph") {
+        CFG::CFGraph graph;
+        graph.addEdge(CFG::CFGraph::start_node_data, CFG::makeNodeData(1));
+        graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
+        graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(4));
+        graph.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(3));
+        graph.addEdge(CFG::makeNodeData(4), CFG::makeNodeData(5));
+        graph.addEdge(CFG::makeNodeData(3), CFG::makeDummyNodeData(1));
+        graph.addEdge(CFG::makeNodeData(5), CFG::makeDummyNodeData(1));
+        graph.addEdge(CFG::makeDummyNodeData(1), CFG::CFGraph::end_node_data);
+        STMT_SET result = graph.getAllSuccessors();
+        requireEqual(static_cast<int>(result.size()), 4);
+        requireEqual(static_cast<int>(result.count(1)), 0);
+        requireEqual(static_cast<int>(result.count(2)), 1);
+        requireEqual(static_cast<int>(result.count(3)), 1);
+        requireEqual(static_cast<int>(result.count(4)), 1);
+        requireEqual(static_cast<int>(result.count(5)), 1);
+    }
+}

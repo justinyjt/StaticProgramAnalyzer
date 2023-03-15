@@ -13,15 +13,21 @@ CFGraph::CFGraph() : Graph<CFGraphNodeData>(),
                      max_stmt_num_(0),
                      proc_name_(),
                      pairwise_control_flow_transitive_(std::nullopt),
-                     pairwise_control_flow_non_transitive_(std::nullopt) {}
+                     pairwise_control_flow_non_transitive_(std::nullopt) {
+    this->addNode(CFGraph::start_node_data);
+    this->addNode(CFGraph::end_node_data);
+}
 
 CFGraph::CFGraph(const CFGraph &graph, STMT_NUM min_stmt_num, STMT_NUM max_stmt_num, ENT_NAME proc_name) :
-        Graph<CFGraphNodeData>(graph),
-        max_stmt_num_(max_stmt_num),
-        min_stmt_num_(min_stmt_num),
-        proc_name_(std::move(proc_name)),
-        pairwise_control_flow_transitive_(graph.pairwise_control_flow_transitive_),
-        pairwise_control_flow_non_transitive_(graph.pairwise_control_flow_non_transitive_) {}
+    Graph<CFGraphNodeData>(graph),
+    max_stmt_num_(max_stmt_num),
+    min_stmt_num_(min_stmt_num),
+    proc_name_(std::move(proc_name)),
+    pairwise_control_flow_transitive_(graph.pairwise_control_flow_transitive_),
+    pairwise_control_flow_non_transitive_(graph.pairwise_control_flow_non_transitive_) {
+    this->addNode(CFGraph::start_node_data);
+    this->addNode(CFGraph::end_node_data);
+}
 
 STMT_SET CFGraph::getPredecessors(STMT_NUM stmt_num, bool isTransitive) const {
     CFGraphNodeData node_data = makeNodeData(stmt_num);
@@ -46,10 +52,12 @@ STMT_SET CFGraph::getSuccessors(STMT_NUM stmt_num, bool isTransitive) const {
 }
 
 STMT_SET CFGraph::getAllSuccessors() const {
+    assert(this->hasNode(CFGraph::start_node_data));
+    assert(this->hasNode(CFGraph::end_node_data));
     STMT_SET result;
     Index node_index = this->getNodeIndex(CFGraph::start_node_data);
     IndexList successors = getDummyNodeSuccessors(node_index);
-    for (auto index : successors) {
+    for (const auto &index : successors) {
         STMT_SET current = this->getSuccessorsByIndex(index, true);
         result.insert(current.begin(), current.end());
     }
@@ -57,10 +65,12 @@ STMT_SET CFGraph::getAllSuccessors() const {
 }
 
 STMT_SET CFGraph::getAllPredecessors() const {
+    assert(this->hasNode(CFGraph::start_node_data));
+    assert(this->hasNode(CFGraph::end_node_data));
     STMT_SET result;
     Index node_index = this->getNodeIndex(CFGraph::end_node_data);
     IndexList predecessors = getDummyNodePredecessors(node_index);
-    for (auto index : predecessors) {
+    for (const auto &index : predecessors) {
         STMT_SET current = this->getPredecessorsByIndex(index, true);
         result.insert(current.begin(), current.end());
     }
@@ -150,7 +160,7 @@ const STMT_STMT_SET &CFGraph::getPairwiseControlFlow(bool isTransitive) {
     }
 
     std::optional<STMT_STMT_SET> *pairwise_control_flow =
-            isTransitive ? &(this->pairwise_control_flow_transitive_) : &(this->pairwise_control_flow_non_transitive_);
+        isTransitive ? &(this->pairwise_control_flow_transitive_) : &(this->pairwise_control_flow_non_transitive_);
 
     *pairwise_control_flow = STMT_STMT_SET();
     for (Index node_index = 0; node_index < this->getNoOfNodes(); ++node_index) {
@@ -265,7 +275,7 @@ IndexList CFGraph::getDummyNodeSuccessors(Index index) const {
 
 bool CFGraph::operator==(const CFGraph &graph) const {
     return Graph<CFGraphNodeData>::operator==(graph) && this->proc_name_ == graph.proc_name_ &&
-           this->min_stmt_num_ == graph.min_stmt_num_ && this->max_stmt_num_ == graph.max_stmt_num_;
+        this->min_stmt_num_ == graph.min_stmt_num_ && this->max_stmt_num_ == graph.max_stmt_num_;
 }
 
 bool CFGraph::operator!=(const CFGraph &graph) const {
