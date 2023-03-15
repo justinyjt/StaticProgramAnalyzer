@@ -13,7 +13,7 @@ TEST_CASE("1. Test WithEntClause") {
     PKBReader pkbReader(pkb);
     PKBWriter *pkbWriterPtr = &pkbWriter;
     PKBReader *pkbReaderPtr = &pkbReader;
-    ENT_SET setA = {"a", "b", "c"};
+    ENT_SET setA = {"b", "c"};
     ENT_SET setB = {"a", "b"};
     STMT_SET printStmts = {1, 2};
     STMT_SET readStmts = {3, 4};
@@ -72,7 +72,7 @@ TEST_CASE("1. Test WithEntClause") {
         std::unique_ptr<Synonym> arg1 = std::make_unique<Synonym>(Synonym::DesignEntity::PROCEDURE, "p");
         std::unique_ptr<Synonym> arg2 = std::make_unique<Synonym>(Synonym::DesignEntity::VARIABLE, "v");
         WithEntClause withEntClause = WithEntClause(std::move(arg1), std::move(arg2));
-        ENT_ENT_SET s = {std::make_pair("b", "b"), std::make_pair("a", "a")};
+        ENT_ENT_SET s = {std::make_pair("b", "b")};
         TableResult expectedResult = TableResult("p", "v", s);
         TableResult actualResult = dynamic_cast<TableResult&>(*withEntClause.evaluate(pkbReaderPtr));
         requireEqual(actualResult.idents, expectedResult.idents);
