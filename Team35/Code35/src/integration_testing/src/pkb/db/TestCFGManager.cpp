@@ -16,7 +16,6 @@ TEST_CASE("1. CFG with one line") {
     test.emplace_back(std::move(cf_graph));
     manager.setGraphs(std::move(test));
     requireFalse(manager.isNextExists());
-
 }
 
 TEST_CASE("2. Test isNextExists in CFGManager with valid CFG") {
@@ -78,7 +77,6 @@ TEST_CASE("2. Test isNextExists in CFGManager with valid CFG") {
         requireTrue(manager.isNextExistAfterStmtNum(4, true));
         requireFalse(manager.isNextExistAfterStmtNum(5, true));
         requireFalse(manager.isNextExistAfterStmtNum(6, false));
-
     }
 
     SECTION("Test is next exist by val") {
