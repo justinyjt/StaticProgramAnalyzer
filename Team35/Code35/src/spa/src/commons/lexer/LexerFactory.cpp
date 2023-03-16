@@ -78,7 +78,9 @@ std::unique_ptr<ILexer> LexerFactory::createPqlLexer(const Source &source) {
         .addCharacter(Character('_', Token::Tag::Underscore))
         .addCharacter(Character('=', Token::Tag::Equal))
         .addCharacter(Character('.', Token::Tag::Dot))
-        .addCharacter(Character('#', Token::Tag::Hex));
+        .addCharacter(Character('#', Token::Tag::Hex))
+        .addCharacter(Character('<', Token::Tag::LessThan))
+        .addCharacter(Character('>', Token::Tag::GreaterThan));
     return builder.build();
 }
 

@@ -3,6 +3,7 @@
 #include "qps/query_parser/selection_parser/SelectionParser.h"
 #include "commons/lexer/LexerFactory.h"
 #include "qps/clause/select_clause/SingleSynonymSelectClause.h"
+#include "qps/query_parser/QuerySyntaxValidator.h"
 
 TEST_CASE("Selection parser") {
     std::string query = "Select s";
@@ -14,4 +15,18 @@ TEST_CASE("Selection parser") {
     std::unique_ptr<SelectClause> sc = sp.parse();
     Synonym s(Synonym::DesignEntity::STMT, "s");
     requireTrue(*sc == *std::make_unique<SingleSynonymSelectClause>(s));
+}
+
+TEST_CASE("Select tuple - syn, syn") {
+    std::string query = "Select <s, v>";
+    std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    std::unique_ptr<QuerySyntaxValidator> sv = std::make_unique<QuerySyntaxValidator>(std::move(lexer));
+    requireTrue(sv->validateQuery());
+}
+
+TEST_CASE("Select tuple syn.procName, syn.varName") {
+    std::string query = "Select <s.procName, v.varName, s, s.value, s.stmt#>";
+    std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    std::unique_ptr<QuerySyntaxValidator> sv = std::make_unique<QuerySyntaxValidator>(std::move(lexer));
+    requireTrue(sv->validateQuery());
 }

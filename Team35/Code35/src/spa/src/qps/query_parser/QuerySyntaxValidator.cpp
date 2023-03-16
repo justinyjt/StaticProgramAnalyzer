@@ -452,16 +452,46 @@ bool QuerySyntaxValidator::validateExpressionSpec() {
 bool QuerySyntaxValidator::validateTuple() {
     if (validateElem()) {
         return true;
+    } else if (scanner_.peek(Token::Tag::LessThan)) {
+        return validateMultipleElem();
     }
     return false;
 }
 
-bool QuerySyntaxValidator::validateElem() {
-    if (!scanner_.isName()) {
+bool QuerySyntaxValidator::validateMultipleElem() {
+    assert(scanner_.peek(Token::Tag::LessThan));
+    scanner_.next();
+    if (!validateElem()) {
+        return false;
+    }
+
+    while (scanner_.peek(Token::Tag::Comma)) {
+        scanner_.next();
+        if (!validateElem()) {
+            return false;
+        }
+    }
+
+    if (!scanner_.peek(Token::Tag::GreaterThan)) {
         return false;
     }
     scanner_.next();
     return true;
+}
+
+bool QuerySyntaxValidator::validateElem() {
+    scanner_.saveState();
+    if (validateAttrRef()) {
+        return true;
+    }
+
+    scanner_.restoreState();
+    if (scanner_.isName()) {
+        scanner_.next();
+        return true;
+    } else {
+        return false;
+    }
 }
 
 std::deque<std::unique_ptr<Token>> QuerySyntaxValidator::getTokenLst() {
