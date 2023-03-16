@@ -14,7 +14,7 @@ std::unique_ptr<Result> WhilePattern::evaluate(PKBReader *db) {
             return std::make_unique<TableResult>(whileStatements);
         }
         case PQLToken::Tag::IDENT: {  // w("x", _) -> int[]
-            STMT_SET s = db->getRelationship(StmtNameRelationship::Uses, 
+            STMT_SET s = db->getRelationship(StmtNameRelationship::WhileCondVarUses, 
                                 dynamic_cast<Ident&>(*first).s);
             STMT_SET result;
             for (int stmt : whileStatements) {
@@ -24,12 +24,12 @@ std::unique_ptr<Result> WhilePattern::evaluate(PKBReader *db) {
             }
             return std::make_unique<TableResult>(result);
         }
-        case PQLToken::Tag::SYNONYM: {  // w(x, _) -> <int, str>[]
-            STMT_ENT_SET se = db->getAllRelationships(StmtNameRelationship::Uses);
-            STMT_ENT_SET result;
+        case PQLToken::Tag::SYNONYM: {  // w(x, _) -> str[]
+            STMT_ENT_SET se = db->getAllRelationships(StmtNameRelationship::WhileCondVarUses);
+            ENT_SET result;
             for (auto& p : se) {
                 if (whileStatements.find(p.first) != whileStatements.end()) {
-                    result.insert(p);
+                    result.insert(p.second);
                 }
             }
             return std::make_unique<TableResult>(result);

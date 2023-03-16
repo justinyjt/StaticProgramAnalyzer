@@ -3,7 +3,7 @@
 #include <utility>
 #include <string>
 
-#include "qps/clause/TwoArgClause/TwoArgClause.h"
+#include "qps/clause/two_arg_clause/TwoArgClause.h"
 
 class AssignPattern : public TwoArgClause {
     const std::string ident;

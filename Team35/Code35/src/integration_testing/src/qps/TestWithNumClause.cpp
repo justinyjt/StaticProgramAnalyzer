@@ -1,6 +1,6 @@
 #include <utility>
 
-#include "qps/clause/TwoArgClause/WithNumClause.h"
+#include "qps/clause/two_arg_clause/WithNumClause.h"
 #include "pkb/PKBReader.h"
 #include "pkb/PKBWriter.h"
 #include "commons/types.h"

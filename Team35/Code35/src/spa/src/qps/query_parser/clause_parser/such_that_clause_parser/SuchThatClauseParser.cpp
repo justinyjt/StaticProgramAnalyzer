@@ -4,11 +4,11 @@
 #include "qps/pql/StatementNumber.h"
 #include "qps/query_exceptions/SyntaxException.h"
 #include "qps/pql/Wildcard.h"
-#include "qps/clause/TwoArgClause/StmtEntClause.h"
-#include "qps/clause/TwoArgClause/StmtStmtClause.h"
+#include "qps/clause/two_arg_clause/StmtEntClause.h"
+#include "qps/clause/two_arg_clause/StmtStmtClause.h"
 #include "qps/pql/Ident.h"
 #include "qps/query_parser/SemanticValidator.h"
-#include "qps/clause/TwoArgClause/EntEntClause.h"
+#include "qps/clause/two_arg_clause/EntEntClause.h"
 
 SuchThatClauseParser::SuchThatClauseParser(PQLTokenScanner& pqlTokenScanner,
                                            std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
