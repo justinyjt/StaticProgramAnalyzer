@@ -75,12 +75,12 @@ bool QuerySyntaxValidator::validateResultClause() {
 }
 
 bool QuerySyntaxValidator::validateClauseLst() {
-    while (true) {
+    while (!scanner_.peek(Token::Tag::EndOfFile)) {
         if (!validateClause()) {
             return false;
         }
-        return true;
     }
+    return true;
 }
 
 bool QuerySyntaxValidator::validateClause() {
@@ -92,7 +92,7 @@ bool QuerySyntaxValidator::validateClause() {
     } else if (scanner_.peek(Token::Tag::With)) {
         return validateWithClause();
     } else {
-        return true;
+        return false;
     }
 }
 
