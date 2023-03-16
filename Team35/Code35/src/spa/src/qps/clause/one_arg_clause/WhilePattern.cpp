@@ -10,10 +10,10 @@ WhilePattern::WhilePattern(std::unique_ptr<PQLToken> first,
 std::unique_ptr<Result> WhilePattern::evaluate(PKBReader *db) {
     STMT_SET whileStatements = db->getStatements(StmtType::While);
     switch (first->tag) {
-        case PQLToken::Tag::WILDCARD: {  // w(_, _) -> int[]
-            return std::make_unique<TableResult>(whileStatements);
+        case PQLToken::Tag::WILDCARD: {  // w(_, _) -> bool
+            return std::make_unique<BoolResult>(!whileStatements.empty());
         }
-        case PQLToken::Tag::IDENT: {  // w("x", _) -> int[]
+        case PQLToken::Tag::IDENT: {  // w("x", _) -> bool
             STMT_SET s = db->getRelationship(StmtNameRelationship::WhileCondVarUses, 
                                 dynamic_cast<Ident&>(*first).s);
             STMT_SET result;
@@ -22,7 +22,7 @@ std::unique_ptr<Result> WhilePattern::evaluate(PKBReader *db) {
                     result.insert(stmt);
                 }
             }
-            return std::make_unique<TableResult>(result);
+            return std::make_unique<BoolResult>(!result.empty());
         }
         case PQLToken::Tag::SYNONYM: {  // w(x, _) -> str[]
             STMT_ENT_SET se = db->getAllRelationships(StmtNameRelationship::WhileCondVarUses);
@@ -32,7 +32,7 @@ std::unique_ptr<Result> WhilePattern::evaluate(PKBReader *db) {
                     result.insert(p.second);
                 }
             }
-            return std::make_unique<TableResult>(result);
+            return std::make_unique<TableResult>(dynamic_cast<Synonym&>(*first).ident, result);
         }
         default: throw std::runtime_error("WhilePattern");
     }

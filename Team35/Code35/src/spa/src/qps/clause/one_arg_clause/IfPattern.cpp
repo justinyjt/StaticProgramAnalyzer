@@ -10,10 +10,10 @@ IfPattern::IfPattern(std::unique_ptr<PQLToken> first,
 std::unique_ptr<Result> IfPattern::evaluate(PKBReader *db) {
     STMT_SET ifStatements = db->getStatements(StmtType::If);
     switch (first->tag) {
-        case PQLToken::Tag::WILDCARD: {  // ifs(_, _, _) -> int[]
-            return std::make_unique<TableResult>(ifStatements);
+        case PQLToken::Tag::WILDCARD: {  // ifs(_, _, _) -> bool
+            return std::make_unique<BoolResult>(!ifStatements.empty());
         }
-        case PQLToken::Tag::IDENT: {  // ifs("x", _, _) -> int[]
+        case PQLToken::Tag::IDENT: {  // ifs("x", _, _) -> bool
             STMT_SET s = db->getRelationship(StmtNameRelationship::IfCondVarUses, 
                                 dynamic_cast<Ident&>(*first).s);
             STMT_SET result;
@@ -22,7 +22,7 @@ std::unique_ptr<Result> IfPattern::evaluate(PKBReader *db) {
                     result.insert(stmt);
                 }
             }
-            return std::make_unique<TableResult>(result);
+            return std::make_unique<BoolResult>(!result.empty());
         }
         case PQLToken::Tag::SYNONYM: {  // ifs(x, _, _) -> str[]
             STMT_ENT_SET se = db->getAllRelationships(StmtNameRelationship::IfCondVarUses);
@@ -32,7 +32,7 @@ std::unique_ptr<Result> IfPattern::evaluate(PKBReader *db) {
                     result.insert(p.second);
                 }
             }
-            return std::make_unique<TableResult>(result);
+            return std::make_unique<TableResult>(dynamic_cast<Synonym&>(*first).ident, result);
         }
         default: throw std::runtime_error("IfPattern");
     }
