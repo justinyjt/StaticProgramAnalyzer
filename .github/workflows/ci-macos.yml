@@ -18,7 +18,7 @@ jobs:
   lint:
     name: MacOS Lint
     runs-on: macos-latest
-    timeout-minutes: 3
+    timeout-minutes: 5
     strategy:
       fail-fast: true
 
@@ -60,3 +60,8 @@ jobs:
         working-directory: ${{runner.workspace}}/build
         shell: bash
         run: ./src/unit_testing/unit_testing
+
+      - name: Run Integration Test
+        working-directory: ${{runner.workspace}}/build
+        shell: bash
+        run: ./src/integration_testing/integration_testing

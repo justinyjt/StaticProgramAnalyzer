@@ -1,5 +1,4 @@
-#ifndef TEAM35_CODE35_SRC_SPA_SRC_PKB_PKBREADER_H_
-#define TEAM35_CODE35_SRC_SPA_SRC_PKB_PKBREADER_H_
+#pragma once
 
 #include "PKB.h"
 
@@ -29,9 +28,9 @@ class PKBReader {
 
     ENT_ENT_SET getAllRelationships(NameNameRelationship tableType) const;
 
-    ENT_SET getKeyStmtByRelationship(NameNameRelationship tableType) const;
-    
-    ENT_SET getValueStmtByRelationship(NameNameRelationship tableType) const;
+    ENT_SET getKeyNameByRelationship(NameNameRelationship tableType) const;
+
+    ENT_SET getValueNameByRelationship(NameNameRelationship tableType) const;
 
     bool isRelationshipExists(NameNameRelationship tableType, ENT_NAME keyName, ENT_NAME valName) const;
 
@@ -47,6 +46,8 @@ class PKBReader {
 
     STMT_SET getStmtByRs(StmtStmtRelationship tableType) const;
 
+    STMT_SET getStmtByProc(const ENT_NAME &procName) const;
+
     bool isRelationshipExists(StmtStmtRelationship tableType, STMT_NUM keyName, STMT_NUM valName) const;
 
     STMT_SET getStmtWithExactPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;
@@ -57,6 +58,3 @@ class PKBReader {
  private:
     PKB &pkb;
 };
-
-
-#endif  // TEAM35_CODE35_SRC_SPA_SRC_PKB_PKBREADER_H_

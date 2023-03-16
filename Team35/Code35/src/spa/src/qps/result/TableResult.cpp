@@ -48,7 +48,6 @@ TableResult::TableResult(const std::string &ident1, const std::string &ident2,
     }
 }
 
-
 // for 2 cols with vector<list<string>>
 TableResult::TableResult(const std::string &ident1, const std::string &ident2,
                          const std::vector<std::list<std::string>> &vec) : Result(Tag::TABLE) {

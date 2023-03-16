@@ -4,7 +4,7 @@
 #include "../TestHelper.h"
 #include "../commons/expr_parser/MockExprMaker.h"
 
-TEST_CASE("1. Test PKB Read Entities", "[PKB][PKBReader][Entity]") {
+TEST_CASE("1. Test PKB Read Entities", "[pkb][PKBReader][Entity]") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
@@ -30,7 +30,7 @@ TEST_CASE("1. Test PKB Read Entities", "[PKB][PKBReader][Entity]") {
     }
 }
 
-TEST_CASE("2. Read StmtName Relationship table", "[PKB][PKBReader][Relationship]") {
+TEST_CASE("2. Read StmtName Relationship table", "[pkb][PKBReader][Relationship]") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
@@ -54,7 +54,7 @@ TEST_CASE("2. Read StmtName Relationship table", "[PKB][PKBReader][Relationship]
     }
 }
 
-TEST_CASE("3. Read statements from StmtNameRelationship table", "[PKB][PKBReader][Relationship]") {
+TEST_CASE("3. Read statements from StmtNameRelationship table", "[pkb][PKBReader][Relationship]") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
@@ -90,7 +90,7 @@ TEST_CASE("3. Read statements from StmtNameRelationship table", "[PKB][PKBReader
     }
 }
 
-TEST_CASE("4. Read variables from StmtNameRelationship table", "[PKB][PKBReader][Relationship]") {
+TEST_CASE("4. Read variables from StmtNameRelationship table", "[pkb][PKBReader][Relationship]") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
@@ -118,7 +118,6 @@ TEST_CASE("4. Read variables from StmtNameRelationship table", "[PKB][PKBReader]
     }
 }
 
-
 TEST_CASE("5. Test isRelationshipExists") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
@@ -142,19 +141,19 @@ TEST_CASE("5. Test isRelationshipExists") {
 
     SECTION("Check if relationship exists given valid arguments in StmtName Table") {
         requireTrue(pkbReaderPtr->isRelationshipExists(StmtNameRelationship::Uses, 1, "b"));
-        requireTrue(pkbReaderPtr->isRelationshipExists(StmtNameRelationship::Uses, 1, "a") == false);
+        requireFalse(pkbReaderPtr->isRelationshipExists(StmtNameRelationship::Uses, 1, "a"));
     }
 
     SECTION("Returns false for empty tables") {
-        requireTrue(pkbReaderPtr->isRelationshipExists(StmtNameRelationship::Modifies, 4, "a") == false);
+        requireFalse(pkbReaderPtr->isRelationshipExists(StmtNameRelationship::Modifies, 4, "a"));
     }
 
     SECTION("Return false for non-existent statement number") {
-        requireTrue(pkbReaderPtr->isRelationshipExists(StmtNameRelationship::Modifies, 5, "b") == false);
+        requireFalse(pkbReaderPtr->isRelationshipExists(StmtNameRelationship::Modifies, 5, "b"));
     }
 
     SECTION("Return false for non-existent variable") {
-        requireTrue(pkbReaderPtr->isRelationshipExists(StmtNameRelationship::Modifies, 2, "a") == false);
+        requireFalse(pkbReaderPtr->isRelationshipExists(StmtNameRelationship::Modifies, 2, "a"));
     }
 
     SECTION("Check if relationship exists given valid arguments in NameName Table") {
@@ -162,7 +161,7 @@ TEST_CASE("5. Test isRelationshipExists") {
     }
 
     SECTION("Return false for empty tables") {
-        requireTrue(pkbReaderPtr->isRelationshipExists(NameNameRelationship::Modifies, "main", "x") == false);
+        requireFalse(pkbReaderPtr->isRelationshipExists(NameNameRelationship::Modifies, "main", "x"));
     }
 
     SECTION("Return false for non-existent key variable") {
@@ -192,7 +191,7 @@ TEST_CASE("5. Test isRelationshipExists") {
     }
 }
 
-TEST_CASE("6. Read relationships in NameName table", "[PKB]") {
+TEST_CASE("6. Read relationships in NameName table", "[pkb]") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
@@ -350,7 +349,7 @@ TEST_CASE("10. Test getRelationshipByKey for statements") {
     }
 }
 
-TEST_CASE("11. Test PKB Read Statements") {
+TEST_CASE("11. Test pkb Read Statements") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);
@@ -409,7 +408,7 @@ TEST_CASE("11. Test PKB Read Statements") {
     }
 }
 
-TEST_CASE("12. Test PKB AssignPattern Matching") {
+TEST_CASE("12. Test PKB Assign Pattern Matching") {
     PKB pkb;
     PKBWriter pkbWriter(pkb);
     PKBReader pkbReader(pkb);

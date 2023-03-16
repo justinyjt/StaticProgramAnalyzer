@@ -295,7 +295,6 @@ std::unordered_map<STMT_NUM, ASSIGN_PAT> DesignExtractor::getAssignPatMap() {
 }
 
 void DesignExtractor::addCallsToPKB() {
-    pkbWriter_->addEntityEntityRelationships(NameNameRelationship::Calls, callGraph_.getImmediateCalls());
-    pkbWriter_->addEntityEntityRelationships(NameNameRelationship::CallsStar, callGraph_.getTransitiveCalls());
+    pkbWriter_->addCallGraph(std::move(callGraph_));
 }
 

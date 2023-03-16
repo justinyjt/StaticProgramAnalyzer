@@ -9,6 +9,7 @@
 #include "pkb/db/EntityTable.h"
 #include "pkb/db/RelationshipTable.h"
 #include "pkb/db/PatternTable.h"
+#include "commons/graph/CallGraph.h"
 
 class PKB {
  public:
@@ -48,6 +49,8 @@ class PKB {
 
     void addPattern(STMT_NUM stmt, ASSIGN_PAT pattern);
 
+    void addCallGraph(CallGraph &&callGraph);
+
     ENT_SET getEntByStmtKey(StmtNameRelationship tableType, STMT_NUM stmt) const;
 
     STMT_SET getStmtByEntVal(StmtNameRelationship tableType, ENT_NAME name) const;
@@ -64,15 +67,17 @@ class PKB {
 
     ENT_ENT_SET getEntEntSet(NameNameRelationship tableType) const;
 
-    ENT_SET getKeyStmtByRs(NameNameRelationship tableType) const;
+    ENT_SET getKeyNameByRs(NameNameRelationship tableType) const;
 
-    ENT_SET getValStmtByRs(NameNameRelationship tableType) const;
+    ENT_SET getValNameByRs(NameNameRelationship tableType) const;
 
     bool isEntEntPairExists(NameNameRelationship tableType, ENT_NAME key, ENT_NAME val) const;
 
     STMT_SET getStmtByStmtKey(StmtStmtRelationship tableType, STMT_NUM stmt) const;
 
     STMT_SET getStmtByStmtVal(StmtStmtRelationship tableType, STMT_NUM stmt) const;
+
+    STMT_SET getStmtByProc(const ENT_NAME &procName) const;
 
     STMT_STMT_SET getStmtStmtSet(StmtStmtRelationship tableType) const;
 
@@ -99,6 +104,10 @@ class PKB {
     // Relationship related tables
     RelationshipTable<STMT_NUM, ENT_NAME> modifiesStmtNameTable;
     RelationshipTable<STMT_NUM, ENT_NAME> usesStmtNameTable;
+    RelationshipTable<STMT_NUM, ENT_NAME> ifCondUsesVarTable;
+    RelationshipTable<STMT_NUM, ENT_NAME> whileCondUsesVarTable;
+    RelationshipTable<STMT_NUM, ENT_NAME> containerProcedureTable;
+
     RelationshipTable<ENT_NAME, ENT_NAME> modifiesNameNameTable;
     RelationshipTable<ENT_NAME, ENT_NAME> usesNameNameTable;
     RelationshipTable<ENT_NAME, ENT_NAME> callsNameNameTable;
@@ -110,4 +119,5 @@ class PKB {
     RelationshipTable<STMT_NUM, STMT_NUM> parentStarTable;
 
     PatternTable patternTable;
+    CallGraph callGraph;
 };

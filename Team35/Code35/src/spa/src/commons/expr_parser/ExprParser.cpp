@@ -59,7 +59,7 @@ ASSIGN_PAT_RIGHT ExprParser::parseTerm() {
 
 ASSIGN_PAT_RIGHT ExprParser::parseFactor() {
     ASSIGN_PAT_RIGHT cur;
-    if (scanner_.peek(Token::Tag::Name)) {
+    if (scanner_.isName()) {
         cur = parseName();
     } else if (scanner_.peek(Token::Tag::Integer)) {
         cur = parseInteger();
@@ -72,10 +72,10 @@ ASSIGN_PAT_RIGHT ExprParser::parseFactor() {
 }
 
 ASSIGN_PAT_RIGHT ExprParser::parseName() {
-    assert(scanner_.peek(Token::Tag::Name));
+    assert(scanner_.isName());
     ASSIGN_PAT_RIGHT cur =
             std::make_shared<ExprNode>(ASTNode::SyntaxType::Variable, scanner_.peekLexeme());
-    scanner_.match(Token::Tag::Name);
+    scanner_.next();
     return std::move(cur);
 }
 

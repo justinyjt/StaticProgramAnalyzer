@@ -5,15 +5,9 @@
 #include "commons/graph/CFGraph.h"
 
 namespace CFG {
-
 class CFGManager {
- private:
-    std::vector<CFGraph> graphs_;
-
-    int getIndex(STMT_NUM num);
-
  public:
-    CFGManager();
+    CFGManager() = default;
 
     void setGraphs(std::vector<CFGraph> &&cfg);
 
@@ -22,5 +16,26 @@ class CFGManager {
     ENT_NAME getProcName(STMT_NUM num);
 
     bool isValidStmtNum(STMT_NUM num);
+
+    bool isNext(STMT_NUM first, STMT_NUM second, bool isTransitive);
+
+    bool isNextExists();
+
+    STMT_SET getConnectedStmts(STMT_NUM num, bool isAfter, bool isTransitive);
+
+    bool isNextExistAfterStmtNum(STMT_NUM num, bool isTransitive);
+
+    bool isNextExistBeforeStmtNum(STMT_NUM num, bool isTransitive);
+
+    STMT_STMT_SET getValidNextPairs(bool isTransitive);
+
+    STMT_SET getValidPredecessors();
+
+    STMT_SET getValidSuccessors();
+
+ private:
+    std::vector<CFGraph> graphs_;
+
+    int getIndex(STMT_NUM num);
 };
 }  // namespace CFG
