@@ -176,9 +176,9 @@ const STMT_STMT_SET &CFGraph::getPairwiseControlFlow(bool isTransitive) {
     return pairwise_control_flow->value();
 }
 
-bool CFGraph::isReachable(STMT_NUM stmt1, STMT_NUM stmt2, bool check_neighbor_only) const {
-    CFGraphNodeData node_data1 = makeNodeData(stmt1);
-    CFGraphNodeData node_data2 = makeNodeData(stmt2);
+bool CFGraph::isReachable(const CFGraphNodeData &node_data1,
+                          const CFGraphNodeData &node_data2,
+                          bool check_neighbor_only) const {
     if (!this->hasNode(node_data1) || !this->hasNode(node_data2)) {
         return false;
     }
@@ -219,6 +219,12 @@ bool CFGraph::isReachable(STMT_NUM stmt1, STMT_NUM stmt2, bool check_neighbor_on
         }
     }
     return false;
+}
+
+bool CFGraph::isReachable(STMT_NUM stmt1, STMT_NUM stmt2, bool check_neighbor_only) const {
+    CFGraphNodeData node_data1 = makeNodeData(stmt1);
+    CFGraphNodeData node_data2 = makeNodeData(stmt2);
+    return this->isReachable(node_data1, node_data2, check_neighbor_only);
 }
 
 STMT_NUM CFGraph::getMaxStmtNum() const {

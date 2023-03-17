@@ -9,11 +9,11 @@
 #include <unordered_set>
 #include <vector>
 
-typedef uint32_t Index;
-typedef std::unordered_set<Index> IndexSet;
-typedef std::queue<Index> IndexQueue;
-
 using std::unordered_set;
+
+typedef uint32_t Index;
+typedef unordered_set<Index> IndexSet;
+typedef std::queue<Index> IndexQueue;
 
 /**
  * A directed unweighted graph with nodes of type T. The nodes are unique by value. It is possible that one node is
@@ -46,8 +46,8 @@ class Graph {
     void addEdge(const T &from, const T &to) {
         Index from_index = addNodeHelper(from);
         Index to_index = addNodeHelper(to);
-        outgoing_adj_list_.at(from_index).insert(to_index);
-        incoming_adj_list_.at(to_index).insert(from_index);
+        outgoing_adj_list_[from_index].insert(to_index);
+        incoming_adj_list_[to_index].insert(from_index);
     }
 
     void addNode(const T &node) {
@@ -191,7 +191,7 @@ class Graph {
 
     const T &getNode(Index index) const {
         assert(index < nodes.size());
-        return nodes[index];
+        return nodes.at(index);
     }
 
     bool isNeighbor(Index index1, Index index2) const {
