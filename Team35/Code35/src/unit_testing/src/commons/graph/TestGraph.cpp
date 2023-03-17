@@ -9,36 +9,28 @@ class TestGraphHelper : public Graph<T> {
 
     ~TestGraphHelper() = default;
 
-    const IndexList &getOutgoingNodesPublic(Index index) const {
+    const IndexSet &getOutgoingNodesPublic(Index index) const {
         return this->getOutgoingNodes(index);
     }
 
-    const IndexList &getIncomingNodesPublic(Index index) const {
+    const IndexSet &getIncomingNodesPublic(Index index) const {
         return this->getIncomingNodes(index);
     }
 
-    const IndexList &getOutgoingNodesPublic(const T &node) const {
+    const IndexSet &getOutgoingNodesPublic(const T &node) const {
         return this->getOutgoingNodes(node);
     }
 
-    const IndexList &getIncomingNodesPublic(const T &node) const {
+    const IndexSet &getIncomingNodesPublic(const T &node) const {
         return this->getIncomingNodes(node);
     }
 
     bool isNeighborFromPublic(const T &from, const T &to) const {
-        if (!this->hasNode(from) || !this->hasNode(to)) {
-            return false;
-        }
-        const IndexList &outgoingNodes = this->getOutgoingNodes(from);
-        return std::find(outgoingNodes.begin(), outgoingNodes.end(), this->getNodeIndex(to)) != outgoingNodes.end();
+        return this->isNeighbor(from, to);
     }
 
     bool isNeighborToPublic(const T &from, const T &to) const {
-        if (!this->hasNode(from) || !this->hasNode(to)) {
-            return false;
-        }
-        const IndexList &incomingNodes = this->getIncomingNodes(from);
-        return std::find(incomingNodes.begin(), incomingNodes.end(), this->getNodeIndex(to)) != incomingNodes.end();
+        return this->isNeighbor(to, from);
     }
 };
 

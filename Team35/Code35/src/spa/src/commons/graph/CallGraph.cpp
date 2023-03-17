@@ -61,8 +61,8 @@ ENT_ENT_SET CallGraph::getImmediateCalls() {
 
 ENT_SET CallGraph::getCallEntities(Index index) {
     ENT_SET callees;
-    IndexList calleeIndices = this->getOutgoingNodes(index);
-    for (auto callee : calleeIndices) {
+    IndexSet calleeIndices = this->getOutgoingNodes(index);
+    for (auto &callee : calleeIndices) {
         callees.emplace(this->getNode(callee));
     }
     return callees;
