@@ -11,18 +11,16 @@
 #include "commons/lexer/Lexer.h"
 #include "commons/token_scanner/PQLTokenScanner.h"
 
-class SuchThatClauseParser {
+class WithClauseParser {
  public:
-    explicit SuchThatClauseParser(PQLTokenScanner& pqlTokenScanner,
+    explicit WithClauseParser(PQLTokenScanner& pqlTokenScanner,
                                   std::unordered_map<std::string, Synonym::DesignEntity>& synonyms);
     std::vector<std::unique_ptr<Clause>> parse();
-    std::unique_ptr<Clause> parseRelationship();
-    std::unique_ptr<Clause> parseUsesModifies(std::string& relationship);
-    std::unique_ptr<Clause> parseStmtStmt(std::string& relationship);
-    std::unique_ptr<Clause> parseEntEnt(std::string& relationship);
-    std::unique_ptr<PQLToken> parseEntRef();
-    std::unique_ptr<PQLToken> parseStmtRef();
+    std::unique_ptr<Clause> parseWith();
+    std::unique_ptr<PQLToken> parseRef();
  private:
     PQLTokenScanner &pqlTokenScanner;
     std::unordered_map<std::string, Synonym::DesignEntity>& synonyms;
+    int entArgCount = 0;
+    int numArgCount = 0;
 };

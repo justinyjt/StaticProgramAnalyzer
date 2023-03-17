@@ -8,11 +8,16 @@
 #include "commons/lexer/exception/LexerException.h"
 #include "qps/query_exceptions/SyntaxException.h"
 #include "commons/token_scanner/PQLTokenScanner.h"
+#include "QuerySyntaxValidator.h"
 
 std::vector<std::unique_ptr<Clause>> QueryParser::parse(std::string &query) {
     try {
         std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-        PQLTokenScanner pqlTokenScanner(std::move(lexer));
+        std::unique_ptr<QuerySyntaxValidator> sv = std::make_unique<QuerySyntaxValidator>(std::move(lexer));
+        if (!sv->validateQuery()) {
+            throw SyntaxException();
+        }
+        PQLTokenScanner pqlTokenScanner(std::move(sv->getTokenLst()));
         // pass tokenList and parse declaration
         std::unordered_map<std::string, Synonym::DesignEntity> declarationList;
         // std::vector<Synonym> declarationList;

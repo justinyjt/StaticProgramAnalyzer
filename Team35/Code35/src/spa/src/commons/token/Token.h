@@ -37,6 +37,8 @@ class Token {
         Calls,
         Parent,
         Pattern,
+        With,
+        And,
 
         // logical operators
         LogicalAnd,
@@ -70,6 +72,8 @@ class Token {
         DoubleQuotes,
         Comma,
         Star,
+        Dot,
+        Hex,
 
         // types
         Ascii,

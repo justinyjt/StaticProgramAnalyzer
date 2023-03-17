@@ -68,12 +68,17 @@ std::unique_ptr<ILexer> LexerFactory::createPqlLexer(const Source &source) {
         .addKeyword(Keyword("such", Token::Tag::Such))
         .addKeyword(Keyword("that", Token::Tag::That))
         .addKeyword(Keyword("Calls", Token::Tag::Calls))
+        .addKeyword(Keyword("with", Token::Tag::With))
+        .addKeyword(Keyword("and", Token::Tag::And))
         .addCharacter(Character('*', Token::Tag::Star))
         .addCharacter(Character('(', Token::Tag::LParen))
         .addCharacter(Character(')', Token::Tag::RParen))
         .addCharacter(Character(';', Token::Tag::SemiColon))
         .addCharacter(Character(',', Token::Tag::Comma))
-        .addCharacter(Character('_', Token::Tag::Underscore));
+        .addCharacter(Character('_', Token::Tag::Underscore))
+        .addCharacter(Character('=', Token::Tag::Equal))
+        .addCharacter(Character('.', Token::Tag::Dot))
+        .addCharacter(Character('#', Token::Tag::Hex));
     return builder.build();
 }
 
