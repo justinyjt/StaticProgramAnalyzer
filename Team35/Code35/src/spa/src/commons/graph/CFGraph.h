@@ -60,9 +60,9 @@ class CFGraph : public Graph<CFGraphNodeData> {
 
     STMT_NUM getStmtNumFromIndex(Index index) const;
 
-    IndexList getDummyNodePredecessors(Index index) const;
+    IndexSet getDummyNodePredecessors(Index index) const;
 
-    IndexList getDummyNodeSuccessors(Index index) const;
+    IndexSet getDummyNodeSuccessors(Index index) const;
 
     STMT_SET getSuccessorsByIndex(Index index, bool isTransitive) const;
 
