@@ -10,6 +10,7 @@
 #include "qps/query_parser/SemanticValidator.h"
 #include "qps/clause/TwoArgClause/TwoArgClauseFactory.h"
 #include "qps/clause/one_arg_clause/OneArgClauseFactory.h"
+#include "commons/expr_parser/ExprParser.h"
 
 PatternClauseParser::PatternClauseParser(PQLTokenScanner& pqlTokenScanner,
                                          std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
@@ -137,13 +138,27 @@ std::unique_ptr<PQLToken> PatternClauseParser::parseExpressionSpec() {
             std::unique_ptr<Wildcard> w = std::make_unique<Wildcard>();
             return std::move(w);
         } else {  // _"x"_
-            std::unique_ptr<Expression> e = std::make_unique<Expression>(pqlTokenScanner.peekLexeme(), true);
+            std::string expr = pqlTokenScanner.peekLexeme();
+            std::unique_ptr<ILexer> lxr =
+                    LexerFactory::createLexer(expr, LexerFactory::LexerType::Expression);
+            TokenScanner scanner(std::move(lxr));
+            ExprParser parser(scanner);
+            ASSIGN_PAT_RIGHT pattern = parser.parseExpr();
+
+            std::unique_ptr<Expression> e = std::make_unique<Expression>(pattern, true);
             pqlTokenScanner.next();
             pqlTokenScanner.match(Token::Tag::Underscore);
             return std::move(e);
         }
     } else if (pqlTokenScanner.peek(Token::Tag::String)) {  // "x"
-        std::unique_ptr<Expression> e = std::make_unique<Expression>(pqlTokenScanner.peekLexeme(), false);
+        std::string expr = pqlTokenScanner.peekLexeme();
+        std::unique_ptr<ILexer> lxr =
+                LexerFactory::createLexer(expr, LexerFactory::LexerType::Expression);
+        TokenScanner scanner(std::move(lxr));
+        ExprParser parser(scanner);
+        ASSIGN_PAT_RIGHT pattern = parser.parseExpr();
+
+        std::unique_ptr<Expression> e = std::make_unique<Expression>(pattern, false);
         pqlTokenScanner.next();
         pqlTokenScanner.match(Token::Tag::Underscore);
         return std::move(e);
