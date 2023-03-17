@@ -59,7 +59,7 @@ STMT_SET PKBReader::getRelationshipByVal(StmtStmtRelationship tableType, STMT_NU
     return pkb.getStmtByStmtVal(tableType, valName);
 }
 
-STMT_STMT_SET PKBReader::getAllRelationships(StmtStmtRelationship tableType) const {
+STMT_STMT_SET PKBReader::getAllRelationships(StmtStmtRelationship tableType) {
     return pkb.getStmtStmtSet(tableType);
 }
 
