@@ -57,4 +57,24 @@ class PKBReader {
 
  private:
     PKB &pkb;
+
+    bool isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const;
+
+    bool isValidAffectsSuccessor(STMT_NUM stmt) const;
+
+    bool isValidAffectsPredecessor(STMT_NUM stmt) const;
+
+    STMT_SET getAffectsBySuccessor(STMT_NUM stmt2) const;
+
+    STMT_SET getAffectsByPredecessor(STMT_NUM stmt1) const;
+
+    STMT_STMT_SET getAllAffects() const;
+
+    STMT_SET getAllAffectsPredecessors() const;
+
+    STMT_SET getAllAffectsSuccessors() const;
+
+    bool hasAffects() const;
+
+    bool isModifies(STMT_NUM key, const ENT_NAME &val) const;
 };

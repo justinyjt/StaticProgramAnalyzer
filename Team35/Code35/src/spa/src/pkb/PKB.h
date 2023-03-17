@@ -90,6 +90,7 @@ class PKB {
 
     bool isStmtStmtPairExists(StmtStmtRelationship tableType, STMT_NUM key, STMT_NUM val) const;
 
+    bool isEntityTypeExists(StmtType tableType, STMT_NUM key) const;
 
  private:
     // Entity related tables

@@ -237,7 +237,6 @@ STMT_STMT_SET PKB::getStmtStmtSet(StmtStmtRelationship tableType) {
 STMT_SET PKB::getKeyStmtByRs(StmtStmtRelationship tableType) const {
     switch (tableType) {
         case StmtStmtRelationship::Next:
-            return cfgManager.getValidPredecessors();
         case StmtStmtRelationship::NextStar:
             return cfgManager.getValidPredecessors();
         default:
@@ -248,7 +247,6 @@ STMT_SET PKB::getKeyStmtByRs(StmtStmtRelationship tableType) const {
 STMT_SET PKB::getValStmtByRs(StmtStmtRelationship tableType) const {
     switch (tableType) {
         case StmtStmtRelationship::Next:
-            return cfgManager.getValidSuccessors();
         case StmtStmtRelationship::NextStar:
             return cfgManager.getValidSuccessors();
         default:
@@ -265,4 +263,8 @@ bool PKB::isStmtStmtPairExists(StmtStmtRelationship tableType, STMT_NUM key, STM
         default:
             return getStmtStmtRelationshipTable(tableType).containsPair(key, val);
     }
+}
+
+bool PKB::isEntityTypeExists(StmtType tableType, STMT_NUM key) const {
+    return this->getStatementTable(tableType).hasEntity(key);
 }
