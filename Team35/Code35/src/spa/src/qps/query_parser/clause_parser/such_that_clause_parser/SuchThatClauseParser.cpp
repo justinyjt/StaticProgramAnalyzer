@@ -34,7 +34,8 @@ std::unique_ptr<Clause> SuchThatClauseParser::parseRelationship() {
         relationship += pqlTokenScanner.peekLexeme();
         pqlTokenScanner.next();
         return std::move(parseUsesModifies(relationship));
-    } else if (pqlTokenScanner.peek(Token::Tag::Parent) || pqlTokenScanner.peek(Token::Tag::Follows)) {
+    } else if (pqlTokenScanner.peek(Token::Tag::Parent) || pqlTokenScanner.peek(Token::Tag::Follows)
+                || pqlTokenScanner.peek(Token::Tag::Next) || pqlTokenScanner.peek(Token::Tag::Affects)) {
         relationship += pqlTokenScanner.peekLexeme();
         pqlTokenScanner.next();
         if (pqlTokenScanner.peek(Token::Tag::Star)) {

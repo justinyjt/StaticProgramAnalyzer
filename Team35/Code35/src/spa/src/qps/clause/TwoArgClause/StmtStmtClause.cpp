@@ -117,3 +117,11 @@ Parent::Parent(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second
 Follows::Follows(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :
         StmtStmtClause(std::move(first), std::move(second),
                        isTransitive ? StmtStmtRelationship::FollowsStar : StmtStmtRelationship::Follows) {}
+
+Next::Next(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :
+        StmtStmtClause(std::move(first), std::move(second),
+                       isTransitive ? StmtStmtRelationship::NextStar : StmtStmtRelationship::Next) {}
+
+Affects::Affects(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :
+        StmtStmtClause(std::move(first), std::move(second),
+                       isTransitive ? StmtStmtRelationship::NextStar : StmtStmtRelationship::Next) {}

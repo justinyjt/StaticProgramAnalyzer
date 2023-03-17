@@ -35,6 +35,8 @@ class Token {
         Modifies,
         Uses,
         Calls,
+        Next,
+        Affects,
         Parent,
         Pattern,
         With,

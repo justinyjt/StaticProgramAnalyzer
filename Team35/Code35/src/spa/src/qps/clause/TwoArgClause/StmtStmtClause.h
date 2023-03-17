@@ -25,3 +25,14 @@ class Follows : public StmtStmtClause {
  public:
     Follows(std::unique_ptr<PQLToken>, std::unique_ptr<PQLToken>, bool isTransitive);
 };
+
+class Next : public StmtStmtClause {
+public:
+    Next(std::unique_ptr<PQLToken>, std::unique_ptr<PQLToken>, bool isTransitive);
+};
+
+
+class Affects : public StmtStmtClause {
+public:
+    Affects(std::unique_ptr<PQLToken>, std::unique_ptr<PQLToken>, bool isTransitive);
+};
