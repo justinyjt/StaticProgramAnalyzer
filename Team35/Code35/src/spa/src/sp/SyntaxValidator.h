@@ -6,6 +6,7 @@
 #include "commons/lexer/ILexer.h"
 #include "commons/token/Token.h"
 #include "commons/token_scanner/SimpleTokenScanner.h"
+#include "commons/expr_validator/ExprValidator.h"
 
 class SyntaxValidator {
  public:
@@ -15,6 +16,7 @@ class SyntaxValidator {
 
  private:
     SimpleTokenScanner scanner_;
+    ExprValidator expr_validator_;
 
     void reset();
 
@@ -31,11 +33,7 @@ class SyntaxValidator {
 
     bool validateCondExpr();
     bool validateRelExpr();
-    bool validateExpr();
-    bool validateTerm();
-    bool validateFactor();
     bool validateName();
-    bool validateInt();
 };
 
 
