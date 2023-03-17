@@ -14,17 +14,17 @@ class PKBReader {
 
     ENT_SET getRelationship(StmtNameRelationship tableType, STMT_NUM stmt) const;
 
-    STMT_SET getRelationship(StmtNameRelationship tableType, ENT_NAME name) const;
+    STMT_SET getRelationship(StmtNameRelationship tableType, const ENT_NAME &name) const;
 
     STMT_ENT_SET getAllRelationships(StmtNameRelationship tableType) const;
 
     STMT_SET getStmtByRelationship(StmtNameRelationship tableType) const;
 
-    bool isRelationshipExists(StmtNameRelationship tableType, STMT_NUM stmt, ENT_NAME name) const;
+    bool isRelationshipExists(StmtNameRelationship tableType, STMT_NUM stmt, const ENT_NAME &name) const;
 
-    ENT_SET getRelationshipByKey(NameNameRelationship tableType, ENT_NAME keyName) const;
+    ENT_SET getRelationshipByKey(NameNameRelationship tableType, const ENT_NAME &keyName) const;
 
-    ENT_SET getRelationshipByVal(NameNameRelationship tableType, ENT_NAME valName) const;
+    ENT_SET getRelationshipByVal(NameNameRelationship tableType, const ENT_NAME &valName) const;
 
     ENT_ENT_SET getAllRelationships(NameNameRelationship tableType) const;
 
@@ -32,7 +32,7 @@ class PKBReader {
 
     ENT_SET getValueNameByRelationship(NameNameRelationship tableType) const;
 
-    bool isRelationshipExists(NameNameRelationship tableType, ENT_NAME keyName, ENT_NAME valName) const;
+    bool isRelationshipExists(NameNameRelationship tableType, const ENT_NAME &keyName, const ENT_NAME &valName) const;
 
     STMT_SET getRelationshipByKey(StmtStmtRelationship tableType, STMT_NUM keyName) const;
 

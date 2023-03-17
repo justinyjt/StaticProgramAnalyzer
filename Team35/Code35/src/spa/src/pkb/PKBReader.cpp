@@ -1,5 +1,7 @@
 #include "PKBReader.h"
 
+#include <algorithm>
+
 PKBReader::PKBReader(PKB &pkb) : pkb(pkb) {}
 
 ENT_SET PKBReader::getEntities(Entity entityType) const {
@@ -15,7 +17,7 @@ ENT_SET PKBReader::getRelationship(StmtNameRelationship tableType, STMT_NUM stmt
     return pkb.getEntByStmtKey(tableType, stmt);
 }
 
-STMT_SET PKBReader::getRelationship(StmtNameRelationship tableType, ENT_NAME name) const {
+STMT_SET PKBReader::getRelationship(StmtNameRelationship tableType, const ENT_NAME &name) const {
     return pkb.getStmtByEntVal(tableType, name);
 }
 
@@ -28,17 +30,17 @@ STMT_SET PKBReader::getStmtByRelationship(StmtNameRelationship tableType) const 
     return pkb.getStmtByRs(tableType);
 }
 
-bool PKBReader::isRelationshipExists(StmtNameRelationship tableType, STMT_NUM stmt, ENT_NAME name) const {
+bool PKBReader::isRelationshipExists(StmtNameRelationship tableType, STMT_NUM stmt, const ENT_NAME &name) const {
     return pkb.isStmtEntPairExists(tableType, stmt, name);
 }
 
 
 // Entity-Entity Relationship
-ENT_SET PKBReader::getRelationshipByKey(NameNameRelationship tableType, ENT_NAME keyName) const {
+ENT_SET PKBReader::getRelationshipByKey(NameNameRelationship tableType, const ENT_NAME &keyName) const {
     return pkb.getEntByEntKey(tableType, keyName);
 }
 
-ENT_SET PKBReader::getRelationshipByVal(NameNameRelationship tableType, ENT_NAME valName) const {
+ENT_SET PKBReader::getRelationshipByVal(NameNameRelationship tableType, const ENT_NAME &valName) const {
     return pkb.getEntByEntVal(tableType, valName);
 }
 
@@ -46,7 +48,8 @@ ENT_ENT_SET PKBReader::getAllRelationships(NameNameRelationship tableType) const
     return pkb.getEntEntSet(tableType);
 }
 
-bool PKBReader::isRelationshipExists(NameNameRelationship tableType, ENT_NAME keyName, ENT_NAME valName) const {
+bool PKBReader::isRelationshipExists(NameNameRelationship tableType, const ENT_NAME &keyName,
+                                     const ENT_NAME &valName) const {
     return pkb.isEntEntPairExists(tableType, keyName, valName);
 }
 
@@ -182,12 +185,10 @@ bool PKBReader::isValidAffectsSuccessor(STMT_NUM stmt) const {
         return false;
     }
     STMT_SET predecessors = pkb.getStmtByStmtVal(StmtStmtRelationship::NextStar, stmt);
-    for (auto &predecessor : predecessors) {
-        if (isAffects(predecessor, stmt)) {
-            return true;
-        }
-    }
-    return false;
+    return std::any_of(predecessors.begin(), predecessors.end(),
+                       [stmt, this](auto &predecessor) {
+                           return isAffects(predecessor, stmt);
+                       });
 }
 
 bool PKBReader::isValidAffectsPredecessor(STMT_NUM stmt) const {
@@ -199,12 +200,10 @@ bool PKBReader::isValidAffectsPredecessor(STMT_NUM stmt) const {
         return false;
     }
     STMT_SET successors = pkb.getStmtByStmtKey(StmtStmtRelationship::NextStar, stmt);
-    for (auto &successor : successors) {
-        if (isAffects(stmt, successor)) {
-            return true;
-        }
-    }
-    return false;
+    return std::any_of(successors.begin(), successors.end(),
+                       [stmt, this](auto &successor) {
+                           return isAffects(stmt, successor);
+                       });
 }
 
 STMT_SET PKBReader::getAffectsByPredecessor(STMT_NUM stmt) const {
