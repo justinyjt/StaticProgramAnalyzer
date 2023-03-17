@@ -35,5 +35,3 @@ class SyntaxValidator {
     bool validateRelExpr();
     bool validateName();
 };
-
-
