@@ -20,7 +20,6 @@ TEST_CASE("1. Test IfPattern") {
     pkbWriterPtr->addStatements(StmtType::If, ifStatements);
     pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::IfCondVarUses, ifUses);
 
-    
     SECTION("Test ifs(_, _, _)") {
         IfPattern ifPattern(std::make_unique<Wildcard>(), "");
         std::unique_ptr<Result> actualResult = ifPattern.evaluate(pkbReaderPtr);
