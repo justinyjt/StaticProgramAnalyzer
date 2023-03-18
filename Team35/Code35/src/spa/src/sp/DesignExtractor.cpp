@@ -271,7 +271,7 @@ void DesignExtractor::extractCall(const std::shared_ptr<ASTNode> &node) {
 
     ENT_NAME calleeName = child->getLabel();
     callGraph_.addCallRelationship(curProc_, calleeName);
-    callProcNameToStmtMap_.emplace(calleeName, stmtCnt_);
+    callProcNameToStmtMap_[calleeName].insert(stmtCnt_);
     updateContainerCallPairSet(calleeName);
 }
 
@@ -324,7 +324,9 @@ void DesignExtractor::analyzeProc() {
                         auto &procUseVarSet = iter->second;
                         for (const auto &varUsed : procUseVarSet) {
                             procUsePairSet_.emplace(procName, varUsed);
-                            stmtUsePairSet_.emplace(callProcNameToStmtMap_.at(curProcName), varUsed);
+                            for (const auto &stmt : callProcNameToStmtMap_.at(curProcName)) {
+                                stmtUsePairSet_.emplace(stmt, varUsed);
+                            }
                         }
                     }
                     //  Variables directly modified by current proc
@@ -333,7 +335,9 @@ void DesignExtractor::analyzeProc() {
                         auto &procModVarSet = iter->second;
                         for (const auto &varModified : procModVarSet) {
                             procModPairSet_.emplace(procName, varModified);
-                            stmtModPairSet_.emplace(callProcNameToStmtMap_.at(curProcName), varModified);
+                            for (const auto &stmt : callProcNameToStmtMap_.at(curProcName)) {
+                                stmtModPairSet_.emplace(stmt, varModified);
+                            }
                         }
                     }
                 }
