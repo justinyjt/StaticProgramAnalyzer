@@ -332,7 +332,7 @@ void DesignExtractor::analyzeProc() {
                 auto& curProcNode = procQueue->front();
                 auto& curProcName = curProcNode.procName;
                 auto& curPath = curProcNode.path;
-                auto& newPath = std::vector<ENT_NAME>(curPath);
+                auto newPath = std::vector<ENT_NAME>(curPath);
                 newPath.push_back(curProcName);
 
                 //  For every previous procs on the path
@@ -340,21 +340,20 @@ void DesignExtractor::analyzeProc() {
                     //  Variables directly used by current proc
                     auto iter = procDirectUseVarMap_.find(curProcName);
                     if (iter != procDirectUseVarMap_.end()) {
-                        auto& procUseVarSet = iter->second;
-                        for (const auto& varUsed : procUseVarSet) {
+                        auto &procUseVarSet = iter->second;
+                        for (const auto &varUsed : procUseVarSet) {
                             procUsePairSet_.insert(ENT_ENT(procName, varUsed));
                         }
                     }
                     //  Variables directly modified by current proc
                     iter = procDirectModVarMap_.find(curProcName);
                     if (iter != procDirectModVarMap_.end()) {
-                        auto& procModVarSet = iter->second;
-                        for (const auto& varModed : procModVarSet) {
+                        auto &procModVarSet = iter->second;
+                        for (const auto &varModed : procModVarSet) {
                             procModPairSet_.insert(ENT_ENT(procName, varModed));
                         }
                     }
                 }
-                
                 for (const auto& calleeProc : callGraph_.getCallingProcs(curProcName)) {
                     procQueue->push(ProcNode(calleeProc, newPath));
                 }
