@@ -1,4 +1,6 @@
 #include "QuerySyntaxValidator.h"
+#include "commons/lexer/LexerFactory.h"
+#include "commons/expr_validator/ExprValidator.h"
 
 #include <cassert>
 #include <utility>
@@ -433,11 +435,27 @@ bool QuerySyntaxValidator::validateEntRef() {
 
 bool QuerySyntaxValidator::validateExpressionSpec() {
     if (scanner_.peek(Token::Tag::String)) {
+        std::string expr = scanner_.peekLexeme();
         scanner_.next();
+        std::unique_ptr<ILexer> lxr =
+                LexerFactory::createLexer(expr, LexerFactory::LexerType::Expression);
+        TokenScanner scanner(std::move(lxr));
+        ExprValidator exprValidator(scanner);
+        if (!exprValidator.validateExpr()) {
+            return false;
+        }
         return true;
     } else if (scanner_.peek(Token::Tag::Underscore)) {
         scanner_.next();
         if (scanner_.peek(Token::Tag::String) && scanner_.peekOffset(Token::Tag::Underscore, 1)) {
+            std::string expr = scanner_.peekLexeme();
+            std::unique_ptr<ILexer> lxr =
+                    LexerFactory::createLexer(expr, LexerFactory::LexerType::Expression);
+            TokenScanner scanner(std::move(lxr));
+            ExprValidator exprValidator(scanner);
+            if (!exprValidator.validateExpr()) {
+                return false;
+            }
             scanner_.next();
             scanner_.next();
         } else {

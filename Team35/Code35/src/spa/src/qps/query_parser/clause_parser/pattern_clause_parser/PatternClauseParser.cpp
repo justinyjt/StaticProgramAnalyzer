@@ -11,6 +11,7 @@
 #include "qps/clause/TwoArgClause/TwoArgClauseFactory.h"
 #include "qps/clause/one_arg_clause/OneArgClauseFactory.h"
 #include "commons/expr_parser/ExprParser.h"
+#include "commons/lexer/LexerFactory.h"
 
 PatternClauseParser::PatternClauseParser(PQLTokenScanner& pqlTokenScanner,
                                          std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
