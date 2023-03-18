@@ -59,6 +59,7 @@ class DesignExtractor {
     std::unordered_map<STMT_NUM, ASSIGN_PAT> assignPatMap_;
     std::unordered_map<ENT_NAME, ENT_SET> procDirectUseVarMap_;
     std::unordered_map<ENT_NAME, ENT_SET> procDirectModVarMap_;
+    std::unordered_map<ENT_NAME, STMT_SET> callProcNameToStmtMap_;
 
     std::unique_ptr<PKBWriter> pkbWriter_;
     std::shared_ptr<ASTNode> root_;
@@ -146,4 +147,8 @@ class DesignExtractor {
     void updateStmtModsPairSet(STMT_NUM stmt, const ENT_NAME &varName);
 
     void updateContainerCallPairSet(const ENT_NAME &procName);
+
+    void updateStmtUsesPairSetWithCalls();
+
+    void updateStmtModsPairSetWithCalls();
 };
