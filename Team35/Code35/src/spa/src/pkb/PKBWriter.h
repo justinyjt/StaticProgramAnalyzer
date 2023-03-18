@@ -10,7 +10,7 @@
 
 class PKBWriter {
  public:
-    explicit PKBWriter(PKB &);
+    explicit PKBWriter(PKB &pkb);
 
     bool addEntities(Entity entity, const ENT_SET &entitySet);
 
@@ -22,7 +22,7 @@ class PKBWriter {
 
     bool addEntityEntityRelationships(NameNameRelationship tableType, const ENT_ENT_SET &set);
 
-    void addPatterns(std::unordered_map<STMT_NUM, ASSIGN_PAT> patMap);
+    void addPatterns(std::unordered_map<STMT_NUM, ASSIGN_PAT> &patMap);
 
     void addCallGraph(CallGraph &&callGraph);
 
