@@ -79,6 +79,12 @@ void TableResult::output(std::list<std::string> &list) {
     }
 }
 
+// general constructor for n-cols
+TableResult::TableResult(SelectResult &selectResult) : Result(Tag::TABLE) {
+    idents = selectResult.idents;
+    rows = selectResult.rows;
+}
+
 bool TableResult::operator==(const Result &rhs) const {
     const TableResult *pRhs = dynamic_cast<const TableResult *>(&rhs);
     return pRhs != nullptr && idents == pRhs->idents && rows == pRhs->rows;

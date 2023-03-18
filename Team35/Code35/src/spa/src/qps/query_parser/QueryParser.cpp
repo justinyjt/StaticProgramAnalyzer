@@ -10,7 +10,7 @@
 #include "commons/token_scanner/PQLTokenScanner.h"
 #include "QuerySyntaxValidator.h"
 
-std::vector<std::unique_ptr<Clause>> QueryParser::parse(std::string &query) {
+std::pair<std::unique_ptr<SelectClause>, std::vector<std::unique_ptr<Clause>>> QueryParser::parse(std::string &query) {
     try {
         std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
         std::unique_ptr<QuerySyntaxValidator> sv = std::make_unique<QuerySyntaxValidator>(std::move(lexer));
@@ -25,19 +25,13 @@ std::vector<std::unique_ptr<Clause>> QueryParser::parse(std::string &query) {
         std::unordered_map<std::string, Synonym::DesignEntity> synonyms = declarationParser.parse();
         // parse select using list of found synonyms
         SelectionParser selectionParser(pqlTokenScanner, synonyms);
-        std::unique_ptr<Clause> selectClause = selectionParser.parse();
-
-        std::vector<std::unique_ptr<Clause>> res;
-        res.push_back(std::move(selectClause));
+        std::unique_ptr<SelectClause> selectClause = selectionParser.parse();
 
         // parse clauses
         ClauseParser clauseParser(pqlTokenScanner, synonyms);
         std::vector<std::unique_ptr<Clause>> clauses = clauseParser.parse();
-        for (auto &clause : clauses) {
-            res.push_back(std::move(clause));
-        }
 
-        return res;
+        return {std::move(selectClause), std::move(clauses)};
     } catch (const LexerException &e) {
         throw SyntaxException();
     }

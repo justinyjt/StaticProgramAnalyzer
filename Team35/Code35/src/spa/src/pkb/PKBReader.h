@@ -55,6 +55,8 @@ class PKBReader {
 
     STMT_SET getStmtWithPartialPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;
 
+    STMT_ENT_SET getStatementsEntities(StmtType stmtType) const;
+
  private:
     PKB &pkb;
 

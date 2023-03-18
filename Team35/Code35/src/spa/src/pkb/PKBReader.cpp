@@ -134,6 +134,10 @@ STMT_SET PKBReader::getStmtWithPartialPatternMatch(ASSIGN_PAT_RIGHT &pattern) co
     return pkb.getPatternTable().getPartialPatternMatch(pattern);
 }
 
+STMT_ENT_SET PKBReader::getStatementsEntities(StmtType stmtType) const {
+    assert(false);
+}
+
 bool PKBReader::isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const {
     if (!pkb.isEntityTypeExists(StmtType::Assign, stmt1) ||
         !pkb.isEntityTypeExists(StmtType::Assign, stmt2)) {

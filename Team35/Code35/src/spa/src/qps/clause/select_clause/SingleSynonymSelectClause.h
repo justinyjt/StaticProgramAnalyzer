@@ -7,8 +7,9 @@
 
 class SingleSynonymSelectClause : public SelectClause {
  public:
-    const Synonym syn;
-    explicit SingleSynonymSelectClause(Synonym &syn);
+    const std::unique_ptr<Synonym> syn;
+    std::string selectedIdent;
+    explicit SingleSynonymSelectClause(std::unique_ptr<Synonym> syn);
     std::unique_ptr<Result> evaluate(PKBReader *db);
     bool operator==(const Clause &rhs) const;
 };

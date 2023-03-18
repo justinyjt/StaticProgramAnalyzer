@@ -7,6 +7,7 @@
 #include <unordered_set>
 
 #include "Result.h"
+#include "SelectResult.h"
 
 // n-col result
 class TableResult : public Result {
@@ -42,6 +43,9 @@ class TableResult : public Result {
 
     // for 1 col with STMT_SET
     TableResult(const std::string &ident, STMT_SET &set);
+
+    // SelectResult
+    TableResult(SelectResult &selectResult);
 
     void output(std::list<std::string> &list) override;
 

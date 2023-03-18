@@ -6,6 +6,7 @@
 
 #include "BoolResult.h"
 #include "TableResult.h"
+#include "SelectResult.h"
 
 Result::Result(Result::Tag _tag) : tag(_tag) {}
 
@@ -169,8 +170,7 @@ std::unique_ptr<Result> Result::tableJoin(Result &lhs, Result &rhs) {
 }
 
 std::unique_ptr<Result> Result::selectJoin(Result &lhs, Result &rhs) {
-    // LHS(select clause) can only be BoolResult if Select BOOLEAN, always return BoolResult
-    // LHS(select clause) can be TableResult if SingleSynonym or tuple, always return TableResult
+    // LHS is always SelectResult as evaluated by SelectClause
     if (lhs.tag == Tag::BOOL && rhs.tag == Tag::BOOL) {
         BoolResult &l = dynamic_cast<BoolResult &>(lhs);
         BoolResult &r = dynamic_cast<BoolResult &>(rhs);
@@ -181,24 +181,29 @@ std::unique_ptr<Result> Result::selectJoin(Result &lhs, Result &rhs) {
         TableResult &r = dynamic_cast<TableResult &>(rhs);
         std::unique_ptr<Result> res = std::make_unique<BoolResult>(r.rows.size() != 0);
         return std::move(res);
-    } else if (lhs.tag == Tag::TABLE && rhs.tag == Tag::BOOL) {
+    } else if (lhs.tag == Tag::SELECT && rhs.tag == Tag::BOOL) {
         BoolResult &r = dynamic_cast<BoolResult &>(rhs);
-        TableResult& tbl = dynamic_cast<TableResult&>(lhs);
-        return r.b ? std::move(std::make_unique<TableResult>(tbl)) : std::move(std::make_unique<TableResult>());
-    } else {
+        SelectResult& tbl = dynamic_cast<SelectResult &>(lhs);
+        return r.b ? std::move(std::make_unique<SelectResult>(tbl)) : std::move(std::make_unique<SelectResult>());
+    } else if (lhs.tag == Tag::SELECT && rhs.tag == Tag::TABLE) {
         int selectedIdx = 0;
-        TableResult& selectList = dynamic_cast<TableResult&>(lhs);
-        TableResult& tbl = dynamic_cast<TableResult&>(rhs);
-        std::string selected = selectList.idents.front();
+        SelectResult& selectList = dynamic_cast<SelectResult&>(lhs);
+        TableResult& r = dynamic_cast<TableResult&>(rhs);
+        std::string selected = selectList.selected;
         std::list<std::string> resultTableHeaders;
         std::vector<std::list<std::string>> rows;
         std::unordered_set<std::string> resultSet;
         resultTableHeaders.push_back(selected);
 
         // select clause or result clause is empty
-        if (tbl.rows.size() == 0 || selectList.rows.size() == 0) {
+        if (r.rows.size() == 0 || selectList.rows.size() == 0) {
             return std::move(std::make_unique<TableResult>());
         }
+
+        // join select with rhs, then selected the column 'selected'
+        TableResult selectTable = TableResult(selectList);
+        std::unique_ptr<Result> res = Result::join(selectTable, r);
+        TableResult& tbl = dynamic_cast<TableResult&>(*res);
 
         for (auto &s : tbl.idents) {
             if (s == selected) {

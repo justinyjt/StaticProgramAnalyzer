@@ -9,8 +9,8 @@ QPS::QPS(PKBReader *pkbReader)
 
 void QPS::executeQuery(std::string &query, std::list<std::string> &result) {
     try {
-        std::vector<std::unique_ptr<Clause>> clauses = queryParser->parse(query);
-        std::unique_ptr<Result> eval = queryEvaluator->evaluate(clauses);
+        std::pair<std::unique_ptr<SelectClause>, std::vector<std::unique_ptr<Clause>>> clauses = queryParser->parse(query);
+        std::unique_ptr<Result> eval = queryEvaluator->evaluate(std::move(clauses));
         eval->output(result);
     } catch (SyntaxException &e) {
         result.emplace_back(e.what());
