@@ -114,6 +114,10 @@ class DesignExtractor {
 
     void analyzeProc();
 
+    void updateStmtUsesPairSetWithContainedCalls();
+
+    void updateStmtModsPairSetWithContainedCalls();
+
     void extractProc(const std::shared_ptr<ASTNode> &);
 
     void extractAssign(const std::shared_ptr<ASTNode> &);

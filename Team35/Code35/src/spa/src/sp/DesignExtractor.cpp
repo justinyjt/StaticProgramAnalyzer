@@ -29,6 +29,8 @@ std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode
     analyzeProc();
     updateStmtUsesPairSetWithCalls();
     updateStmtModsPairSetWithCalls();
+    updateStmtUsesPairSetWithContainedCalls();
+    updateStmtModsPairSetWithContainedCalls();
 
     addVarNameSetToPKB();
     addConstantSetToPKB();
@@ -320,6 +322,34 @@ void DesignExtractor::updateStmtModsPairSetWithCalls() {
         }
         for (STMT_NUM stmt : callProcNameToStmtMap_.at(procName)) {
             stmtModPairSet_.emplace(stmt, var);
+        }
+    }
+}
+
+void DesignExtractor::updateStmtUsesPairSetWithContainedCalls() {
+    for (const auto &containerToCallStmt : containerCallPairSet_) {
+        const auto &containerStmt = containerToCallStmt.first;
+        const auto &procCalled = containerToCallStmt.second;
+        for (const auto &procVarPair : procUsePairSet_) {
+            const auto &usesProc = procVarPair.first;
+            const auto &usesVar = procVarPair.second;
+            if (usesProc == procCalled) {
+                stmtUsePairSet_.emplace(containerStmt, usesVar);
+            }
+        }
+    }
+}
+
+void DesignExtractor::updateStmtModsPairSetWithContainedCalls() {
+    for (const auto &containerToCallStmt : containerCallPairSet_) {
+        const auto &containerStmt = containerToCallStmt.first;
+        const auto &procCalled = containerToCallStmt.second;
+        for (const auto &procVarPair : procModPairSet_) {
+            const auto &modProc = procVarPair.first;
+            const auto &modVar = procVarPair.second;
+            if (modProc == procCalled) {
+                stmtModPairSet_.emplace(containerStmt, modVar);
+            }
         }
     }
 }
