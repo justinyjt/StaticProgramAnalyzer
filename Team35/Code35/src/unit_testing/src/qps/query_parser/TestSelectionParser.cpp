@@ -5,6 +5,7 @@
 #include "qps/clause/select_clause/SingleSynonymSelectClause.h"
 #include "qps/query_parser/QuerySyntaxValidator.h"
 #include "qps/pql/AttrRef.h"
+#include "qps/query_parser/helper.h"
 
 TEST_CASE("Selection parser") {
     std::string query = "Select s";
@@ -40,7 +41,7 @@ TEST_CASE("Selection parser, attrRef") {
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     SelectionParser sp(pqlTokenScanner, declarationList);
     std::unique_ptr<SelectClause> sc = sp.parse();
-    std::unique_ptr<AttrRef> attrRef = std::make_unique<AttrRef>(Synonym::DesignEntity::STMT, "s", AttrRef::AttrVal::INTEGER);
+    std::unique_ptr<AttrRef> attrRef = std::make_unique<AttrRef>(Synonym::DesignEntity::STMT, "s", STMT_KEYWORD);
     std::unique_ptr<SelectClause> expected = std::make_unique<SingleSynonymSelectClause>(std::move(attrRef));
     requireTrue(*sc == *expected);
 }

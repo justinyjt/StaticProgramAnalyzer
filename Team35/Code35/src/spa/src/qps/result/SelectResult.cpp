@@ -4,7 +4,8 @@
 
 // general constructor for n-cols
 SelectResult::SelectResult(std::list<std::string> &_idents,
-                         const std::vector<std::list<std::string>> &_rows, std::string selected) : Result(Tag::SELECT), selected(selected) {
+                           const std::vector<std::list<std::string>> &_rows, std::string selected) :
+        Result(Tag::SELECT), selected(selected) {
     idents.insert(idents.end(), _idents.begin(), _idents.end());
     rows.insert(rows.end(), _rows.begin(), _rows.end());
 }
@@ -50,14 +51,16 @@ SelectResult::SelectResult(const std::string &ident1, const std::string &ident2,
 
 // for 2 cols with vector<list<string>>
 SelectResult::SelectResult(const std::string &ident1, const std::string &ident2,
-                         const std::vector<std::list<std::string>> &vec, std::string selected) : Result(Tag::SELECT), selected(selected) {
+                           const std::vector<std::list<std::string>> &vec, std::string selected) :
+        Result(Tag::SELECT), selected(selected) {
     idents.push_back(ident1);
     idents.push_back(ident2);
     rows.insert(rows.end(), vec.begin(), vec.end());
 }
 
 // for 1 col with ENT_SET
-SelectResult::SelectResult(const std::string &ident, ENT_SET &set, std::string selected) : Result(Tag::SELECT), selected(selected) {
+SelectResult::SelectResult(const std::string &ident, ENT_SET &set, std::string selected)
+        : Result(Tag::SELECT), selected(selected) {
     idents.push_back(ident);
     for (auto &elem : set)
         rows.emplace_back(
@@ -65,7 +68,8 @@ SelectResult::SelectResult(const std::string &ident, ENT_SET &set, std::string s
 }
 
 // for 1 col with STMT_SET
-SelectResult::SelectResult(const std::string &ident, STMT_SET &set, std::string selected) : Result(Tag::SELECT), selected(selected) {
+SelectResult::SelectResult(const std::string &ident, STMT_SET &set, std::string selected) :
+        Result(Tag::SELECT), selected(selected) {
     idents.push_back(ident);
     for (auto &elem : set)
         rows.emplace_back(

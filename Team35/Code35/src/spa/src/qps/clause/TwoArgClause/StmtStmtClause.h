@@ -27,12 +27,12 @@ class Follows : public StmtStmtClause {
 };
 
 class Next : public StmtStmtClause {
-public:
+ public:
     Next(std::unique_ptr<PQLToken>, std::unique_ptr<PQLToken>, bool isTransitive);
 };
 
 
 class Affects : public StmtStmtClause {
-public:
+ public:
     Affects(std::unique_ptr<PQLToken>, std::unique_ptr<PQLToken>, bool isTransitive);
 };

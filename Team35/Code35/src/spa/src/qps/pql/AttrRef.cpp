@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "AttrRef.h"
 
 AttrRef::AttrRef(DesignEntity de, std::string ident, std::string ref) : Synonym(de, std::move(ident)), ref(ref) {}

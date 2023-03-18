@@ -78,7 +78,8 @@ std::unique_ptr<Result> SingleSynonymSelectClause::evaluate(PKBReader *db) {
         auto attrRef = dynamic_cast<AttrRef *>(syn.get());
         if (attrRef != nullptr && (attrRef->ref == VARNAME_KEYWORD || attrRef->ref == PROCNAME_KEYWORD)) {
             selectedIdent = syn->ident + attrRef->ref;
-            result = std::make_unique<SelectResult>(syn->ident, syn->ident + attrRef->ref,ses, syn->ident + attrRef->ref);
+            result = std::make_unique<SelectResult>(syn->ident, syn->ident + attrRef->ref,
+                                                    ses, syn->ident + attrRef->ref);
         } else {
             selectedIdent = syn->ident;
             result = std::make_unique<SelectResult>(syn->ident, ss, syn->ident);

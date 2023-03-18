@@ -46,7 +46,7 @@ class TableResult : public Result {
     TableResult(const std::string &ident, STMT_SET &set);
 
     // SelectResult
-    TableResult(SelectResult &selectResult);
+    explicit TableResult(SelectResult &selectResult);
 
     void output(std::list<std::string> &list) override;
 

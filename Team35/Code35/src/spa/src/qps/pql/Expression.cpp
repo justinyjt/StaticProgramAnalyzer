@@ -2,7 +2,8 @@
 
 #include <utility>
 
-Expression::Expression(ASSIGN_PAT_RIGHT exprNode, bool hasWildcard) : PQLToken(Tag::EXPR), exprNode(exprNode), hasWildcard(hasWildcard) {}
+Expression::Expression(ASSIGN_PAT_RIGHT exprNode, bool hasWildcard) :
+        PQLToken(Tag::EXPR), exprNode(exprNode), hasWildcard(hasWildcard) {}
 
 std::string Expression::str() const {
     return exprNode->toString();

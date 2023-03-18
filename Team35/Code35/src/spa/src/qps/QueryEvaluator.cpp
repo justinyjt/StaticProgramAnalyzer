@@ -3,7 +3,8 @@
 
 QueryEvaluator::QueryEvaluator(PKBReader *db) : db(db) {}
 
-std::unique_ptr<Result> QueryEvaluator::evaluate(std::pair<std::unique_ptr<SelectClause>, std::vector<std::unique_ptr<Clause>>> clausePair) const {
+std::unique_ptr<Result> QueryEvaluator::evaluate(std::pair<std::unique_ptr<SelectClause>,
+        std::vector<std::unique_ptr<Clause>>> clausePair) const {
     std::unique_ptr<SelectClause> selectClause = std::move(clausePair.first);
     std::vector<std::unique_ptr<Clause>> clauses = std::move(clausePair.second);
 

@@ -1,4 +1,5 @@
 #include <cassert>
+#include <vector>
 
 #include "SelectClause.h"
 #include "MultipleSynonymSelectClause.h"
@@ -8,7 +9,6 @@ MultipleSynonymSelectClause::MultipleSynonymSelectClause(std::vector<std::unique
 
 std::unique_ptr<Result> MultipleSynonymSelectClause::evaluate(PKBReader *db) {
     // loop through synonyms and get tables
-
 }
 
 bool MultipleSynonymSelectClause::operator==(const Clause &rhs) const {

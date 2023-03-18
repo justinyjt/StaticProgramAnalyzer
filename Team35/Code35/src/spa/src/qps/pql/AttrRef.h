@@ -1,10 +1,12 @@
+#pragma once
+
 #include <string>
 
 #include "PQLToken.h"
 #include "Synonym.h"
 
 class AttrRef : public Synonym {
-public:
+ public:
     enum class AttrVal {
         NAME, INTEGER
     };

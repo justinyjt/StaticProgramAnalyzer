@@ -14,15 +14,15 @@ TEST_CASE("1. Query parser") {
     std::string query = "variable v, x; assign a, b, c; read y; Select c such that Parent*(a,b) pattern "
                         "a ( _ , _\"x\"_)";
     QueryParser qp;
-    std::vector<std::unique_ptr<Clause>> clauses = qp.parse(query);
+    std::pair<std::unique_ptr<SelectClause>, std::vector<std::unique_ptr<Clause>>> clauses = qp.parse(query);
 
-    requireTrue(clauses.size() == 3);
+    requireTrue(clauses.second.size() == 2);
 
     std::unique_ptr<Synonym> st = std::make_unique<Synonym>(Synonym::DesignEntity::ASSIGN, "a");
     std::unique_ptr<Synonym> syn = std::make_unique<Synonym>(Synonym::DesignEntity::ASSIGN, "b");
     std::unique_ptr<Parent> m = std::make_unique<Parent>(std::move(st), std::move(syn), true);
 
-    requireTrue(*clauses[1] == *m);
+    requireTrue(*clauses.second[0] == *m);
 
     std::unique_ptr<Wildcard> w = std::make_unique<Wildcard>();
     std::string exprStr = "x";
@@ -35,6 +35,6 @@ TEST_CASE("1. Query parser") {
 
     std::unique_ptr<AssignPattern> assignPattern = std::make_unique<AssignPattern>(std::move(w), std::move(expr), "a");
 
-    std::unique_ptr<Clause> c2 = std::move(clauses[2]);
+    std::unique_ptr<Clause> c2 = std::move(clauses.second[1]);
     requireTrue(*c2 == *assignPattern);
 }

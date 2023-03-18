@@ -1,9 +1,10 @@
+#include <cassert>
+#include <string>
+#include <utility>
+
 #include "QuerySyntaxValidator.h"
 #include "commons/lexer/LexerFactory.h"
 #include "commons/expr_validator/ExprValidator.h"
-
-#include <cassert>
-#include <utility>
 
 QuerySyntaxValidator::QuerySyntaxValidator(std::unique_ptr<ILexer> lex) : scanner_(std::move(lex)) {}
 

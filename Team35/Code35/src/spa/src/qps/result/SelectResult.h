@@ -10,7 +10,7 @@
 
 // n-col result
 class SelectResult : public Result {
-public:
+ public:
     std::list<std::string> idents;  // eg list<"v", "s1">
     std::vector<std::list<std::string>> rows;  // eg vector<list<"x",1>, list<"y",2>, ...>
     std::string selected;
