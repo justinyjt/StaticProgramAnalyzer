@@ -16,6 +16,7 @@
 #include "qps/clause/TwoArgClause/WithNumClause.h"
 #include "qps/query_parser/clause_parser/ClauseParser.h"
 #include "qps/query_parser/QuerySyntaxValidator.h"
+#include "commons/expr_parser/ExprParser.h"
 
 class setUpMcp {
  public:
@@ -51,7 +52,13 @@ class setUpMcp {
         synonymConstant = std::make_unique<Synonym>(Synonym::DesignEntity::CONSTANT, "c");
 
         identStr = std::make_unique<Ident>("x");
-        expr = std::make_unique<Expression>("x", false);
+        std::string exprStr = "x";
+        std::unique_ptr<ILexer> lxr =
+                LexerFactory::createLexer(exprStr, LexerFactory::LexerType::Expression);
+        TokenScanner scanner(std::move(lxr));
+        ExprParser parser(scanner);
+        ASSIGN_PAT_RIGHT pattern = parser.parseExpr();
+        expr = std::make_unique<Expression>(pattern, false);
         statementNumber1 = std::make_unique<StatementNumber>(1);
         statementNumber2 = std::make_unique<StatementNumber>(1);
         wildcard1 = std::make_unique<Wildcard>();

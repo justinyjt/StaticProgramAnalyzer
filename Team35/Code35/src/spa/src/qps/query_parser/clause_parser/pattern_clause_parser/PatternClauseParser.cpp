@@ -123,11 +123,11 @@ std::unique_ptr<PQLToken> PatternClauseParser::parseEntRef() {
     } else if (pqlTokenScanner.peek(Token::Tag::Underscore)) {
         std::unique_ptr<Wildcard> w = std::make_unique<Wildcard>();
         pqlTokenScanner.next();
-        return w;
+        return std::move(w);
     } else if (pqlTokenScanner.peek(Token::Tag::String)) {
         std::unique_ptr<Ident> i = std::make_unique<Ident>(pqlTokenScanner.peekLexeme());
         pqlTokenScanner.next();
-        return i;
+        return std::move(i);
     }
 }
 

@@ -10,6 +10,7 @@
 #include "qps/clause/one_arg_clause/WhilePattern.h"
 #include "qps/clause/one_arg_clause/IfPattern.h"
 #include "qps/query_parser/QuerySyntaxValidator.h"
+#include "commons/expr_parser/ExprParser.h"
 
 class setUp {
  public:
@@ -31,9 +32,21 @@ class setUp {
         synonymConstant = std::make_unique<Synonym>(Synonym::DesignEntity::CONSTANT, "c");
 
         ident = std::make_unique<Ident>("x");
-        expr = std::make_unique<Expression>("x", false);
-        exprWildcardVarName = std::make_unique<Expression>("x", true);
-        exprWildcardConstValue = std::make_unique<Expression>("1", true);
+        std::string exprStr = "x";
+        std::unique_ptr<ILexer> lxr =
+                LexerFactory::createLexer(exprStr, LexerFactory::LexerType::Expression);
+        TokenScanner scanner(std::move(lxr));
+        ExprParser parser(scanner);
+        ASSIGN_PAT_RIGHT pattern = parser.parseExpr();
+        exprStr = "1";
+        lxr =
+                LexerFactory::createLexer(exprStr, LexerFactory::LexerType::Expression);
+        TokenScanner scanner2(std::move(lxr));
+        ExprParser parser2(scanner2);
+        ASSIGN_PAT_RIGHT pattern2 = parser2.parseExpr();
+        expr = std::make_unique<Expression>(pattern, false);
+        exprWildcardVarName = std::make_unique<Expression>(pattern, true);
+        exprWildcardConstValue = std::make_unique<Expression>(pattern2, true);
         wildcard1 = std::make_unique<Wildcard>();
         wildcard2 = std::make_unique<Wildcard>();
     }

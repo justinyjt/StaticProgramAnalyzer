@@ -7,6 +7,8 @@
 #include "qps/pql/Expression.h"
 #include "qps/query_parser/clause_parser/ClauseParser.h"
 #include "qps/query_parser/QueryParser.h"
+#include "commons/lexer/LexerFactory.h"
+#include "commons/expr_parser/ExprParser.h"
 
 TEST_CASE("1. Query parser") {
     std::string query = "variable v, x; assign a, b, c; read y; Select c such that Parent*(a,b) pattern "
@@ -23,10 +25,16 @@ TEST_CASE("1. Query parser") {
     requireTrue(*clauses[1] == *m);
 
     std::unique_ptr<Wildcard> w = std::make_unique<Wildcard>();
-    std::unique_ptr<Expression> expr = std::make_unique<Expression>("x", true);
+    std::string exprStr = "x";
+    std::unique_ptr<ILexer> lxr =
+            LexerFactory::createLexer(exprStr, LexerFactory::LexerType::Expression);
+    TokenScanner scanner(std::move(lxr));
+    ExprParser parser(scanner);
+    ASSIGN_PAT_RIGHT pattern = parser.parseExpr();
+    std::unique_ptr<Expression> expr = std::make_unique<Expression>(pattern, true);
 
-    std::unique_ptr<AssignPattern> pattern = std::make_unique<AssignPattern>(std::move(w), std::move(expr), "a");
+    std::unique_ptr<AssignPattern> assignPattern = std::make_unique<AssignPattern>(std::move(w), std::move(expr), "a");
 
     std::unique_ptr<Clause> c2 = std::move(clauses[2]);
-    requireTrue(*c2 == *pattern);
+    requireTrue(*c2 == *assignPattern);
 }

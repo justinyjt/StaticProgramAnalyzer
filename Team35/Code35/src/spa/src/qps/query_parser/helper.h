@@ -13,6 +13,10 @@
 #define FOLLOWSTAR_KEYWORD "Follows*"
 #define CALLS_KEYWORD "Calls"
 #define CALLSSTAR_KEYWORD "Calls*"
+#define NEXT_KEYWORD "Next"
+#define NEXTSTAR_KEYWORD "Next*"
+#define AFFECTS_KEYWORD "Affects"
+#define AFFECTSSTAR_KEYWORD "Affects*"
 
 #define PROCNAME_KEYWORD "procName"
 #define VARNAME_KEYWORD "varName"

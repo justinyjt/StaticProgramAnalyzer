@@ -53,5 +53,17 @@ std::unique_ptr<TwoArgClause> TwoArgClauseFactory::createClause(std::unique_ptr<
     } else if (relationship == CALLSSTAR_KEYWORD) {
         std::unique_ptr<Calls> p = std::make_unique<Calls>(std::move(token1), std::move(token2), true);
         return std::move(p);
+    } else if (relationship == NEXT_KEYWORD) {
+        std::unique_ptr<Next> n = std::make_unique<Next>(std::move(token1), std::move(token2), false);
+        return std::move(n);
+    } else if (relationship == NEXTSTAR_KEYWORD) {
+        std::unique_ptr<Next> n = std::make_unique<Next>(std::move(token1), std::move(token2), true);
+        return std::move(n);
+    } else if (relationship == AFFECTS_KEYWORD) {
+        std::unique_ptr<Affects> n = std::make_unique<Affects>(std::move(token1), std::move(token2), false);
+        return std::move(n);
+    } else if (relationship == AFFECTSSTAR_KEYWORD) {
+        std::unique_ptr<Affects> n = std::make_unique<Affects>(std::move(token1), std::move(token2), true);
+        return std::move(n);
     }
 }

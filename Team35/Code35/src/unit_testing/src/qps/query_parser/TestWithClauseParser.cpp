@@ -7,6 +7,7 @@
 #include "qps/query_exceptions/SyntaxException.h"
 #include "qps/clause/TwoArgClause/WithEntClause.h"
 #include "qps/clause/TwoArgClause/WithNumClause.h"
+#include "commons/expr_parser/ExprParser.h"
 
 class setUpWcp {
  public:
@@ -31,9 +32,21 @@ class setUpWcp {
         ident2 = std::make_unique<Ident>("x");
         statementNumber1 = std::make_unique<StatementNumber>(1);
         statementNumber2 = std::make_unique<StatementNumber>(1);
-        expr = std::make_unique<Expression>("x", false);
-        exprWildcardVarName = std::make_unique<Expression>("x", true);
-        exprWildcardConstValue = std::make_unique<Expression>("1", true);
+        std::string exprStr1 = "x";
+        std::unique_ptr<ILexer> lxr1 =
+                LexerFactory::createLexer(exprStr1, LexerFactory::LexerType::Expression);
+        TokenScanner scanner1(std::move(lxr1));
+        ExprParser parser1(scanner1);
+        ASSIGN_PAT_RIGHT pattern1 = parser1.parseExpr();
+        std::string exprStr2 = "1";
+        std::unique_ptr<ILexer> lxr2 =
+                LexerFactory::createLexer(exprStr2, LexerFactory::LexerType::Expression);
+        TokenScanner scanner2(std::move(lxr2));
+        ExprParser parser2(scanner2);
+        ASSIGN_PAT_RIGHT pattern2 = parser2.parseExpr();
+        expr = std::make_unique<Expression>(pattern1, false);
+        exprWildcardVarName = std::make_unique<Expression>(pattern1, true);
+        exprWildcardConstValue = std::make_unique<Expression>(pattern2, true);
         wildcard1 = std::make_unique<Wildcard>();
         wildcard2 = std::make_unique<Wildcard>();
     }
