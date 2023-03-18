@@ -88,8 +88,8 @@ TEST_CASE("1. Test WithEntClause") {
         STMT_ENT_SET printSet = {STMT_ENT(1, "a"), STMT_ENT(2, "b")};
         STMT_ENT_SET readSet = {STMT_ENT(3, "b"), STMT_ENT(4, "c")};
         TableResult expectedResult = dynamic_cast<TableResult &>(
-            *Result::join(*std::make_unique<TableResult>(TableResult("pr", "common-procname", printSet)),
-            *std::make_unique<TableResult>(TableResult("r", "common-procname", readSet))));
+            *Result::join(*std::make_unique<TableResult>(TableResult("pr", "common-name", printSet)),
+            *std::make_unique<TableResult>(TableResult("r", "common-name", readSet))));
         TableResult actualResult = dynamic_cast<TableResult &>(*withEntClause.evaluate(pkbReaderPtr));
         requireEqual(actualResult.idents, expectedResult.idents);
         requireEqual(actualResult.rows, expectedResult.rows);

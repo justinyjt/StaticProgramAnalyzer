@@ -3,6 +3,8 @@
 #include <cassert>
 #include <string>
 
+#define DUMMY_NAME "common-name"
+
 WithEntClause::WithEntClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second) :
     TwoArgClause(std::move(first), std::move(second)) {}
 
@@ -38,8 +40,8 @@ std::unique_ptr<Result> WithEntClause::handleSynSyn(PKBReader *db, Synonym syn1,
     if (isSyn1Stmt && isSyn2Stmt) {
         STMT_ENT_SET syn1StmtEntSet = getStmtEntSet(db, syn1);
         STMT_ENT_SET syn2StmtEntSet = getStmtEntSet(db, syn2);
-        std::unique_ptr<Result> syn1Res = std::make_unique<TableResult>(syn1.str(), "common-procname", syn1StmtEntSet);
-        std::unique_ptr<Result> syn2Res = std::make_unique<TableResult>(syn2.str(), "common-procname", syn2StmtEntSet);
+        std::unique_ptr<Result> syn1Res = std::make_unique<TableResult>(syn1.str(), DUMMY_NAME, syn1StmtEntSet);
+        std::unique_ptr<Result> syn2Res = std::make_unique<TableResult>(syn2.str(), DUMMY_NAME, syn2StmtEntSet);
         return std::move(Result::join(*syn1Res, *syn2Res));
     } else if (isSyn1Stmt) {
         STMT_ENT_SET syn1StmtEntSet = getStmtEntSet(db, syn1);
