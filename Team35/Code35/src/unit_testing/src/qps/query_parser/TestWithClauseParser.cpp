@@ -2,7 +2,7 @@
 #include "../../TestHelper.h"
 #include "qps/query_parser/clause_parser/ClauseParser.h"
 #include "commons/lexer/LexerFactory.h"
-#include "qps/pql/StatementNumber.h"
+#include "qps/pql/PQLNumber.h"
 #include "qps/pql/Ident.h"
 #include "qps/query_exceptions/SyntaxException.h"
 #include "qps/clause/TwoArgClause/WithEntClause.h"
@@ -29,8 +29,8 @@ class setUpWcp {
 
         ident1 = std::make_unique<Ident>("x");
         ident2 = std::make_unique<Ident>("x");
-        statementNumber1 = std::make_unique<StatementNumber>(1);
-        statementNumber2 = std::make_unique<StatementNumber>(1);
+        statementNumber1 = std::make_unique<PQLNumber>(1);
+        statementNumber2 = std::make_unique<PQLNumber>(1);
         expr = std::make_unique<Expression>("x", false);
         exprWildcardVarName = std::make_unique<Expression>("x", true);
         exprWildcardConstValue = std::make_unique<Expression>("1", true);
@@ -56,8 +56,8 @@ class setUpWcp {
 
     std::unique_ptr<Ident> ident1;
     std::unique_ptr<Ident> ident2;
-    std::unique_ptr<StatementNumber> statementNumber1;
-    std::unique_ptr<StatementNumber> statementNumber2;
+    std::unique_ptr<PQLNumber> statementNumber1;
+    std::unique_ptr<PQLNumber> statementNumber2;
     std::unique_ptr<Expression> expr;
     std::unique_ptr<Expression> exprWildcardVarName;
     std::unique_ptr<Expression> exprWildcardConstValue;

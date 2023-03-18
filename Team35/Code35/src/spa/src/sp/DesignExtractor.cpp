@@ -28,7 +28,7 @@ DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
 std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode> root) {
     root_ = std::move(root);
     assert(root_->getSyntaxType() == ASTNode::SyntaxType::Program);
-    for (const auto &child: root_->getChildren()) {
+    for (const auto &child : root_->getChildren()) {
         extractProc(child);
     }
     if (callGraph_.isCyclic()) {
@@ -84,28 +84,28 @@ void DesignExtractor::extractStmtLst(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::StmtLst);
     std::unique_ptr<std::vector<STMT_NUM>> childStmtLstPtr = std::make_unique<std::vector<STMT_NUM>>();
 
-    for (const auto &child: node->getChildren()) {
+    for (const auto &child : node->getChildren()) {
         stmtCnt_++;
         childStmtLstPtr->push_back(stmtCnt_);
         CFGBuilder_.addStmt(stmtCnt_);
 
         switch (child->getSyntaxType()) {
-            case ASTNode::SyntaxType::Assign:
+            case ASTNode::SyntaxType::Assign :
                 extractAssign(child);
                 break;
-            case ASTNode::SyntaxType::Read:
+            case ASTNode::SyntaxType::Read :
                 extractRead(child);
                 break;
-            case ASTNode::SyntaxType::Print:
+            case ASTNode::SyntaxType::Print :
                 extractPrint(child);
                 break;
-            case ASTNode::SyntaxType::If:
+            case ASTNode::SyntaxType::If :
                 extractIf(child);
                 break;
-            case ASTNode::SyntaxType::While:
+            case ASTNode::SyntaxType::While :
                 extractWhile(child);
                 break;
-            case ASTNode::SyntaxType::Call:
+            case ASTNode::SyntaxType::Call :
                 extractCall(child);
                 break;
             default:
@@ -136,7 +136,7 @@ void DesignExtractor::updateParentsPairSet(const std::unique_ptr<std::vector<STM
     for (int i = 0; i < lst->size(); i++) {
         STMT_NUM stmt = (*lst)[i];
         stmtParentPairSet_.insert(STMT_STMT(containerStmtLst_.back(), stmt));
-        for (int &j: containerStmtLst_) {
+        for (int &j : containerStmtLst_) {
             stmtParentStarPairSet_.insert(STMT_STMT(j, stmt));
         }
     }
@@ -298,7 +298,7 @@ void DesignExtractor::updateStmtSet() {
 
 void DesignExtractor::updateStmtUsesPairSet(STMT_NUM stmt, const ENT_NAME &varName) {
     stmtUsePairSet_.insert(STMT_ENT(stmt, varName));
-    for (STMT_NUM itr: containerStmtLst_) {
+    for (STMT_NUM itr : containerStmtLst_) {
         stmtUsePairSet_.insert(STMT_ENT(itr, varName));
     }
     procDirectUseVarMap_[curProc_].insert(varName);
@@ -306,21 +306,21 @@ void DesignExtractor::updateStmtUsesPairSet(STMT_NUM stmt, const ENT_NAME &varNa
 
 void DesignExtractor::updateStmtModsPairSet(STMT_NUM stmt, const ENT_NAME &varName) {
     stmtModPairSet_.insert(STMT_ENT(stmt, varName));
-    for (STMT_NUM itr: containerStmtLst_) {
+    for (STMT_NUM itr : containerStmtLst_) {
         stmtModPairSet_.insert(STMT_ENT(itr, varName));
     }
     procDirectModVarMap_[curProc_].insert(varName);
 }
 
 void DesignExtractor::updateContainerCallPairSet(const ENT_NAME &procName) {
-    for (STMT_NUM itr: containerStmtLst_) {
+    for (STMT_NUM itr : containerStmtLst_) {
         containerCallPairSet_.insert(STMT_ENT(itr, procName));
     }
 }
 
 void DesignExtractor::analyzeProc() {
     std::queue<ProcNode> procQueue;
-    for (const auto &proc: procSet_) {
+    for (const auto &proc : procSet_) {
         if (!isProcGetCalled_[proc]) {
             procQueue.push(ProcNode(proc, std::vector<ENT_NAME>()));
 
@@ -332,12 +332,12 @@ void DesignExtractor::analyzeProc() {
                 newPath.push_back(curProcName);
 
                 //  For every previous procs on the path
-                for (const auto &procName: newPath) {
+                for (const auto &procName : newPath) {
                     //  Variables directly used by current proc
                     auto iter = procDirectUseVarMap_.find(curProcName);
                     if (iter != procDirectUseVarMap_.end()) {
                         auto &procUseVarSet = iter->second;
-                        for (const auto &varUsed: procUseVarSet) {
+                        for (const auto &varUsed : procUseVarSet) {
                             procUsePairSet_.insert(ENT_ENT(procName, varUsed));
                         }
                     }
@@ -345,12 +345,12 @@ void DesignExtractor::analyzeProc() {
                     iter = procDirectModVarMap_.find(curProcName);
                     if (iter != procDirectModVarMap_.end()) {
                         auto &procModVarSet = iter->second;
-                        for (const auto &varModed: procModVarSet) {
+                        for (const auto &varModed : procModVarSet) {
                             procModPairSet_.insert(ENT_ENT(procName, varModed));
                         }
                     }
                 }
-                for (const auto &calleeProc: callGraph_.getCallingProcs(curProcName)) {
+                for (const auto &calleeProc : callGraph_.getCallingProcs(curProcName)) {
                     procQueue.push(ProcNode(calleeProc, newPath));
                 }
                 procQueue.pop();

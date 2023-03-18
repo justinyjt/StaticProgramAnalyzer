@@ -20,8 +20,8 @@ TEST_CASE("1. Test WithNumClause") {
 
 
     SECTION("Test with num = num") {
-        std::unique_ptr<StatementNumber> arg1 = std::make_unique<StatementNumber>(2);
-        std::unique_ptr<StatementNumber> arg2 = std::make_unique<StatementNumber>(2);
+        std::unique_ptr<PQLNumber> arg1 = std::make_unique<PQLNumber>(2);
+        std::unique_ptr<PQLNumber> arg2 = std::make_unique<PQLNumber>(2);
         WithNumClause withNumClause = WithNumClause(std::move(arg1), std::move(arg2));
         bool expectedResult = true;
         BoolResult actualResult = dynamic_cast<BoolResult &>(*withNumClause.evaluate(pkbReaderPtr));
@@ -30,7 +30,7 @@ TEST_CASE("1. Test WithNumClause") {
 
     SECTION("Test with syn = num") {
         std::unique_ptr<Synonym> arg1 = std::make_unique<Synonym>(Synonym::DesignEntity::ASSIGN, "a");
-        std::unique_ptr<StatementNumber> arg2 = std::make_unique<StatementNumber>(2);
+        std::unique_ptr<PQLNumber> arg2 = std::make_unique<PQLNumber>(2);
         WithNumClause withNumClause = WithNumClause(std::move(arg1), std::move(arg2));
         STMT_SET s = {2};
         TableResult expectedResult = TableResult("a", s);

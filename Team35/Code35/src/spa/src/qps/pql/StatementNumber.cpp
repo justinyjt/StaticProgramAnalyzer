@@ -1,12 +1,12 @@
-#include "StatementNumber.h"
+#include "PQLNumber.h"
 
-StatementNumber::StatementNumber(int n) : PQLToken::PQLToken(Tag::STMT_NUM), n(n) {}
+PQLNumber::PQLNumber(std::string n) : PQLToken::PQLToken(Tag::STMT_NUM), n(n) {}
 
-std::string StatementNumber::str() const {
-    return std::to_string(n);
+std::string PQLNumber::str() const {
+    return n;
 }
 
-bool StatementNumber::operator==(const PQLToken& rhs) const {
-    const StatementNumber* p_rhs = dynamic_cast<const StatementNumber*>(&rhs);
+bool PQLNumber::operator==(const PQLToken &rhs) const {
+    const PQLNumber *p_rhs = dynamic_cast<const PQLNumber *>(&rhs);
     return p_rhs != nullptr && n == p_rhs->n;
 }

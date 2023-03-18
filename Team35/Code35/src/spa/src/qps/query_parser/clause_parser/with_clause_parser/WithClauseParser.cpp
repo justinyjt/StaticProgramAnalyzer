@@ -1,7 +1,7 @@
 #include <utility>
 
 #include "WithClauseParser.h"
-#include "qps/pql/StatementNumber.h"
+#include "qps/pql/PQLNumber.h"
 #include "qps/pql/Ident.h"
 #include "qps/query_parser/SemanticValidator.h"
 #include "qps/query_exceptions/SemanticException.h"
@@ -10,8 +10,8 @@
 #include "qps/clause/TwoArgClause/TwoArgClauseFactory.h"
 #include "qps/query_parser/helper.h"
 
-WithClauseParser::WithClauseParser(PQLTokenScanner& pqlTokenScanner,
-                                           std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
+WithClauseParser::WithClauseParser(PQLTokenScanner &pqlTokenScanner,
+                                   std::unordered_map<std::string, Synonym::DesignEntity> &synonyms) :
         pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
 
 std::vector<std::unique_ptr<Clause>> WithClauseParser::parse() {
@@ -61,7 +61,7 @@ std::unique_ptr<PQLToken> WithClauseParser::parseRef() {
         entArgCount++;
         return i;
     } else if (pqlTokenScanner.peek(Token::Tag::Integer)) {
-        std::unique_ptr<StatementNumber> s = std::make_unique<StatementNumber>(stoi(pqlTokenScanner.peekLexeme()));
+        std::unique_ptr<PQLNumber> s = std::make_unique<PQLNumber>(pqlTokenScanner.peekLexeme());
         pqlTokenScanner.next();
         numArgCount++;
         return s;

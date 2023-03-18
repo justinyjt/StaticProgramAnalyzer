@@ -13,7 +13,7 @@
 #include "commons/graph/CallGraph.h"
 
 class PKB {
-public:
+ public:
     const EntityTable<ENT_NAME> &getEntityTable(Entity entityType) const;
 
     const EntityTable<STMT_NUM> &getStatementTable(StmtType stmtType) const;
@@ -92,7 +92,7 @@ public:
 
     bool isEntityTypeExists(StmtType tableType, STMT_NUM key) const;
 
-private:
+ private:
     // Entity related tables
     EntityTable<ENT_NAME> variableTable;
     EntityTable<ENT_NAME> constantTable;

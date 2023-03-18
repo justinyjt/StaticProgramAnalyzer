@@ -1,12 +1,12 @@
 #include "catch.hpp"
 #include "../../TestHelper.h"
-#include "qps/pql/StatementNumber.h"
+#include "qps/pql/PQLNumber.h"
 #include "qps/pql/PQLToken.h"
 
-TEST_CASE("StatementNumber") {
-    std::unique_ptr<StatementNumber> st1 = std::make_unique<StatementNumber>(1);
-    std::unique_ptr<StatementNumber> st2 = std::make_unique<StatementNumber>(2);
-    std::unique_ptr<PQLToken> st1_ = std::make_unique<StatementNumber>(1);
+TEST_CASE("PQLNumber") {
+    std::unique_ptr<PQLNumber> st1 = std::make_unique<PQLNumber>(1);
+    std::unique_ptr<PQLNumber> st2 = std::make_unique<PQLNumber>(2);
+    std::unique_ptr<PQLToken> st1_ = std::make_unique<PQLNumber>(1);
 
     requireTrue(*st1 == *st1);
     requireTrue(*st1 != *st2);

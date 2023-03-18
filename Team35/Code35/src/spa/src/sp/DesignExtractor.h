@@ -12,15 +12,14 @@
 #include "CFGraphBuilder.h"
 
 class DesignExtractor {
-public:
+ public:
     explicit DesignExtractor(std::unique_ptr<PKBWriter>);
 
     std::shared_ptr<ASTNode> extractProgram(std::shared_ptr<ASTNode>);
 
     std::unordered_map<STMT_NUM, ASSIGN_PAT> getAssignPatMap();
 
-private:
-
+ private:
     ENT_SET varNameSet_;
     ENT_SET constSet_;
     ENT_SET procSet_;

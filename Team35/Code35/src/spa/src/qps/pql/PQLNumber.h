@@ -3,10 +3,13 @@
 #include <string>
 #include "PQLToken.h"
 
-class StatementNumber : public PQLToken {
+class PQLNumber : public PQLToken {
  public:
-    explicit StatementNumber(int n);
-    int n;
+    explicit PQLNumber(std::string n);
+
+    std::string n;
+
     std::string str() const override;
-    bool operator==(const PQLToken& rhs) const override;
+
+    bool operator==(const PQLToken &rhs) const override;
 };
