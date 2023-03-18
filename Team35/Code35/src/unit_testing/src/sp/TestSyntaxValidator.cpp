@@ -861,7 +861,7 @@ TEST_CASE("SV can handle conditional expressions well", "[sv]") {
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
         SyntaxValidator sv(std::move(lexPtr));
-        requireTrue(sv.validateProgram());
+        requireFalse(sv.validateProgram());
     }
 
     SECTION("SV can validate if clause: if(((x-2)>2)&&((x)>0))then{}else{}") {
@@ -893,7 +893,7 @@ TEST_CASE("SV can handle conditional expressions well", "[sv]") {
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
         SyntaxValidator sv(std::move(lexPtr));
-        requireTrue(sv.validateProgram());
+        requireFalse(sv.validateProgram());
     }
 
     SECTION("SV can invalidate if clause: if((x-2>2)&&(x))then{}else{}") {
