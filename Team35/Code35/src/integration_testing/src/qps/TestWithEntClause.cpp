@@ -30,9 +30,8 @@ TEST_CASE("1. Test WithEntClause") {
         std::unique_ptr<Ident> arg1 = std::make_unique<Ident>("a");
         std::unique_ptr<Ident> arg2 = std::make_unique<Ident>("a");
         WithEntClause withEntClause = WithEntClause(std::move(arg1), std::move(arg2));
-        bool expectedResult = true;
-        BoolResult actualResult = dynamic_cast<BoolResult &>(*withEntClause.evaluate(pkbReaderPtr));
-        requireEqual(actualResult.b, expectedResult);
+        auto actualResult = withEntClause.evaluate(pkbReaderPtr);
+        requireTrue(BoolResult(true) == *actualResult);
     }
 
     SECTION("Test with syn = num") {
@@ -41,9 +40,8 @@ TEST_CASE("1. Test WithEntClause") {
         WithEntClause withEntClause = WithEntClause(std::move(arg1), std::move(arg2));
         ENT_SET s = {"a"};
         TableResult expectedResult = TableResult("p", s);
-        TableResult actualResult = dynamic_cast<TableResult &>(*withEntClause.evaluate(pkbReaderPtr));
-        requireEqual(actualResult.idents, expectedResult.idents);
-        requireEqual(actualResult.rows, expectedResult.rows);
+        auto actualResult = withEntClause.evaluate(pkbReaderPtr);
+        requireTrue(expectedResult == *actualResult);
     }
 
     SECTION("Test with syn = num with print") {
@@ -52,9 +50,8 @@ TEST_CASE("1. Test WithEntClause") {
         WithEntClause withEntClause = WithEntClause(std::move(arg1), std::move(arg2));
         ENT_SET s = {"a"};
         TableResult expectedResult = TableResult("pr", s);
-        TableResult actualResult = dynamic_cast<TableResult &>(*withEntClause.evaluate(pkbReaderPtr));
-        requireEqual(actualResult.idents, expectedResult.idents);
-        requireEqual(actualResult.rows, expectedResult.rows);
+        auto actualResult = withEntClause.evaluate(pkbReaderPtr);
+        requireTrue(expectedResult == *actualResult);
     }
 
     SECTION("Test with syn = num with read") {
@@ -63,9 +60,8 @@ TEST_CASE("1. Test WithEntClause") {
         WithEntClause withEntClause = WithEntClause(std::move(arg1), std::move(arg2));
         ENT_SET s = {"c"};
         TableResult expectedResult = TableResult("r", s);
-        TableResult actualResult = dynamic_cast<TableResult &>(*withEntClause.evaluate(pkbReaderPtr));
-        requireEqual(actualResult.idents, expectedResult.idents);
-        requireEqual(actualResult.rows, expectedResult.rows);
+        auto actualResult = withEntClause.evaluate(pkbReaderPtr);
+        requireTrue(expectedResult == *actualResult);
     }
 
     SECTION("Test with syn = syn") {
@@ -74,9 +70,8 @@ TEST_CASE("1. Test WithEntClause") {
         WithEntClause withEntClause = WithEntClause(std::move(arg1), std::move(arg2));
         ENT_ENT_SET s = {std::make_pair("b", "b")};
         TableResult expectedResult = TableResult("p", "v", s);
-        TableResult actualResult = dynamic_cast<TableResult &>(*withEntClause.evaluate(pkbReaderPtr));
-        requireEqual(actualResult.idents, expectedResult.idents);
-        requireEqual(actualResult.rows, expectedResult.rows);
+        auto actualResult = withEntClause.evaluate(pkbReaderPtr);
+        requireTrue(expectedResult == *actualResult);
     }
 
     SECTION("Test with syn = syn print, read") {
@@ -85,8 +80,7 @@ TEST_CASE("1. Test WithEntClause") {
         WithEntClause withEntClause = WithEntClause(std::move(arg1), std::move(arg2));
         ENT_ENT_SET s = {std::make_pair("b", "b")};
         TableResult expectedResult = TableResult("pr", "r", s);
-        TableResult actualResult = dynamic_cast<TableResult &>(*withEntClause.evaluate(pkbReaderPtr));
-        requireEqual(actualResult.idents, expectedResult.idents);
-        requireEqual(actualResult.rows, expectedResult.rows);
+        auto actualResult = withEntClause.evaluate(pkbReaderPtr);
+        requireTrue(expectedResult == *actualResult);
     }
 }

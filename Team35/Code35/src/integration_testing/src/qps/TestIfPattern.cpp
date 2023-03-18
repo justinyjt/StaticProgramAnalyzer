@@ -20,30 +20,29 @@ TEST_CASE("1. Test IfPattern") {
     pkbWriterPtr->addStatements(StmtType::If, ifStatements);
     pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::IfCondVarUses, ifUses);
 
-    /*
+    
     SECTION("Test ifs(_, _, _)") {
         IfPattern ifPattern(std::make_unique<Wildcard>(), "");
-        BoolResult& actualResult = dynamic_cast<BoolResult &>(*ifPattern.evaluate(pkbReaderPtr));
-        // requireEqual(actualResult.b, true);
+        std::unique_ptr<Result> actualResult = ifPattern.evaluate(pkbReaderPtr);
+        requireTrue(BoolResult(true) == *actualResult);
     }
 
     SECTION("Test positive ifs(\"x\", _, _)") {
         IfPattern ifPattern(std::make_unique<Ident>("x"), "");
-        BoolResult& actualResult = dynamic_cast<BoolResult &>(*ifPattern.evaluate(pkbReaderPtr));
-        // requireEqual(actualResult.b, true);
+        std::unique_ptr<Result> actualResult = ifPattern.evaluate(pkbReaderPtr);
+        requireTrue(BoolResult(true) == *actualResult);
     }
 
     SECTION("Test negative ifs(\"z\", _, _)") {
         IfPattern ifPattern(std::make_unique<Ident>("z"), "");
-        BoolResult& actualResult = dynamic_cast<BoolResult &>(*ifPattern.evaluate(pkbReaderPtr));
-        // requireEqual(actualResult.b, false);
+        std::unique_ptr<Result> actualResult = ifPattern.evaluate(pkbReaderPtr);
+        requireTrue(BoolResult(false) == *actualResult);
     }
 
     SECTION("Test ifs(var, _, _)") {
         IfPattern ifPattern(std::make_unique<Synonym>(Synonym::DesignEntity::VARIABLE, "var"), "");
         TableResult expectedResult = TableResult("var", std::unordered_set<std::string>{"x", "y"});
-        TableResult& actualResult = dynamic_cast<TableResult &>(*ifPattern.evaluate(pkbReaderPtr));
-        // requireTrue(actualResult == expectedResult);
+        std::unique_ptr<Result> actualResult = ifPattern.evaluate(pkbReaderPtr);
+        requireTrue(expectedResult == *actualResult);
     }
-    */
 }
