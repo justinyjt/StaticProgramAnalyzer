@@ -14,7 +14,7 @@ class CallGraph : public Graph<ENT_NAME> {
 
     void addProcScope(ENT_NAME proc, STMT_STMT scope);
 
-    ENT_SET getCallingProcs(const ENT_NAME &proc) const;
+    ENT_SET getCallingProcs(const ENT_NAME &proc);
 
     ENT_ENT_SET getTransitiveCalls();
 

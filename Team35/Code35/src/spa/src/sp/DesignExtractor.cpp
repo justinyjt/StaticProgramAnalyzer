@@ -12,7 +12,7 @@ struct ProcNode {
     ENT_NAME procName;
     std::vector<ENT_NAME> path;
 
-    ProcNode(const ENT_NAME& name, std::vector<ENT_NAME> newPath)
+    ProcNode(const ENT_NAME& name, const std::vector<ENT_NAME> &newPath)
         : procName(name), path(newPath) {}
 };
 
@@ -21,7 +21,7 @@ DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
     pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(), procSet_(),
     stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
     stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(), ifCondUsePairSet_(), whileCondUsePairSet_(),
-    containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_(), CFGBuilder_(), isIfCond(),
+    containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_(), CFGBuilder_(), isIfCond(), isExit(),
     procDirectUseVarMap_(), procDirectModVarMap_(), isProcGetCalled_(), containerCallPairSet_() {}
 
 std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode> root) {
@@ -29,8 +29,12 @@ std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode
     assert(root_->getSyntaxType() == ASTNode::SyntaxType::Program);
     for (const auto &child : root_->getChildren()) {
         extractProc(child);
+        if (isExit) {
+            return std::move(root_);
+        }
     }
     if (callGraph_.isCyclic()) {
+        isExit = true;
         return std::move(root_);
     }
     analyzeProc();
@@ -70,8 +74,11 @@ void DesignExtractor::extractProc(const std::shared_ptr<ASTNode> &node) {
     extractStmtLst(nodeC);
 
     if (lastCnt == stmtCnt_) {
+        //  Empty Procedure
         CFGBuilder_.setMinStmtNum(lastCnt);
         CFGBuilder_.setMaxStmtNum(lastCnt);
+        isExit = true;
+        return ;
     } else {
         CFGBuilder_.setMinStmtNum(lastCnt + 1);
         CFGBuilder_.setMaxStmtNum(stmtCnt_);
@@ -87,6 +94,7 @@ void DesignExtractor::extractStmtLst(const std::shared_ptr<ASTNode> &node) {
     for (const auto &child : node->getChildren()) {
         stmtCnt_++;
         childStmtLstPtr->push_back(stmtCnt_);
+        CFGBuilder_.addStmt(stmtCnt_);
 
         switch (child->getSyntaxType()) {
             case ASTNode::SyntaxType::Assign:
@@ -99,7 +107,6 @@ void DesignExtractor::extractStmtLst(const std::shared_ptr<ASTNode> &node) {
                 extractPrint(child);
                 break;
             case ASTNode::SyntaxType::If:
-                isIfCond = true;
                 extractIf(child);
                 break;
             case ASTNode::SyntaxType::While:
@@ -152,8 +159,6 @@ void DesignExtractor::extractAssign(const std::shared_ptr<ASTNode> &node) {
     ASSIGN_PAT assignPat = std::make_pair(lAssignPat, rAssignPat);
     assignPatMap_.emplace(stmtCnt_, std::move(assignPat));
     extractRightAssign(rAssign);
-
-    CFGBuilder_.addStmt(stmtCnt_);
 }
 
 ENT_NAME DesignExtractor::extractLeftAssign(const std::shared_ptr<ASTNode> &node) {
@@ -193,8 +198,6 @@ void DesignExtractor::extractRead(const std::shared_ptr<ASTNode> &node) {
     varNameSet_.insert(varName);
     updateStmtModsPairSet(stmtCnt_, varName);
     readSet_.insert(stmtCnt_);
-
-    CFGBuilder_.addStmt(stmtCnt_);
 }
 
 void DesignExtractor::extractPrint(const std::shared_ptr<ASTNode> &node) {
@@ -205,8 +208,6 @@ void DesignExtractor::extractPrint(const std::shared_ptr<ASTNode> &node) {
     varNameSet_.insert(varName);
     updateStmtUsesPairSet(stmtCnt_, varName);
     printSet_.insert(stmtCnt_);
-
-    CFGBuilder_.addStmt(stmtCnt_);
 }
 
 void DesignExtractor::extractCondExpr(const std::shared_ptr<ASTNode> &node) {
@@ -216,9 +217,9 @@ void DesignExtractor::extractCondExpr(const std::shared_ptr<ASTNode> &node) {
             varNameSet_.insert(label);
             updateStmtUsesPairSet(stmtCnt_, label);
             if (isIfCond) {
-                ifCondUsePairSet_.insert(STMT_ENT(stmtCnt_, label));
+                ifCondUsePairSet_.emplace(stmtCnt_, label);
             } else {
-                whileCondUsePairSet_.insert(STMT_ENT(stmtCnt_, label));
+                whileCondUsePairSet_.emplace(stmtCnt_, label);
             }
             break;
         case ASTNode::SyntaxType::Constant:
@@ -241,18 +242,18 @@ void DesignExtractor::extractCondExpr(const std::shared_ptr<ASTNode> &node) {
 void DesignExtractor::extractIf(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::If);
 
-    int ifStmtNum = stmtCnt_;
+    STMT_NUM ifStmtNum = stmtCnt_;
     containerStmtLst_.push_back(stmtCnt_);
     ifSet_.insert(stmtCnt_);
-    CFGBuilder_.addStmt(stmtCnt_);
 
     const auto &cond = node->getChildren().at(0);
+    isIfCond = true;
     extractCondExpr(cond);
-    isIfCond = isIfCond ? false : true;
+    isIfCond = !isIfCond;
 
     const auto &thenStmtLst = node->getChildren().at(1);
     extractStmtLst(thenStmtLst);
-    int dummyStmtNum = stmtCnt_;
+    STMT_NUM dummyStmtNum = stmtCnt_;
     CFGBuilder_.addDummyNode(dummyStmtNum);
     CFGBuilder_.setLastVisitedStmt(ifStmtNum);
 
@@ -266,10 +267,9 @@ void DesignExtractor::extractIf(const std::shared_ptr<ASTNode> &node) {
 void DesignExtractor::extractWhile(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::While);
 
-    int whileStmtNum = stmtCnt_;
+    STMT_NUM whileStmtNum = stmtCnt_;
     containerStmtLst_.push_back(stmtCnt_);
     whileSet_.insert(stmtCnt_);
-    CFGBuilder_.addStmt(stmtCnt_);
 
     const auto &cond = node->getChildren().at(0);
     extractCondExpr(cond);
@@ -290,7 +290,6 @@ void DesignExtractor::extractCall(const std::shared_ptr<ASTNode> &node) {
     ENT_NAME calleeName = child->getLabel();
     callGraph_.addCallRelationship(curProc_, calleeName);
     isProcGetCalled_[calleeName] = true;
-    CFGBuilder_.addStmt(stmtCnt_);
     updateContainerCallPairSet(stmtCnt_, calleeName);
 }
 

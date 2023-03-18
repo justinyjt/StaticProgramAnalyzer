@@ -62,6 +62,7 @@ class DesignExtractor {
     std::vector<CFG::CFGraph> CFGLst;
 
     bool isIfCond;
+    bool isExit;
 
     void addVarNameSetToPKB();
 
