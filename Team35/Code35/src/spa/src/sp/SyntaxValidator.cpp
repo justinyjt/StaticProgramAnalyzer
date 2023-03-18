@@ -3,7 +3,9 @@
 #include <cassert>
 #include <utility>
 
-SyntaxValidator::SyntaxValidator(std::unique_ptr<ILexer> lex) : scanner_(std::move(lex)) {}
+#include "commons/expr_validator/ExprValidator.h"
+
+SyntaxValidator::SyntaxValidator(std::unique_ptr<ILexer> lex) : scanner_(std::move(lex)), expr_validator_(scanner_) {}
 
 void SyntaxValidator::reset() {
     scanner_.reset();
@@ -70,7 +72,7 @@ bool SyntaxValidator::validateAssign() {
     assert(scanner_.isName());
     scanner_.next();
 
-    if (!scanner_.match(Token::Tag::Assignment) || !validateExpr()) {
+    if (!scanner_.match(Token::Tag::Assignment) || !expr_validator_.validateExpr()) {
         return false;
     }
 
@@ -160,64 +162,12 @@ bool SyntaxValidator::validateCall() {
     return scanner_.match(Token::Tag::SemiColon);
 }
 
-bool SyntaxValidator::validateExpr() {
-    if (!validateTerm()) {
-        return false;
-    }
-    if (scanner_.peek(Token::Tag::Plus)) {
-        scanner_.next();
-        return validateExpr();
-    } else if (scanner_.peek(Token::Tag::Minus)) {
-        scanner_.next();
-        return validateExpr();
-    } else {
-        return true;
-    }
-}
-
-bool SyntaxValidator::validateTerm() {
-    if (!validateFactor()) {
-        return false;
-    }
-    if (scanner_.peek(Token::Tag::Multiply)) {
-        scanner_.next();
-        return validateTerm();
-    } else if (scanner_.peek(Token::Tag::Divide)) {
-        scanner_.next();
-        return validateTerm();
-    } else if (scanner_.peek(Token::Tag::Modulo)) {
-        scanner_.next();
-        return validateTerm();
-    } else {
-        return true;
-    }
-}
-
-bool SyntaxValidator::validateFactor() {
-    if (scanner_.isName()) {
-        return validateName();
-    } else if (scanner_.peek(Token::Tag::Integer)) {
-        return validateInt();
-    } else if (scanner_.match(Token::Tag::LParen)) {
-        if (!validateExpr()) {
-            return false;
-        }
-        return scanner_.match(Token::Tag::RParen);
-    } else {
-        return false;
-    }
-}
-
 bool SyntaxValidator::validateName() {
     if (scanner_.isName()) {
         scanner_.next();
         return true;
     }
     return false;
-}
-
-bool SyntaxValidator::validateInt() {
-    return scanner_.match(Token::Tag::Integer);
 }
 
 std::deque<std::unique_ptr<Token>> SyntaxValidator::getTokenLst() {
@@ -271,7 +221,7 @@ bool SyntaxValidator::validateCondExpr() {
 }
 
 bool SyntaxValidator::validateRelExpr() {
-    if (!validateExpr()) {
+    if (!expr_validator_.validateExpr()) {
         return false;
     }
 
@@ -282,5 +232,5 @@ bool SyntaxValidator::validateRelExpr() {
         return false;
     }
 
-    return validateExpr();
+    return expr_validator_.validateExpr();
 }
