@@ -9,10 +9,10 @@
 #include "commons/ASTNode.h"
 
 DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
-        pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(), procSet_(),
-        stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
-        stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(),
-        containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_() {}
+    pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(), procSet_(),
+    stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
+    stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(),
+    containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_() {}
 
 std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode> root) {
     root_ = std::move(root);

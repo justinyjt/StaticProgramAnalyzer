@@ -4,6 +4,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "commons/graph/CallGraph.h"
 
@@ -24,6 +25,8 @@ class PKBWriter {
     void addPatterns(std::unordered_map<STMT_NUM, ASSIGN_PAT> patMap);
 
     void addCallGraph(CallGraph &&callGraph);
+
+    void addCFGraphs(std::vector<CFG::CFGraph> &&cfGraphs);
 
  private:
     PKB &pkb;

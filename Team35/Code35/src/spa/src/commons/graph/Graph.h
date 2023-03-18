@@ -24,9 +24,17 @@ class Graph {
 
     virtual ~Graph() = default;
 
+    Graph(Graph &&other) noexcept = default;
+
+    Graph &operator=(Graph &&other) noexcept = default;
+
+    Graph(const Graph &other) = default;
+
+    Graph &operator=(const Graph &other) = default;
+
     bool operator==(const Graph &other) const {
         return nodes == other.nodes && nodeToIndex == other.nodeToIndex &&
-               outgoingAdjList == other.outgoingAdjList && incomingAdjList == other.incomingAdjList;
+            outgoingAdjList == other.outgoingAdjList && incomingAdjList == other.incomingAdjList;
     }
 
     bool operator!=(const Graph &other) const {
@@ -48,10 +56,6 @@ class Graph {
         return nodeToIndex.find(node) != nodeToIndex.end();
     }
 
-    bool isIndexValid(Index index) const {
-        return index < nodes.size();
-    }
-
     bool isCyclic() const {
         std::vector<bool> visited(nodes.size(), false);
         std::vector<bool> recursion_stack(nodes.size(), false);
@@ -68,6 +72,10 @@ class Graph {
     }
 
  protected:
+    bool isIndexValid(Index index) const {
+        return index < nodes.size();
+    }
+
     Index getNodeIndex(const T &node) const {
         assert(hasNode(node));
         return nodeToIndex.at(node);

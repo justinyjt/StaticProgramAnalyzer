@@ -14,9 +14,9 @@ class CFGraph : public Graph<CFGraphNodeData> {
 
     CFGraph &operator=(const CFGraph &graph) = delete;
 
-    CFGraph(CFGraph &&graph) = default;
+    CFGraph(CFGraph &&graph) noexcept = default;
 
-    CFGraph &operator=(CFGraph &&graph) = default;
+    CFGraph &operator=(CFGraph &&graph) noexcept = default;
 
     bool operator==(const CFGraph &graph) const;
 
@@ -33,11 +33,15 @@ class CFGraph : public Graph<CFGraphNodeData> {
 
     STMT_SET getPredecessors(STMT_NUM stmt_num, bool isTransitive) const;
 
+    STMT_SET getAllPredecessors() const;
+
     STMT_SET getSuccessors(STMT_NUM stmt_num, bool isTransitive) const;
+
+    STMT_SET getAllSuccessors() const;
 
     const STMT_STMT_SET &getPairwiseControlFlow(bool isTransitive);
 
-    bool isReachable(STMT_NUM stmt1, STMT_NUM stmt2) const;
+    bool isReachable(STMT_NUM stmt1, STMT_NUM stmt2, bool check_neighbor_only = false) const;
 
     STMT_NUM getMaxStmtNum() const;
 
@@ -61,5 +65,7 @@ class CFGraph : public Graph<CFGraphNodeData> {
     IndexList getDummyNodeSuccessors(Index index) const;
 
     STMT_SET getSuccessorsByIndex(Index index, bool isTransitive) const;
+
+    STMT_SET getPredecessorsByIndex(Index index, bool isTransitive) const;
 };
 }  // namespace CFG
