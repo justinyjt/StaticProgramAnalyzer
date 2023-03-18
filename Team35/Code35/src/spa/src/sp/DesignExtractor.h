@@ -59,7 +59,7 @@ class DesignExtractor {
 
     CallGraph callGraph_;
     CFG::CFGraphBuilder CFGBuilder_;
-    std::vector<CFG::CFGraph> CFGLst;
+    std::vector<CFG::CFGraph> CFGLst_;
 
     bool isIfCond;
 
@@ -82,6 +82,8 @@ class DesignExtractor {
     void addStmtTypesToPKB();
 
     void addCallsToPKB();
+
+    void addCFGToPKB();
 
     void addIfCondUsesPairSetToPKB();
 

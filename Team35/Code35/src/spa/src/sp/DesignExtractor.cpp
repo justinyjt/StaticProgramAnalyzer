@@ -45,6 +45,7 @@ std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode
     addStmtTypesToPKB();
     addPatternsToPKB();
     addCallsToPKB();
+    addCFGToPKB();
     addIfCondUsesPairSetToPKB();
     addWhileCondUsesPairSetToPKB();
     addContainerCallPairSetToPKB();
@@ -72,7 +73,7 @@ void DesignExtractor::extractProc(const std::shared_ptr<ASTNode> &node) {
     CFGBuilder_.setMinStmtNum(lastCnt + 1);
     CFGBuilder_.setMaxStmtNum(stmtCnt_);
 
-    CFGLst.push_back(CFGBuilder_.build());
+    CFGLst_.push_back(CFGBuilder_.build());
 }
 
 void DesignExtractor::extractStmtLst(const std::shared_ptr<ASTNode> &node) {
@@ -400,6 +401,10 @@ std::unordered_map<STMT_NUM, ASSIGN_PAT> DesignExtractor::getAssignPatMap() {
 
 void DesignExtractor::addCallsToPKB() {
     pkbWriter_->addCallGraph(std::move(callGraph_));
+}
+
+void DesignExtractor::addCFGToPKB() {
+    pkbWriter_->addCFGraphs(std::move(CFGLst_));
 }
 
 void DesignExtractor::addIfCondUsesPairSetToPKB() {
