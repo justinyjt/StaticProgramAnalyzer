@@ -23,24 +23,20 @@ class OneArgClause : public Clause {
     std::string ident;
 
     explicit OneArgClause(std::unique_ptr<PQLToken> first, StmtNameRelationship rs, std::string ident);
-    virtual void validateArgs() = 0;
     std::unique_ptr<Result> evaluate(PKBReader *) override;
+    bool operator==(const Clause& rhs) const;
+    void validateArgs();
 
  protected:
-    bool equal(const OneArgClause& rhs) const;
     StmtNameRelationship rs;
 };
 
 class IfPattern : public OneArgClause {
  public:
     IfPattern(std::unique_ptr<PQLToken> arg, std::string ident);
-    void validateArgs() override;
-    bool operator==(const Clause &rhs) const override;
 };
 
 class WhilePattern : public OneArgClause {
  public:
     WhilePattern(std::unique_ptr<PQLToken> arg, std::string ident);
-    void validateArgs() override;
-    bool operator==(const Clause &rhs) const override;
 };

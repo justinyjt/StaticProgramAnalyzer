@@ -36,48 +36,28 @@ std::unique_ptr<Result> OneArgClause::evaluate(PKBReader *db) {
     }
 }
 
-bool OneArgClause::equal(const OneArgClause &rhs) const {
-    return *first == *(rhs.first) && ident == rhs.ident;
+bool OneArgClause::operator==(const Clause &rhs) const {
+    const auto *pRhs = dynamic_cast<const OneArgClause *>(&rhs);
+    return pRhs != nullptr && rs == pRhs->rs && ident == pRhs->ident && *first == *(pRhs->first);
 }
 
-// If Pattern
+void OneArgClause::validateArgs() {
+    Synonym* synonym = dynamic_cast<Synonym*>(first.get());
+    if (synonym != nullptr && !(synonym->de == Synonym::DesignEntity::PROCEDURE ||
+            synonym->de == Synonym::DesignEntity::VARIABLE ||
+            synonym->de == Synonym::DesignEntity::CONSTANT)) {
+        throw SemanticException();
+    }
+}
+
 
 IfPattern::IfPattern(std::unique_ptr<PQLToken> first, std::string ident) :
                 OneArgClause(std::move(first), StmtNameRelationship::IfCondVarUses, ident) {
     validateArgs();
 }
 
-bool IfPattern::operator==(const Clause &rhs) const {
-    const auto *pRhs = dynamic_cast<const IfPattern *>(&rhs);
-    return pRhs != nullptr && equal(*pRhs);
-}
-
-void IfPattern::validateArgs() {
-    Synonym* synonym = dynamic_cast<Synonym*>(first.get());
-    if (synonym != nullptr && !(synonym->de == Synonym::DesignEntity::PROCEDURE ||
-            synonym->de == Synonym::DesignEntity::VARIABLE ||
-            synonym->de == Synonym::DesignEntity::CONSTANT)) {
-        throw SemanticException();
-    }
-}
-
-// While Pattern
 
 WhilePattern::WhilePattern(std::unique_ptr<PQLToken> first, std::string ident) :
                 OneArgClause(std::move(first), StmtNameRelationship::WhileCondVarUses, ident) {
     validateArgs();
-}
-
-bool WhilePattern::operator==(const Clause &rhs) const {
-    const auto *pRhs = dynamic_cast<const WhilePattern *>(&rhs);
-    return pRhs != nullptr && equal(*pRhs);
-}
-
-void WhilePattern::validateArgs() {
-    Synonym* synonym = dynamic_cast<Synonym*>(first.get());
-    if (synonym != nullptr && !(synonym->de == Synonym::DesignEntity::PROCEDURE ||
-            synonym->de == Synonym::DesignEntity::VARIABLE ||
-            synonym->de == Synonym::DesignEntity::CONSTANT)) {
-        throw SemanticException();
-    }
 }
