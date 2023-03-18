@@ -81,20 +81,23 @@ void TableResult::output(std::list<std::string> &list) {
 
 bool TableResult::operator==(const Result &rhs) const {
     const TableResult* pRhs = dynamic_cast<const TableResult*>(&rhs);
-    if (pRhs != nullptr && idents == pRhs->idents && rows.size() == pRhs->rows.size()) {
-        std::unordered_set<std::string> a;
-        for (auto& row : rows) {
-            std::string s;
-            for (auto& elem : row) s += elem;
-            a.insert(s);
-        }
-        std::unordered_set<std::string> b;
-        for (auto& row : pRhs->rows) {
-            std::string s;
-            for (auto& elem : row) s += elem;
-            b.insert(s);
-        }
-        return a == b;
-    };
-    return false;
+    if (pRhs == nullptr || idents != pRhs->idents || rows.size() != pRhs->rows.size()) {
+        return false;
+    }
+
+    std::unordered_set<std::string> a;
+    for (auto& row : rows) {
+        std::string s;
+        for (auto& elem : row) s += elem;
+        a.insert(s);
+    }
+
+    std::unordered_set<std::string> b;
+    for (auto& row : pRhs->rows) {
+        std::string s;
+        for (auto& elem : row) s += elem;
+        b.insert(s);
+    }
+
+    return a == b;
 }
