@@ -11,6 +11,13 @@
 #include "pkb/PKBWriter.h"
 #include "CFGraphBuilder.h"
 
+struct ProcNode {
+    ENT_NAME procName;
+    std::vector<ENT_NAME> path;
+
+    ProcNode(ENT_NAME name, const std::vector<ENT_NAME> &newPath);
+};
+
 class DesignExtractor {
  public:
     explicit DesignExtractor(std::unique_ptr<PKBWriter>);
