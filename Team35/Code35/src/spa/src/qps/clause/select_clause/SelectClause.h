@@ -7,6 +7,5 @@
 
 class SelectClause : public Clause {
  public:
-    SelectClause();
-    bool operator==(const Clause &rhs) const override;
+    SelectClause() = default;
 };

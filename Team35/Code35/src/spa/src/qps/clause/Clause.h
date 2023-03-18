@@ -21,9 +21,14 @@ Boolean Single Tuple  IfPattern   WhilePattern   AssignPattern StmtNameClause St
 */
 class Clause {
  public:
-    virtual ~Clause() = default;
     virtual bool operator==(const Clause &rhs) const = 0;
     bool operator!=(const Clause &rhs) const;
+    Clause() = default;
+    virtual ~Clause() = default;
+    Clause(const Clause&) = delete;
+    Clause(Clause&&) = delete;
+    Clause& operator=(const Clause&) = delete;
+    Clause& operator=(Clause&&) = delete;
 
     virtual std::unique_ptr<Result> evaluate(PKBReader *db) = 0;
 };

@@ -10,5 +10,5 @@ class SingleSynonymSelectClause : public SelectClause {
     const Synonym syn;
     explicit SingleSynonymSelectClause(Synonym &syn);
     std::unique_ptr<Result> evaluate(PKBReader *db);
-    bool operator==(const Clause &rhs) const;
+    bool operator==(const Clause &rhs) const override;
 };

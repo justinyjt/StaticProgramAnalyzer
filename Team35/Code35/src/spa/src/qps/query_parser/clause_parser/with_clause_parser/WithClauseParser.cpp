@@ -7,7 +7,7 @@
 #include "qps/query_exceptions/SemanticException.h"
 #include "qps/clause/two_arg_clause/WithEntClause.h"
 #include "qps/clause/two_arg_clause/WithNumClause.h"
-#include "qps/clause/two_arg_clause/TwoArgClauseFactory.h"
+#include "qps/clause/ClauseFactory.h"
 #include "qps/query_parser/helper.h"
 
 WithClauseParser::WithClauseParser(PQLTokenScanner& pqlTokenScanner,
@@ -44,12 +44,12 @@ std::unique_ptr<Clause> WithClauseParser::parseWith() {
         entArgCount = 0;
         numArgCount = 0;
         // create WithEnt
-        return std::move(TwoArgClauseFactory::createClause(std::move(arg1), std::move(arg2), WITHENT_KEYWORD));
+        return std::move(ClauseFactory::createClause(std::move(arg1), std::move(arg2), WITHENT_KEYWORD));
     } else if (numArgCount == 2) {
         entArgCount = 0;
         numArgCount = 0;
         // create WithNum
-        return std::move(TwoArgClauseFactory::createClause(std::move(arg1), std::move(arg2), WITHNUM_KEYWORD));
+        return std::move(ClauseFactory::createClause(std::move(arg1), std::move(arg2), WITHNUM_KEYWORD));
     }
 }
 

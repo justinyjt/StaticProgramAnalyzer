@@ -13,9 +13,9 @@ TEST_CASE("1. Test IfPattern") {
     PKBReader pkbReader(pkb);
     PKBWriter *pkbWriterPtr = &pkbWriter;
     PKBReader *pkbReaderPtr = &pkbReader;
-    ENT_SET entset = {"x", "y"};
-    STMT_SET ifStatements = {1, 2};
-    STMT_ENT_SET ifUses = {std::make_pair(1, "x"), std::make_pair(2, "y")};
+    ENT_SET entset{"x", "y"};
+    STMT_SET ifStatements{1, 2};
+    STMT_ENT_SET ifUses{std::make_pair(1, "x"), std::make_pair(2, "y")};
     pkbWriterPtr->addEntities(Entity::Variable, entset);
     pkbWriterPtr->addStatements(StmtType::If, ifStatements);
     pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::IfCondVarUses, ifUses);
@@ -40,7 +40,7 @@ TEST_CASE("1. Test IfPattern") {
 
     SECTION("Test ifs(var, _, _)") {
         IfPattern ifPattern(std::make_unique<Synonym>(Synonym::DesignEntity::VARIABLE, "var"), "");
-        TableResult expectedResult = TableResult("var", std::unordered_set<std::string>{"x", "y"});
+        TableResult expectedResult("var", std::unordered_set<std::string>{"x", "y"});
         std::unique_ptr<Result> actualResult = ifPattern.evaluate(pkbReaderPtr);
         requireTrue(expectedResult == *actualResult);
     }
