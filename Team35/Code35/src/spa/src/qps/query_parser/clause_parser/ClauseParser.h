@@ -11,6 +11,7 @@
 #include "qps/pql/Synonym.h"
 #include "commons/lexer/Lexer.h"
 #include "commons/token_scanner/TokenScanner.h"
+#include "qps/query_parser/clause_parser/with_clause_parser/WithClauseParser.h"
 
 class ClauseParser {
  public:
@@ -19,6 +20,7 @@ class ClauseParser {
  private:
     PatternClauseParser patternClauseParser;
     SuchThatClauseParser suchThatClauseParser;
+    WithClauseParser withClauseParser;
     PQLTokenScanner& pqlTokenScanner;
     std::unordered_map<std::string, Synonym::DesignEntity>& synonyms;
 };

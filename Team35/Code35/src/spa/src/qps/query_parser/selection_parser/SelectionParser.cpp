@@ -5,7 +5,6 @@
 #include "qps/query_exceptions/SemanticException.h"
 #include "qps/clause/select_clause/SingleSynonymSelectClause.h"
 #include "qps/clause/select_clause/BooleanSelectClause.h"
-#include "qps/query_exceptions/SyntaxException.h"
 #include "qps/query_parser/SemanticValidator.h"
 
 SelectionParser::SelectionParser(PQLTokenScanner &pqlTokenScanner,
@@ -13,7 +12,7 @@ SelectionParser::SelectionParser(PQLTokenScanner &pqlTokenScanner,
     pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
 
 std::unique_ptr<SelectClause> SelectionParser::parse() {
-    pqlTokenScanner.matchAndValidate(Token::Tag::Select);
+    pqlTokenScanner.match(Token::Tag::Select);
 
     if (pqlTokenScanner.peek(Token::Tag::Bool)) {  // BOOLEAN
         if (!SemanticValidator::isDeclared(synonyms, "BOOLEAN")) {
@@ -22,12 +21,8 @@ std::unique_ptr<SelectClause> SelectionParser::parse() {
         } else {
             return std::move(parseSelect());
         }
-        pqlTokenScanner.match(Token::Tag::Bool);
-        return std::move(std::make_unique<BooleanSelectClause>());
     } else if (pqlTokenScanner.isName()) {  // single synonym
         return std::move(parseSelect());
-    } else {
-        throw SyntaxException();
     }
 }
 

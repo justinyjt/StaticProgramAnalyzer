@@ -10,6 +10,10 @@ int PQLTokenScanner::peekDesignEntity() const {
            || peek(Token::Tag::Procedure) || peek(Token::Tag::Variable);
 }
 
+int PQLTokenScanner::peekSuchThatClause() const {
+    return peek(Token::Tag::Such) && peekOffset(Token::Tag::That, 1);
+}
+
 // for expression with string
 int PQLTokenScanner::peekIdent() const {
     std::string input = peekLexeme();
@@ -25,34 +29,5 @@ int PQLTokenScanner::peekIdent() const {
         return true;
     } else {
         return false;
-    }
-}
-
-// for expression with constant
-int PQLTokenScanner::peekConstant() const {
-    std::string next = peekLexeme();
-    if (peek(Token::Tag::String)) {
-        std::string input = peekLexeme();
-        std::string::const_iterator it = input.begin();
-        while (it != input.end() && std::isdigit(*it)) ++it;
-        return !input.empty() && it == input.end();
-    } else {
-        return false;
-    }
-}
-
-bool PQLTokenScanner::peekStmtRef() {
-    return peek(Token::Tag::Integer) || peek(Token::Tag::Underscore) ||
-           peek(Token::Tag::Bool) || isName();
-}
-
-bool PQLTokenScanner::peekEntRef() {
-    return peek(Token::Tag::Underscore) || isName() ||
-           peek(Token::Tag::Bool) || peekIdent();
-}
-
-void PQLTokenScanner::matchAndValidate(Token::Tag tag) {
-    if (!match(tag)) {
-        throw SyntaxException();
     }
 }

@@ -9,6 +9,7 @@
 #include "qps/clause/two_arg_clause/StmtStmtClause.h"
 #include "qps/clause/two_arg_clause/EntEntClause.h"
 #include "qps/query_exceptions/SyntaxException.h"
+#include "qps/query_parser/QuerySyntaxValidator.h"
 
 class setUpStcp {
  public:
@@ -76,7 +77,7 @@ class setUpStcp {
     std::unique_ptr<Wildcard> wildcard1;
     std::unique_ptr<Wildcard> wildcard2;
 
-    std::unique_ptr<Clause> clause;
+    std::vector<std::unique_ptr<Clause>> clause;
     std::unique_ptr<ModifiesS> modifiesS;
     std::unique_ptr<UsesS> usesS;
     std::unique_ptr<ModifiesP> modifiesP;
@@ -94,7 +95,7 @@ TEST_CASE_METHOD(setUpStcp, "Modifies, statement and variable") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     modifiesS = std::make_unique<ModifiesS>(std::move(synonymStatement), std::move(synonymVariable));
-    requireTrue(*clause == *modifiesS);
+    requireTrue(*clause.front() == *modifiesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Modifies, read and variable") {
@@ -104,7 +105,7 @@ TEST_CASE_METHOD(setUpStcp, "Modifies, read and variable") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     modifiesS = std::make_unique<ModifiesS>(std::move(synonymRead), std::move(synonymVariable));
-    requireTrue(*clause == *modifiesS);
+    requireTrue(*clause.front() == *modifiesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Modifies, assign and variable") {
@@ -114,7 +115,7 @@ TEST_CASE_METHOD(setUpStcp, "Modifies, assign and variable") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     modifiesS = std::make_unique<ModifiesS>(std::move(synonymAssign), std::move(synonymVariable));
-    requireTrue(*clause == *modifiesS);
+    requireTrue(*clause.front() == *modifiesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Modifies, call and variable") {
@@ -124,7 +125,7 @@ TEST_CASE_METHOD(setUpStcp, "Modifies, call and variable") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     modifiesS = std::make_unique<ModifiesS>(std::move(synonymCall), std::move(synonymVariable));
-    requireTrue(*clause == *modifiesS);
+    requireTrue(*clause.front() == *modifiesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Modifies, while and variable") {
@@ -134,7 +135,7 @@ TEST_CASE_METHOD(setUpStcp, "Modifies, while and variable") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     modifiesS = std::make_unique<ModifiesS>(std::move(synonymWhile), std::move(synonymVariable));
-    requireTrue(*clause == *modifiesS);
+    requireTrue(*clause.front() == *modifiesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Modifies, if and variable") {
@@ -144,7 +145,7 @@ TEST_CASE_METHOD(setUpStcp, "Modifies, if and variable") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     modifiesS = std::make_unique<ModifiesS>(std::move(synonymIf), std::move(synonymVariable));
-    requireTrue(*clause == *modifiesS);
+    requireTrue(*clause.front() == *modifiesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Modifies, statement and ident") {
@@ -154,7 +155,7 @@ TEST_CASE_METHOD(setUpStcp, "Modifies, statement and ident") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     modifiesS = std::make_unique<ModifiesS>(std::move(synonymStatement), std::move(identStr));
-    requireTrue(*clause == *modifiesS);
+    requireTrue(*clause.front() == *modifiesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Modifies, statement and wildcard") {
@@ -164,7 +165,7 @@ TEST_CASE_METHOD(setUpStcp, "Modifies, statement and wildcard") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     modifiesS = std::make_unique<ModifiesS>(std::move(synonymStatement), std::move(wildcard1));
-    requireTrue(*clause == *modifiesS);
+    requireTrue(*clause.front() == *modifiesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Modifies, int and variable") {
@@ -174,7 +175,7 @@ TEST_CASE_METHOD(setUpStcp, "Modifies, int and variable") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     modifiesS = std::make_unique<ModifiesS>(std::move(statementNumber1), std::move(synonymVariable));
-    requireTrue(*clause == *modifiesS);
+    requireTrue(*clause.front() == *modifiesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Modifies, int and ident") {
@@ -184,7 +185,7 @@ TEST_CASE_METHOD(setUpStcp, "Modifies, int and ident") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     modifiesS = std::make_unique<ModifiesS>(std::move(statementNumber1), std::move(identStr));
-    requireTrue(*clause == *modifiesS);
+    requireTrue(*clause.front() == *modifiesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Modifies, int and wildcard") {
@@ -194,7 +195,7 @@ TEST_CASE_METHOD(setUpStcp, "Modifies, int and wildcard") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     modifiesS = std::make_unique<ModifiesS>(std::move(statementNumber1), std::move(wildcard1));
-    requireTrue(*clause == *modifiesS);
+    requireTrue(*clause.front() == *modifiesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Uses, statement and variable") {
@@ -204,7 +205,7 @@ TEST_CASE_METHOD(setUpStcp, "Uses, statement and variable") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     usesS = std::make_unique<UsesS>(std::move(synonymStatement), std::move(synonymVariable));
-    requireTrue(*clause == *usesS);
+    requireTrue(*clause.front() == *usesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Uses, print and variable") {
@@ -214,7 +215,7 @@ TEST_CASE_METHOD(setUpStcp, "Uses, print and variable") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     usesS = std::make_unique<UsesS>(std::move(synonymPrint), std::move(synonymVariable));
-    requireTrue(*clause == *usesS);
+    requireTrue(*clause.front() == *usesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Uses, assign and variable") {
@@ -224,7 +225,7 @@ TEST_CASE_METHOD(setUpStcp, "Uses, assign and variable") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     usesS = std::make_unique<UsesS>(std::move(synonymAssign), std::move(synonymVariable));
-    requireTrue(*clause == *usesS);
+    requireTrue(*clause.front() == *usesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Uses, call and variable") {
@@ -234,7 +235,7 @@ TEST_CASE_METHOD(setUpStcp, "Uses, call and variable") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     usesS = std::make_unique<UsesS>(std::move(synonymCall), std::move(synonymVariable));
-    requireTrue(*clause == *usesS);
+    requireTrue(*clause.front() == *usesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Uses, while and variable") {
@@ -244,7 +245,7 @@ TEST_CASE_METHOD(setUpStcp, "Uses, while and variable") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     usesS = std::make_unique<UsesS>(std::move(synonymWhile), std::move(synonymVariable));
-    requireTrue(*clause == *usesS);
+    requireTrue(*clause.front() == *usesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Uses, if and variable") {
@@ -254,7 +255,7 @@ TEST_CASE_METHOD(setUpStcp, "Uses, if and variable") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     usesS = std::make_unique<UsesS>(std::move(synonymIf), std::move(synonymVariable));
-    requireTrue(*clause == *usesS);
+    requireTrue(*clause.front() == *usesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Uses, statement and ident") {
@@ -264,7 +265,7 @@ TEST_CASE_METHOD(setUpStcp, "Uses, statement and ident") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     usesS = std::make_unique<UsesS>(std::move(synonymStatement), std::move(identStr));
-    requireTrue(*clause == *usesS);
+    requireTrue(*clause.front() == *usesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Uses, statement and wildcard") {
@@ -274,7 +275,7 @@ TEST_CASE_METHOD(setUpStcp, "Uses, statement and wildcard") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     usesS = std::make_unique<UsesS>(std::move(synonymStatement), std::move(wildcard1));
-    requireTrue(*clause == *usesS);
+    requireTrue(*clause.front() == *usesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Uses, int and variable") {
@@ -284,7 +285,7 @@ TEST_CASE_METHOD(setUpStcp, "Uses, int and variable") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     usesS = std::make_unique<UsesS>(std::move(statementNumber1), std::move(synonymVariable));
-    requireTrue(*clause == *usesS);
+    requireTrue(*clause.front() == *usesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Uses, int and ident") {
@@ -294,7 +295,7 @@ TEST_CASE_METHOD(setUpStcp, "Uses, int and ident") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     usesS = std::make_unique<UsesS>(std::move(statementNumber1), std::move(identStr));
-    requireTrue(*clause == *usesS);
+    requireTrue(*clause.front() == *usesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Uses, int and wildcard") {
@@ -304,7 +305,7 @@ TEST_CASE_METHOD(setUpStcp, "Uses, int and wildcard") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     usesS = std::make_unique<UsesS>(std::move(statementNumber1), std::move(wildcard1));
-    requireTrue(*clause == *usesS);
+    requireTrue(*clause.front() == *usesS);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Follows, statement and statement") {
@@ -314,7 +315,7 @@ TEST_CASE_METHOD(setUpStcp, "Follows, statement and statement") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     follows = std::make_unique<Follows>(std::move(synonymStatement), std::move(synonymStatement1), false);
-    requireTrue(*clause == *follows);
+    requireTrue(*clause.front() == *follows);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Follows, statement and read") {
@@ -324,7 +325,7 @@ TEST_CASE_METHOD(setUpStcp, "Follows, statement and read") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     follows = std::make_unique<Follows>(std::move(synonymStatement), std::move(synonymRead), false);
-    requireTrue(*clause == *follows);
+    requireTrue(*clause.front() == *follows);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Follows, statement and print") {
@@ -334,7 +335,7 @@ TEST_CASE_METHOD(setUpStcp, "Follows, statement and print") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     follows = std::make_unique<Follows>(std::move(synonymStatement), std::move(synonymPrint), false);
-    requireTrue(*clause == *follows);
+    requireTrue(*clause.front() == *follows);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Follows, statement and assign") {
@@ -344,7 +345,7 @@ TEST_CASE_METHOD(setUpStcp, "Follows, statement and assign") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     follows = std::make_unique<Follows>(std::move(synonymStatement), std::move(synonymAssign), false);
-    requireTrue(*clause == *follows);
+    requireTrue(*clause.front() == *follows);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Follows, statement and call") {
@@ -354,7 +355,7 @@ TEST_CASE_METHOD(setUpStcp, "Follows, statement and call") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     follows = std::make_unique<Follows>(std::move(synonymStatement), std::move(synonymCall), false);
-    requireTrue(*clause == *follows);
+    requireTrue(*clause.front() == *follows);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Follows, statement and while") {
@@ -364,7 +365,7 @@ TEST_CASE_METHOD(setUpStcp, "Follows, statement and while") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     follows = std::make_unique<Follows>(std::move(synonymStatement), std::move(synonymWhile), false);
-    requireTrue(*clause == *follows);
+    requireTrue(*clause.front() == *follows);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Follows, statement and if") {
@@ -374,7 +375,7 @@ TEST_CASE_METHOD(setUpStcp, "Follows, statement and if") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     follows = std::make_unique<Follows>(std::move(synonymStatement), std::move(synonymIf), false);
-    requireTrue(*clause == *follows);
+    requireTrue(*clause.front() == *follows);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Follows, statement and wildcard") {
@@ -384,7 +385,7 @@ TEST_CASE_METHOD(setUpStcp, "Follows, statement and wildcard") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     follows = std::make_unique<Follows>(std::move(synonymStatement), std::move(wildcard1), false);
-    requireTrue(*clause == *follows);
+    requireTrue(*clause.front() == *follows);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Follows, statement and int") {
@@ -394,7 +395,7 @@ TEST_CASE_METHOD(setUpStcp, "Follows, statement and int") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     follows = std::make_unique<Follows>(std::move(synonymStatement), std::move(statementNumber1), false);
-    requireTrue(*clause == *follows);
+    requireTrue(*clause.front() == *follows);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Follows, wildcard and statement") {
@@ -404,7 +405,7 @@ TEST_CASE_METHOD(setUpStcp, "Follows, wildcard and statement") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     follows = std::make_unique<Follows>(std::move(wildcard1), std::move(synonymStatement), false);
-    requireTrue(*clause == *follows);
+    requireTrue(*clause.front() == *follows);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Follows, wildcard and wildcard") {
@@ -414,7 +415,7 @@ TEST_CASE_METHOD(setUpStcp, "Follows, wildcard and wildcard") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     follows = std::make_unique<Follows>(std::move(wildcard1), std::move(wildcard2), false);
-    requireTrue(*clause == *follows);
+    requireTrue(*clause.front() == *follows);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Follows, wildcard and int") {
@@ -424,7 +425,7 @@ TEST_CASE_METHOD(setUpStcp, "Follows, wildcard and int") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     follows = std::make_unique<Follows>(std::move(wildcard1), std::move(statementNumber1), false);
-    requireTrue(*clause == *follows);
+    requireTrue(*clause.front() == *follows);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Follows, int and wildcard") {
@@ -434,7 +435,7 @@ TEST_CASE_METHOD(setUpStcp, "Follows, int and wildcard") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     follows = std::make_unique<Follows>(std::move(statementNumber1), std::move(wildcard1), false);
-    requireTrue(*clause == *follows);
+    requireTrue(*clause.front() == *follows);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Follows, int and int") {
@@ -444,7 +445,7 @@ TEST_CASE_METHOD(setUpStcp, "Follows, int and int") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     follows = std::make_unique<Follows>(std::move(statementNumber1), std::move(statementNumber2), false);
-    requireTrue(*clause == *follows);
+    requireTrue(*clause.front() == *follows);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Parent, statement and statement") {
@@ -454,7 +455,7 @@ TEST_CASE_METHOD(setUpStcp, "Parent, statement and statement") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(synonymStatement1), false);
-    requireTrue(*clause == *parent);
+    requireTrue(*clause.front() == *parent);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Parent, statement and read") {
@@ -464,7 +465,7 @@ TEST_CASE_METHOD(setUpStcp, "Parent, statement and read") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(synonymRead), false);
-    requireTrue(*clause == *parent);
+    requireTrue(*clause.front() == *parent);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Parent, statement and print") {
@@ -474,7 +475,7 @@ TEST_CASE_METHOD(setUpStcp, "Parent, statement and print") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(synonymPrint), false);
-    requireTrue(*clause == *parent);
+    requireTrue(*clause.front() == *parent);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Parent, statement and assign") {
@@ -484,7 +485,7 @@ TEST_CASE_METHOD(setUpStcp, "Parent, statement and assign") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(synonymAssign), false);
-    requireTrue(*clause == *parent);
+    requireTrue(*clause.front() == *parent);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Parent, statement and call") {
@@ -494,7 +495,7 @@ TEST_CASE_METHOD(setUpStcp, "Parent, statement and call") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(synonymCall), false);
-    requireTrue(*clause == *parent);
+    requireTrue(*clause.front() == *parent);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Parent, statement and while") {
@@ -504,7 +505,7 @@ TEST_CASE_METHOD(setUpStcp, "Parent, statement and while") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(synonymWhile), false);
-    requireTrue(*clause == *parent);
+    requireTrue(*clause.front() == *parent);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Parent, statement and if") {
@@ -514,7 +515,7 @@ TEST_CASE_METHOD(setUpStcp, "Parent, statement and if") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(synonymIf), false);
-    requireTrue(*clause == *parent);
+    requireTrue(*clause.front() == *parent);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Parent, statement and wildcard") {
@@ -524,7 +525,7 @@ TEST_CASE_METHOD(setUpStcp, "Parent, statement and wildcard") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(wildcard1), false);
-    requireTrue(*clause == *parent);
+    requireTrue(*clause.front() == *parent);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Parent, statement and int") {
@@ -534,7 +535,7 @@ TEST_CASE_METHOD(setUpStcp, "Parent, statement and int") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(statementNumber1), false);
-    requireTrue(*clause == *parent);
+    requireTrue(*clause.front() == *parent);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Parent, wildcard and statement") {
@@ -544,7 +545,7 @@ TEST_CASE_METHOD(setUpStcp, "Parent, wildcard and statement") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     parent = std::make_unique<Parent>(std::move(wildcard1), std::move(synonymStatement), false);
-    requireTrue(*clause == *parent);
+    requireTrue(*clause.front() == *parent);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Parent, wildcard and wildcard") {
@@ -554,7 +555,7 @@ TEST_CASE_METHOD(setUpStcp, "Parent, wildcard and wildcard") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     parent = std::make_unique<Parent>(std::move(wildcard1), std::move(wildcard2), false);
-    requireTrue(*clause == *parent);
+    requireTrue(*clause.front() == *parent);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Parent, wildcard and int") {
@@ -564,7 +565,7 @@ TEST_CASE_METHOD(setUpStcp, "Parent, wildcard and int") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     parent = std::make_unique<Parent>(std::move(wildcard1), std::move(statementNumber1), false);
-    requireTrue(*clause == *parent);
+    requireTrue(*clause.front() == *parent);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Parent, int and print") {
@@ -574,7 +575,7 @@ TEST_CASE_METHOD(setUpStcp, "Parent, int and print") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     parent = std::make_unique<Parent>(std::move(statementNumber1), std::move(synonymPrint), false);
-    requireTrue(*clause == *parent);
+    requireTrue(*clause.front() == *parent);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Parent, int and wildcard") {
@@ -584,7 +585,7 @@ TEST_CASE_METHOD(setUpStcp, "Parent, int and wildcard") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     parent = std::make_unique<Parent>(std::move(statementNumber1), std::move(wildcard1), false);
-    requireTrue(*clause == *parent);
+    requireTrue(*clause.front() == *parent);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Parent, int and int") {
@@ -594,7 +595,7 @@ TEST_CASE_METHOD(setUpStcp, "Parent, int and int") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     parent = std::make_unique<Parent>(std::move(statementNumber1), std::move(statementNumber2), false);
-    requireTrue(*clause == *parent);
+    requireTrue(*clause.front() == *parent);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Follows*, statement and statement") {
@@ -604,7 +605,7 @@ TEST_CASE_METHOD(setUpStcp, "Follows*, statement and statement") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     follows = std::make_unique<Follows>(std::move(synonymStatement), std::move(synonymStatement1), true);
-    requireTrue(*clause == *follows);
+    requireTrue(*clause.front() == *follows);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Parent*, statement and statement") {
@@ -614,7 +615,7 @@ TEST_CASE_METHOD(setUpStcp, "Parent*, statement and statement") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     parent = std::make_unique<Parent>(std::move(synonymStatement), std::move(synonymStatement1), true);
-    requireTrue(*clause == *parent);
+    requireTrue(*clause.front() == *parent);
 }
 
 TEST_CASE_METHOD(setUpStcp, "invalid Modifies, statement and statement, semantic error") {
@@ -664,7 +665,7 @@ TEST_CASE_METHOD(setUpStcp, "Calls, procedure and procedure") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     calls = std::make_unique<Calls>(std::move(synonymProcedure), std::move(synonymProcedure1), false);
-    requireTrue(*clause == *calls);
+    requireTrue(*clause.front() == *calls);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Calls*, procedure and procedure") {
@@ -674,27 +675,21 @@ TEST_CASE_METHOD(setUpStcp, "Calls*, procedure and procedure") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     calls = std::make_unique<Calls>(std::move(synonymProcedure), std::move(synonymProcedure1), true);
-    requireTrue(*clause == *calls);
+    requireTrue(*clause.front() == *calls);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Calls, int and procedure, syntax error") {
     query = "such that Calls(1,p1)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    PQLTokenScanner pqlTokenScanner(std::move(lexer));
-    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
-    requireThrowAs<SyntaxException>([&stcp]() {
-        stcp.parse();
-    });
+    std::unique_ptr<QuerySyntaxValidator> sv = std::make_unique<QuerySyntaxValidator>(std::move(lexer));
+    requireTrue(!sv->validateQuery());
 }
 
 TEST_CASE_METHOD(setUpStcp, "Calls, procedure and int, syntax error") {
     query = "such that Calls(p1,1)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    PQLTokenScanner pqlTokenScanner(std::move(lexer));
-    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
-    requireThrowAs<SyntaxException>([&stcp]() {
-        stcp.parse();
-    });
+    std::unique_ptr<QuerySyntaxValidator> sv = std::make_unique<QuerySyntaxValidator>(std::move(lexer));
+    requireTrue(!sv->validateQuery());
 }
 
 TEST_CASE_METHOD(setUpStcp, "Calls, stmt and procedure, semantic error") {
@@ -714,15 +709,12 @@ TEST_CASE_METHOD(setUpStcp, "Calls, ident and procedure, semantic error") {
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     clause = stcp.parse();
     calls = std::make_unique<Calls>(std::move(identStr), std::move(synonymProcedure), false);
-    requireTrue(*clause == *calls);
+    requireTrue(*clause.front() == *calls);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Calls, invalid syntax ident and procedure, syntax error") {
     query = "such that Calls(\"+x\",p)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    PQLTokenScanner pqlTokenScanner(std::move(lexer));
-    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
-    requireThrowAs<SyntaxException>([&stcp]() {
-        stcp.parse();
-    });
+    std::unique_ptr<QuerySyntaxValidator> sv = std::make_unique<QuerySyntaxValidator>(std::move(lexer));
+    requireTrue(!sv->validateQuery());
 }
