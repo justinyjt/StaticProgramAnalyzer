@@ -8,6 +8,16 @@
 #include "DesignExtractor.h"
 #include "commons/ASTNode.h"
 
+struct ProcNode {
+    ENT_NAME procName;
+    std::shared_ptr<ENT_SET> procUseVarSet;
+    std::shared_ptr<ENT_SET> procModVarSet;
+
+    ProcNode(const ENT_NAME& name, std::shared_ptr<ENT_SET> useVarSet, std::shared_ptr<ENT_SET> modVarSet)
+        : procName(name), procUseVarSet(useVarSet), procModVarSet(modVarSet) {}
+};
+
+
 DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
     pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(), procSet_(),
     stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
@@ -314,31 +324,41 @@ void DesignExtractor::updateContainerCallPairSet(STMT_NUM stmt, const ENT_NAME& 
 }
 
 void DesignExtractor::analyzeProc() {
-    std::unique_ptr<std::queue<ENT_NAME>> procQueue = std::make_unique<std::queue<ENT_NAME>>();;
-    for (const auto &proc : procSet_) {
+    std::unique_ptr<std::queue<ProcNode>> procQueue = std::make_unique<std::queue<ProcNode>>();
+    for (const auto& proc : procSet_) {
         if (!isProcGetCalled_[proc]) {
-            procQueue->push(proc);
-            while (!procQueue->empty()) {
-                auto &curProc = procQueue->front();
+            procQueue->push(ProcNode(proc, std::make_shared<ENT_SET>(), std::make_shared<ENT_SET>()));
 
-                auto iter = procDirectUseVarMap_.find(curProc);
+            while (!procQueue->empty()) {
+                auto& curProcNode = procQueue->front();
+                auto& curProcName = curProcNode.procName;
+                std::shared_ptr<ENT_SET> useVarSet = curProcNode.procUseVarSet;
+                std::shared_ptr<ENT_SET> modVarSet = curProcNode.procModVarSet;
+
+                auto iter = procDirectUseVarMap_.find(curProcName);
                 if (iter != procDirectUseVarMap_.end()) {
-                    auto& varUsedSet = iter->second;
-                    for (const auto& varUsed : varUsedSet) {
+                    auto& procUseVarSet = iter->second;
+                    for (const auto& varUsed : procUseVarSet) {
+                        useVarSet->insert(varUsed);
+                    }
+                    for (const auto& varUsed : *useVarSet) {
                         procUsePairSet_.insert(ENT_ENT(proc, varUsed));
                     }
                 }
 
-                iter = procDirectModVarMap_.find(curProc);
+                iter = procDirectModVarMap_.find(curProcName);
                 if (iter != procDirectModVarMap_.end()) {
-                    auto& varModedSet = iter->second;
-                    for (const auto& varModed : varModedSet) {
+                    auto& procModVarSet = iter->second;
+                    for (const auto& varModed : procModVarSet) {
+                        modVarSet->insert(varModed);
+                    }
+                    for (const auto& varModed : *modVarSet) {
                         procModPairSet_.insert(ENT_ENT(proc, varModed));
                     }
                 }
 
-                for (const auto& calleeProc : callGraph_.getCallingProcs(curProc)) {
-                    procQueue->push(calleeProc);
+                for (const auto& calleeProc : callGraph_.getCallingProcs(curProcName)) {
+                    procQueue->push(ProcNode(calleeProc, useVarSet, modVarSet));
                 }
                 procQueue->pop();
             }
