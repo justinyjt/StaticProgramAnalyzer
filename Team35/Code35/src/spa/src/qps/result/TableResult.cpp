@@ -87,14 +87,14 @@ bool TableResult::operator==(const Result &rhs) const {
 
     std::unordered_set<std::string> a;
     for (auto& row : rows) {
-        std::string s;
+        std::string s{""};
         for (auto& elem : row) s += elem;
         a.insert(s);
     }
 
     std::unordered_set<std::string> b;
     for (auto& row : pRhs->rows) {
-        std::string s;
+        std::string s{""};
         for (auto& elem : row) s += elem;
         b.insert(s);
     }
