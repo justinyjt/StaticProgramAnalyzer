@@ -78,8 +78,24 @@ class Graph {
         return false;
     }
 
-    int getNoOfNodes() const {
+    uint32_t getNoOfNodes() const {
         return nodes.size();
+    }
+
+    uint32_t getNoOfOutgoingEdges(const T &node) const {
+        if (!hasNode(node)) {
+            return 0;
+        }
+        Index node_index = getNodeIndex(node);
+        return outgoing_adj_list_.at(node_index).size();
+    }
+
+    uint32_t getNoOfIncomingEdges(const T &node) const {
+        if (!hasNode(node)) {
+            return 0;
+        }
+        Index node_index = getNodeIndex(node);
+        return incoming_adj_list_.at(node_index).size();
     }
 
     unordered_set<T> getPredecessors(const T &node, bool isTransitive) const {

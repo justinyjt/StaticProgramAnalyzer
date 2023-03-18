@@ -1,3 +1,5 @@
+#include <cstdint>
+
 #include "catch.hpp"
 #include "../../TestHelper.h"
 #include "commons/graph/Graph.h"
@@ -49,7 +51,7 @@ TEST_CASE("1. test addEdge() method") {
             requireTrue(g.hasNode(i));
         }
 
-        requireEqual(g.getNoOfNodes(), 10);
+        requireEqual(g.getNoOfNodes(), static_cast<uint32_t>(10));
 
         for (int i = 1; i < 10; ++i) {
             requireTrue(g.isNeighborFromPublic(i, i + 1));
@@ -94,6 +96,9 @@ TEST_CASE("1. test addEdge() method") {
 
         requireFalse(g.isCyclic());
         requireFalse(g.hasNode(0));
+        requireEqual(g.getNoOfOutgoingEdges(2), static_cast<uint32_t>(6));
+        requireEqual(g.getNoOfOutgoingEdges(16), static_cast<uint32_t>(0));
+        requireEqual(g.getNoOfIncomingEdges(15), static_cast<uint32_t>(6));
         requireEqual(static_cast<int>(g.getOutgoingNodesPublic(1).size()), 1);
         requireEqual(static_cast<int>(g.getOutgoingNodesPublic(2).size()), 6);
         requireEqual(static_cast<int>(g.getOutgoingNodesPublic(3).size()), 1);
@@ -112,7 +117,7 @@ TEST_CASE("1. test addEdge() method") {
         requireEqual(static_cast<int>(g.getIncomingNodesPublic(15).size()), 6);
         requireEqual(static_cast<int>(g.getOutgoingNodesPublic(16).size()), 0);
         requireEqual(static_cast<int>(g.getIncomingNodesPublic(16).size()), 1);
-        requireEqual(g.getNoOfNodes(), 16);
+        requireEqual(g.getNoOfNodes(), static_cast<uint32_t>(16));
 
         for (int i = 1; i <= 16; ++i) {
             requireTrue(g.hasNode(i));
