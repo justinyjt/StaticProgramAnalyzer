@@ -324,7 +324,10 @@ void DesignExtractor::analyzeProc() {
                         auto &procUseVarSet = iter->second;
                         for (const auto &varUsed : procUseVarSet) {
                             procUsePairSet_.emplace(procName, varUsed);
-                            for (const auto &stmt : callProcNameToStmtMap_.at(curProcName)) {
+                            if (callProcNameToStmtMap_.find(procName) == callProcNameToStmtMap_.end()) {
+                                continue;
+                            }
+                            for (const auto &stmt : callProcNameToStmtMap_.at(procName)) {
                                 stmtUsePairSet_.emplace(stmt, varUsed);
                             }
                         }
@@ -335,7 +338,10 @@ void DesignExtractor::analyzeProc() {
                         auto &procModVarSet = iter->second;
                         for (const auto &varModified : procModVarSet) {
                             procModPairSet_.emplace(procName, varModified);
-                            for (const auto &stmt : callProcNameToStmtMap_.at(curProcName)) {
+                            if (callProcNameToStmtMap_.find(procName) == callProcNameToStmtMap_.end()) {
+                                continue;
+                            }
+                            for (const auto &stmt : callProcNameToStmtMap_.at(procName)) {
                                 stmtModPairSet_.emplace(stmt, varModified);
                             }
                         }
