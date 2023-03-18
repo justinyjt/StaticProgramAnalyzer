@@ -1,11 +1,14 @@
 #include "PKBWriter.h"
 
+#include <algorithm>
 #include <utility>
+
+using std::any_of;
 
 PKBWriter::PKBWriter(PKB &pkb) : pkb(pkb) {}
 
 bool PKBWriter::addEntities(Entity entity, const ENT_SET &entitySet) {
-    for (auto ent : entitySet) {
+    for (const auto &ent : entitySet) {
         if (!pkb.addEntityToTable(entity, ent)) {
             return false;
         }
@@ -14,7 +17,7 @@ bool PKBWriter::addEntities(Entity entity, const ENT_SET &entitySet) {
 }
 
 bool PKBWriter::addStatements(StmtType tableType, const STMT_SET &stmtSet) {
-    for (auto stmt : stmtSet) {
+    for (const auto &stmt : stmtSet) {
         if (!pkb.addStatementToTable(tableType, stmt)) {
             return false;
         }
@@ -23,7 +26,7 @@ bool PKBWriter::addStatements(StmtType tableType, const STMT_SET &stmtSet) {
 }
 
 bool PKBWriter::addStmtEntityRelationships(StmtNameRelationship tableType, const STMT_ENT_SET &set) {
-    for (auto stmtEnt : set) {
+    for (const auto &stmtEnt : set) {
         if (!pkb.addRelationshipToTable(tableType, stmtEnt)) {
             return false;
         }
@@ -32,7 +35,7 @@ bool PKBWriter::addStmtEntityRelationships(StmtNameRelationship tableType, const
 }
 
 bool PKBWriter::addEntityEntityRelationships(NameNameRelationship tableType, const ENT_ENT_SET &set) {
-    for (auto entEnt : set) {
+    for (const auto &entEnt : set) {
         if (!pkb.addRelationshipToTable(tableType, entEnt)) {
             return false;
         }
@@ -49,11 +52,10 @@ bool PKBWriter::addStmtStmtRelationships(StmtStmtRelationship tableType, const S
     return true;
 }
 
-
-void PKBWriter::addPatterns(std::unordered_map<STMT_NUM, ASSIGN_PAT> patMap) {
+void PKBWriter::addPatterns(std::unordered_map<STMT_NUM, ASSIGN_PAT> &patMap) {
     std::unordered_map<STMT_NUM, ASSIGN_PAT>::iterator p;
     for (p = patMap.begin(); p != patMap.end(); ++p) {
-        pkb.addPattern(p->first, p->second);
+        pkb.addPattern(p->first, std::move(p->second));
     }
 }
 
