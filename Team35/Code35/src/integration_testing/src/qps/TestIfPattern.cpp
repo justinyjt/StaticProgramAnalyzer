@@ -40,7 +40,8 @@ TEST_CASE("1. Test IfPattern") {
 
     SECTION("Test ifs(var, _, _)") {
         IfPattern ifPattern(std::make_unique<Synonym>(Synonym::DesignEntity::VARIABLE, "var"), "");
-        TableResult expectedResult("var", std::unordered_set<std::string>{"x", "y"});
+        ENT_SET s{"x, y"};
+        TableResult expectedResult("var", s);
         std::unique_ptr<Result> actualResult = ifPattern.evaluate(pkbReaderPtr);
         requireTrue(expectedResult == *actualResult);
     }
