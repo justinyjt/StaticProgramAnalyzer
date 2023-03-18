@@ -12,7 +12,7 @@ void CFGManager::setGraphs(std::vector<CFGraph> &&cfg) {
     this->graphs_ = std::move(cfg);
 }
 
-int CFGManager::getIndex(STMT_NUM num) {
+int CFGManager::getIndex(STMT_NUM num) const {
     int start = 0;
     int end = this->graphs_.size() - 1;
     while (start <= end) {
@@ -28,7 +28,7 @@ int CFGManager::getIndex(STMT_NUM num) {
     return -1;
 }
 
-const CFGraph &CFGManager::getCFG(STMT_NUM num) {
+const CFGraph &CFGManager::getCFG(STMT_NUM num) const {
     int index = this->getIndex(num);
     assert(index != -1);
     return graphs_[index];
@@ -40,11 +40,11 @@ ENT_NAME CFGManager::getProcName(STMT_NUM num) {
     return graphs_[index].getProcName();
 }
 
-bool CFGManager::isValidStmtNum(STMT_NUM num) {
+bool CFGManager::isValidStmtNum(STMT_NUM num) const {
     return this->getIndex(num) != -1;
 }
 
-bool CFGManager::isNext(STMT_NUM first, STMT_NUM second, bool isTransitive) {
+bool CFGManager::isNext(STMT_NUM first, STMT_NUM second, bool isTransitive) const {
     if (!isValidStmtNum(first) || !isValidStmtNum(second)) {
         return false;
     }
@@ -63,7 +63,7 @@ bool CFGManager::isNextExists() {
     });
 }
 
-STMT_SET CFGManager::getConnectedStmts(STMT_NUM num, bool isAfter, bool isTransitive) {
+STMT_SET CFGManager::getConnectedStmts(STMT_NUM num, bool isAfter, bool isTransitive) const {
     const CFGraph &curr = getCFG(num);
     if (isAfter) {
         return curr.getSuccessors(num, isTransitive);
@@ -82,13 +82,13 @@ bool CFGManager::isNextExistBeforeStmtNum(STMT_NUM num, bool isTransitive) {
 STMT_STMT_SET CFGManager::getValidNextPairs(bool isTransitive) {
     STMT_STMT_SET result;
     for (auto &curr : this->graphs_) {
-        STMT_STMT_SET temp = curr.getPairwiseControlFlow(isTransitive);
+        const STMT_STMT_SET &temp = curr.getPairwiseControlFlow(isTransitive);
         result.insert(temp.begin(), temp.end());
     }
     return result;
 }
 
-STMT_SET CFGManager::getValidPredecessors() {
+STMT_SET CFGManager::getValidPredecessors() const {
     STMT_SET result;
     for (auto &curr : this->graphs_) {
         STMT_SET temp = curr.getAllPredecessors();
@@ -97,7 +97,7 @@ STMT_SET CFGManager::getValidPredecessors() {
     return result;
 }
 
-STMT_SET CFGManager::getValidSuccessors() {
+STMT_SET CFGManager::getValidSuccessors() const {
     STMT_SET result;
     for (auto &curr : this->graphs_) {
         STMT_SET temp = curr.getAllSuccessors();

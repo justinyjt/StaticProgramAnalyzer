@@ -62,3 +62,7 @@ void PKBWriter::addCallGraph(CallGraph &&callGraph) {
     this->addEntityEntityRelationships(NameNameRelationship::CallsStar, callGraph.getTransitiveCalls());
     pkb.addCallGraph(std::move(callGraph));
 }
+
+void PKBWriter::addCFGraphs(std::vector<CFG::CFGraph> &&cfGraphs) {
+    pkb.addCFGraphs(std::move(cfGraphs));
+}
