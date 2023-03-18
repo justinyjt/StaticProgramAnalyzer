@@ -137,4 +137,8 @@ class DesignExtractor {
     void updateStmtModsPairSet(STMT_NUM stmt, const ENT_NAME &varName);
 
     void updateContainerCallPairSet(const ENT_NAME &procName);
+
+    void updateStmtUsesPairSetWithCalls();
+
+    void updateStmtModsPairSetWithCalls();
 };

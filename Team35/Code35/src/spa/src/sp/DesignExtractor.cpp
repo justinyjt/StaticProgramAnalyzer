@@ -27,6 +27,8 @@ std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode
         return std::move(root_);
     }
     analyzeProc();
+    updateStmtUsesPairSetWithCalls();
+    updateStmtModsPairSetWithCalls();
 
     addVarNameSetToPKB();
     addConstantSetToPKB();
@@ -289,6 +291,32 @@ void DesignExtractor::updateStmtUsesPairSet(STMT_NUM stmt, const ENT_NAME &varNa
     procDirectUseVarMap_[curProc_].insert(varName);
 }
 
+void DesignExtractor::updateStmtUsesPairSetWithCalls() {
+    for (const auto &procToVarPair : procUsePairSet_) {
+        const auto &procName = procToVarPair.first;
+        const auto &var = procToVarPair.second;
+        if (callProcNameToStmtMap_.find(procName) == callProcNameToStmtMap_.end()) {
+            continue;
+        }
+        for (STMT_NUM stmt : callProcNameToStmtMap_.at(procName)) {
+            stmtUsePairSet_.emplace(stmt, var);
+        }
+    }
+}
+
+void DesignExtractor::updateStmtModsPairSetWithCalls() {
+    for (const auto &procToVarPair : procModPairSet_) {
+        const auto &procName = procToVarPair.first;
+        const auto &var = procToVarPair.second;
+        if (callProcNameToStmtMap_.find(procName) == callProcNameToStmtMap_.end()) {
+            continue;
+        }
+        for (STMT_NUM stmt : callProcNameToStmtMap_.at(procName)) {
+            stmtModPairSet_.emplace(stmt, var);
+        }
+    }
+}
+
 void DesignExtractor::updateStmtModsPairSet(STMT_NUM stmt, const ENT_NAME &varName) {
     stmtModPairSet_.emplace(stmt, varName);
     for (STMT_NUM itr : containerStmtLst_) {
@@ -324,12 +352,6 @@ void DesignExtractor::analyzeProc() {
                         auto &procUseVarSet = iter->second;
                         for (const auto &varUsed : procUseVarSet) {
                             procUsePairSet_.emplace(procName, varUsed);
-                            if (callProcNameToStmtMap_.find(procName) == callProcNameToStmtMap_.end()) {
-                                continue;
-                            }
-                            for (const auto &stmt : callProcNameToStmtMap_.at(procName)) {
-                                stmtUsePairSet_.emplace(stmt, varUsed);
-                            }
                         }
                     }
                     //  Variables directly modified by current proc
@@ -338,12 +360,6 @@ void DesignExtractor::analyzeProc() {
                         auto &procModVarSet = iter->second;
                         for (const auto &varModified : procModVarSet) {
                             procModPairSet_.emplace(procName, varModified);
-                            if (callProcNameToStmtMap_.find(procName) == callProcNameToStmtMap_.end()) {
-                                continue;
-                            }
-                            for (const auto &stmt : callProcNameToStmtMap_.at(procName)) {
-                                stmtModPairSet_.emplace(stmt, varModified);
-                            }
                         }
                     }
                 }
