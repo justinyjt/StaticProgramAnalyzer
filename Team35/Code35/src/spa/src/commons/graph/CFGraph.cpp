@@ -176,55 +176,32 @@ const STMT_STMT_SET &CFGraph::getPairwiseControlFlow(bool isTransitive) {
     return pairwise_control_flow->value();
 }
 
-bool CFGraph::isReachable(const CFGraphNodeData &node_data1,
-                          const CFGraphNodeData &node_data2,
-                          bool check_neighbor_only) const {
+bool CFGraph::isReachable(STMT_NUM stmt1, STMT_NUM stmt2, bool check_neighbor_only) const {
+    CFGraphNodeData node_data1 = makeNodeData(stmt1);
+    CFGraphNodeData node_data2 = makeNodeData(stmt2);
     if (!this->hasNode(node_data1) || !this->hasNode(node_data2)) {
         return false;
     }
     Index node_index1 = this->getNodeIndex(node_data1);
     Index node_index2 = this->getNodeIndex(node_data2);
 
-    if (check_neighbor_only) {
-        for (Index successor_index : this->getOutgoingNodes(node_index1)) {
-            if (successor_index == node_index2) {
-                return true;
-            }
-            if (isIndexDummyNode(successor_index)) {
-                IndexSet successors_of_dummy_node = this->getDummyNodeSuccessors(successor_index);
-                if (std::find(successors_of_dummy_node.begin(), successors_of_dummy_node.end(), node_index2) !=
-                    successors_of_dummy_node.end()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    if (!check_neighbor_only) {
+        return Graph<CFGraphNodeData>::isReachable(node_data1, node_data2, false);
     }
 
-    IndexQueue frontier;
-    IndexSet visited;
-    frontier.push(node_index1);
-
-    while (!frontier.empty()) {
-        Index node_index = frontier.front();
-        frontier.pop();
-        visited.insert(node_index);
-        for (Index successor_index : this->getOutgoingNodes(node_index)) {
-            if (successor_index == node_index2) {
+    for (Index successor_index : this->getOutgoingNodes(node_index1)) {
+        if (successor_index == node_index2) {
+            return true;
+        }
+        if (isIndexDummyNode(successor_index)) {
+            IndexSet successors_of_dummy_node = this->getDummyNodeSuccessors(successor_index);
+            if (std::find(successors_of_dummy_node.begin(), successors_of_dummy_node.end(), node_index2) !=
+                successors_of_dummy_node.end()) {
                 return true;
-            }
-            if (visited.find(successor_index) == visited.end()) {
-                frontier.push(successor_index);
             }
         }
     }
     return false;
-}
-
-bool CFGraph::isReachable(STMT_NUM stmt1, STMT_NUM stmt2, bool check_neighbor_only) const {
-    CFGraphNodeData node_data1 = makeNodeData(stmt1);
-    CFGraphNodeData node_data2 = makeNodeData(stmt2);
-    return this->isReachable(node_data1, node_data2, check_neighbor_only);
 }
 
 STMT_NUM CFGraph::getMaxStmtNum() const {

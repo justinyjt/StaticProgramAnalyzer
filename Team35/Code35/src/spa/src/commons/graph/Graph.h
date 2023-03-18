@@ -82,7 +82,7 @@ class Graph {
         return nodes.size();
     }
 
-    virtual unordered_set<T> getPredecessors(const T &node, bool isTransitive) const {
+    unordered_set<T> getPredecessors(const T &node, bool isTransitive) const {
         if (!this->hasNode(node)) {
             return {};
         }
@@ -115,7 +115,7 @@ class Graph {
         return predecessors;
     }
 
-    virtual unordered_set<T> getSuccessors(const T &node, bool isTransitive) const {
+    unordered_set<T> getSuccessors(const T &node, bool isTransitive) const {
         if (!this->hasNode(node)) {
             return {};
         }
@@ -148,7 +148,7 @@ class Graph {
         return successors;
     }
 
-    virtual bool isReachable(const T &node1, const T &node2, bool check_neighbor_only) const {
+    bool isReachable(const T &node1, const T &node2, bool check_neighbor_only) const {
         if (!this->hasNode(node1) || !this->hasNode(node2)) {
             return false;
         }
