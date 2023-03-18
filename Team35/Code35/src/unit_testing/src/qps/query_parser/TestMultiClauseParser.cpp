@@ -52,8 +52,8 @@ class setUpMcp {
 
         identStr = std::make_unique<Ident>("x");
         expr = std::make_unique<Expression>("x", false);
-        statementNumber1 = std::make_unique<PQLNumber>(1);
-        statementNumber2 = std::make_unique<PQLNumber>(1);
+        statementNumber1 = std::make_unique<PQLNumber>("1");
+        statementNumber2 = std::make_unique<PQLNumber>("1");
         wildcard1 = std::make_unique<Wildcard>();
         wildcard2 = std::make_unique<Wildcard>();
     }

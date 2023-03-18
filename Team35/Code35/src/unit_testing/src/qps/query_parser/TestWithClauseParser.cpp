@@ -29,8 +29,8 @@ class setUpWcp {
 
         ident1 = std::make_unique<Ident>("x");
         ident2 = std::make_unique<Ident>("x");
-        statementNumber1 = std::make_unique<PQLNumber>(1);
-        statementNumber2 = std::make_unique<PQLNumber>(1);
+        statementNumber1 = std::make_unique<PQLNumber>("1");
+        statementNumber2 = std::make_unique<PQLNumber>("1");
         expr = std::make_unique<Expression>("x", false);
         exprWildcardVarName = std::make_unique<Expression>("x", true);
         exprWildcardConstValue = std::make_unique<Expression>("1", true);

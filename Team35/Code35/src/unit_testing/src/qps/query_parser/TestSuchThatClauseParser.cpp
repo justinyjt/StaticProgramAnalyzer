@@ -44,8 +44,8 @@ class setUpStcp {
         synonymConstant = std::make_unique<Synonym>(Synonym::DesignEntity::CONSTANT, "c");
 
         identStr = std::make_unique<Ident>("x");
-        statementNumber1 = std::make_unique<PQLNumber>(1);
-        statementNumber2 = std::make_unique<PQLNumber>(1);
+        statementNumber1 = std::make_unique<PQLNumber>("1");
+        statementNumber2 = std::make_unique<PQLNumber>("1");
         wildcard1 = std::make_unique<Wildcard>();
         wildcard2 = std::make_unique<Wildcard>();
     }
