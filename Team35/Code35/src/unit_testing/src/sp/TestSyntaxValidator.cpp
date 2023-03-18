@@ -1103,3 +1103,71 @@ TEST_CASE("SV can handle conditional expressions well", "[sv]") {
         requireFalse(sv.validateProgram());
     }
 }
+
+TEST_CASE("SV can invalidate empty stmt list") {
+    SECTION("SV can invalidate empty procedure: procedure main(){}") {
+        Token EoF(Token::Tag::EndOfFile);
+        Token Proc(Token::Tag::Procedure);
+        Token ProcName("main", Token::Tag::Name);
+        Token LBrace(Token::Tag::LBrace);
+        Token RBrace(Token::Tag::RBrace);
+        std::vector<Token> tokens = {
+            EoF, RBrace,
+            LBrace, ProcName, Proc};
+        MockLexer lex(tokens);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
+        SyntaxValidator sv(std::move(lexPtr));
+        requireFalse(sv.validateProgram());
+    }
+
+    SECTION("SV can invalidate empty if clause: if(x>2)then{}else{}") {
+        Token EoF(Token::Tag::EndOfFile);
+        Token Proc(Token::Tag::Procedure);
+        Token ProcName("main", Token::Tag::Name);
+        Token LBrace(Token::Tag::LBrace);
+        Token RBrace(Token::Tag::RBrace);
+        Token LParen(Token::Tag::LParen);
+        Token RParen(Token::Tag::RParen);
+        Token If(Token::Tag::If);
+        Token Then(Token::Tag::Then);
+        Token Else(Token::Tag::Else);
+        Token VarName("x", Token::Tag::Name);
+        Token GreaterThan(">", Token::Tag::GreaterThan);
+        Token ConstVal("2", Token::Tag::Integer);
+        std::vector<Token> tokens = {
+            EoF, RBrace,
+            RBrace, RBrace, LBrace, Else,
+            RBrace, LBrace, Then,
+            RParen, RParen,
+            ConstVal, GreaterThan, VarName, LParen, If,
+            LBrace, ProcName, Proc};
+        MockLexer lex(tokens);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
+        SyntaxValidator sv(std::move(lexPtr));
+        requireFalse(sv.validateProgram());
+    }
+
+    SECTION("SV can invalidate empty while clause: while(x>2){}") {
+        Token EoF(Token::Tag::EndOfFile);
+        Token Proc(Token::Tag::Procedure);
+        Token ProcName("main", Token::Tag::Name);
+        Token LBrace(Token::Tag::LBrace);
+        Token RBrace(Token::Tag::RBrace);
+        Token LParen(Token::Tag::LParen);
+        Token RParen(Token::Tag::RParen);
+        Token While(Token::Tag::While);
+        Token VarName("x", Token::Tag::Name);
+        Token GreaterThan(">", Token::Tag::GreaterThan);
+        Token ConstVal("2", Token::Tag::Integer);
+        std::vector<Token> tokens = {
+            EoF, RBrace,
+            RBrace, LBrace,
+            RParen, RParen,
+            ConstVal, GreaterThan, VarName, LParen, While,
+            LBrace, ProcName, Proc};
+        MockLexer lex(tokens);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
+        SyntaxValidator sv(std::move(lexPtr));
+        requireFalse(sv.validateProgram());
+    }
+}
