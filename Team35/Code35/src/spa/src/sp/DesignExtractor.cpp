@@ -1,7 +1,6 @@
 #include <cassert>
 #include <memory>
 #include <queue>
-#include <string>
 #include <utility>
 #include <unordered_map>
 
@@ -150,7 +149,7 @@ void DesignExtractor::extractAssign(const std::shared_ptr<ASTNode> &node) {
 
 ENT_NAME DesignExtractor::extractLeftAssign(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::Variable);
-    std::string &varName = node->getLabel();
+    const std::string &varName = node->getLabel();
     varNameSet_.insert(varName);
     updateStmtModsPairSet(stmtCnt_, varName);
     assignSet_.insert(stmtCnt_);
