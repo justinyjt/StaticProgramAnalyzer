@@ -7,9 +7,9 @@
 
 #include "commons/ASTNode.h"
 #include "commons/graph/CallGraph.h"
+#include "commons/graph/CFGraph.h"
 #include "pkb/PKBWriter.h"
 #include "CFGraphBuilder.h"
-#include <commons/graph/CFGraph.h>
 
 class DesignExtractor {
  public:

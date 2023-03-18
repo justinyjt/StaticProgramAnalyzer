@@ -1,5 +1,6 @@
 #include <cassert>
 #include <memory>
+#include <queue>
 #include <string>
 #include <utility>
 #include <unordered_map>
@@ -12,7 +13,7 @@ DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
     pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(), procSet_(),
     stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
     stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(), ifCondUsePairSet_(), whileCondUsePairSet_(),
-    containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_(), CFGBuilder_(), isIfCond(), 
+    containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_(), CFGBuilder_(), isIfCond(),
     procDirectUseVarMap_(), procDirectModVarMap_(), isProcGetCalled_(), containerCallPairSet_() {}
 
 std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode> root) {
@@ -243,17 +244,15 @@ void DesignExtractor::extractIf(const std::shared_ptr<ASTNode> &node) {
 
     const auto &thenStmtLst = node->getChildren().at(1);
     extractStmtLst(thenStmtLst);
-
     int dummyStmtNum = stmtCnt_;
     CFGBuilder_.addDummyNode(dummyStmtNum);
     CFGBuilder_.setLastVisitedStmt(ifStmtNum);
-    
+
     const auto &elseStmtLst = node->getChildren().at(2);
     extractStmtLst(elseStmtLst);
+    CFGBuilder_.addDummyNode(dummyStmtNum);
 
     containerStmtLst_.pop_back();
-
-    CFGBuilder_.addDummyNode(dummyStmtNum);
 }
 
 void DesignExtractor::extractWhile(const std::shared_ptr<ASTNode> &node) {
@@ -283,9 +282,7 @@ void DesignExtractor::extractCall(const std::shared_ptr<ASTNode> &node) {
     ENT_NAME calleeName = child->getLabel();
     callGraph_.addCallRelationship(curProc_, calleeName);
     isProcGetCalled_[calleeName] = true;
-   
     CFGBuilder_.addStmt(stmtCnt_);
-    
     updateContainerCallPairSet(stmtCnt_, calleeName);
 }
 
@@ -322,7 +319,6 @@ void DesignExtractor::analyzeProc() {
     for (const auto &proc : procSet_) {
         if (!isProcGetCalled_[proc]) {
             procQueue->push(proc);
-            
             while (!procQueue->empty()) {
                 auto &curProc = procQueue->front();
 
