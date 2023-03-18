@@ -7,8 +7,7 @@
 #include "qps/pql/Ident.h"
 #include "qps/pql/Expression.h"
 #include "qps/query_exceptions/SyntaxException.h"
-#include "qps/clause/one_arg_clause//WhilePattern.h"
-#include "qps/clause/one_arg_clause/IfPattern.h"
+#include "qps/clause/one_arg_clause/OneArgClause.h"
 
 class setUp {
  public:

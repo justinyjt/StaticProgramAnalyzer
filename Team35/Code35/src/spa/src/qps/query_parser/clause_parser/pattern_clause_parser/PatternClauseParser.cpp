@@ -9,8 +9,7 @@
 #include "qps/query_exceptions/SemanticException.h"
 #include "commons/token_scanner/TokenScanner.h"
 #include "qps/query_parser/SemanticValidator.h"
-#include "qps/clause/one_arg_clause/WhilePattern.h"
-#include "qps/clause/one_arg_clause/IfPattern.h"
+#include "qps/clause/one_arg_clause/OneArgClause.h"
 
 PatternClauseParser::PatternClauseParser(PQLTokenScanner& pqlTokenScanner,
                                          std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
