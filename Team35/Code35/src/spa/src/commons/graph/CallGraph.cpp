@@ -61,8 +61,8 @@ ENT_ENT_SET CallGraph::getImmediateCalls() {
 
 ENT_SET CallGraph::getCallEntities(Index index) {
     ENT_SET callees;
-    IndexList calleeIndices = this->getOutgoingNodes(index);
-    for (auto callee : calleeIndices) {
+    IndexSet calleeIndices = this->getOutgoingNodes(index);
+    for (auto &callee : calleeIndices) {
         callees.emplace(this->getNode(callee));
     }
     return callees;
@@ -105,3 +105,6 @@ void CallGraph::addProcScope(ENT_NAME proc, STMT_STMT scope) {
     this->call_map_.emplace(proc, scope);
 }
 
+ENT_SET CallGraph::getCallingProcs(const ENT_NAME &procName) {
+    return this->getCallEntities(getNodeIndex(procName));
+}

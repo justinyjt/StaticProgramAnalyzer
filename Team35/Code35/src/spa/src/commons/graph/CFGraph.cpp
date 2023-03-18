@@ -19,12 +19,12 @@ CFGraph::CFGraph() : Graph<CFGraphNodeData>(),
 }
 
 CFGraph::CFGraph(const CFGraph &graph, STMT_NUM min_stmt_num, STMT_NUM max_stmt_num, ENT_NAME proc_name) :
-    Graph<CFGraphNodeData>(graph),
-    max_stmt_num_(max_stmt_num),
-    min_stmt_num_(min_stmt_num),
-    proc_name_(std::move(proc_name)),
-    pairwise_control_flow_transitive_(graph.pairwise_control_flow_transitive_),
-    pairwise_control_flow_non_transitive_(graph.pairwise_control_flow_non_transitive_) {
+        Graph<CFGraphNodeData>(graph),
+        max_stmt_num_(max_stmt_num),
+        min_stmt_num_(min_stmt_num),
+        proc_name_(std::move(proc_name)),
+        pairwise_control_flow_transitive_(graph.pairwise_control_flow_transitive_),
+        pairwise_control_flow_non_transitive_(graph.pairwise_control_flow_non_transitive_) {
     this->addNode(CFGraph::start_node_data);
     this->addNode(CFGraph::end_node_data);
 }
@@ -56,7 +56,7 @@ STMT_SET CFGraph::getAllSuccessors() const {
     assert(this->hasNode(CFGraph::end_node_data));
     STMT_SET result;
     Index node_index = this->getNodeIndex(CFGraph::start_node_data);
-    IndexList successors = getDummyNodeSuccessors(node_index);
+    IndexSet successors = getDummyNodeSuccessors(node_index);
     for (const auto &index : successors) {
         STMT_SET current = this->getSuccessorsByIndex(index, true);
         result.insert(current.begin(), current.end());
@@ -69,7 +69,7 @@ STMT_SET CFGraph::getAllPredecessors() const {
     assert(this->hasNode(CFGraph::end_node_data));
     STMT_SET result;
     Index node_index = this->getNodeIndex(CFGraph::end_node_data);
-    IndexList predecessors = getDummyNodePredecessors(node_index);
+    IndexSet predecessors = getDummyNodePredecessors(node_index);
     for (const auto &index : predecessors) {
         STMT_SET current = this->getPredecessorsByIndex(index, true);
         result.insert(current.begin(), current.end());
@@ -160,7 +160,7 @@ const STMT_STMT_SET &CFGraph::getPairwiseControlFlow(bool isTransitive) {
     }
 
     std::optional<STMT_STMT_SET> *pairwise_control_flow =
-        isTransitive ? &(this->pairwise_control_flow_transitive_) : &(this->pairwise_control_flow_non_transitive_);
+            isTransitive ? &(this->pairwise_control_flow_transitive_) : &(this->pairwise_control_flow_non_transitive_);
 
     *pairwise_control_flow = STMT_STMT_SET();
     for (Index node_index = 0; node_index < this->getNoOfNodes(); ++node_index) {
@@ -185,36 +185,19 @@ bool CFGraph::isReachable(STMT_NUM stmt1, STMT_NUM stmt2, bool check_neighbor_on
     Index node_index1 = this->getNodeIndex(node_data1);
     Index node_index2 = this->getNodeIndex(node_data2);
 
-    if (check_neighbor_only) {
-        for (Index successor_index : this->getOutgoingNodes(node_index1)) {
-            if (successor_index == node_index2) {
-                return true;
-            }
-            if (isIndexDummyNode(successor_index)) {
-                IndexList successors_of_dummy_node = this->getDummyNodeSuccessors(successor_index);
-                if (std::find(successors_of_dummy_node.begin(), successors_of_dummy_node.end(), node_index2) !=
-                    successors_of_dummy_node.end()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    if (!check_neighbor_only) {
+        return Graph<CFGraphNodeData>::isReachable(node_data1, node_data2, false);
     }
 
-    IndexQueue frontier;
-    IndexSet visited;
-    frontier.push(node_index1);
-
-    while (!frontier.empty()) {
-        Index node_index = frontier.front();
-        frontier.pop();
-        visited.insert(node_index);
-        for (Index successor_index : this->getOutgoingNodes(node_index)) {
-            if (successor_index == node_index2) {
+    for (Index successor_index : this->getOutgoingNodes(node_index1)) {
+        if (successor_index == node_index2) {
+            return true;
+        }
+        if (isIndexDummyNode(successor_index)) {
+            IndexSet successors_of_dummy_node = this->getDummyNodeSuccessors(successor_index);
+            if (std::find(successors_of_dummy_node.begin(), successors_of_dummy_node.end(), node_index2) !=
+                successors_of_dummy_node.end()) {
                 return true;
-            }
-            if (visited.find(successor_index) == visited.end()) {
-                frontier.push(successor_index);
             }
         }
     }
@@ -243,31 +226,31 @@ STMT_NUM CFGraph::getStmtNumFromIndex(Index index) const {
     return this->getNode(index).getStmtNum();
 }
 
-IndexList CFGraph::getDummyNodePredecessors(Index index) const {
+IndexSet CFGraph::getDummyNodePredecessors(Index index) const {
     assert(this->isIndexValid(index));
     assert(this->isIndexDummyNode(index));
-    IndexList predecessors;
+    IndexSet predecessors;
     for (Index predecessor_index : this->getIncomingNodes(index)) {
         if (!this->isIndexDummyNode(predecessor_index)) {
-            predecessors.push_back(predecessor_index);
+            predecessors.insert(predecessor_index);
         } else {
-            IndexList dummy_predecessors = this->getDummyNodePredecessors(predecessor_index);
-            predecessors.insert(predecessors.end(), dummy_predecessors.begin(), dummy_predecessors.end());
+            IndexSet dummy_predecessors = this->getDummyNodePredecessors(predecessor_index);
+            predecessors.insert(dummy_predecessors.begin(), dummy_predecessors.end());
         }
     }
     return predecessors;
 }
 
-IndexList CFGraph::getDummyNodeSuccessors(Index index) const {
+IndexSet CFGraph::getDummyNodeSuccessors(Index index) const {
     assert(this->isIndexValid(index));
     assert(this->isIndexDummyNode(index));
-    IndexList successors;
+    IndexSet successors;
     for (Index successor_index : this->getOutgoingNodes(index)) {
         if (!this->isIndexDummyNode(successor_index)) {
-            successors.push_back(successor_index);
+            successors.insert(successor_index);
         } else {
-            IndexList dummy_successors = this->getDummyNodeSuccessors(successor_index);
-            successors.insert(successors.end(), dummy_successors.begin(), dummy_successors.end());
+            IndexSet dummy_successors = this->getDummyNodeSuccessors(successor_index);
+            successors.insert(dummy_successors.begin(), dummy_successors.end());
         }
     }
     return successors;
@@ -275,7 +258,7 @@ IndexList CFGraph::getDummyNodeSuccessors(Index index) const {
 
 bool CFGraph::operator==(const CFGraph &graph) const {
     return Graph<CFGraphNodeData>::operator==(graph) && this->proc_name_ == graph.proc_name_ &&
-        this->min_stmt_num_ == graph.min_stmt_num_ && this->max_stmt_num_ == graph.max_stmt_num_;
+           this->min_stmt_num_ == graph.min_stmt_num_ && this->max_stmt_num_ == graph.max_stmt_num_;
 }
 
 bool CFGraph::operator!=(const CFGraph &graph) const {

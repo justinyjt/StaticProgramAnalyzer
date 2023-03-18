@@ -9,6 +9,7 @@
 #include "pkb/db/EntityTable.h"
 #include "pkb/db/RelationshipTable.h"
 #include "pkb/db/PatternTable.h"
+#include "pkb/db/CFGManager.h"
 #include "commons/graph/CallGraph.h"
 
 class PKB {
@@ -51,6 +52,8 @@ public:
 
     void addCallGraph(CallGraph &&callGraph);
 
+    void addCFGraphs(std::vector<CFG::CFGraph> &&CFGraphs);
+
     ENT_SET getEntByStmtKey(StmtNameRelationship tableType, STMT_NUM stmt) const;
 
     STMT_SET getStmtByEntVal(StmtNameRelationship tableType, ENT_NAME name) const;
@@ -79,7 +82,7 @@ public:
 
     STMT_SET getStmtByProc(const ENT_NAME &procName) const;
 
-    STMT_STMT_SET getStmtStmtSet(StmtStmtRelationship tableType) const;
+    STMT_STMT_SET getStmtStmtSet(StmtStmtRelationship tableType);
 
     STMT_SET getKeyStmtByRs(StmtStmtRelationship tableType) const;
 
@@ -87,6 +90,7 @@ public:
 
     bool isStmtStmtPairExists(StmtStmtRelationship tableType, STMT_NUM key, STMT_NUM val) const;
 
+    bool isEntityTypeExists(StmtType tableType, STMT_NUM key) const;
 
 private:
     // Entity related tables
@@ -123,4 +127,5 @@ private:
 
     PatternTable patternTable;
     CallGraph callGraph;
+    CFG::CFGManager cfgManager;
 };

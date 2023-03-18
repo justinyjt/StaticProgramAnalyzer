@@ -51,7 +51,7 @@ enum class NameNameRelationship {
 };
 
 enum class StmtStmtRelationship {
-    Parent, ParentStar, Follows, FollowsStar
+    Parent, ParentStar, Follows, FollowsStar, Next, NextStar, Affects, AffectsStar
 };
 
 enum class Entity {
