@@ -43,10 +43,6 @@ class CFGraph : public Graph<CFGraphNodeData> {
 
     bool isReachable(STMT_NUM stmt1, STMT_NUM stmt2, bool check_neighbor_only = false) const;
 
-    bool isReachable(const CFGraphNodeData &node_data1,
-                     const CFGraphNodeData &node_data2,
-                     bool check_neighbor_only) const override;
-
     STMT_NUM getMaxStmtNum() const;
 
     STMT_NUM getMinStmtNum() const;
