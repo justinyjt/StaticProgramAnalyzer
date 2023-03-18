@@ -15,7 +15,7 @@ DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
     stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
     stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(), ifCondUsePairSet_(), whileCondUsePairSet_(),
     containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_(), CFGBuilder_(), isIfCond(),
-    procDirectUseVarMap_(), procDirectModVarMap_(), containerCallPairSet_() {}
+    procDirectUseVarMap_(), procDirectModVarMap_(), containerCallPairSet_(), callProcNameToStmtMap_() {}
 
 std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode> root) {
     root_ = std::move(root);
@@ -271,6 +271,7 @@ void DesignExtractor::extractCall(const std::shared_ptr<ASTNode> &node) {
 
     ENT_NAME calleeName = child->getLabel();
     callGraph_.addCallRelationship(curProc_, calleeName);
+    callProcNameToStmtMap_.emplace(calleeName, stmtCnt_);
     updateContainerCallPairSet(calleeName);
 }
 
@@ -323,6 +324,7 @@ void DesignExtractor::analyzeProc() {
                         auto &procUseVarSet = iter->second;
                         for (const auto &varUsed : procUseVarSet) {
                             procUsePairSet_.emplace(procName, varUsed);
+                            stmtUsePairSet_.emplace(callProcNameToStmtMap_.at(curProcName), varUsed);
                         }
                     }
                     //  Variables directly modified by current proc
@@ -331,6 +333,7 @@ void DesignExtractor::analyzeProc() {
                         auto &procModVarSet = iter->second;
                         for (const auto &varModified : procModVarSet) {
                             procModPairSet_.emplace(procName, varModified);
+                            stmtModPairSet_.emplace(callProcNameToStmtMap_.at(curProcName), varModified);
                         }
                     }
                 }
