@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <queue>
@@ -8,19 +9,20 @@
 #include <unordered_set>
 #include <vector>
 
+using std::unordered_set;
+
 typedef uint32_t Index;
-typedef std::vector<Index> IndexList;
-typedef std::unordered_set<Index> IndexSet;
+typedef unordered_set<Index> IndexSet;
 typedef std::queue<Index> IndexQueue;
 
 /**
  * A directed unweighted graph with nodes of type T. The nodes are unique by value. It is possible that one node is
- * connected to another node multiple times, or connected to itself.
+ * connected to itself.
  */
 template<typename T>
 class Graph {
  public:
-    Graph() : nodes(), nodeToIndex(), outgoingAdjList(), incomingAdjList() {}
+    Graph() : nodes(), node_to_index_(), outgoing_adj_list_(), incoming_adj_list_() {}
 
     virtual ~Graph() = default;
 
@@ -33,8 +35,8 @@ class Graph {
     Graph &operator=(const Graph &other) = default;
 
     bool operator==(const Graph &other) const {
-        return nodes == other.nodes && nodeToIndex == other.nodeToIndex &&
-            outgoingAdjList == other.outgoingAdjList && incomingAdjList == other.incomingAdjList;
+        return nodes == other.nodes && node_to_index_ == other.node_to_index_ &&
+            outgoing_adj_list_ == other.outgoing_adj_list_ && incoming_adj_list_ == other.incoming_adj_list_;
     }
 
     bool operator!=(const Graph &other) const {
@@ -42,10 +44,10 @@ class Graph {
     }
 
     void addEdge(const T &from, const T &to) {
-        Index fromIndex = addNodeHelper(from);
-        Index toIndex = addNodeHelper(to);
-        outgoingAdjList[fromIndex].push_back(toIndex);
-        incomingAdjList[toIndex].push_back(fromIndex);
+        Index from_index = addNodeHelper(from);
+        Index to_index = addNodeHelper(to);
+        outgoing_adj_list_[from_index].insert(to_index);
+        incoming_adj_list_[to_index].insert(from_index);
     }
 
     void addNode(const T &node) {
@@ -53,7 +55,16 @@ class Graph {
     }
 
     bool hasNode(const T &node) const {
-        return nodeToIndex.find(node) != nodeToIndex.end();
+        return node_to_index_.find(node) != node_to_index_.end();
+    }
+
+    bool isNeighbor(const T &node1, const T &node2) const {
+        if (!hasNode(node1) || !hasNode(node2)) {
+            return false;
+        }
+        Index node_index1 = getNodeIndex(node1);
+        Index node_index2 = getNodeIndex(node2);
+        return isNeighbor(node_index1, node_index2);
     }
 
     bool isCyclic() const {
@@ -67,8 +78,121 @@ class Graph {
         return false;
     }
 
-    int getNoOfNodes() const {
+    uint32_t getNoOfNodes() const {
         return nodes.size();
+    }
+
+    uint32_t getNoOfOutgoingEdges(const T &node) const {
+        if (!hasNode(node)) {
+            return 0;
+        }
+        Index node_index = getNodeIndex(node);
+        return outgoing_adj_list_.at(node_index).size();
+    }
+
+    uint32_t getNoOfIncomingEdges(const T &node) const {
+        if (!hasNode(node)) {
+            return 0;
+        }
+        Index node_index = getNodeIndex(node);
+        return incoming_adj_list_.at(node_index).size();
+    }
+
+    unordered_set<T> getPredecessors(const T &node, bool isTransitive) const {
+        if (!this->hasNode(node)) {
+            return {};
+        }
+
+        Index node_index = this->getNodeIndex(node);
+
+        unordered_set<T> predecessors;
+
+        if (!isTransitive) {
+            for (Index predecessor_index : this->getIncomingNodes(node_index)) {
+                predecessors.insert(this->getNode(predecessor_index));
+            }
+            return predecessors;
+        }
+        IndexQueue frontier;
+        IndexSet visited;
+        frontier.push(node_index);
+
+        while (!frontier.empty()) {
+            Index index = frontier.front();
+            frontier.pop();
+            visited.insert(index);
+            for (Index predecessor_index : this->getIncomingNodes(index)) {
+                if (visited.find(predecessor_index) == visited.end()) {
+                    frontier.push(predecessor_index);
+                }
+                predecessors.insert(this->getNode(predecessor_index));
+            }
+        }
+        return predecessors;
+    }
+
+    unordered_set<T> getSuccessors(const T &node, bool isTransitive) const {
+        if (!this->hasNode(node)) {
+            return {};
+        }
+
+        Index node_index = this->getNodeIndex(node);
+
+        unordered_set<T> successors;
+
+        if (!isTransitive) {
+            for (Index successor_index : this->getIncomingNodes(node_index)) {
+                successors.insert(this->getNode(successor_index));
+            }
+            return successors;
+        }
+        IndexQueue frontier;
+        IndexSet visited;
+        frontier.push(node_index);
+
+        while (!frontier.empty()) {
+            Index index = frontier.front();
+            frontier.pop();
+            visited.insert(index);
+            for (Index successor_index : this->getOutgoingNodes(index)) {
+                if (visited.find(successor_index) == visited.end()) {
+                    frontier.push(successor_index);
+                }
+                successors.insert(this->getNode(successor_index));
+            }
+        }
+        return successors;
+    }
+
+    bool isReachable(const T &node1, const T &node2, bool check_neighbor_only) const {
+        if (!this->hasNode(node1) || !this->hasNode(node2)) {
+            return false;
+        }
+        Index node_index1 = this->getNodeIndex(node1);
+        Index node_index2 = this->getNodeIndex(node2);
+
+        if (check_neighbor_only) {
+            return isNeighbor(node_index1, node_index2);
+        }
+
+        IndexQueue frontier;
+        IndexSet visited;
+        frontier.push(node_index1);
+
+        while (!frontier.empty()) {
+            Index node_index = frontier.front();
+            frontier.pop();
+            visited.insert(node_index);
+            for (Index successor_index : this->getOutgoingNodes(node_index)) {
+                if (successor_index == node_index2) {
+                    return true;
+                }
+                if (visited.find(successor_index) == visited.end()) {
+                    frontier.push(successor_index);
+                }
+            }
+        }
+        return false;
     }
 
  protected:
@@ -78,49 +202,55 @@ class Graph {
 
     Index getNodeIndex(const T &node) const {
         assert(hasNode(node));
-        return nodeToIndex.at(node);
+        return node_to_index_.at(node);
     }
 
     const T &getNode(Index index) const {
         assert(index < nodes.size());
-        return nodes[index];
+        return nodes.at(index);
     }
 
-    const IndexList &getOutgoingNodes(Index index) const {
+    bool isNeighbor(Index index1, Index index2) const {
+        assert(index1 < nodes.size());
+        assert(index2 < nodes.size());
+        return outgoing_adj_list_.at(index1).find(index2) != outgoing_adj_list_.at(index1).end();
+    }
+
+    const IndexSet &getOutgoingNodes(Index index) const {
         assert(index < nodes.size());
-        return outgoingAdjList[index];
+        return outgoing_adj_list_.at(index);
     }
 
-    const IndexList &getIncomingNodes(Index index) const {
+    const IndexSet &getIncomingNodes(Index index) const {
         assert(index < nodes.size());
-        return incomingAdjList[index];
+        return incoming_adj_list_.at(index);
     }
 
-    const IndexList &getOutgoingNodes(const T &node) const {
+    const IndexSet &getOutgoingNodes(const T &node) const {
         assert(hasNode(node));
-        return outgoingAdjList[getNodeIndex(node)];
+        return outgoing_adj_list_.at(getNodeIndex(node));
     }
 
-    const IndexList &getIncomingNodes(const T &node) const {
+    const IndexSet &getIncomingNodes(const T &node) const {
         assert(hasNode(node));
-        return incomingAdjList[getNodeIndex(node)];
+        return incoming_adj_list_.at(getNodeIndex(node));
     }
 
  private:
     std::vector<T> nodes;
-    std::unordered_map<T, Index> nodeToIndex;
-    std::vector<std::vector<Index>> outgoingAdjList;
-    std::vector<std::vector<Index>> incomingAdjList;
+    std::unordered_map<T, Index> node_to_index_;
+    std::vector<IndexSet> outgoing_adj_list_;
+    std::vector<IndexSet> incoming_adj_list_;
 
     Index addNodeHelper(const T &node) {
-        if (nodeToIndex.find(node) != nodeToIndex.end()) {
-            return nodeToIndex[node];
+        if (node_to_index_.find(node) != node_to_index_.end()) {
+            return node_to_index_[node];
         }
         Index index = nodes.size();
         nodes.push_back(node);
-        nodeToIndex[node] = index;
-        outgoingAdjList.emplace_back();
-        incomingAdjList.emplace_back();
+        node_to_index_[node] = index;
+        outgoing_adj_list_.emplace_back();
+        incoming_adj_list_.emplace_back();
         return index;
     }
 
