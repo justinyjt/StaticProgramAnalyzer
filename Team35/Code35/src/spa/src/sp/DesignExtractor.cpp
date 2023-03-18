@@ -9,15 +9,16 @@
 #include "commons/ASTNode.h"
 
 DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
-    pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(), procSet_(),
-    stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
-    stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(),
-    containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_() {}
+        pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(), procSet_(),
+        stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
+        callSet_(), stmtUsePairSet_(), stmtModPairSet_(), stmtCallProcSet_(),
+        stmtReadVarSet_(), stmtPrintVarSet_(), assignPatMap_(), containerStmtLst_(),
+        stmtCnt_(0), curProc_(), callGraph_() {}
 
 std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode> root) {
     root_ = std::move(root);
     assert(root_->getSyntaxType() == ASTNode::SyntaxType::Program);
-    for (const auto &child : root_->getChildren()) {
+    for (const auto &child: root_->getChildren()) {
         extractProc(child);
     }
     addVarNameSetToPKB();
@@ -27,6 +28,9 @@ std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode
     addStmtModifiesPairSetToPKB();
     addStmtFollowPairSetToPKB();
     addStmtParentPairSetToPKB();
+    addCallProcSetToPKB();
+    addReadStmtVarSetToPKB();
+    addPrintStmtVarSetToPKB();
     addStmtTypesToPKB();
     addPatternsToPKB();
     addCallsToPKB();
@@ -45,7 +49,7 @@ void DesignExtractor::extractStmtLst(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::StmtLst);
     std::unique_ptr<std::vector<STMT_NUM>> childStmtLstPtr = std::make_unique<std::vector<STMT_NUM>>();
 
-    for (const auto &child : node->getChildren()) {
+    for (const auto &child: node->getChildren()) {
         stmtCnt_++;
         childStmtLstPtr->push_back(stmtCnt_);
         switch (child->getSyntaxType()) {
@@ -95,7 +99,7 @@ void DesignExtractor::updateParentsPairSet(const std::unique_ptr<std::vector<STM
     for (int i = 0; i < lst->size(); i++) {
         STMT_NUM stmt = (*lst)[i];
         stmtParentPairSet_.insert(STMT_STMT(containerStmtLst_.back(), stmt));
-        for (int &j : containerStmtLst_) {
+        for (int &j: containerStmtLst_) {
             stmtParentStarPairSet_.insert(STMT_STMT(j, stmt));
         }
     }
@@ -150,6 +154,7 @@ void DesignExtractor::extractRead(const std::shared_ptr<ASTNode> &node) {
     varNameSet_.insert(varName);
     updateStmtModsPairSet(stmtCnt_, varName);
     readSet_.insert(stmtCnt_);
+    stmtReadVarSet_.emplace(stmtCnt_, varName);
 }
 
 void DesignExtractor::extractPrint(const std::shared_ptr<ASTNode> &node) {
@@ -160,6 +165,7 @@ void DesignExtractor::extractPrint(const std::shared_ptr<ASTNode> &node) {
     varNameSet_.insert(varName);
     updateStmtUsesPairSet(stmtCnt_, varName);
     printSet_.insert(stmtCnt_);
+    stmtPrintVarSet_.emplace(stmtCnt_, varName);
 }
 
 void DesignExtractor::extractCondExpr(const std::shared_ptr<ASTNode> &node) {
@@ -219,11 +225,14 @@ void DesignExtractor::extractWhile(const std::shared_ptr<ASTNode> &node) {
 
 void DesignExtractor::extractCall(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::Call);
+    callSet_.insert(stmtCnt_);
     const auto &child = node->getChildren().front();
     assert(child->getSyntaxType() == ASTNode::SyntaxType::Variable);
 
     ENT_NAME calleeName = child->getLabel();
     callGraph_.addCallRelationship(curProc_, calleeName);
+    stmtCallProcSet_.emplace(stmtCnt_, calleeName);
+
 }
 
 void DesignExtractor::updateStmtSet() {
@@ -234,14 +243,14 @@ void DesignExtractor::updateStmtSet() {
 
 void DesignExtractor::updateStmtUsesPairSet(STMT_NUM stmt, const std::string &varName) {
     stmtUsePairSet_.insert(STMT_ENT(stmt, varName));
-    for (STMT_NUM itr : containerStmtLst_) {
+    for (STMT_NUM itr: containerStmtLst_) {
         stmtUsePairSet_.insert(STMT_ENT(itr, varName));
     }
 }
 
 void DesignExtractor::updateStmtModsPairSet(STMT_NUM stmt, const std::string &varName) {
     stmtModPairSet_.insert(STMT_ENT(stmt, varName));
-    for (STMT_NUM itr : containerStmtLst_) {
+    for (STMT_NUM itr: containerStmtLst_) {
         stmtModPairSet_.insert(STMT_ENT(itr, varName));
     }
 }
@@ -256,6 +265,18 @@ void DesignExtractor::addConstantSetToPKB() {
 
 void DesignExtractor::addProcSetToPKB() {
     pkbWriter_->addEntities(Entity::Procedure, procSet_);
+}
+
+void DesignExtractor::addCallProcSetToPKB() {
+    pkbWriter_->addStmtEntityRelationships(StmtNameRelationship::CallsProcedure, stmtCallProcSet_);
+}
+
+void DesignExtractor::addReadStmtVarSetToPKB() {
+    pkbWriter_->addStmtEntityRelationships(StmtNameRelationship::ReadStmtVar, stmtReadVarSet_);
+}
+
+void DesignExtractor::addPrintStmtVarSetToPKB() {
+    pkbWriter_->addStmtEntityRelationships(StmtNameRelationship::PrintStmtVar, stmtPrintVarSet_);
 }
 
 void DesignExtractor::addStmtUsesPairSetToPKB() {
@@ -287,6 +308,7 @@ void DesignExtractor::addStmtTypesToPKB() {
     pkbWriter_->addStatements(StmtType::Print, printSet_);
     pkbWriter_->addStatements(StmtType::If, ifSet_);
     pkbWriter_->addStatements(StmtType::While, whileSet_);
+    pkbWriter_->addStatements(StmtType::Call, callSet_);
     pkbWriter_->addStatements(StmtType::None, stmtSet_);
 }
 

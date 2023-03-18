@@ -1,22 +1,13 @@
 #include "Integer.h"
 
-Integer::Integer(int integer_lexeme) : Token::Token(std::to_string(integer_lexeme), Token::Tag::Integer),
-                                       integer_lexeme_(integer_lexeme) {}
+Integer::Integer(const Lexeme &integer_lexeme) : Token::Token(integer_lexeme, Token::Tag::Integer) {}
 
-Integer::Integer(int integer_lexeme, Token::Tag tag) : Token::Token(std::to_string(integer_lexeme), tag),
-                                                       integer_lexeme_(integer_lexeme) {}
+Integer::Integer(const Lexeme &integer_lexeme, Token::Tag tag) : Token::Token(integer_lexeme, tag) {}
 
-Integer::Integer(int integer_lexeme, LineNumber line_number) : Token::Token(std::to_string(integer_lexeme),
-                                                                            Token::Tag::Integer,
-                                                                            line_number),
-                                                               integer_lexeme_(integer_lexeme) {}
+Integer::Integer(const Lexeme &integer_lexeme, LineNumber line_number) : Token::Token(integer_lexeme,
+                                                                                      Token::Tag::Integer,
+                                                                                      line_number) {}
 
-Integer::Integer(int integer_lexeme, Token::Tag tag, LineNumber line_number) : Token::Token(std::to_string(
-                                                                                                integer_lexeme),
-                                                                                            tag,
-                                                                                            line_number),
-                                                                               integer_lexeme_(integer_lexeme) {}
-
-int Integer::getInteger() const {
-    return integer_lexeme_;
-}
+Integer::Integer(const Lexeme &integer_lexeme, Token::Tag tag, LineNumber line_number) : Token::Token(integer_lexeme,
+                                                                                                      tag,
+                                                                                                      line_number) {}

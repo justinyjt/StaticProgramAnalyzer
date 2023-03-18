@@ -12,7 +12,7 @@
 #include "commons/graph/CallGraph.h"
 
 class PKB {
- public:
+public:
     const EntityTable<ENT_NAME> &getEntityTable(Entity entityType) const;
 
     const EntityTable<STMT_NUM> &getStatementTable(StmtType stmtType) const;
@@ -88,7 +88,7 @@ class PKB {
     bool isStmtStmtPairExists(StmtStmtRelationship tableType, STMT_NUM key, STMT_NUM val) const;
 
 
- private:
+private:
     // Entity related tables
     EntityTable<ENT_NAME> variableTable;
     EntityTable<ENT_NAME> constantTable;
@@ -107,6 +107,9 @@ class PKB {
     RelationshipTable<STMT_NUM, ENT_NAME> ifCondUsesVarTable;
     RelationshipTable<STMT_NUM, ENT_NAME> whileCondUsesVarTable;
     RelationshipTable<STMT_NUM, ENT_NAME> containerProcedureTable;
+    RelationshipTable<STMT_NUM, ENT_NAME> callsStmtProcedureTable;
+    RelationshipTable<STMT_NUM, ENT_NAME> readStmtVarTable;
+    RelationshipTable<STMT_NUM, ENT_NAME> printStmtVarTable;
 
     RelationshipTable<ENT_NAME, ENT_NAME> modifiesNameNameTable;
     RelationshipTable<ENT_NAME, ENT_NAME> usesNameNameTable;

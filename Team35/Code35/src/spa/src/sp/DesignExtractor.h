@@ -10,14 +10,15 @@
 #include "pkb/PKBWriter.h"
 
 class DesignExtractor {
- public:
+public:
     explicit DesignExtractor(std::unique_ptr<PKBWriter>);
 
     std::shared_ptr<ASTNode> extractProgram(std::shared_ptr<ASTNode>);
 
     std::unordered_map<STMT_NUM, ASSIGN_PAT> getAssignPatMap();
 
- private:
+private:
+
     ENT_SET varNameSet_;
     ENT_SET constSet_;
     ENT_SET procSet_;
@@ -27,9 +28,13 @@ class DesignExtractor {
     STMT_SET readSet_;
     STMT_SET ifSet_;
     STMT_SET whileSet_;
+    STMT_SET callSet_;
 
     STMT_ENT_SET stmtUsePairSet_;
     STMT_ENT_SET stmtModPairSet_;
+    STMT_ENT_SET stmtCallProcSet_;
+    STMT_ENT_SET stmtReadVarSet_;
+    STMT_ENT_SET stmtPrintVarSet_;
     STMT_STMT_SET stmtFollowPairSet_;
     STMT_STMT_SET stmtFollowStarPairSet_;
     STMT_STMT_SET stmtParentPairSet_;
@@ -58,6 +63,12 @@ class DesignExtractor {
     void addStmtFollowPairSetToPKB();
 
     void addStmtParentPairSetToPKB();
+
+    void addCallProcSetToPKB();
+
+    void addReadStmtVarSetToPKB();
+
+    void addPrintStmtVarSetToPKB();
 
     void addPatternsToPKB();
 
