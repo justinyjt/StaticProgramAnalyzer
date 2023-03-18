@@ -111,6 +111,9 @@ class PKB {
     RelationshipTable<STMT_NUM, ENT_NAME> ifCondUsesVarTable;
     RelationshipTable<STMT_NUM, ENT_NAME> whileCondUsesVarTable;
     RelationshipTable<STMT_NUM, ENT_NAME> containerProcedureTable;
+    RelationshipTable<STMT_NUM, ENT_NAME> callsStmtProcedureTable;
+    RelationshipTable<STMT_NUM, ENT_NAME> readStmtVarTable;
+    RelationshipTable<STMT_NUM, ENT_NAME> printStmtVarTable;
 
     RelationshipTable<ENT_NAME, ENT_NAME> modifiesNameNameTable;
     RelationshipTable<ENT_NAME, ENT_NAME> usesNameNameTable;

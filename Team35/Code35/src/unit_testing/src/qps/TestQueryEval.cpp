@@ -5,7 +5,7 @@
 #include "qps/clause/TwoArgClause/StmtEntClause.h"
 #include "qps/clause/TwoArgClause/Pattern.h"
 #include "qps/clause/Clause.h"
-#include "qps/pql/StatementNumber.h"
+#include "qps/pql/PQLNumber.h"
 #include "qps/pql/Expression.h"
 #include "qps/pql/Wildcard.h"
 #include "pkb/PKBReader.h"
@@ -46,7 +46,7 @@ TEST_CASE("Query Evaluator Modifies") {
     // Perform evaluation
     Synonym syn(Synonym::DesignEntity::VARIABLE, "v");
     std::vector<std::unique_ptr<Clause>> clauses;
-    clauses.push_back(std::make_unique<ModifiesS>(StatementNumber("1"), syn));
+    clauses.push_back(std::make_unique<ModifiesS>(PQLNumber("1"), syn));
     std::unique_ptr<Result> evalResult = qe.evaluate(syn, clauses);
     evalResult->output(resultList);
     requireEqual(resultList.front(), std::string("x"));

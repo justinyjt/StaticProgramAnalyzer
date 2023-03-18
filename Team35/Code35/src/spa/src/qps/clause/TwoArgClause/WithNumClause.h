@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include <utility>
 
 #include "TwoArgClause.h"
@@ -15,7 +16,17 @@ class WithNumClause : public TwoArgClause {
     void validateArgs() override;
 
  protected:
-    STMT_SET getNumValuesFromSyn(Synonym syn, PKBReader *db);
+    static STMT_SET getStmtNumsFromSyn(Synonym syn, PKBReader *db);
+
+    static std::unique_ptr<Result> handleTwoConstCase(PKBReader *db, std::string syn1, std::string syn2);
+
+    static std::unique_ptr<Result> handleOneConstCaseSyn(PKBReader *db, std::string constSyn, Synonym nonConstSyn);
+
+    static std::unique_ptr<Result> handleNoConstCaseSyn(PKBReader *db, Synonym syn1, Synonym syn2);
+
+    static std::unique_ptr<Result> handleOneConstCaseNum(PKBReader *db, std::string constSyn, std::string num);
+
+    static std::unique_ptr<Result> handleNoConstCaseNum(PKBReader *db, Synonym syn, STMT_NUM num);
 
     bool operator==(const Clause &rhs) const override;
 };

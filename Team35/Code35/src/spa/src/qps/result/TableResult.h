@@ -1,4 +1,5 @@
 #pragma once
+
 #include <string>
 #include <list>
 #include <vector>
@@ -12,8 +13,8 @@
 // n-col result
 class TableResult : public Result {
  public:
-    std::list<std::string> idents;  // eg list<"v", "s1">
-    std::vector<std::list<std::string>> rows;  // eg vector<list<"x",1>, list<"y",2>, ...>
+    std::list<std::string> idents;  // eg list<"r", "s1">
+    std::vector<std::list<std::string>> rows;  // eg vector<list<1,1>, list<3,2>, ...>
 
     // general constructor for n-cols
     TableResult(std::list<std::string> &_idents,

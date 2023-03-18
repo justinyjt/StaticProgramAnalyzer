@@ -1,5 +1,6 @@
 #include "StmtStmtClause.h"
 
+#include <string>
 #include <unordered_set>
 
 StmtStmtClause::StmtStmtClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second,
@@ -27,8 +28,8 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::STMT_NUM):  // Parent/Follows(stmt, 5) -> int[]
         {
-            int num = (dynamic_cast<StatementNumber &>(*second)).n;
-            STMT_SET set = db->getRelationshipByVal(rs, num);
+            std::string num = (dynamic_cast<PQLNumber &>(*second)).n;
+            STMT_SET set = db->getRelationshipByVal(rs, std::stoi(num));
             STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*first).de));
             std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(first->str(), filterSet);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), set);
@@ -44,8 +45,8 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
         }
         case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::SYNONYM):  // Parent/Follows(1, stmt) -> int[]
         {
-            int num = (dynamic_cast<StatementNumber &>(*first)).n;
-            STMT_SET set = db->getRelationshipByKey(rs, num);
+            std::string num = (dynamic_cast<PQLNumber &>(*first)).n;
+            STMT_SET set = db->getRelationshipByKey(rs, std::stoi(num));
             STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*second).de));
             std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(second->str(), filterSet);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), set);
@@ -53,16 +54,16 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
         }
         case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::STMT_NUM):  // Parent/Follows(1, 2) -> bool
         {
-            int firstNum = (dynamic_cast<StatementNumber &>(*first)).n;
-            int secondNum = (dynamic_cast<StatementNumber &>(*second)).n;
-            bool b = db->isRelationshipExists(rs, firstNum, secondNum);
+            std::string firstNum = (dynamic_cast<PQLNumber &>(*first)).n;
+            std::string secondNum = (dynamic_cast<PQLNumber &>(*second)).n;
+            bool b = db->isRelationshipExists(rs, std::stoi(firstNum), std::stoi(secondNum));
             std::unique_ptr<Result> result = std::make_unique<BoolResult>(b);
             return std::move(result);
         }
         case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::WILDCARD):  // Parent/Follows(3, _) -> bool
         {
-            int num = (dynamic_cast<StatementNumber &>(*first)).n;
-            STMT_SET s = db->getRelationshipByKey(rs, num);
+            std::string num = (dynamic_cast<PQLNumber &>(*first)).n;
+            STMT_SET s = db->getRelationshipByKey(rs, std::stoi(num));
             std::unique_ptr<Result> result = std::make_unique<BoolResult>(!s.empty());
             return std::move(result);
         }
@@ -76,8 +77,8 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
         }
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::STMT_NUM):  // Parent/Follows(_, 3) -> bool
         {
-            int num = (dynamic_cast<StatementNumber &>(*second)).n;
-            STMT_SET s = db->getRelationshipByVal(rs, num);
+            std::string num = (dynamic_cast<PQLNumber &>(*second)).n;
+            STMT_SET s = db->getRelationshipByVal(rs, std::stoi(num));
             std::unique_ptr<Result> result = std::make_unique<BoolResult>(!s.empty());
             return std::move(result);
         }

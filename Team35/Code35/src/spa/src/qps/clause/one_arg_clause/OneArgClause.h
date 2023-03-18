@@ -1,4 +1,5 @@
 #pragma once
+
 #include <memory>
 #include <utility>
 
@@ -6,7 +7,7 @@
 #include "qps/pql/Expression.h"
 #include "qps/pql/Ident.h"
 #include "qps/pql/PQLToken.h"
-#include "qps/pql/StatementNumber.h"
+#include "qps/pql/PQLNumber.h"
 #include "qps/pql/Synonym.h"
 #include "qps/pql/Wildcard.h"
 #include "qps/query_exceptions/SemanticException.h"
@@ -21,9 +22,11 @@ class OneArgClause : public Clause {
     const std::unique_ptr<PQLToken> first;
 
     explicit OneArgClause(std::unique_ptr<PQLToken> first);
+
     virtual void validateArgs() = 0;
 
  protected:
-    bool equal(const OneArgClause& rhs) const;
+    bool equal(const OneArgClause &rhs) const;
+
     EntType getEntType(Synonym::DesignEntity type);
 };

@@ -31,7 +31,7 @@ std::unique_ptr<Result> SingleSynonymSelectClause::evaluate(PKBReader *db) {
             // check if varName - get stmt-ent-set, else get stmt-set
             auto attrRef = dynamic_cast<AttrRef*>(syn.get());
             if (attrRef != nullptr && attrRef->ref == VARNAME_KEYWORD) {
-                ses = db->getStatementsEntities(StmtType::Read);
+                ses = db->getAllRelationships(StmtNameRelationship::ReadStmtVar);
             } else {
                 ss = db->getStatements(StmtType::Read);
             }
@@ -41,7 +41,7 @@ std::unique_ptr<Result> SingleSynonymSelectClause::evaluate(PKBReader *db) {
             // check if varName - get stmt-ent-set, else get stmt-set
             auto attrRef = dynamic_cast<AttrRef *>(syn.get());
             if (attrRef != nullptr && attrRef->ref == VARNAME_KEYWORD) {
-                ses = db->getStatementsEntities(StmtType::Print);
+                ses = db->getAllRelationships(StmtNameRelationship::PrintStmtVar);
             } else {
                 ss = db->getStatements(StmtType::Print);
             }
@@ -51,7 +51,7 @@ std::unique_ptr<Result> SingleSynonymSelectClause::evaluate(PKBReader *db) {
             // check if varName - get stmt-ent-set, else get stmt-set
             auto attrRef = dynamic_cast<AttrRef*>(syn.get());
             if (attrRef != nullptr && attrRef->ref == PROCNAME_KEYWORD) {
-                ses = db->getStatementsEntities(StmtType::Call);
+                ses = db->getAllRelationships(StmtNameRelationship::CallsProcedure);
             } else {
                 ss = db->getStatements(StmtType::Call);
             }

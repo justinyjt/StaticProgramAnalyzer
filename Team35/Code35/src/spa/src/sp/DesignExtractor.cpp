@@ -35,6 +35,9 @@ std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode
     addStmtModifiesPairSetToPKB();
     addStmtFollowPairSetToPKB();
     addStmtParentPairSetToPKB();
+    addCallProcSetToPKB();
+    addReadStmtVarSetToPKB();
+    addPrintStmtVarSetToPKB();
     addStmtTypesToPKB();
     addPatternsToPKB();
     addCallsToPKB();
@@ -79,22 +82,22 @@ void DesignExtractor::extractStmtLst(const std::shared_ptr<ASTNode> &node) {
         CFGBuilder_.addStmt(stmtCnt_);
 
         switch (child->getSyntaxType()) {
-            case ASTNode::SyntaxType::Assign:
+            case ASTNode::SyntaxType::Assign :
                 extractAssign(child);
                 break;
-            case ASTNode::SyntaxType::Read:
+            case ASTNode::SyntaxType::Read :
                 extractRead(child);
                 break;
-            case ASTNode::SyntaxType::Print:
+            case ASTNode::SyntaxType::Print :
                 extractPrint(child);
                 break;
-            case ASTNode::SyntaxType::If:
+            case ASTNode::SyntaxType::If :
                 extractIf(child);
                 break;
-            case ASTNode::SyntaxType::While:
+            case ASTNode::SyntaxType::While :
                 extractWhile(child);
                 break;
-            case ASTNode::SyntaxType::Call:
+            case ASTNode::SyntaxType::Call :
                 extractCall(child);
                 break;
             default:
@@ -180,6 +183,7 @@ void DesignExtractor::extractRead(const std::shared_ptr<ASTNode> &node) {
     varNameSet_.emplace(varName);
     updateStmtModsPairSet(stmtCnt_, varName);
     readSet_.emplace(stmtCnt_);
+    stmtReadVarSet_.emplace(stmtCnt_, varName);
 }
 
 void DesignExtractor::extractPrint(const std::shared_ptr<ASTNode> &node) {
@@ -190,6 +194,7 @@ void DesignExtractor::extractPrint(const std::shared_ptr<ASTNode> &node) {
     varNameSet_.emplace(varName);
     updateStmtUsesPairSet(stmtCnt_, varName);
     printSet_.emplace(stmtCnt_);
+    stmtPrintVarSet_.emplace(stmtCnt_, varName);
 }
 
 void DesignExtractor::extractCondExpr(const std::shared_ptr<ASTNode> &node) {
@@ -266,11 +271,13 @@ void DesignExtractor::extractWhile(const std::shared_ptr<ASTNode> &node) {
 
 void DesignExtractor::extractCall(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::Call);
+    callSet_.insert(stmtCnt_);
     const auto &child = node->getChildren().front();
     assert(child->getSyntaxType() == ASTNode::SyntaxType::Variable);
 
     ENT_NAME calleeName = child->getLabel();
     callGraph_.addCallRelationship(curProc_, calleeName);
+    stmtCallProcSet_.emplace(stmtCnt_, calleeName);
     updateContainerCallPairSet(calleeName);
 }
 
@@ -307,7 +314,6 @@ void DesignExtractor::analyzeProc() {
     for (const auto &proc : procSet_) {
         if (!callGraph_.getNoOfIncomingEdges(proc)) {
             procQueue.emplace(proc, std::vector<ENT_NAME>());
-
             while (!procQueue.empty()) {
                 auto &curProcNode = procQueue.front();
                 auto &curProcName = curProcNode.procName;
@@ -355,6 +361,18 @@ void DesignExtractor::addProcSetToPKB() {
     pkbWriter_->addEntities(Entity::Procedure, procSet_);
 }
 
+void DesignExtractor::addCallProcSetToPKB() {
+    pkbWriter_->addStmtEntityRelationships(StmtNameRelationship::CallsProcedure, stmtCallProcSet_);
+}
+
+void DesignExtractor::addReadStmtVarSetToPKB() {
+    pkbWriter_->addStmtEntityRelationships(StmtNameRelationship::ReadStmtVar, stmtReadVarSet_);
+}
+
+void DesignExtractor::addPrintStmtVarSetToPKB() {
+    pkbWriter_->addStmtEntityRelationships(StmtNameRelationship::PrintStmtVar, stmtPrintVarSet_);
+}
+
 void DesignExtractor::addStmtUsesPairSetToPKB() {
     pkbWriter_->addStmtEntityRelationships(StmtNameRelationship::Uses, stmtUsePairSet_);
 }
@@ -384,6 +402,7 @@ void DesignExtractor::addStmtTypesToPKB() {
     pkbWriter_->addStatements(StmtType::Print, printSet_);
     pkbWriter_->addStatements(StmtType::If, ifSet_);
     pkbWriter_->addStatements(StmtType::While, whileSet_);
+    pkbWriter_->addStatements(StmtType::Call, callSet_);
     pkbWriter_->addStatements(StmtType::None, stmtSet_);
 }
 

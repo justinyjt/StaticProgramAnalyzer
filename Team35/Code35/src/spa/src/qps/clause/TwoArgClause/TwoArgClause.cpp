@@ -7,13 +7,22 @@ TwoArgClause::TwoArgClause(std::unique_ptr<PQLToken> first,
 
 StmtType TwoArgClause::getStmtType(Synonym::DesignEntity type) {
     switch (type) {
-        case Synonym::DesignEntity::READ:return StmtType::Read;
-        case Synonym::DesignEntity::PRINT:return StmtType::Print;
-        case Synonym::DesignEntity::WHILE:return StmtType::While;
-        case Synonym::DesignEntity::IF:return StmtType::If;
-        case Synonym::DesignEntity::ASSIGN:return StmtType::Assign;
-        case Synonym::DesignEntity::STMT:return StmtType::None;
-        default:assert(false);
+        case Synonym::DesignEntity::READ:
+            return StmtType::Read;
+        case Synonym::DesignEntity::PRINT:
+            return StmtType::Print;
+        case Synonym::DesignEntity::WHILE:
+            return StmtType::While;
+        case Synonym::DesignEntity::IF:
+            return StmtType::If;
+        case Synonym::DesignEntity::ASSIGN:
+            return StmtType::Assign;
+        case Synonym::DesignEntity::CALL:
+            return StmtType::Call;
+        case Synonym::DesignEntity::STMT:
+            return StmtType::None;
+        default:
+            assert(false);
     }
 }
 
