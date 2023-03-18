@@ -10,9 +10,9 @@
 
 struct ProcNode {
     ENT_NAME procName;
-    std::shared_ptr<std::vector<ENT_NAME>> path;
+    std::vector<ENT_NAME> path;
 
-    ProcNode(const ENT_NAME& name, std::shared_ptr<std::vector<ENT_NAME>> newPath)
+    ProcNode(const ENT_NAME& name, std::vector<ENT_NAME> newPath)
         : procName(name), path(newPath) {}
 };
 
@@ -326,17 +326,17 @@ void DesignExtractor::analyzeProc() {
     std::unique_ptr<std::queue<ProcNode>> procQueue = std::make_unique<std::queue<ProcNode>>();
     for (const auto& proc : procSet_) {
         if (!isProcGetCalled_[proc]) {
-            procQueue->push(ProcNode(proc, std::make_shared<std::vector<ENT_NAME>>()));
+            procQueue->push(ProcNode(proc, std::vector<ENT_NAME>()));
 
             while (!procQueue->empty()) {
                 auto& curProcNode = procQueue->front();
                 auto& curProcName = curProcNode.procName;
                 auto& curPath = curProcNode.path;
-                auto& newPath = std::make_shared<std::vector<ENT_NAME>>(*curPath);
-                newPath->push_back(curProcName);
+                auto& newPath = std::vector<ENT_NAME>(curPath);
+                newPath.push_back(curProcName);
 
                 //  For every previous procs on the path
-                for (const auto& procName : *newPath) {
+                for (const auto& procName : newPath) {
                     //  Variables directly used by current proc
                     auto iter = procDirectUseVarMap_.find(curProcName);
                     if (iter != procDirectUseVarMap_.end()) {
