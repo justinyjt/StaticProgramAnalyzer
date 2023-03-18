@@ -15,7 +15,7 @@ DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
     stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
     stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(), ifCondUsePairSet_(), whileCondUsePairSet_(),
     containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_(), CFGBuilder_(), isIfCond(),
-    procDirectUseVarMap_(), procDirectModVarMap_(), containerCallPairSet_() {}
+    procDirectUseVarMap_(), procDirectModVarMap_(), containerCallPairSet_(), callProcNameToStmtMap_() {}
 
 std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode> root) {
     root_ = std::move(root);
@@ -27,6 +27,8 @@ std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode
         return std::move(root_);
     }
     analyzeProc();
+    updateStmtUsesPairSetWithCalls();
+    updateStmtModsPairSetWithCalls();
 
     addVarNameSetToPKB();
     addConstantSetToPKB();
@@ -271,6 +273,7 @@ void DesignExtractor::extractCall(const std::shared_ptr<ASTNode> &node) {
 
     ENT_NAME calleeName = child->getLabel();
     callGraph_.addCallRelationship(curProc_, calleeName);
+    callProcNameToStmtMap_[calleeName].insert(stmtCnt_);
     updateContainerCallPairSet(calleeName);
 }
 
@@ -286,6 +289,32 @@ void DesignExtractor::updateStmtUsesPairSet(STMT_NUM stmt, const ENT_NAME &varNa
         stmtUsePairSet_.emplace(itr, varName);
     }
     procDirectUseVarMap_[curProc_].insert(varName);
+}
+
+void DesignExtractor::updateStmtUsesPairSetWithCalls() {
+    for (const auto &procToVarPair : procUsePairSet_) {
+        const auto &procName = procToVarPair.first;
+        const auto &var = procToVarPair.second;
+        if (callProcNameToStmtMap_.find(procName) == callProcNameToStmtMap_.end()) {
+            continue;
+        }
+        for (STMT_NUM stmt : callProcNameToStmtMap_.at(procName)) {
+            stmtUsePairSet_.emplace(stmt, var);
+        }
+    }
+}
+
+void DesignExtractor::updateStmtModsPairSetWithCalls() {
+    for (const auto &procToVarPair : procModPairSet_) {
+        const auto &procName = procToVarPair.first;
+        const auto &var = procToVarPair.second;
+        if (callProcNameToStmtMap_.find(procName) == callProcNameToStmtMap_.end()) {
+            continue;
+        }
+        for (STMT_NUM stmt : callProcNameToStmtMap_.at(procName)) {
+            stmtModPairSet_.emplace(stmt, var);
+        }
+    }
 }
 
 void DesignExtractor::updateStmtModsPairSet(STMT_NUM stmt, const ENT_NAME &varName) {
