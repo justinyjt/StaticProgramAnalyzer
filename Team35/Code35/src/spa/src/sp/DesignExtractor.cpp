@@ -11,8 +11,9 @@
 DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
     pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(), procSet_(),
     stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
-    stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(),
-    containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_() {}
+    stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(), ifCondUsePairSet_(), whileCondUsePairSet_(),
+    containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_(), CFGBuilder_(), isIfCond(), 
+    procDirectUseVarMap_(), procDirectModVarMap_(), isProcGetCalled_(), containerCallPairSet_() {}
 
 std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode> root) {
     root_ = std::move(root);
@@ -20,6 +21,11 @@ std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode
     for (const auto &child : root_->getChildren()) {
         extractProc(child);
     }
+    if (callGraph_.isCyclic()) {
+        return std::move(root_);
+    }
+    analyzeProc();
+
     addVarNameSetToPKB();
     addConstantSetToPKB();
     addProcSetToPKB();
@@ -30,15 +36,39 @@ std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode
     addStmtTypesToPKB();
     addPatternsToPKB();
     addCallsToPKB();
+    addIfCondUsesPairSetToPKB();
+    addWhileCondUsesPairSetToPKB();
+    addContainerCallPairSetToPKB();
+    addProcUsesPairSetToPKB();
+    addProcModifiesPairSetToPKB();
+
     return std::move(root_);
 }
 
 void DesignExtractor::extractProc(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::Procedure);
     const std::shared_ptr<ASTNode> &nodeC = node->getChildren().front();
+
     curProc_ = node->getLabel();
     procSet_.insert(node->getLabel());
+
+    callGraph_.addNode(curProc_);
+
+    int lastCnt = stmtCnt_;
+    CFGBuilder_.reset();
+    CFGBuilder_.setProcName(curProc_);
+
     extractStmtLst(nodeC);
+
+    if (lastCnt == stmtCnt_) {
+        CFGBuilder_.setMinStmtNum(lastCnt);
+        CFGBuilder_.setMaxStmtNum(lastCnt);
+    } else {
+        CFGBuilder_.setMinStmtNum(lastCnt + 1);
+        CFGBuilder_.setMaxStmtNum(stmtCnt_);
+    }
+
+    CFGLst.push_back(CFGBuilder_.build());
 }
 
 void DesignExtractor::extractStmtLst(const std::shared_ptr<ASTNode> &node) {
@@ -48,6 +78,7 @@ void DesignExtractor::extractStmtLst(const std::shared_ptr<ASTNode> &node) {
     for (const auto &child : node->getChildren()) {
         stmtCnt_++;
         childStmtLstPtr->push_back(stmtCnt_);
+
         switch (child->getSyntaxType()) {
             case ASTNode::SyntaxType::Assign:
                 extractAssign(child);
@@ -59,6 +90,7 @@ void DesignExtractor::extractStmtLst(const std::shared_ptr<ASTNode> &node) {
                 extractPrint(child);
                 break;
             case ASTNode::SyntaxType::If:
+                isIfCond = true;
                 extractIf(child);
                 break;
             case ASTNode::SyntaxType::While:
@@ -104,18 +136,20 @@ void DesignExtractor::updateParentsPairSet(const std::unique_ptr<std::vector<STM
 void DesignExtractor::extractAssign(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::Assign);
     const auto &lAssign = node->getChildren().front();
-    auto rAssign = node->getChildren().back();
+    auto &rAssign = node->getChildren().back();
 
     ASSIGN_PAT_LEFT lAssignPat = extractLeftAssign(lAssign);
     ASSIGN_PAT_RIGHT rAssignPat = std::dynamic_pointer_cast<ExprNode>(rAssign);
     ASSIGN_PAT assignPat = std::make_pair(lAssignPat, rAssignPat);
     assignPatMap_.emplace(stmtCnt_, std::move(assignPat));
     extractRightAssign(rAssign);
+
+    CFGBuilder_.addStmt(stmtCnt_);
 }
 
 ENT_NAME DesignExtractor::extractLeftAssign(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::Variable);
-    std::string varName = node->getLabel();
+    std::string &varName = node->getLabel();
     varNameSet_.insert(varName);
     updateStmtModsPairSet(stmtCnt_, varName);
     assignSet_.insert(stmtCnt_);
@@ -123,7 +157,7 @@ ENT_NAME DesignExtractor::extractLeftAssign(const std::shared_ptr<ASTNode> &node
 }
 
 void DesignExtractor::extractRightAssign(const std::shared_ptr<ASTNode> &node) {
-    std::string label = node->getLabel();
+    const std::string &label = node->getLabel();
     switch (node->getSyntaxType()) {
         case ASTNode::SyntaxType::Variable:
             varNameSet_.insert(label);
@@ -146,28 +180,37 @@ void DesignExtractor::extractRead(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::Read);
     const auto &child = node->getChildren().front();
     assert(child->getSyntaxType() == ASTNode::SyntaxType::Variable);
-    std::string varName = child->getLabel();
+    const std::string &varName = child->getLabel();
     varNameSet_.insert(varName);
     updateStmtModsPairSet(stmtCnt_, varName);
     readSet_.insert(stmtCnt_);
+
+    CFGBuilder_.addStmt(stmtCnt_);
 }
 
 void DesignExtractor::extractPrint(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::Print);
     const auto &child = node->getChildren().front();
     assert(child->getSyntaxType() == ASTNode::SyntaxType::Variable);
-    std::string varName = child->getLabel();
+    const std::string &varName = child->getLabel();
     varNameSet_.insert(varName);
     updateStmtUsesPairSet(stmtCnt_, varName);
     printSet_.insert(stmtCnt_);
+
+    CFGBuilder_.addStmt(stmtCnt_);
 }
 
 void DesignExtractor::extractCondExpr(const std::shared_ptr<ASTNode> &node) {
-    std::string label = node->getLabel();
+    const std::string &label = node->getLabel();
     switch (node->getSyntaxType()) {
         case ASTNode::SyntaxType::Variable:
             varNameSet_.insert(label);
             updateStmtUsesPairSet(stmtCnt_, label);
+            if (isIfCond) {
+                ifCondUsePairSet_.insert(STMT_ENT(stmtCnt_, label));
+            } else {
+                whileCondUsePairSet_.insert(STMT_ENT(stmtCnt_, label));
+            }
             break;
         case ASTNode::SyntaxType::Constant:
             constSet_.insert(label);
@@ -188,25 +231,38 @@ void DesignExtractor::extractCondExpr(const std::shared_ptr<ASTNode> &node) {
 
 void DesignExtractor::extractIf(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::If);
+
+    int ifStmtNum = stmtCnt_;
     containerStmtLst_.push_back(stmtCnt_);
     ifSet_.insert(stmtCnt_);
+    CFGBuilder_.addStmt(stmtCnt_);
 
     const auto &cond = node->getChildren().at(0);
     extractCondExpr(cond);
+    isIfCond = isIfCond ? false : true;
 
     const auto &thenStmtLst = node->getChildren().at(1);
     extractStmtLst(thenStmtLst);
 
+    int dummyStmtNum = stmtCnt_;
+    CFGBuilder_.addDummyNode(dummyStmtNum);
+    CFGBuilder_.setLastVisitedStmt(ifStmtNum);
+    
     const auto &elseStmtLst = node->getChildren().at(2);
     extractStmtLst(elseStmtLst);
 
     containerStmtLst_.pop_back();
+
+    CFGBuilder_.addDummyNode(dummyStmtNum);
 }
 
 void DesignExtractor::extractWhile(const std::shared_ptr<ASTNode> &node) {
     assert(node->getSyntaxType() == ASTNode::SyntaxType::While);
+
+    int whileStmtNum = stmtCnt_;
     containerStmtLst_.push_back(stmtCnt_);
     whileSet_.insert(stmtCnt_);
+    CFGBuilder_.addStmt(stmtCnt_);
 
     const auto &cond = node->getChildren().at(0);
     extractCondExpr(cond);
@@ -215,6 +271,8 @@ void DesignExtractor::extractWhile(const std::shared_ptr<ASTNode> &node) {
     extractStmtLst(whileStmtLst);
 
     containerStmtLst_.pop_back();
+
+    CFGBuilder_.addLoop(whileStmtNum);
 }
 
 void DesignExtractor::extractCall(const std::shared_ptr<ASTNode> &node) {
@@ -224,6 +282,11 @@ void DesignExtractor::extractCall(const std::shared_ptr<ASTNode> &node) {
 
     ENT_NAME calleeName = child->getLabel();
     callGraph_.addCallRelationship(curProc_, calleeName);
+    isProcGetCalled_[calleeName] = true;
+   
+    CFGBuilder_.addStmt(stmtCnt_);
+    
+    updateContainerCallPairSet(stmtCnt_, calleeName);
 }
 
 void DesignExtractor::updateStmtSet() {
@@ -237,12 +300,54 @@ void DesignExtractor::updateStmtUsesPairSet(STMT_NUM stmt, const std::string &va
     for (STMT_NUM itr : containerStmtLst_) {
         stmtUsePairSet_.insert(STMT_ENT(itr, varName));
     }
+    procDirectUseVarMap_[curProc_].insert(varName);
 }
 
 void DesignExtractor::updateStmtModsPairSet(STMT_NUM stmt, const std::string &varName) {
     stmtModPairSet_.insert(STMT_ENT(stmt, varName));
     for (STMT_NUM itr : containerStmtLst_) {
         stmtModPairSet_.insert(STMT_ENT(itr, varName));
+    }
+    procDirectModVarMap_[curProc_].insert(varName);
+}
+
+void DesignExtractor::updateContainerCallPairSet(STMT_NUM stmt, const ENT_NAME& procName) {
+    for (STMT_NUM itr : containerStmtLst_) {
+        containerCallPairSet_.insert(STMT_ENT(itr, procName));
+    }
+}
+
+void DesignExtractor::analyzeProc() {
+    std::unique_ptr<std::queue<ENT_NAME>> procQueue = std::make_unique<std::queue<ENT_NAME>>();;
+    for (const auto &proc : procSet_) {
+        if (!isProcGetCalled_[proc]) {
+            procQueue->push(proc);
+            
+            while (!procQueue->empty()) {
+                auto &curProc = procQueue->front();
+
+                auto iter = procDirectUseVarMap_.find(curProc);
+                if (iter != procDirectUseVarMap_.end()) {
+                    auto& varUsedSet = iter->second;
+                    for (const auto& varUsed : varUsedSet) {
+                        procUsePairSet_.insert(ENT_ENT(proc, varUsed));
+                    }
+                }
+
+                iter = procDirectModVarMap_.find(curProc);
+                if (iter != procDirectModVarMap_.end()) {
+                    auto& varModedSet = iter->second;
+                    for (const auto& varModed : varModedSet) {
+                        procModPairSet_.insert(ENT_ENT(proc, varModed));
+                    }
+                }
+
+                for (const auto& calleeProc : callGraph_.getCallingProcs(curProc)) {
+                    procQueue->push(calleeProc);
+                }
+                procQueue->pop();
+            }
+        }
     }
 }
 
@@ -298,3 +403,22 @@ void DesignExtractor::addCallsToPKB() {
     pkbWriter_->addCallGraph(std::move(callGraph_));
 }
 
+void DesignExtractor::addIfCondUsesPairSetToPKB() {
+    pkbWriter_->addStmtEntityRelationships(StmtNameRelationship::IfCondVarUses, ifCondUsePairSet_);
+}
+
+void DesignExtractor::addWhileCondUsesPairSetToPKB() {
+    pkbWriter_->addStmtEntityRelationships(StmtNameRelationship::WhileCondVarUses, whileCondUsePairSet_);
+}
+
+void DesignExtractor::addProcUsesPairSetToPKB() {
+    pkbWriter_->addEntityEntityRelationships(NameNameRelationship::Uses, procUsePairSet_);
+}
+
+void DesignExtractor::addProcModifiesPairSetToPKB() {
+    pkbWriter_->addEntityEntityRelationships(NameNameRelationship::Modifies, procModPairSet_);
+}
+
+void DesignExtractor::addContainerCallPairSetToPKB() {
+    pkbWriter_->addStmtEntityRelationships(StmtNameRelationship::ContainerProcedure, containerCallPairSet_);
+}

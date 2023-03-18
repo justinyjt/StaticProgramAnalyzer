@@ -8,6 +8,8 @@
 #include "commons/ASTNode.h"
 #include "commons/graph/CallGraph.h"
 #include "pkb/PKBWriter.h"
+#include "CFGraphBuilder.h"
+#include <commons/graph/CFGraph.h>
 
 class DesignExtractor {
  public:
@@ -21,6 +23,7 @@ class DesignExtractor {
     ENT_SET varNameSet_;
     ENT_SET constSet_;
     ENT_SET procSet_;
+
     STMT_SET stmtSet_;
     STMT_SET assignSet_;
     STMT_SET printSet_;
@@ -30,20 +33,35 @@ class DesignExtractor {
 
     STMT_ENT_SET stmtUsePairSet_;
     STMT_ENT_SET stmtModPairSet_;
+    STMT_ENT_SET ifCondUsePairSet_;
+    STMT_ENT_SET whileCondUsePairSet_;
+    STMT_ENT_SET containerCallPairSet_;
+
     STMT_STMT_SET stmtFollowPairSet_;
     STMT_STMT_SET stmtFollowStarPairSet_;
     STMT_STMT_SET stmtParentPairSet_;
     STMT_STMT_SET stmtParentStarPairSet_;
 
+    ENT_ENT_SET procUsePairSet_;
+    ENT_ENT_SET procModPairSet_;
+
     std::unordered_map<STMT_NUM, ASSIGN_PAT> assignPatMap_;
+    std::unordered_map<ENT_NAME, ENT_SET> procDirectUseVarMap_;
+    std::unordered_map<ENT_NAME, ENT_SET> procDirectModVarMap_;
+    std::unordered_map<ENT_NAME, bool> isProcGetCalled_;
 
     std::unique_ptr<PKBWriter> pkbWriter_;
     std::shared_ptr<ASTNode> root_;
     std::vector<STMT_NUM> containerStmtLst_;
+
     STMT_NUM stmtCnt_;
     ENT_NAME curProc_;
 
     CallGraph callGraph_;
+    CFG::CFGraphBuilder CFGBuilder_;
+    std::vector<CFG::CFGraph> CFGLst;
+
+    bool isIfCond;
 
     void addVarNameSetToPKB();
 
@@ -64,6 +82,18 @@ class DesignExtractor {
     void addStmtTypesToPKB();
 
     void addCallsToPKB();
+
+    void addIfCondUsesPairSetToPKB();
+
+    void addWhileCondUsesPairSetToPKB();
+
+    void addProcUsesPairSetToPKB();
+
+    void addProcModifiesPairSetToPKB();
+
+    void addContainerCallPairSetToPKB();
+
+    void analyzeProc();
 
     void extractProc(const std::shared_ptr<ASTNode> &);
 
@@ -93,7 +123,9 @@ class DesignExtractor {
 
     void updateFollowsPairSet(const std::unique_ptr<std::vector<STMT_NUM>> &lst);
 
-    void updateStmtUsesPairSet(STMT_NUM stmt, const std::string &varName);
+    void updateStmtUsesPairSet(STMT_NUM stmt, const ENT_NAME &varName);
 
-    void updateStmtModsPairSet(STMT_NUM stmt, const std::string &varName);
+    void updateStmtModsPairSet(STMT_NUM stmt, const ENT_NAME &varName);
+
+    void updateContainerCallPairSet(STMT_NUM stmt, const ENT_NAME &procName);
 };

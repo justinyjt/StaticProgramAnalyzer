@@ -105,3 +105,13 @@ void CallGraph::addProcScope(ENT_NAME proc, STMT_STMT scope) {
     this->call_map_.emplace(proc, scope);
 }
 
+ENT_SET CallGraph::getCallingProcs(const ENT_NAME &procName) const {
+    const auto &indexContainer = this->getOutgoingNodes(procName);
+    ENT_SET calleeProcSet;
+
+    for (const auto& index : indexContainer) {
+        calleeProcSet.insert(this->getNode(index));
+    }
+
+    return calleeProcSet;
+}
