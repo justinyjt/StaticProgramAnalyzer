@@ -78,7 +78,7 @@ void DesignExtractor::extractProc(const std::shared_ptr<ASTNode> &node) {
         CFGBuilder_.setMinStmtNum(lastCnt);
         CFGBuilder_.setMaxStmtNum(lastCnt);
         isExit = true;
-        return ;
+        return;
     } else {
         CFGBuilder_.setMinStmtNum(lastCnt + 1);
         CFGBuilder_.setMaxStmtNum(stmtCnt_);
