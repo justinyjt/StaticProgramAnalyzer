@@ -32,18 +32,33 @@ std::unique_ptr<Result> StmtEntClause::evaluate(PKBReader *db) {
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Uses/Mod(stmt, var) -> <int, string>[]
         {
-            STMT_ENT_SET modifiesSet = db->getAllRelationships(rs);
+//            Synonym syn = dynamic_cast<Synonym &>(*first);
+//            if (syn.de == Synonym::DesignEntity::CALL) {
+//                STMT_SET callSet = db->getStatements(StmtType::Call);
+//                ENT_SET procSet;
+//                for (auto const &callStmt : callSet) {
+//                    ENT_SET callStmtProcs = db->getRelationship(StmtNameRelationship::CallsProcedure, callStmt);
+//                    for (auto const &callStmtProc : callStmtProcs) {
+//                        procSet.emplace(callStmtProc);
+//                    }
+//                }
+//                STMT_ENT_SET resultSet;
+//                for (auto const &proc : procSet) {
+//
+//                }
+//            }
+            STMT_ENT_SET stmtEntSet = db->getAllRelationships(rs);
             STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*first).de));
             std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(first->str(), filterSet);
-            std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), second->str(), modifiesSet);
+            std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), second->str(), stmtEntSet);
             return std::move(Result::join(*result, *intermediateResult));
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // Uses/Modifies(stmt, _) -> int[]
         {
-            STMT_SET modifiesStmtSet = db->getStmtByRelationship(rs);
+            STMT_SET stmtSet = db->getStmtByRelationship(rs);
             STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*first).de));
             std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(first->str(), filterSet);
-            std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), modifiesStmtSet);
+            std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), stmtSet);
             return std::move(Result::join(*result, *intermediateResult));
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::IDENT):  // Uses/Modifies(stmt, "x") -> int[]
