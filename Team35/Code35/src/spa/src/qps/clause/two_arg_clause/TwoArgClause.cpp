@@ -13,6 +13,7 @@ StmtType TwoArgClause::getStmtType(Synonym::DesignEntity type) {
         case Synonym::DesignEntity::IF:return StmtType::If;
         case Synonym::DesignEntity::ASSIGN:return StmtType::Assign;
         case Synonym::DesignEntity::STMT:return StmtType::None;
+        case Synonym::DesignEntity::CALL:return StmtType::Call;
         default:assert(false);
     }
 }

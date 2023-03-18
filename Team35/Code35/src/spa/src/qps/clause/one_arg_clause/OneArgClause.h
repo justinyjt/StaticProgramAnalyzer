@@ -20,14 +20,15 @@ IfPattern | WhilePattern
 class OneArgClause : public Clause {
  public:
     const std::unique_ptr<PQLToken> first;
-    std::string ident;
+    const std::string ident;
 
-    explicit OneArgClause(std::unique_ptr<PQLToken> first, StmtNameRelationship rs, std::string ident);
+    OneArgClause(std::unique_ptr<PQLToken> first, StmtNameRelationship rs, std::string ident);
     std::unique_ptr<Result> evaluate(PKBReader *) override;
-    bool operator==(const Clause& rhs) const;
-    void validateArgs();
+    bool operator==(const Clause& rhs) const override;
 
  protected:
+    void validateArgs();
+    StmtType getStmtType() const;
     StmtNameRelationship rs;
 };
 
