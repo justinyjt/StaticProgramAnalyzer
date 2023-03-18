@@ -15,7 +15,7 @@ DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
     stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
     stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(), ifCondUsePairSet_(), whileCondUsePairSet_(),
     containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_(), CFGBuilder_(), isIfCond(),
-    procDirectUseVarMap_(), procDirectModVarMap_(), isProcGetCalled_(), containerCallPairSet_() {}
+    procDirectUseVarMap_(), procDirectModVarMap_(), containerCallPairSet_() {}
 
 std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode> root) {
     root_ = std::move(root);
@@ -271,7 +271,6 @@ void DesignExtractor::extractCall(const std::shared_ptr<ASTNode> &node) {
 
     ENT_NAME calleeName = child->getLabel();
     callGraph_.addCallRelationship(curProc_, calleeName);
-    isProcGetCalled_[calleeName] = true;
     updateContainerCallPairSet(calleeName);
 }
 
@@ -306,7 +305,7 @@ void DesignExtractor::updateContainerCallPairSet(const ENT_NAME &procName) {
 void DesignExtractor::analyzeProc() {
     std::queue<ProcNode> procQueue;
     for (const auto &proc : procSet_) {
-        if (!isProcGetCalled_[proc]) {
+        if (!callGraph_.getNoOfIncomingEdges(proc)) {
             procQueue.emplace(proc, std::vector<ENT_NAME>());
 
             while (!procQueue.empty()) {
