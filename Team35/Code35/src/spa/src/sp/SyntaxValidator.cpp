@@ -34,10 +34,15 @@ bool SyntaxValidator::validateStmtLst() {
         return false;
     }
 
+    int cnt = 0;
     while (!scanner_.peek(Token::Tag::RBrace)) {
+        cnt++;
         if (!validateStmt()) {
             return false;
         }
+    }
+    if (cnt == 0) {
+        return false;
     }
 
     return scanner_.match(Token::Tag::RBrace);

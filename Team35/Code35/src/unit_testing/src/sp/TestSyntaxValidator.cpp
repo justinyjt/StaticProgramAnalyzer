@@ -31,7 +31,7 @@ TEST_CASE("SyntaxValidator can validate very simple program correctly") {
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
         SyntaxValidator sv(std::move(lexPtr));
 
-        requireTrue(sv.validateProgram());
+        requireFalse(sv.validateProgram());
     }
 
     SECTION("SV can validate one procedure with one print") {

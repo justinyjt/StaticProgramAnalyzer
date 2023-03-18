@@ -21,7 +21,7 @@ DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
     pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(), procSet_(),
     stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
     stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(), ifCondUsePairSet_(), whileCondUsePairSet_(),
-    containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_(), CFGBuilder_(), isIfCond(), isExit(),
+    containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_(), CFGBuilder_(), isIfCond(),
     procDirectUseVarMap_(), procDirectModVarMap_(), isProcGetCalled_(), containerCallPairSet_() {}
 
 std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode> root) {
@@ -29,12 +29,8 @@ std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode
     assert(root_->getSyntaxType() == ASTNode::SyntaxType::Program);
     for (const auto &child : root_->getChildren()) {
         extractProc(child);
-        if (isExit) {
-            return std::move(root_);
-        }
     }
     if (callGraph_.isCyclic()) {
-        isExit = true;
         return std::move(root_);
     }
     analyzeProc();
@@ -73,16 +69,8 @@ void DesignExtractor::extractProc(const std::shared_ptr<ASTNode> &node) {
 
     extractStmtLst(nodeC);
 
-    if (lastCnt == stmtCnt_) {
-        //  Empty Procedure
-        CFGBuilder_.setMinStmtNum(lastCnt);
-        CFGBuilder_.setMaxStmtNum(lastCnt);
-        isExit = true;
-        return;
-    } else {
-        CFGBuilder_.setMinStmtNum(lastCnt + 1);
-        CFGBuilder_.setMaxStmtNum(stmtCnt_);
-    }
+    CFGBuilder_.setMinStmtNum(lastCnt + 1);
+    CFGBuilder_.setMaxStmtNum(stmtCnt_);
 
     CFGLst.push_back(CFGBuilder_.build());
 }
@@ -290,7 +278,7 @@ void DesignExtractor::extractCall(const std::shared_ptr<ASTNode> &node) {
     ENT_NAME calleeName = child->getLabel();
     callGraph_.addCallRelationship(curProc_, calleeName);
     isProcGetCalled_[calleeName] = true;
-    updateContainerCallPairSet(stmtCnt_, calleeName);
+    updateContainerCallPairSet(calleeName);
 }
 
 void DesignExtractor::updateStmtSet() {
@@ -299,7 +287,7 @@ void DesignExtractor::updateStmtSet() {
     }
 }
 
-void DesignExtractor::updateStmtUsesPairSet(STMT_NUM stmt, const std::string &varName) {
+void DesignExtractor::updateStmtUsesPairSet(STMT_NUM stmt, const ENT_NAME &varName) {
     stmtUsePairSet_.insert(STMT_ENT(stmt, varName));
     for (STMT_NUM itr : containerStmtLst_) {
         stmtUsePairSet_.insert(STMT_ENT(itr, varName));
@@ -307,7 +295,7 @@ void DesignExtractor::updateStmtUsesPairSet(STMT_NUM stmt, const std::string &va
     procDirectUseVarMap_[curProc_].insert(varName);
 }
 
-void DesignExtractor::updateStmtModsPairSet(STMT_NUM stmt, const std::string &varName) {
+void DesignExtractor::updateStmtModsPairSet(STMT_NUM stmt, const ENT_NAME &varName) {
     stmtModPairSet_.insert(STMT_ENT(stmt, varName));
     for (STMT_NUM itr : containerStmtLst_) {
         stmtModPairSet_.insert(STMT_ENT(itr, varName));
@@ -315,20 +303,20 @@ void DesignExtractor::updateStmtModsPairSet(STMT_NUM stmt, const std::string &va
     procDirectModVarMap_[curProc_].insert(varName);
 }
 
-void DesignExtractor::updateContainerCallPairSet(STMT_NUM stmt, const ENT_NAME& procName) {
+void DesignExtractor::updateContainerCallPairSet(const ENT_NAME& procName) {
     for (STMT_NUM itr : containerStmtLst_) {
         containerCallPairSet_.insert(STMT_ENT(itr, procName));
     }
 }
 
 void DesignExtractor::analyzeProc() {
-    std::unique_ptr<std::queue<ProcNode>> procQueue = std::make_unique<std::queue<ProcNode>>();
+    std::queue<ProcNode> procQueue;
     for (const auto& proc : procSet_) {
         if (!isProcGetCalled_[proc]) {
-            procQueue->push(ProcNode(proc, std::vector<ENT_NAME>()));
+            procQueue.push(ProcNode(proc, std::vector<ENT_NAME>()));
 
-            while (!procQueue->empty()) {
-                auto& curProcNode = procQueue->front();
+            while (!procQueue.empty()) {
+                auto& curProcNode = procQueue.front();
                 auto& curProcName = curProcNode.procName;
                 auto& curPath = curProcNode.path;
                 auto newPath = std::vector<ENT_NAME>(curPath);
@@ -354,9 +342,9 @@ void DesignExtractor::analyzeProc() {
                     }
                 }
                 for (const auto& calleeProc : callGraph_.getCallingProcs(curProcName)) {
-                    procQueue->push(ProcNode(calleeProc, newPath));
+                    procQueue.push(ProcNode(calleeProc, newPath));
                 }
-                procQueue->pop();
+                procQueue.pop();
             }
         }
     }

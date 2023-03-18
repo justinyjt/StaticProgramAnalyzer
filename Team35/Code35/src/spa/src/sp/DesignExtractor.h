@@ -62,7 +62,6 @@ class DesignExtractor {
     std::vector<CFG::CFGraph> CFGLst;
 
     bool isIfCond;
-    bool isExit;
 
     void addVarNameSetToPKB();
 
@@ -128,5 +127,5 @@ class DesignExtractor {
 
     void updateStmtModsPairSet(STMT_NUM stmt, const ENT_NAME &varName);
 
-    void updateContainerCallPairSet(STMT_NUM stmt, const ENT_NAME &procName);
+    void updateContainerCallPairSet(const ENT_NAME &procName);
 };
