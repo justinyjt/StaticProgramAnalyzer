@@ -19,8 +19,8 @@ TableResult::TableResult(const std::string &ident1, const std::string &ident2,
     idents.push_back(ident2);
     for (auto &p : set) {
         rows.emplace_back(
-            std::initializer_list<std::string>
-                {std::to_string(p.first), p.second});
+                std::initializer_list<std::string>
+                        {std::to_string(p.first), p.second});
     }
 }
 
@@ -70,7 +70,7 @@ TableResult::TableResult(const std::string &ident, ENT_SET &set) : Result(Tag::T
     idents.push_back(ident);
     for (auto &elem : set)
         rows.emplace_back(
-            std::initializer_list<std::string>{elem});
+                std::initializer_list<std::string>{elem});
 }
 
 // for 1 col with STMT_SET
@@ -78,7 +78,17 @@ TableResult::TableResult(const std::string &ident, STMT_SET &set) : Result(Tag::
     idents.push_back(ident);
     for (auto &elem : set)
         rows.emplace_back(
-            std::initializer_list<std::string>{std::to_string(elem)});
+                std::initializer_list<std::string>{std::to_string(elem)});
+}
+
+// 2 col with ENT_SET
+TableResult::TableResult(const std::string &ident1, const std::string &ident2,
+                         const std::vector<ENT_NAME> &set) : Result(Tag::TABLE) {
+    idents.push_back(ident1);
+    idents.push_back(ident2);
+    for (auto &ent : set) {
+        rows.emplace_back(std::list<ENT_NAME>{ent, ent});
+    }
 }
 
 void TableResult::output(std::list<std::string> &list) {
@@ -95,22 +105,22 @@ TableResult::TableResult(SelectResult &selectResult) : Result(Tag::TABLE) {
 }
 
 bool TableResult::operator==(const Result &rhs) const {
-    const TableResult* pRhs = dynamic_cast<const TableResult*>(&rhs);
+    const TableResult *pRhs = dynamic_cast<const TableResult *>(&rhs);
     if (pRhs == nullptr || idents != pRhs->idents || rows.size() != pRhs->rows.size()) {
         return false;
     }
 
     std::unordered_set<std::string> a;
-    for (auto& row : rows) {
+    for (auto &row : rows) {
         std::string s{""};
-        for (auto& elem : row) s += elem;
+        for (auto &elem : row) s += elem;
         a.insert(s);
     }
 
     std::unordered_set<std::string> b;
-    for (auto& row : pRhs->rows) {
+    for (auto &row : pRhs->rows) {
         std::string s{""};
-        for (auto& elem : row) s += elem;
+        for (auto &elem : row) s += elem;
         b.insert(s);
     }
 

@@ -45,6 +45,9 @@ class TableResult : public Result {
     // for 1 col with STMT_SET
     TableResult(const std::string &ident, STMT_SET &set);
 
+    // 2 col with ENT_SET
+    TableResult(const std::string &ident, const std::string &ident2, const std::vector<ENT_NAME> &set);
+
     // SelectResult
     explicit TableResult(SelectResult &selectResult);
 

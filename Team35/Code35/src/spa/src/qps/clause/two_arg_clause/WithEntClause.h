@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "TwoArgClause.h"
 
@@ -22,5 +23,6 @@ class WithEntClause : public TwoArgClause {
     static std::unique_ptr<Result> handleSynSyn(PKBReader *db, Synonym syn1, Synonym syn2);
 
     static std::unique_ptr<Result> handleSynEnt(PKBReader *db, Synonym syn, ENT_NAME ent);
+
     bool operator==(const Clause &rhs) const override;
 };
