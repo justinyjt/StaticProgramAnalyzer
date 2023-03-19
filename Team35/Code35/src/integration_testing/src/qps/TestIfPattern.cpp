@@ -20,29 +20,33 @@ TEST_CASE("1. Test IfPattern") {
     pkbWriterPtr->addStatements(StmtType::If, ifStatements);
     pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::IfCondVarUses, ifUses);
 
-    SECTION("Test ifs(_, _, _)") {
-        IfPattern ifPattern(std::make_unique<Wildcard>(), "");
+    SECTION("Test ifs(_, _, _)") {  // -> int[]
+        IfPattern ifPattern(std::make_unique<Wildcard>(), "ifs");
         std::unique_ptr<Result> actualResult = ifPattern.evaluate(pkbReaderPtr);
-        requireTrue(BoolResult(true) == *actualResult);
+        TableResult expectedResult("ifs", ifStatements);
+        requireTrue(expectedResult == *actualResult);
     }
 
-    SECTION("Test positive ifs(\"x\", _, _)") {
-        IfPattern ifPattern(std::make_unique<Ident>("x"), "");
+    SECTION("Test positive ifs('x', _, _)") {  // -> int[]
+        IfPattern ifPattern(std::make_unique<Ident>("x"), "ifs");
         std::unique_ptr<Result> actualResult = ifPattern.evaluate(pkbReaderPtr);
-        requireTrue(BoolResult(true) == *actualResult);
+        STMT_SET s{1};
+        TableResult expectedResult("ifs", s);
+        requireTrue(expectedResult == *actualResult);
     }
 
-    SECTION("Test negative ifs(\"z\", _, _)") {
-        IfPattern ifPattern(std::make_unique<Ident>("z"), "");
+    SECTION("Test negative ifs('z', _, _)") {  // -> int[]
+        IfPattern ifPattern(std::make_unique<Ident>("z"), "ifs");
         std::unique_ptr<Result> actualResult = ifPattern.evaluate(pkbReaderPtr);
-        requireTrue(BoolResult(false) == *actualResult);
+        STMT_SET s{};
+        TableResult expectedResult("ifs", s);
+        requireTrue(expectedResult == *actualResult);
     }
 
-    SECTION("Test ifs(var, _, _)") {
-        IfPattern ifPattern(std::make_unique<Synonym>(Synonym::DesignEntity::VARIABLE, "var"), "");
-        ENT_SET s{"x" , "y"};
-        TableResult expectedResult("var", s);
+    SECTION("Test ifs(var, _, _)") {  // -> <str, str>[]
+        IfPattern ifPattern(std::make_unique<Synonym>(Synonym::DesignEntity::VARIABLE, "var"), "ifs");
         std::unique_ptr<Result> actualResult = ifPattern.evaluate(pkbReaderPtr);
+        TableResult expectedResult("ifs", "var", ifUses);
         requireTrue(expectedResult == *actualResult);
     }
 }
