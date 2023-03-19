@@ -42,9 +42,9 @@ class PKB {
 
     bool addStatementToTable(StmtType stmtType, STMT_NUM stmt);
 
-    bool addRelationshipToTable(StmtNameRelationship tableType, STMT_ENT stmtEnt);
+    bool addRelationshipToTable(StmtNameRelationship tableType, const STMT_ENT &stmtEnt);
 
-    bool addRelationshipToTable(NameNameRelationship tableType, ENT_ENT entEnt);
+    bool addRelationshipToTable(NameNameRelationship tableType, const ENT_ENT &entEnt);
 
     bool addRelationshipToTable(StmtStmtRelationship tableType, STMT_STMT stmtStmt);
 
@@ -56,17 +56,17 @@ class PKB {
 
     ENT_SET getEntByStmtKey(StmtNameRelationship tableType, STMT_NUM stmt) const;
 
-    STMT_SET getStmtByEntVal(StmtNameRelationship tableType, ENT_NAME name) const;
+    STMT_SET getStmtByEntVal(StmtNameRelationship tableType, const ENT_NAME &name) const;
 
     STMT_ENT_SET getStmtEntSet(StmtNameRelationship tableType) const;
 
     STMT_SET getStmtByRs(StmtNameRelationship tableType) const;
 
-    bool isStmtEntPairExists(StmtNameRelationship tableType, STMT_NUM stmt, ENT_NAME name) const;
+    bool isStmtEntPairExists(StmtNameRelationship tableType, STMT_NUM stmt, const ENT_NAME &name) const;
 
-    ENT_SET getEntByEntKey(NameNameRelationship tableType, ENT_NAME name) const;
+    ENT_SET getEntByEntKey(NameNameRelationship tableType, const ENT_NAME &name) const;
 
-    ENT_SET getEntByEntVal(NameNameRelationship tableType, ENT_NAME name) const;
+    ENT_SET getEntByEntVal(NameNameRelationship tableType, const ENT_NAME &name) const;
 
     ENT_ENT_SET getEntEntSet(NameNameRelationship tableType) const;
 
@@ -74,7 +74,7 @@ class PKB {
 
     ENT_SET getValNameByRs(NameNameRelationship tableType) const;
 
-    bool isEntEntPairExists(NameNameRelationship tableType, ENT_NAME key, ENT_NAME val) const;
+    bool isEntEntPairExists(NameNameRelationship tableType, const ENT_NAME &key, const ENT_NAME &val) const;
 
     STMT_SET getStmtByStmtKey(StmtStmtRelationship tableType, STMT_NUM stmt) const;
 
@@ -94,35 +94,38 @@ class PKB {
 
  private:
     // Entity related tables
-    EntityTable<ENT_NAME> variableTable;
-    EntityTable<ENT_NAME> constantTable;
-    EntityTable<ENT_NAME> procedureTable;
-    EntityTable<STMT_NUM> assignStatementTable;
-    EntityTable<STMT_NUM> ifStatementTable;
-    EntityTable<STMT_NUM> whileStatementTable;
-    EntityTable<STMT_NUM> printStatementTable;
-    EntityTable<STMT_NUM> readStatementTable;
-    EntityTable<STMT_NUM> callStatementTable;
-    EntityTable<STMT_NUM> statementTable;
+    EntityTable<ENT_NAME> variableTable_;
+    EntityTable<ENT_NAME> constantTable_;
+    EntityTable<ENT_NAME> procedureTable_;
+    EntityTable<STMT_NUM> assignStatementTable_;
+    EntityTable<STMT_NUM> ifStatementTable_;
+    EntityTable<STMT_NUM> whileStatementTable_;
+    EntityTable<STMT_NUM> printStatementTable_;
+    EntityTable<STMT_NUM> readStatementTable_;
+    EntityTable<STMT_NUM> callStatementTable_;
+    EntityTable<STMT_NUM> statementTable_;
 
     // Relationship related tables
-    RelationshipTable<STMT_NUM, ENT_NAME> modifiesStmtNameTable;
-    RelationshipTable<STMT_NUM, ENT_NAME> usesStmtNameTable;
-    RelationshipTable<STMT_NUM, ENT_NAME> ifCondUsesVarTable;
-    RelationshipTable<STMT_NUM, ENT_NAME> whileCondUsesVarTable;
-    RelationshipTable<STMT_NUM, ENT_NAME> containerProcedureTable;
+    RelationshipTable<STMT_NUM, ENT_NAME> modifiesStmtNameTable_;
+    RelationshipTable<STMT_NUM, ENT_NAME> usesStmtNameTable_;
+    RelationshipTable<STMT_NUM, ENT_NAME> ifCondUsesVarTable_;
+    RelationshipTable<STMT_NUM, ENT_NAME> whileCondUsesVarTable_;
+    RelationshipTable<STMT_NUM, ENT_NAME> containerProcedureTable_;
+    RelationshipTable<STMT_NUM, ENT_NAME> readStmtVarTable_;
+    RelationshipTable<STMT_NUM, ENT_NAME> printStmtVarTable_;
+    RelationshipTable<STMT_NUM, ENT_NAME> callsStmtProcedureTable_;
 
-    RelationshipTable<ENT_NAME, ENT_NAME> modifiesNameNameTable;
-    RelationshipTable<ENT_NAME, ENT_NAME> usesNameNameTable;
-    RelationshipTable<ENT_NAME, ENT_NAME> callsNameNameTable;
-    RelationshipTable<ENT_NAME, ENT_NAME> callsStarNameNameTable;
+    RelationshipTable<ENT_NAME, ENT_NAME> modifiesNameNameTable_;
+    RelationshipTable<ENT_NAME, ENT_NAME> usesNameNameTable_;
+    RelationshipTable<ENT_NAME, ENT_NAME> callsNameNameTable_;
+    RelationshipTable<ENT_NAME, ENT_NAME> callsStarNameNameTable_;
 
-    RelationshipTable<STMT_NUM, STMT_NUM> followsTable;
-    RelationshipTable<STMT_NUM, STMT_NUM> followsStarTable;
-    RelationshipTable<STMT_NUM, STMT_NUM> parentTable;
-    RelationshipTable<STMT_NUM, STMT_NUM> parentStarTable;
+    RelationshipTable<STMT_NUM, STMT_NUM> followsTable_;
+    RelationshipTable<STMT_NUM, STMT_NUM> followsStarTable_;
+    RelationshipTable<STMT_NUM, STMT_NUM> parentTable_;
+    RelationshipTable<STMT_NUM, STMT_NUM> parentStarTable_;
 
-    PatternTable patternTable;
-    CallGraph callGraph;
-    CFG::CFGManager cfgManager;
+    PatternTable patternTable_;
+    CallGraph callGraph_;
+    CFG::CFGManager cfgManager_;
 };

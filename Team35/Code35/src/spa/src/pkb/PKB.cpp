@@ -6,11 +6,11 @@
 const EntityTable<ENT_NAME> &PKB::getEntityTable(Entity entityType) const {
     switch (entityType) {
         case Entity::Variable:
-            return variableTable;
+            return variableTable_;
         case Entity::Constant:
-            return constantTable;
+            return constantTable_;
         case Entity::Procedure:
-            return procedureTable;
+            return procedureTable_;
         default:
             assert(false);
     }
@@ -19,17 +19,19 @@ const EntityTable<ENT_NAME> &PKB::getEntityTable(Entity entityType) const {
 const EntityTable<STMT_NUM> &PKB::getStatementTable(StmtType stmtType) const {
     switch (stmtType) {
         case StmtType::Assign:
-            return assignStatementTable;
+            return assignStatementTable_;
         case StmtType::Print:
-            return printStatementTable;
+            return printStatementTable_;
         case StmtType::Read:
-            return readStatementTable;
+            return readStatementTable_;
         case StmtType::If:
-            return ifStatementTable;
+            return ifStatementTable_;
         case StmtType::While:
-            return whileStatementTable;
+            return whileStatementTable_;
+        case StmtType::Call:
+            return callStatementTable_;
         case StmtType::None:
-            return statementTable;
+            return statementTable_;
         default:
             assert(false);
     }
@@ -48,15 +50,21 @@ EntityTable<STMT_NUM> &PKB::getStatementTable(StmtType stmtType) {
 const RelationshipTable<STMT_NUM, ENT_NAME> &PKB::getStmtNameRelationshipTable(StmtNameRelationship tableType) const {
     switch (tableType) {
         case StmtNameRelationship::Modifies:
-            return modifiesStmtNameTable;
+            return modifiesStmtNameTable_;
         case StmtNameRelationship::Uses:
-            return usesStmtNameTable;
+            return usesStmtNameTable_;
         case StmtNameRelationship::IfCondVarUses:
-            return ifCondUsesVarTable;
+            return ifCondUsesVarTable_;
         case StmtNameRelationship::WhileCondVarUses:
-            return whileCondUsesVarTable;
+            return whileCondUsesVarTable_;
         case StmtNameRelationship::ContainerProcedure:
-            return containerProcedureTable;
+            return containerProcedureTable_;
+        case StmtNameRelationship::CallsProcedure:
+            return callsStmtProcedureTable_;
+        case StmtNameRelationship::ReadStmtVar:
+            return readStmtVarTable_;
+        case StmtNameRelationship::PrintStmtVar:
+            return printStmtVarTable_;
         default:
             assert(false);
     }
@@ -70,13 +78,13 @@ RelationshipTable<STMT_NUM, ENT_NAME> &PKB::getStmtNameRelationshipTable(StmtNam
 const RelationshipTable<ENT_NAME, ENT_NAME> &PKB::getNameNameRelationshipTable(NameNameRelationship tableType) const {
     switch (tableType) {
         case NameNameRelationship::Modifies:
-            return modifiesNameNameTable;
+            return modifiesNameNameTable_;
         case NameNameRelationship::Uses:
-            return usesNameNameTable;
+            return usesNameNameTable_;
         case NameNameRelationship::Calls:
-            return callsNameNameTable;
+            return callsNameNameTable_;
         case NameNameRelationship::CallsStar:
-            return callsStarNameNameTable;
+            return callsStarNameNameTable_;
         default:
             assert(false);
     }
@@ -90,13 +98,13 @@ RelationshipTable<STMT_NUM, STMT_NUM> &PKB::getStmtStmtRelationshipTable(StmtStm
 const RelationshipTable<STMT_NUM, STMT_NUM> &PKB::getStmtStmtRelationshipTable(StmtStmtRelationship tableType) const {
     switch (tableType) {
         case StmtStmtRelationship::Parent:
-            return parentTable;
+            return parentTable_;
         case StmtStmtRelationship::ParentStar:
-            return parentStarTable;
+            return parentStarTable_;
         case StmtStmtRelationship::Follows:
-            return followsTable;
+            return followsTable_;
         case StmtStmtRelationship::FollowsStar:
-            return followsStarTable;
+            return followsStarTable_;
         default:
             assert(false);
     }
@@ -108,7 +116,7 @@ RelationshipTable<ENT_NAME, ENT_NAME> &PKB::getNameNameRelationshipTable(NameNam
 }
 
 const PatternTable &PKB::getPatternTable() const {
-    return patternTable;
+    return patternTable_;
 }
 
 PatternTable &PKB::getPatternTable() {
@@ -126,12 +134,12 @@ bool PKB::addStatementToTable(StmtType stmtType, STMT_NUM stmtNum) {
     return table.addEntity(stmtNum);
 }
 
-bool PKB::addRelationshipToTable(StmtNameRelationship tableType, STMT_ENT stmtEnt) {
+bool PKB::addRelationshipToTable(StmtNameRelationship tableType, const STMT_ENT &stmtEnt) {
     RelationshipTable<STMT_NUM, ENT_NAME> &table = this->getStmtNameRelationshipTable(tableType);
     return table.insertPair(stmtEnt.first, stmtEnt.second);
 }
 
-bool PKB::addRelationshipToTable(NameNameRelationship tableType, ENT_ENT entEnt) {
+bool PKB::addRelationshipToTable(NameNameRelationship tableType, const ENT_ENT &entEnt) {
     RelationshipTable<ENT_NAME, ENT_NAME> &table = this->getNameNameRelationshipTable(tableType);
     return table.insertPair(entEnt.first, entEnt.second);
 }
@@ -142,22 +150,22 @@ bool PKB::addRelationshipToTable(StmtStmtRelationship tableType, STMT_STMT stmtS
 }
 
 void PKB::addPattern(STMT_NUM stmtNum, ASSIGN_PAT pattern) {
-    patternTable.addPattern(stmtNum, pattern);
+    patternTable_.addPattern(stmtNum, std::move(pattern));
 }
 
 void PKB::addCallGraph(CallGraph &&callGraph) {
-    this->callGraph = std::move(callGraph);
+    this->callGraph_ = std::move(callGraph);
 }
 
 void PKB::addCFGraphs(std::vector<CFG::CFGraph> &&CFGraphs) {
-    this->cfgManager.setGraphs(std::move(CFGraphs));
+    this->cfgManager_.setGraphs(std::move(CFGraphs));
 }
 
 ENT_SET PKB::getEntByStmtKey(StmtNameRelationship tableType, STMT_NUM stmt) const {
     return getStmtNameRelationshipTable(tableType).getValuesByKey(stmt);
 }
 
-STMT_SET PKB::getStmtByEntVal(StmtNameRelationship tableType, ENT_NAME name) const {
+STMT_SET PKB::getStmtByEntVal(StmtNameRelationship tableType, const ENT_NAME &name) const {
     return getStmtNameRelationshipTable(tableType).getKeysByValue(name);
 }
 
@@ -169,15 +177,15 @@ STMT_SET PKB::getStmtByRs(StmtNameRelationship tableType) const {
     return getStmtNameRelationshipTable(tableType).getKeys();
 }
 
-bool PKB::isStmtEntPairExists(StmtNameRelationship tableType, STMT_NUM stmt, ENT_NAME name) const {
+bool PKB::isStmtEntPairExists(StmtNameRelationship tableType, STMT_NUM stmt, const ENT_NAME &name) const {
     return getStmtNameRelationshipTable(tableType).containsPair(stmt, name);
 }
 
-ENT_SET PKB::getEntByEntKey(NameNameRelationship tableType, ENT_NAME name) const {
+ENT_SET PKB::getEntByEntKey(NameNameRelationship tableType, const ENT_NAME &name) const {
     return getNameNameRelationshipTable(tableType).getValuesByKey(name);
 }
 
-ENT_SET PKB::getEntByEntVal(NameNameRelationship tableType, ENT_NAME name) const {
+ENT_SET PKB::getEntByEntVal(NameNameRelationship tableType, const ENT_NAME &name) const {
     return getNameNameRelationshipTable(tableType).getKeysByValue(name);
 }
 
@@ -193,16 +201,16 @@ ENT_SET PKB::getValNameByRs(NameNameRelationship tableType) const {
     return getNameNameRelationshipTable(tableType).getValues();
 }
 
-bool PKB::isEntEntPairExists(NameNameRelationship tableType, ENT_NAME key, ENT_NAME val) const {
+bool PKB::isEntEntPairExists(NameNameRelationship tableType, const ENT_NAME &key, const ENT_NAME &val) const {
     return getNameNameRelationshipTable(tableType).containsPair(key, val);
 }
 
 STMT_SET PKB::getStmtByStmtKey(StmtStmtRelationship tableType, STMT_NUM stmt) const {
     switch (tableType) {
         case StmtStmtRelationship::Next:
-            return cfgManager.getConnectedStmts(stmt, false, false);
+            return cfgManager_.getConnectedStmts(stmt, false, false);
         case StmtStmtRelationship::NextStar:
-            return cfgManager.getConnectedStmts(stmt, false, true);
+            return cfgManager_.getConnectedStmts(stmt, false, true);
         default:
             return getStmtStmtRelationshipTable(tableType).getValuesByKey(stmt);
     }
@@ -211,24 +219,24 @@ STMT_SET PKB::getStmtByStmtKey(StmtStmtRelationship tableType, STMT_NUM stmt) co
 STMT_SET PKB::getStmtByStmtVal(StmtStmtRelationship tableType, STMT_NUM stmt) const {
     switch (tableType) {
         case StmtStmtRelationship::Next:
-            return cfgManager.getConnectedStmts(stmt, true, false);
+            return cfgManager_.getConnectedStmts(stmt, true, false);
         case StmtStmtRelationship::NextStar:
-            return cfgManager.getConnectedStmts(stmt, true, true);
+            return cfgManager_.getConnectedStmts(stmt, true, true);
         default:
             return getStmtStmtRelationshipTable(tableType).getKeysByValue(stmt);
     }
 }
 
 STMT_SET PKB::getStmtByProc(const ENT_NAME &procName) const {
-    return this->callGraph.getStmts(procName);
+    return this->callGraph_.getStmts(procName);
 }
 
 STMT_STMT_SET PKB::getStmtStmtSet(StmtStmtRelationship tableType) {
     switch (tableType) {
         case StmtStmtRelationship::Next:
-            return cfgManager.getValidNextPairs(false);
+            return cfgManager_.getValidNextPairs(false);
         case StmtStmtRelationship::NextStar:
-            return cfgManager.getValidNextPairs(true);
+            return cfgManager_.getValidNextPairs(true);
         default:
             return getStmtStmtRelationshipTable(tableType).getKeyValuePairs();
     }
@@ -238,7 +246,7 @@ STMT_SET PKB::getKeyStmtByRs(StmtStmtRelationship tableType) const {
     switch (tableType) {
         case StmtStmtRelationship::Next:
         case StmtStmtRelationship::NextStar:
-            return cfgManager.getValidPredecessors();
+            return cfgManager_.getValidPredecessors();
         default:
             return getStmtStmtRelationshipTable(tableType).getKeys();
     }
@@ -248,7 +256,7 @@ STMT_SET PKB::getValStmtByRs(StmtStmtRelationship tableType) const {
     switch (tableType) {
         case StmtStmtRelationship::Next:
         case StmtStmtRelationship::NextStar:
-            return cfgManager.getValidSuccessors();
+            return cfgManager_.getValidSuccessors();
         default:
             return getStmtStmtRelationshipTable(tableType).getValues();
     }
@@ -257,9 +265,9 @@ STMT_SET PKB::getValStmtByRs(StmtStmtRelationship tableType) const {
 bool PKB::isStmtStmtPairExists(StmtStmtRelationship tableType, STMT_NUM key, STMT_NUM val) const {
     switch (tableType) {
         case StmtStmtRelationship::Next:
-            return cfgManager.isNext(key, val, false);
+            return cfgManager_.isNext(key, val, false);
         case StmtStmtRelationship::NextStar:
-            return cfgManager.isNext(key, val, true);
+            return cfgManager_.isNext(key, val, true);
         default:
             return getStmtStmtRelationshipTable(tableType).containsPair(key, val);
     }

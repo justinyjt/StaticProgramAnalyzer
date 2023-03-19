@@ -1,4 +1,5 @@
 #pragma once
+
 #include <memory>
 #include <utility>
 #include <string>
@@ -7,7 +8,7 @@
 #include "qps/pql/Expression.h"
 #include "qps/pql/Ident.h"
 #include "qps/pql/PQLToken.h"
-#include "qps/pql/StatementNumber.h"
+#include "qps/pql/PQLNumber.h"
 #include "qps/pql/Synonym.h"
 #include "qps/pql/Wildcard.h"
 #include "qps/query_exceptions/SemanticException.h"
@@ -20,15 +21,20 @@ IfPattern | WhilePattern
 class OneArgClause : public Clause {
  public:
     const std::unique_ptr<PQLToken> first;
+
     const std::string ident;
 
     OneArgClause(std::unique_ptr<PQLToken> first, StmtNameRelationship rs, std::string ident);
+
     std::unique_ptr<Result> evaluate(PKBReader *) override;
+
     bool operator==(const Clause& rhs) const override;
 
  protected:
     void validateArgs();
+
     StmtType getStmtType() const;
+
     StmtNameRelationship rs;
 };
 

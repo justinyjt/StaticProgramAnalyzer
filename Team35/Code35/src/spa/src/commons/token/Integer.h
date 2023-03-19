@@ -6,12 +6,8 @@
 
 class Integer : public Token {
  public:
-    explicit Integer(int integer_lexeme);
-    Integer(int integer_lexeme, Token::Tag tag);
-    Integer(int integer_lexeme, LineNumber line_number);
-    Integer(int integer_lexeme, Token::Tag tag, LineNumber line_number);
-    int getInteger() const;
-
- private:
-    int integer_lexeme_;
+    explicit Integer(const Lexeme &integer_lexeme);
+    Integer(const Lexeme &integer_lexeme, Token::Tag tag);
+    Integer(const Lexeme &integer_lexeme, LineNumber line_number);
+    Integer(const Lexeme &integer_lexeme, Token::Tag tag, LineNumber line_number);
 };

@@ -15,7 +15,12 @@ class WithEntClause : public TwoArgClause {
     void validateArgs() override;
 
  protected:
-    ENT_SET getEntValuesFromSyn(Synonym syn, PKBReader *db);
+    static STMT_ENT_SET getStmtEntSet(PKBReader *db, Synonym syn);
 
+    static ENT_SET getEntSet(PKBReader *db, Synonym syn);
+
+    static std::unique_ptr<Result> handleSynSyn(PKBReader *db, Synonym syn1, Synonym syn2);
+
+    static std::unique_ptr<Result> handleSynEnt(PKBReader *db, Synonym syn, ENT_NAME ent);
     bool operator==(const Clause &rhs) const override;
 };
