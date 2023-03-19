@@ -55,6 +55,8 @@ std::unique_ptr<Clause> PatternClauseParser::parsePattern() {
                     return parseAssign(pattern);
                 case Synonym::DesignEntity::WHILE:
                     return parseWhile(pattern);
+                case Synonym::DesignEntity::IF:
+                    throw SemanticException();
                 default: {
                 }
             }
