@@ -1,15 +1,15 @@
 #pragma once
-
 #include <memory>
 #include <utility>
 #include <string>
 
-#include "OneArgClause.h"
+#include "qps/clause/two_arg_clause/TwoArgClause.h"
 
-class IfPattern : public OneArgClause {
+class AssignPattern : public TwoArgClause {
     const std::string ident;
  public:
-    IfPattern(std::unique_ptr<PQLToken> first, std::string ident);
+    /* <var SYNONYM | IDENT | _> , <EXPR | _EXPR_ | _> */
+    AssignPattern(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, std::string ident);
     std::unique_ptr<Result> evaluate(PKBReader *) override;
     void validateArgs() override;
     bool operator==(const Clause &rhs) const override;

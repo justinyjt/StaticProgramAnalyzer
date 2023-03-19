@@ -1,6 +1,6 @@
 #include <string>
 #include "PatternClauseParser.h"
-#include "qps/clause/TwoArgClause/AssignPattern.h"
+#include "qps/clause/two_arg_clause/AssignPattern.h"
 #include "qps/pql/Synonym.h"
 #include "qps/pql/Wildcard.h"
 #include "qps/pql/Expression.h"
@@ -8,8 +8,7 @@
 #include "qps/query_exceptions/SemanticException.h"
 #include "commons/token_scanner/TokenScanner.h"
 #include "qps/query_parser/SemanticValidator.h"
-#include "qps/clause/TwoArgClause/TwoArgClauseFactory.h"
-#include "qps/clause/one_arg_clause/OneArgClauseFactory.h"
+#include "qps/clause/ClauseFactory.h"
 
 PatternClauseParser::PatternClauseParser(PQLTokenScanner& pqlTokenScanner,
                                          std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
@@ -79,7 +78,7 @@ std::unique_ptr<Clause> PatternClauseParser::parseAssign(std::string patternSyno
     std::unique_ptr<PQLToken> arg2 = parseExpressionSpec();
     pqlTokenScanner.match(Token::Tag::RParen);
 
-    return std::move(TwoArgClauseFactory::createAssignPatternClause(std::move(arg1), std::move(arg2), patternSynonym));
+    return std::move(ClauseFactory::createAssignPatternClause(std::move(arg1), std::move(arg2), patternSynonym));
 }
 
 std::unique_ptr<Clause> PatternClauseParser::parseWhile(std::string patternSynonym) {
@@ -93,7 +92,7 @@ std::unique_ptr<Clause> PatternClauseParser::parseWhile(std::string patternSynon
     pqlTokenScanner.match(Token::Tag::Underscore);
     pqlTokenScanner.match(Token::Tag::RParen);
 
-    return std::move(OneArgClauseFactory::createWhilePatternClause(std::move(arg1), patternSynonym));
+    return std::move(ClauseFactory::createWhilePatternClause(std::move(arg1), patternSynonym));
 }
 
 std::unique_ptr<Clause> PatternClauseParser::parseIf(std::string patternSynonym) {
@@ -109,7 +108,7 @@ std::unique_ptr<Clause> PatternClauseParser::parseIf(std::string patternSynonym)
     pqlTokenScanner.match(Token::Tag::Underscore);
     pqlTokenScanner.match(Token::Tag::RParen);
 
-    return std::move(OneArgClauseFactory::createIfPatternClause(std::move(arg1), patternSynonym));
+    return std::move(ClauseFactory::createIfPatternClause(std::move(arg1), patternSynonym));
 }
 
 std::unique_ptr<PQLToken> PatternClauseParser::parseEntRef() {

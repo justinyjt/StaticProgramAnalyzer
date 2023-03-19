@@ -5,8 +5,8 @@
 #include "qps/pql/StatementNumber.h"
 #include "qps/pql/Ident.h"
 #include "qps/query_exceptions/SyntaxException.h"
-#include "qps/clause/TwoArgClause/WithEntClause.h"
-#include "qps/clause/TwoArgClause/WithNumClause.h"
+#include "qps/clause/two_arg_clause/WithEntClause.h"
+#include "qps/clause/two_arg_clause/WithNumClause.h"
 
 class setUpWcp {
  public:

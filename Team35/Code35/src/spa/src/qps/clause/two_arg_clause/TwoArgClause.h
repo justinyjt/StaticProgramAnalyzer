@@ -22,9 +22,9 @@ class TwoArgClause : public Clause {
     const std::unique_ptr<PQLToken> second;
 
     TwoArgClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second);
-    virtual void validateArgs() = 0;
 
  protected:
+    virtual void validateArgs() = 0;
     bool equal(const TwoArgClause& rhs) const;
     int getPairEnum() const;
     static constexpr int pairEnum(PQLToken::Tag t1, PQLToken::Tag t2) {
