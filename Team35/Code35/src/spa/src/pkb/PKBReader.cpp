@@ -25,7 +25,6 @@ STMT_ENT_SET PKBReader::getAllRelationships(StmtNameRelationship tableType) cons
     return pkb.getStmtEntSet(tableType);
 }
 
-
 STMT_SET PKBReader::getStmtByRelationship(StmtNameRelationship tableType) const {
     return pkb.getStmtByRs(tableType);
 }
@@ -33,7 +32,6 @@ STMT_SET PKBReader::getStmtByRelationship(StmtNameRelationship tableType) const 
 bool PKBReader::isRelationshipExists(StmtNameRelationship tableType, STMT_NUM stmt, const ENT_NAME &name) const {
     return pkb.isStmtEntPairExists(tableType, stmt, name);
 }
-
 
 // Entity-Entity Relationship
 ENT_SET PKBReader::getRelationshipByKey(NameNameRelationship tableType, const ENT_NAME &keyName) const {
@@ -187,7 +185,7 @@ bool PKBReader::isValidAffectsSuccessor(STMT_NUM stmt) const {
     STMT_SET predecessors = pkb.getStmtByStmtVal(StmtStmtRelationship::NextStar, stmt);
     return std::any_of(predecessors.begin(), predecessors.end(),
                        [stmt, this](auto &predecessor) {
-                           return isAffects(predecessor, stmt);
+                         return isAffects(predecessor, stmt);
                        });
 }
 
@@ -202,7 +200,7 @@ bool PKBReader::isValidAffectsPredecessor(STMT_NUM stmt) const {
     STMT_SET successors = pkb.getStmtByStmtKey(StmtStmtRelationship::NextStar, stmt);
     return std::any_of(successors.begin(), successors.end(),
                        [stmt, this](auto &successor) {
-                           return isAffects(stmt, successor);
+                         return isAffects(stmt, successor);
                        });
 }
 
@@ -223,7 +221,6 @@ STMT_SET PKBReader::getAffectsByPredecessor(STMT_NUM stmt) const {
     }
     return affectsSuccessors;
 }
-
 
 STMT_SET PKBReader::getAffectsBySuccessor(STMT_NUM stmt) const {
     if (!pkb.isEntityTypeExists(StmtType::Assign, stmt)) {
@@ -270,10 +267,8 @@ STMT_SET PKBReader::getAllAffectsSuccessors() const {
 }
 
 bool PKBReader::hasAffects() const {
-    for (auto &predecessor : pkb.getKeyStmtByRs(StmtStmtRelationship::NextStar)) {
-        if (this->isValidAffectsPredecessor(predecessor)) {
-            return true;
-        }
-    }
-    return false;
+    const auto &nextStar = pkb.getKeyStmtByRs(StmtStmtRelationship::NextStar);
+    return std::any_of(nextStar.begin(), nextStar.end(), [this](auto &predecessor) {
+      return this->isValidAffectsPredecessor(predecessor);
+    });
 }

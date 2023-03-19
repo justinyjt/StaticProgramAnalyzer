@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PKB.h"
+#include "pkb/db/AffectsGraph.h"
 
 #include <string>
 
@@ -51,12 +52,12 @@ class PKBReader {
     bool isRelationshipExists(StmtStmtRelationship tableType, STMT_NUM keyName, STMT_NUM valName) const;
 
     STMT_SET getStmtWithExactPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;
-//    bool isExactPatternMatch(STMT_NUM stmtNo, std::string &pattern) const;
 
     STMT_SET getStmtWithPartialPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;
 
  private:
     PKB &pkb;
+    AffectsGraph affects_graph_;
 
     bool isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const;
 
