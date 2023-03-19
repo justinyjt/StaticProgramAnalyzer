@@ -23,30 +23,27 @@ TEST_CASE("1. Test WithNumClause") {
         std::unique_ptr<PQLNumber> arg1 = std::make_unique<PQLNumber>("2");
         std::unique_ptr<PQLNumber> arg2 = std::make_unique<PQLNumber>("2");
         WithNumClause withNumClause = WithNumClause(std::move(arg1), std::move(arg2));
-        bool expectedResult = true;
-        BoolResult actualResult = dynamic_cast<BoolResult &>(*withNumClause.evaluate(pkbReaderPtr));
-        requireEqual(actualResult.b, expectedResult);
+        auto actualResult = withNumClause.evaluate(pkbReaderPtr);
+        requireTrue(BoolResult(true) == *actualResult);
     }
 
     SECTION("Test with syn = num") {
         std::unique_ptr<Synonym> arg1 = std::make_unique<Synonym>(Synonym::DesignEntity::ASSIGN, "a");
         std::unique_ptr<PQLNumber> arg2 = std::make_unique<PQLNumber>("2");
         WithNumClause withNumClause = WithNumClause(std::move(arg1), std::move(arg2));
-        STMT_SET s = {2};
-        TableResult expectedResult = TableResult("a", s);
-        TableResult actualResult = dynamic_cast<TableResult &>(*withNumClause.evaluate(pkbReaderPtr));
-        requireEqual(actualResult.idents, expectedResult.idents);
-        requireEqual(actualResult.rows, expectedResult.rows);
+        STMT_SET s{2};
+        TableResult expectedResult("a", s);
+        auto actualResult = withNumClause.evaluate(pkbReaderPtr);
+        requireTrue(expectedResult == *actualResult);
     }
 
     SECTION("Test with syn = syn") {
         std::unique_ptr<Synonym> arg1 = std::make_unique<Synonym>(Synonym::DesignEntity::ASSIGN, "a");
         std::unique_ptr<Synonym> arg2 = std::make_unique<Synonym>(Synonym::DesignEntity::STMT, "s");
         WithNumClause withNumClause = WithNumClause(std::move(arg1), std::move(arg2));
-        STMT_STMT_SET s = {std::make_pair(3, 3)};
-        TableResult expectedResult = TableResult("a", "s", s);
-        TableResult actualResult = dynamic_cast<TableResult &>(*withNumClause.evaluate(pkbReaderPtr));
-        requireEqual(actualResult.idents, expectedResult.idents);
-        requireEqual(actualResult.rows, expectedResult.rows);
+        STMT_STMT_SET s{std::make_pair(3, 3)};
+        TableResult expectedResult("a", "s", s);
+        auto actualResult = withNumClause.evaluate(pkbReaderPtr);
+        requireTrue(expectedResult == *actualResult);
     }
 }
