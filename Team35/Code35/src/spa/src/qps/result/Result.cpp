@@ -112,14 +112,14 @@ std::unique_ptr<Result> Result::tableJoin(Result &lhs, Result &rhs) {
 
         // separate rows in table into keys and values
 
-        std::vector<std::pair<std::set<std::string>, std::vector<std::string>>> hashmap1;
+        std::vector<std::pair<std::vector<std::string>, std::vector<std::string>>> hashmap1;
         for (std::list<std::string> &row : t1.rows) {
-            std::set<std::string> keys;
+            std::vector<std::string> keys;
             std::vector<std::string> values;
             int i = 0;
             for (std::string &val : row) {
                 if (commonHeaders1.find(i) != commonHeaders1.end()) {
-                    keys.insert(val);
+                    keys.push_back(val);
                 } else {
                     values.push_back(val);
                 }
@@ -128,14 +128,14 @@ std::unique_ptr<Result> Result::tableJoin(Result &lhs, Result &rhs) {
             hashmap1.push_back(std::make_pair(keys, values));
         }
 
-        std::vector<std::pair<std::set<std::string>, std::vector<std::string>>> hashmap2;
+        std::vector<std::pair<std::vector<std::string>, std::vector<std::string>>> hashmap2;
         for (std::list<std::string> &row : t2.rows) {
-            std::set<std::string> keys;
+            std::vector<std::string> keys;
             std::vector<std::string> values;
             int i = 0;
             for (std::string &val : row) {
                 if (commonHeaders2.find(i) != commonHeaders2.end()) {
-                    keys.insert(val);
+                    keys.push_back(val);
                 } else {
                     values.push_back(val);
                 }
@@ -146,12 +146,12 @@ std::unique_ptr<Result> Result::tableJoin(Result &lhs, Result &rhs) {
 
         // generate new table
         for (auto &kv : hashmap1) {
-            std::set<std::string> &key1 = kv.first;
+            std::vector<std::string> &key1 = kv.first;
             std::vector<std::string> &value1 = kv.second;
 
             // Look up the key in the second table
             for (auto &kv2 : hashmap2) {
-                std::set<std::string> &key2 = kv2.first;
+                std::vector<std::string> &key2 = kv2.first;
                 std::vector<std::string> &value2 = kv2.second;
                 if (key1 == key2) {
                     // append values from t1 and t2

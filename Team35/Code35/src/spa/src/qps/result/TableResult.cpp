@@ -27,12 +27,21 @@ TableResult::TableResult(const std::string &ident1, const std::string &ident2,
 // for 2 cols with STMT_STMT_SET
 TableResult::TableResult(const std::string &ident1, const std::string &ident2,
                          STMT_STMT_SET &set) : Result(Tag::TABLE) {
-    idents.push_back(ident1);
-    idents.push_back(ident2);
-    for (auto &p : set) {
-        rows.emplace_back(
-            std::initializer_list<std::string>
-                {std::to_string(p.first), std::to_string(p.second)});
+    if (ident1 == ident2) {
+        idents.push_back(ident1);
+        for (auto &p : set) {
+            rows.emplace_back(
+                    std::initializer_list<std::string>
+                            {std::to_string(p.first)});
+        }
+    } else {
+        idents.push_back(ident1);
+        idents.push_back(ident2);
+        for (auto &p : set) {
+            rows.emplace_back(
+                    std::initializer_list<std::string>
+                            {std::to_string(p.first), std::to_string(p.second)});
+        }
     }
 }
 

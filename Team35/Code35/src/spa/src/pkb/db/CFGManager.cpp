@@ -65,7 +65,7 @@ bool CFGManager::isNextExists() {
 
 STMT_SET CFGManager::getConnectedStmts(STMT_NUM num, bool isAfter, bool isTransitive) const {
     const CFGraph &curr = getCFG(num);
-    if (isAfter) {
+    if (!isAfter) {
         return curr.getSuccessors(num, isTransitive);
     }
     return curr.getPredecessors(num, isTransitive);

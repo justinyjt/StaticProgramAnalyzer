@@ -13,7 +13,7 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
     switch (getPairEnum()) {
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Parent/Follows(s1, s2) -> <int, int>[]
         {
-            if (first->str() == second->str()) {  // Follows(s, s) or Parents(s, s) does not exist
+            if (first->str() == second->str() && rs != StmtStmtRelationship::NextStar) {  // Follows(s, s) or Parents(s, s) does not exist
                 return std::move(std::make_unique<BoolResult>(false));
             }
             STMT_STMT_SET s = db->getAllRelationships(rs);
