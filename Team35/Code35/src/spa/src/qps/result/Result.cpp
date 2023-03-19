@@ -51,8 +51,8 @@ std::unique_ptr<Result> Result::tableJoin(Result &lhs, Result &rhs) {
 
     std::vector<std::string> headers1(t1.idents.begin(), t1.idents.end());
     std::vector<std::string> headers2(t2.idents.begin(), t2.idents.end());
-    std::set<int> commonHeaders1;
-    std::set<int> commonHeaders2;
+    std::list<int> commonHeaders1;
+    std::list<int> commonHeaders2;
     std::list<int> nonCommonHeaders1;
     std::list<int> nonCommonHeaders2;
     std::list<std::string> outputHeaders;
@@ -62,22 +62,24 @@ std::unique_ptr<Result> Result::tableJoin(Result &lhs, Result &rhs) {
     for (int i = 0; i < headers1.size(); i++) {
         for (int j = 0; j < headers2.size(); j++) {
             if (headers1[i] == headers2[j]) {
-                commonHeaders1.insert(i);
-                commonHeaders2.insert(j);
+                commonHeaders1.push_back(i);
+                commonHeaders2.push_back(j);
             }
         }
     }
 
     // find non common headers for table 1
     for (int i = 0; i < headers1.size(); i++) {
-        if (commonHeaders1.find(i) == commonHeaders1.end()) {
+        auto it = std::find(commonHeaders1.begin(), commonHeaders1.end(), i);
+        if (it == commonHeaders1.end()) {
             nonCommonHeaders1.push_back(i);
         }
     }
 
     // find non common headers for table 2
     for (int i = 0; i < headers2.size(); i++) {
-        if (commonHeaders2.find(i) == commonHeaders2.end()) {
+        auto it = std::find(commonHeaders2.begin(), commonHeaders2.end(), i);
+        if (it == commonHeaders2.end()) {
             nonCommonHeaders2.push_back(i);
         }
     }
@@ -114,32 +116,28 @@ std::unique_ptr<Result> Result::tableJoin(Result &lhs, Result &rhs) {
 
         std::vector<std::pair<std::vector<std::string>, std::vector<std::string>>> hashmap1;
         for (std::list<std::string> &row : t1.rows) {
+            std::vector<std::string> rowVector(row.begin(), row.end());
             std::vector<std::string> keys;
             std::vector<std::string> values;
-            int i = 0;
-            for (std::string &val : row) {
-                if (commonHeaders1.find(i) != commonHeaders1.end()) {
-                    keys.push_back(val);
-                } else {
-                    values.push_back(val);
-                }
-                i++;
+            for (auto i : commonHeaders1) {
+                keys.push_back(rowVector.at(i));
+            }
+            for (auto i : nonCommonHeaders1) {
+                values.push_back(rowVector.at(i));
             }
             hashmap1.push_back(std::make_pair(keys, values));
         }
 
         std::vector<std::pair<std::vector<std::string>, std::vector<std::string>>> hashmap2;
         for (std::list<std::string> &row : t2.rows) {
+            std::vector<std::string> rowVector(row.begin(), row.end());
             std::vector<std::string> keys;
             std::vector<std::string> values;
-            int i = 0;
-            for (std::string &val : row) {
-                if (commonHeaders2.find(i) != commonHeaders2.end()) {
-                    keys.push_back(val);
-                } else {
-                    values.push_back(val);
-                }
-                i++;
+            for (auto i : commonHeaders2) {
+                keys.push_back(rowVector.at(i));
+            }
+            for (auto i : nonCommonHeaders2) {
+                values.push_back(rowVector.at(i));
             }
             hashmap2.push_back(std::make_pair(keys, values));
         }
