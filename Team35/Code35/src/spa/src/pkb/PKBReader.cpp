@@ -157,9 +157,16 @@ bool PKBReader::isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const {
         if (predecessors.find(successor) == predecessors.end()) {
             continue;
         }
+        if (pkb.isEntityTypeExists(StmtType::While, successor)
+            || pkb.isEntityTypeExists(StmtType::If, successor)) {
+            continue;
+        }
+        if (successor == stmt2) {
+            break;
+        }
         for (auto &modifiedEnt : modifies) {
-            if (isModifies(successor, modifiedEnt)) {
-                hasIntersection &= true;
+            if (successor != stmt1 && isModifies(successor, modifiedEnt)) {
+                return false;
             }
         }
         hasIntersection = true;
