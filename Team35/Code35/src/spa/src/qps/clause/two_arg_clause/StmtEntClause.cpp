@@ -32,21 +32,6 @@ std::unique_ptr<Result> StmtEntClause::evaluate(PKBReader *db) {
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Uses/Mod(stmt, var) -> <int, string>[]
         {
-//            Synonym syn = dynamic_cast<Synonym &>(*first);
-//            if (syn.de == Synonym::DesignEntity::CALL) {
-//                STMT_SET callSet = db->getStatements(StmtType::Call);
-//                ENT_SET procSet;
-//                for (auto const &callStmt : callSet) {
-//                    ENT_SET callStmtProcs = db->getRelationship(StmtNameRelationship::CallsProcedure, callStmt);
-//                    for (auto const &callStmtProc : callStmtProcs) {
-//                        procSet.emplace(callStmtProc);
-//                    }
-//                }
-//                STMT_ENT_SET resultSet;
-//                for (auto const &proc : procSet) {
-//
-//                }
-//            }
             STMT_ENT_SET stmtEntSet = db->getAllRelationships(rs);
             STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*first).de));
             std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(first->str(), filterSet);

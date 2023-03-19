@@ -5,9 +5,9 @@
 #include "qps/query_parser/declaration_parser/DeclarationParser.h"
 #include "qps/pql/PQLNumber.h"
 #include "qps/pql/Ident.h"
-#include "qps/clause/TwoArgClause/StmtEntClause.h"
-#include "qps/clause/TwoArgClause/StmtStmtClause.h"
-#include "qps/clause/TwoArgClause/EntEntClause.h"
+#include "qps/clause/two_arg_clause/StmtEntClause.h"
+#include "qps/clause/two_arg_clause/StmtStmtClause.h"
+#include "qps/clause/two_arg_clause/EntEntClause.h"
 #include "qps/query_exceptions/SyntaxException.h"
 #include "qps/query_parser/QuerySyntaxValidator.h"
 
@@ -86,6 +86,7 @@ class setUpStcp {
     std::unique_ptr<Parent> parent;
     std::unique_ptr<Calls> calls;
     std::unique_ptr<Next> next;
+    std::unique_ptr<Affects> affects;
     std::unique_ptr<ILexer> lexer;
 };
 
@@ -858,4 +859,24 @@ TEST_CASE_METHOD(setUpStcp, "Next, int and int") {
     clause = stcp.parse();
     next = std::make_unique<Next>(std::move(statementNumber1), std::move(statementNumber2), false);
     requireTrue(*clause.front() == *next);
+}
+
+TEST_CASE_METHOD(setUpStcp, "Affects, int and int") {
+    query = "such that Affects(1,1)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    affects = std::make_unique<Affects>(std::move(statementNumber1), std::move(statementNumber2), false);
+    requireTrue(*clause.front() == *affects);
+}
+
+TEST_CASE_METHOD(setUpStcp, "Affects*, int and int") {
+    query = "such that Affects*(1,1)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    affects = std::make_unique<Affects>(std::move(statementNumber1), std::move(statementNumber2), true);
+    requireTrue(*clause.front() == *affects);
 }
