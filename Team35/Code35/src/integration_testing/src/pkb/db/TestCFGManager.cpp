@@ -47,24 +47,24 @@ TEST_CASE("2. Test isNextExists in CFGManager with valid CFG") {
             STMT_SET expected;
             expected.emplace(2);
             expected.emplace(3);
-            requireEqual(expected, manager.getConnectedStmts(1, true, false));
+            requireEqual(expected, manager.getConnectedStmts(1, false, false));
         }
         {
             STMT_SET expected;
             expected.emplace(5);
             expected.emplace(6);
-            requireEqual(expected, manager.getConnectedStmts(4, true, false));
+            requireEqual(expected, manager.getConnectedStmts(4, false, false));
         }
         {
             STMT_SET expected;
             expected.emplace(4);
-            requireEqual(expected, manager.getConnectedStmts(2, true, false));
-            requireEqual(expected, manager.getConnectedStmts(3, true, false));
+            requireEqual(expected, manager.getConnectedStmts(2, false, false));
+            requireEqual(expected, manager.getConnectedStmts(3, false, false));
         }
         {
             STMT_SET expected;
-            requireEqual(expected, manager.getConnectedStmts(5, true, false));
-            requireEqual(expected, manager.getConnectedStmts(6, true, false));
+            requireEqual(expected, manager.getConnectedStmts(5, false, false));
+            requireEqual(expected, manager.getConnectedStmts(6, false, false));
         }
         requireFalse(manager.isNextExistAfterStmtNum(5, true));
         requireFalse(manager.isNextExistAfterStmtNum(6, false));

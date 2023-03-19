@@ -72,11 +72,11 @@ STMT_SET CFGManager::getConnectedStmts(STMT_NUM num, bool isAfter, bool isTransi
 }
 
 bool CFGManager::isNextExistAfterStmtNum(STMT_NUM num, bool isTransitive) {
-    return !getConnectedStmts(num, true, isTransitive).empty();
+    return !getConnectedStmts(num, false, isTransitive).empty();
 }
 
 bool CFGManager::isNextExistBeforeStmtNum(STMT_NUM num, bool isTransitive) {
-    return !getConnectedStmts(num, false, isTransitive).empty();
+    return !getConnectedStmts(num, true, isTransitive).empty();
 }
 
 STMT_STMT_SET CFGManager::getValidNextPairs(bool isTransitive) {
