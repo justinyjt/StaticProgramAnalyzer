@@ -17,12 +17,7 @@ std::unique_ptr<Result> AssignPattern::evaluate(PKBReader *db) {
     STMT_SET stmtSet2;
 
     if (second->tag == PQLToken::Tag::EXPR) {
-        std::string input = dynamic_cast<Expression &>(*second).str();
-        std::unique_ptr<ILexer> lxr =
-                LexerFactory::createLexer(input, LexerFactory::LexerType::Expression);
-        TokenScanner scanner(std::move(lxr));
-        ExprParser parser(scanner);
-        ASSIGN_PAT_RIGHT pattern = parser.parseExpr();
+        ASSIGN_PAT_RIGHT pattern = dynamic_cast<Expression &>(*second).exprNode;
         bool hasWildcard = dynamic_cast<Expression &>(*second).hasWildcard;
         if (!hasWildcard) {  // exact
             stmtSet2 = db->getStmtWithExactPatternMatch(pattern);

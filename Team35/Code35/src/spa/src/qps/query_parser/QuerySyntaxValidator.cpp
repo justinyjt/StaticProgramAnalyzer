@@ -1,7 +1,10 @@
-#include "QuerySyntaxValidator.h"
-
 #include <cassert>
+#include <string>
 #include <utility>
+
+#include "QuerySyntaxValidator.h"
+#include "commons/lexer/LexerFactory.h"
+#include "commons/expr_validator/ExprValidator.h"
 
 QuerySyntaxValidator::QuerySyntaxValidator(std::unique_ptr<ILexer> lex) : scanner_(std::move(lex)) {}
 
@@ -118,7 +121,8 @@ bool QuerySyntaxValidator::validateRelCond() {
 }
 
 bool QuerySyntaxValidator::validateRelRef() {
-    if (scanner_.peek(Token::Tag::Follows) || scanner_.peek(Token::Tag::Parent)) {
+    if (scanner_.peek(Token::Tag::Follows) || scanner_.peek(Token::Tag::Parent)
+        || scanner_.peek(Token::Tag::Next) || scanner_.peek(Token::Tag::Affects)) {
         scanner_.next();
         if (scanner_.peek(Token::Tag::Star)) {
             scanner_.next();
@@ -433,11 +437,27 @@ bool QuerySyntaxValidator::validateEntRef() {
 
 bool QuerySyntaxValidator::validateExpressionSpec() {
     if (scanner_.peek(Token::Tag::String)) {
+        std::string expr = scanner_.peekLexeme();
         scanner_.next();
+        std::unique_ptr<ILexer> lxr =
+                LexerFactory::createLexer(expr, LexerFactory::LexerType::Expression);
+        TokenScanner scanner(std::move(lxr));
+        ExprValidator exprValidator(scanner);
+        if (!exprValidator.validateExpr()) {
+            return false;
+        }
         return true;
     } else if (scanner_.peek(Token::Tag::Underscore)) {
         scanner_.next();
         if (scanner_.peek(Token::Tag::String) && scanner_.peekOffset(Token::Tag::Underscore, 1)) {
+            std::string expr = scanner_.peekLexeme();
+            std::unique_ptr<ILexer> lxr =
+                    LexerFactory::createLexer(expr, LexerFactory::LexerType::Expression);
+            TokenScanner scanner(std::move(lxr));
+            ExprValidator exprValidator(scanner);
+            if (!exprValidator.validateExpr()) {
+                return false;
+            }
             scanner_.next();
             scanner_.next();
         } else {
@@ -452,16 +472,46 @@ bool QuerySyntaxValidator::validateExpressionSpec() {
 bool QuerySyntaxValidator::validateTuple() {
     if (validateElem()) {
         return true;
+    } else if (scanner_.peek(Token::Tag::LessThan)) {
+        return validateMultipleElem();
     }
     return false;
 }
 
-bool QuerySyntaxValidator::validateElem() {
-    if (!scanner_.isName()) {
+bool QuerySyntaxValidator::validateMultipleElem() {
+    assert(scanner_.peek(Token::Tag::LessThan));
+    scanner_.next();
+    if (!validateElem()) {
+        return false;
+    }
+
+    while (scanner_.peek(Token::Tag::Comma)) {
+        scanner_.next();
+        if (!validateElem()) {
+            return false;
+        }
+    }
+
+    if (!scanner_.peek(Token::Tag::GreaterThan)) {
         return false;
     }
     scanner_.next();
     return true;
+}
+
+bool QuerySyntaxValidator::validateElem() {
+    scanner_.saveState();
+    if (validateAttrRef()) {
+        return true;
+    }
+
+    scanner_.restoreState();
+    if (scanner_.isName()) {
+        scanner_.next();
+        return true;
+    } else {
+        return false;
+    }
 }
 
 std::deque<std::unique_ptr<Token>> QuerySyntaxValidator::getTokenLst() {

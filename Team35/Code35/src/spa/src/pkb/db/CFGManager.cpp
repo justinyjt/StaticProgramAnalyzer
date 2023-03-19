@@ -52,7 +52,9 @@ bool CFGManager::isNext(STMT_NUM first, STMT_NUM second, bool isTransitive) cons
     if (this->getIndex(first) != this->getIndex(second)) {
         return false;
     }
-
+    if (!isValidStmtNum(first)) {
+        return false;
+    }
     const CFGraph &curr = getCFG(first);
     return curr.isReachable(first, second, !isTransitive);
 }
@@ -64,19 +66,22 @@ bool CFGManager::isNextExists() {
 }
 
 STMT_SET CFGManager::getConnectedStmts(STMT_NUM num, bool isAfter, bool isTransitive) const {
+    if (!isValidStmtNum(num)) {
+        return {};
+    }
     const CFGraph &curr = getCFG(num);
-    if (isAfter) {
+    if (!isAfter) {
         return curr.getSuccessors(num, isTransitive);
     }
     return curr.getPredecessors(num, isTransitive);
 }
 
 bool CFGManager::isNextExistAfterStmtNum(STMT_NUM num, bool isTransitive) {
-    return !getConnectedStmts(num, true, isTransitive).empty();
+    return !getConnectedStmts(num, false, isTransitive).empty();
 }
 
 bool CFGManager::isNextExistBeforeStmtNum(STMT_NUM num, bool isTransitive) {
-    return !getConnectedStmts(num, false, isTransitive).empty();
+    return !getConnectedStmts(num, true, isTransitive).empty();
 }
 
 STMT_STMT_SET CFGManager::getValidNextPairs(bool isTransitive) {

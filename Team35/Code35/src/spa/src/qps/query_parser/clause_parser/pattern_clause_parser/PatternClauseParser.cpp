@@ -8,10 +8,12 @@
 #include "qps/query_exceptions/SemanticException.h"
 #include "commons/token_scanner/TokenScanner.h"
 #include "qps/query_parser/SemanticValidator.h"
+#include "commons/expr_parser/ExprParser.h"
+#include "commons/lexer/LexerFactory.h"
 #include "qps/clause/ClauseFactory.h"
 
-PatternClauseParser::PatternClauseParser(PQLTokenScanner& pqlTokenScanner,
-                                         std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
+PatternClauseParser::PatternClauseParser(PQLTokenScanner &pqlTokenScanner,
+                                         std::unordered_map<std::string, Synonym::DesignEntity> &synonyms) :
         pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
 
 std::vector<std::unique_ptr<Clause>> PatternClauseParser::parse() {
@@ -53,8 +55,10 @@ std::unique_ptr<Clause> PatternClauseParser::parsePattern() {
                     return parseAssign(pattern);
                 case Synonym::DesignEntity::WHILE:
                     return parseWhile(pattern);
-                default:
-                {}
+                case Synonym::DesignEntity::IF:
+                    throw SemanticException();
+                default: {
+                }
             }
         } else {  // _, -> if
             pqlTokenScanner.restoreState();
@@ -87,7 +91,7 @@ std::unique_ptr<Clause> PatternClauseParser::parseWhile(std::string patternSynon
     }
     pqlTokenScanner.match(Token::Tag::LParen);
     std::unique_ptr<PQLToken> arg1;
-    arg1 = parseEntRef();
+    arg1 = parseVar();
     pqlTokenScanner.match(Token::Tag::Comma);
     pqlTokenScanner.match(Token::Tag::Underscore);
     pqlTokenScanner.match(Token::Tag::RParen);
@@ -101,7 +105,7 @@ std::unique_ptr<Clause> PatternClauseParser::parseIf(std::string patternSynonym)
     }
     pqlTokenScanner.match(Token::Tag::LParen);
     std::unique_ptr<PQLToken> arg1;
-    arg1 = parseEntRef();
+    arg1 = parseVar();
     pqlTokenScanner.match(Token::Tag::Comma);
     pqlTokenScanner.match(Token::Tag::Underscore);
     pqlTokenScanner.match(Token::Tag::Comma);
@@ -109,6 +113,18 @@ std::unique_ptr<Clause> PatternClauseParser::parseIf(std::string patternSynonym)
     pqlTokenScanner.match(Token::Tag::RParen);
 
     return std::move(ClauseFactory::createIfPatternClause(std::move(arg1), patternSynonym));
+}
+
+std::unique_ptr<PQLToken> PatternClauseParser::parseVar() {
+    if (!pqlTokenScanner.isName()) {
+        return std::move(parseEntRef());
+    }
+    std::string synonym = pqlTokenScanner.peekLexeme();
+    Synonym::DesignEntity de = SemanticValidator::getDesignEntity(synonyms, synonym);
+    if (de != Synonym::DesignEntity::VARIABLE) {
+        throw SemanticException();
+    }
+    return std::move(parseEntRef());
 }
 
 std::unique_ptr<PQLToken> PatternClauseParser::parseEntRef() {
@@ -121,11 +137,11 @@ std::unique_ptr<PQLToken> PatternClauseParser::parseEntRef() {
     } else if (pqlTokenScanner.peek(Token::Tag::Underscore)) {
         std::unique_ptr<Wildcard> w = std::make_unique<Wildcard>();
         pqlTokenScanner.next();
-        return w;
+        return std::move(w);
     } else if (pqlTokenScanner.peek(Token::Tag::String)) {
         std::unique_ptr<Ident> i = std::make_unique<Ident>(pqlTokenScanner.peekLexeme());
         pqlTokenScanner.next();
-        return i;
+        return std::move(i);
     }
 }
 
@@ -136,13 +152,27 @@ std::unique_ptr<PQLToken> PatternClauseParser::parseExpressionSpec() {
             std::unique_ptr<Wildcard> w = std::make_unique<Wildcard>();
             return std::move(w);
         } else {  // _"x"_
-            std::unique_ptr<Expression> e = std::make_unique<Expression>(pqlTokenScanner.peekLexeme(), true);
+            std::string expr = pqlTokenScanner.peekLexeme();
+            std::unique_ptr<ILexer> lxr =
+                    LexerFactory::createLexer(expr, LexerFactory::LexerType::Expression);
+            TokenScanner scanner(std::move(lxr));
+            ExprParser parser(scanner);
+            ASSIGN_PAT_RIGHT pattern = parser.parseExpr();
+
+            std::unique_ptr<Expression> e = std::make_unique<Expression>(pattern, true);
             pqlTokenScanner.next();
             pqlTokenScanner.match(Token::Tag::Underscore);
             return std::move(e);
         }
     } else if (pqlTokenScanner.peek(Token::Tag::String)) {  // "x"
-        std::unique_ptr<Expression> e = std::make_unique<Expression>(pqlTokenScanner.peekLexeme(), false);
+        std::string expr = pqlTokenScanner.peekLexeme();
+        std::unique_ptr<ILexer> lxr =
+                LexerFactory::createLexer(expr, LexerFactory::LexerType::Expression);
+        TokenScanner scanner(std::move(lxr));
+        ExprParser parser(scanner);
+        ASSIGN_PAT_RIGHT pattern = parser.parseExpr();
+
+        std::unique_ptr<Expression> e = std::make_unique<Expression>(pattern, false);
         pqlTokenScanner.next();
         pqlTokenScanner.match(Token::Tag::Underscore);
         return std::move(e);

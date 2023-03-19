@@ -85,6 +85,8 @@ class setUpStcp {
     std::unique_ptr<Follows> follows;
     std::unique_ptr<Parent> parent;
     std::unique_ptr<Calls> calls;
+    std::unique_ptr<Next> next;
+    std::unique_ptr<Affects> affects;
     std::unique_ptr<ILexer> lexer;
 };
 
@@ -717,4 +719,164 @@ TEST_CASE_METHOD(setUpStcp, "Calls, invalid syntax ident and procedure, syntax e
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     std::unique_ptr<QuerySyntaxValidator> sv = std::make_unique<QuerySyntaxValidator>(std::move(lexer));
     requireTrue(!sv->validateQuery());
+}
+
+TEST_CASE_METHOD(setUpStcp, "Next, statement and statement") {
+    query = "such that Next(s,s1)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    next = std::make_unique<Next>(std::move(synonymStatement), std::move(synonymStatement1), false);
+    requireTrue(*clause.front() == *next);
+}
+
+TEST_CASE_METHOD(setUpStcp, "Next, statement and read") {
+    query = "such that Next(s,r)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    next = std::make_unique<Next>(std::move(synonymStatement), std::move(synonymRead), false);
+    requireTrue(*clause.front() == *next);
+}
+
+TEST_CASE_METHOD(setUpStcp, "Next, statement and print") {
+    query = "such that Next(s,pn)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    next = std::make_unique<Next>(std::move(synonymStatement), std::move(synonymPrint), false);
+    requireTrue(*clause.front() == *next);
+}
+
+TEST_CASE_METHOD(setUpStcp, "Next, statement and assign") {
+    query = "such that Next(s,a)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    next = std::make_unique<Next>(std::move(synonymStatement), std::move(synonymAssign), false);
+    requireTrue(*clause.front() == *next);
+}
+
+TEST_CASE_METHOD(setUpStcp, "Next, statement and call") {
+    query = "such that Next(s,cl)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    next = std::make_unique<Next>(std::move(synonymStatement), std::move(synonymCall), false);
+    requireTrue(*clause.front() == *next);
+}
+
+TEST_CASE_METHOD(setUpStcp, "Next, statement and while") {
+    query = "such that Next(s,w)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    next = std::make_unique<Next>(std::move(synonymStatement), std::move(synonymWhile), false);
+    requireTrue(*clause.front() == *next);
+}
+
+TEST_CASE_METHOD(setUpStcp, "Next, statement and if") {
+    query = "such that Next(s,ifs)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    next = std::make_unique<Next>(std::move(synonymStatement), std::move(synonymIf), false);
+    requireTrue(*clause.front() == *next);
+}
+
+TEST_CASE_METHOD(setUpStcp, "Next, statement and wildcard") {
+    query = "such that Next(s,_)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    next = std::make_unique<Next>(std::move(synonymStatement), std::move(wildcard1), false);
+    requireTrue(*clause.front() == *next);
+}
+
+TEST_CASE_METHOD(setUpStcp, "Next, statement and int") {
+    query = "such that Next(s,1)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    next = std::make_unique<Next>(std::move(synonymStatement), std::move(statementNumber1), false);
+    requireTrue(*clause.front() == *next);
+}
+
+TEST_CASE_METHOD(setUpStcp, "Next, wildcard and statement") {
+    query = "such that Next(_,s)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    next = std::make_unique<Next>(std::move(wildcard1), std::move(synonymStatement), false);
+    requireTrue(*clause.front() == *next);
+}
+
+TEST_CASE_METHOD(setUpStcp, "Next, wildcard and wildcard") {
+    query = "such that Next(_,_)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    next = std::make_unique<Next>(std::move(wildcard1), std::move(wildcard2), false);
+    requireTrue(*clause.front() == *next);
+}
+
+TEST_CASE_METHOD(setUpStcp, "Next, wildcard and int") {
+    query = "such that Next(_,1)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    next = std::make_unique<Next>(std::move(wildcard1), std::move(statementNumber1), false);
+    requireTrue(*clause.front() == *next);
+}
+
+TEST_CASE_METHOD(setUpStcp, "Next, int and wildcard") {
+    query = "such that Next(1,_)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    next = std::make_unique<Next>(std::move(statementNumber1), std::move(wildcard1), false);
+    requireTrue(*clause.front() == *next);
+}
+
+TEST_CASE_METHOD(setUpStcp, "Next, int and int") {
+    query = "such that Next(1,1)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    next = std::make_unique<Next>(std::move(statementNumber1), std::move(statementNumber2), false);
+    requireTrue(*clause.front() == *next);
+}
+
+TEST_CASE_METHOD(setUpStcp, "Affects, int and int") {
+    query = "such that Affects(1,1)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    affects = std::make_unique<Affects>(std::move(statementNumber1), std::move(statementNumber2), false);
+    requireTrue(*clause.front() == *affects);
+}
+
+TEST_CASE_METHOD(setUpStcp, "Affects*, int and int") {
+    query = "such that Affects*(1,1)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    affects = std::make_unique<Affects>(std::move(statementNumber1), std::move(statementNumber2), true);
+    requireTrue(*clause.front() == *affects);
 }

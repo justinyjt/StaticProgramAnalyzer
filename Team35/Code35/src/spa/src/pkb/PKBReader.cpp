@@ -157,8 +157,15 @@ bool PKBReader::isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const {
         if (predecessors.find(successor) == predecessors.end()) {
             continue;
         }
+        if (pkb.isEntityTypeExists(StmtType::While, successor)
+            || pkb.isEntityTypeExists(StmtType::If, successor)) {
+            continue;
+        }
+        if (successor == stmt2) {
+            break;
+        }
         for (auto &modifiedEnt : modifies) {
-            if (isModifies(successor, modifiedEnt)) {
+            if (successor != stmt1 && isModifies(successor, modifiedEnt)) {
                 return false;
             }
         }
@@ -172,7 +179,7 @@ bool PKBReader::isModifies(STMT_NUM key, const ENT_NAME &val) const {
     if (invalidModifies.find(val) != invalidModifies.end()) {
         return true;
     }
-    ENT_SET calls = pkb.getEntByStmtKey(StmtNameRelationship::Calls, key);
+    ENT_SET calls = pkb.getEntByStmtKey(StmtNameRelationship::CallsProcedure, key);
     if (calls.empty()) {
         return false;
     }
@@ -210,14 +217,14 @@ STMT_SET PKBReader::getAffectsByPredecessor(STMT_NUM stmt) const {
     if (!pkb.isEntityTypeExists(StmtType::Assign, stmt)) {
         return {};
     }
-    ENT_SET uses = pkb.getEntByStmtKey(StmtNameRelationship::Uses, stmt);
-    if (uses.empty()) {
-        return {};
-    }
+//    ENT_SET uses = pkb.getEntByStmtKey(StmtNameRelationship::Uses, stmt);
+//    if (uses.empty()) {
+//        return {};
+//    }
     STMT_SET successors = pkb.getStmtByStmtKey(StmtStmtRelationship::NextStar, stmt);
     STMT_SET affectsSuccessors;
     for (auto &successor : successors) {
-        if (isAffects(successor, stmt)) {
+        if (isAffects(stmt, successor)) {
             affectsSuccessors.insert(successor);
         }
     }

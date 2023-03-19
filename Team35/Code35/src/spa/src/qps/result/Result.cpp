@@ -6,6 +6,7 @@
 
 #include "BoolResult.h"
 #include "TableResult.h"
+#include "SelectResult.h"
 
 Result::Result(Result::Tag _tag) : tag(_tag) {}
 
@@ -50,8 +51,8 @@ std::unique_ptr<Result> Result::tableJoin(Result &lhs, Result &rhs) {
 
     std::vector<std::string> headers1(t1.idents.begin(), t1.idents.end());
     std::vector<std::string> headers2(t2.idents.begin(), t2.idents.end());
-    std::set<int> commonHeaders1;
-    std::set<int> commonHeaders2;
+    std::list<int> commonHeaders1;
+    std::list<int> commonHeaders2;
     std::list<int> nonCommonHeaders1;
     std::list<int> nonCommonHeaders2;
     std::list<std::string> outputHeaders;
@@ -61,22 +62,24 @@ std::unique_ptr<Result> Result::tableJoin(Result &lhs, Result &rhs) {
     for (int i = 0; i < headers1.size(); i++) {
         for (int j = 0; j < headers2.size(); j++) {
             if (headers1[i] == headers2[j]) {
-                commonHeaders1.insert(i);
-                commonHeaders2.insert(j);
+                commonHeaders1.push_back(i);
+                commonHeaders2.push_back(j);
             }
         }
     }
 
     // find non common headers for table 1
     for (int i = 0; i < headers1.size(); i++) {
-        if (commonHeaders1.find(i) == commonHeaders1.end()) {
+        auto it = std::find(commonHeaders1.begin(), commonHeaders1.end(), i);
+        if (it == commonHeaders1.end()) {
             nonCommonHeaders1.push_back(i);
         }
     }
 
     // find non common headers for table 2
     for (int i = 0; i < headers2.size(); i++) {
-        if (commonHeaders2.find(i) == commonHeaders2.end()) {
+        auto it = std::find(commonHeaders2.begin(), commonHeaders2.end(), i);
+        if (it == commonHeaders2.end()) {
             nonCommonHeaders2.push_back(i);
         }
     }
@@ -111,46 +114,42 @@ std::unique_ptr<Result> Result::tableJoin(Result &lhs, Result &rhs) {
 
         // separate rows in table into keys and values
 
-        std::vector<std::pair<std::set<std::string>, std::vector<std::string>>> hashmap1;
+        std::vector<std::pair<std::vector<std::string>, std::vector<std::string>>> hashmap1;
         for (std::list<std::string> &row : t1.rows) {
-            std::set<std::string> keys;
+            std::vector<std::string> rowVector(row.begin(), row.end());
+            std::vector<std::string> keys;
             std::vector<std::string> values;
-            int i = 0;
-            for (std::string &val : row) {
-                if (commonHeaders1.find(i) != commonHeaders1.end()) {
-                    keys.insert(val);
-                } else {
-                    values.push_back(val);
-                }
-                i++;
+            for (auto i : commonHeaders1) {
+                keys.push_back(rowVector.at(i));
+            }
+            for (auto i : nonCommonHeaders1) {
+                values.push_back(rowVector.at(i));
             }
             hashmap1.push_back(std::make_pair(keys, values));
         }
 
-        std::vector<std::pair<std::set<std::string>, std::vector<std::string>>> hashmap2;
+        std::vector<std::pair<std::vector<std::string>, std::vector<std::string>>> hashmap2;
         for (std::list<std::string> &row : t2.rows) {
-            std::set<std::string> keys;
+            std::vector<std::string> rowVector(row.begin(), row.end());
+            std::vector<std::string> keys;
             std::vector<std::string> values;
-            int i = 0;
-            for (std::string &val : row) {
-                if (commonHeaders2.find(i) != commonHeaders2.end()) {
-                    keys.insert(val);
-                } else {
-                    values.push_back(val);
-                }
-                i++;
+            for (auto i : commonHeaders2) {
+                keys.push_back(rowVector.at(i));
+            }
+            for (auto i : nonCommonHeaders2) {
+                values.push_back(rowVector.at(i));
             }
             hashmap2.push_back(std::make_pair(keys, values));
         }
 
         // generate new table
         for (auto &kv : hashmap1) {
-            std::set<std::string> &key1 = kv.first;
+            std::vector<std::string> &key1 = kv.first;
             std::vector<std::string> &value1 = kv.second;
 
             // Look up the key in the second table
             for (auto &kv2 : hashmap2) {
-                std::set<std::string> &key2 = kv2.first;
+                std::vector<std::string> &key2 = kv2.first;
                 std::vector<std::string> &value2 = kv2.second;
                 if (key1 == key2) {
                     // append values from t1 and t2
@@ -169,8 +168,7 @@ std::unique_ptr<Result> Result::tableJoin(Result &lhs, Result &rhs) {
 }
 
 std::unique_ptr<Result> Result::selectJoin(Result &lhs, Result &rhs) {
-    // LHS(select clause) can only be BoolResult if Select BOOLEAN, always return BoolResult
-    // LHS(select clause) can be TableResult if SingleSynonym or tuple, always return TableResult
+    // LHS is always SelectResult as evaluated by SelectClause
     if (lhs.tag == Tag::BOOL && rhs.tag == Tag::BOOL) {
         BoolResult &l = dynamic_cast<BoolResult &>(lhs);
         BoolResult &r = dynamic_cast<BoolResult &>(rhs);
@@ -181,24 +179,29 @@ std::unique_ptr<Result> Result::selectJoin(Result &lhs, Result &rhs) {
         TableResult &r = dynamic_cast<TableResult &>(rhs);
         std::unique_ptr<Result> res = std::make_unique<BoolResult>(r.rows.size() != 0);
         return std::move(res);
-    } else if (lhs.tag == Tag::TABLE && rhs.tag == Tag::BOOL) {
+    } else if (lhs.tag == Tag::SELECT && rhs.tag == Tag::BOOL) {
         BoolResult &r = dynamic_cast<BoolResult &>(rhs);
-        TableResult& tbl = dynamic_cast<TableResult&>(lhs);
-        return r.b ? std::move(std::make_unique<TableResult>(tbl)) : std::move(std::make_unique<TableResult>());
-    } else {
+        SelectResult& tbl = dynamic_cast<SelectResult &>(lhs);
+        return r.b ? std::move(std::make_unique<SelectResult>(tbl)) : std::move(std::make_unique<SelectResult>());
+    } else if (lhs.tag == Tag::SELECT && rhs.tag == Tag::TABLE) {
         int selectedIdx = 0;
-        TableResult& selectList = dynamic_cast<TableResult&>(lhs);
-        TableResult& tbl = dynamic_cast<TableResult&>(rhs);
-        std::string selected = selectList.idents.front();
+        SelectResult& selectList = dynamic_cast<SelectResult&>(lhs);
+        TableResult& r = dynamic_cast<TableResult&>(rhs);
+        std::string selected = selectList.selected;
         std::list<std::string> resultTableHeaders;
         std::vector<std::list<std::string>> rows;
         std::unordered_set<std::string> resultSet;
         resultTableHeaders.push_back(selected);
 
         // select clause or result clause is empty
-        if (tbl.rows.size() == 0 || selectList.rows.size() == 0) {
+        if (r.rows.size() == 0 || selectList.rows.size() == 0) {
             return std::move(std::make_unique<TableResult>());
         }
+
+        // join select with rhs, then selected the column 'selected'
+        TableResult selectTable = TableResult(selectList);
+        std::unique_ptr<Result> res = Result::join(selectTable, r);
+        TableResult& tbl = dynamic_cast<TableResult&>(*res);
 
         for (auto &s : tbl.idents) {
             if (s == selected) {

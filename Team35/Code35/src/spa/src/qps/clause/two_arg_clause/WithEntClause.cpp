@@ -6,7 +6,7 @@
 #define DUMMY_NAME "common-name"
 
 WithEntClause::WithEntClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second) :
-    TwoArgClause(std::move(first), std::move(second)) {}
+        TwoArgClause(std::move(first), std::move(second)) {}
 
 STMT_ENT_SET WithEntClause::getStmtEntSet(PKBReader *db, Synonym syn) {
     switch (syn.de) {
@@ -34,9 +34,9 @@ ENT_SET WithEntClause::getEntSet(PKBReader *db, Synonym syn) {
 
 std::unique_ptr<Result> WithEntClause::handleSynSyn(PKBReader *db, Synonym syn1, Synonym syn2) {
     bool isSyn1Stmt = syn1.de == Synonym::DesignEntity::CALL || syn1.de == Synonym::DesignEntity::READ
-        || syn1.de == Synonym::DesignEntity::PRINT;
+                      || syn1.de == Synonym::DesignEntity::PRINT;
     bool isSyn2Stmt = syn2.de == Synonym::DesignEntity::CALL || syn2.de == Synonym::DesignEntity::READ
-        || syn2.de == Synonym::DesignEntity::PRINT;
+                      || syn2.de == Synonym::DesignEntity::PRINT;
     if (isSyn1Stmt && isSyn2Stmt) {
         STMT_ENT_SET syn1StmtEntSet = getStmtEntSet(db, syn1);
         STMT_ENT_SET syn2StmtEntSet = getStmtEntSet(db, syn2);
@@ -58,15 +58,20 @@ std::unique_ptr<Result> WithEntClause::handleSynSyn(PKBReader *db, Synonym syn1,
     } else {
         ENT_SET syn1EntSet = getEntSet(db, syn1);
         ENT_SET syn2EntSet = getEntSet(db, syn2);
-        ENT_SET resultSet;
+        std::vector<ENT_NAME> resultVec;
         for (auto const &ent : syn1EntSet) {
-            if (syn2EntSet.find(ent) != syn2EntSet.end()) {
-                resultSet.emplace(ent);
+            for (auto const &ent2 : syn2EntSet) {
+                if (ent == ent2) {
+                    resultVec.emplace_back(ent);
+                }
             }
         }
-        std::unique_ptr<Result> syn1Res = std::make_unique<TableResult>(syn1.str(), resultSet);
-        std::unique_ptr<Result> syn2Res = std::make_unique<TableResult>(syn2.str(), resultSet);
-        return std::move(Result::join(*syn1Res, *syn2Res));
+        /* p        | q
+         * proc1    | proc 1
+         * proc2    | proc 2
+         */
+        std::unique_ptr<Result> res = std::make_unique<TableResult>(syn1.str(), syn2.str(), resultVec);
+        return std::move(res);
     }
 }
 

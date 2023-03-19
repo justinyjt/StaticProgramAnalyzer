@@ -15,7 +15,7 @@ or query evaluation (multiple clause evaluations)
 
 class Result {
  public:
-    enum class Tag { BOOL, TABLE };
+    enum class Tag { BOOL, TABLE, SELECT };
     explicit Result(Tag);
     virtual ~Result() = default;
     virtual void output(std::list<std::string> &) = 0;

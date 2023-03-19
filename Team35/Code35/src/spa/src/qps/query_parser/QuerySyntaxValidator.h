@@ -43,5 +43,6 @@ class QuerySyntaxValidator {
     bool validateEntRef();
     bool validateExpressionSpec();
     bool validateTuple();
+    bool validateMultipleElem();
     bool validateElem();
 };
