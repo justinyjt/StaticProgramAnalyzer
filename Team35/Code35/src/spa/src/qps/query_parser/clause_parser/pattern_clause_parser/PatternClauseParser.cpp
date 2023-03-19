@@ -12,8 +12,8 @@
 #include "commons/lexer/LexerFactory.h"
 #include "qps/clause/ClauseFactory.h"
 
-PatternClauseParser::PatternClauseParser(PQLTokenScanner& pqlTokenScanner,
-                                         std::unordered_map<std::string, Synonym::DesignEntity>& synonyms) :
+PatternClauseParser::PatternClauseParser(PQLTokenScanner &pqlTokenScanner,
+                                         std::unordered_map<std::string, Synonym::DesignEntity> &synonyms) :
         pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
 
 std::vector<std::unique_ptr<Clause>> PatternClauseParser::parse() {
@@ -55,8 +55,8 @@ std::unique_ptr<Clause> PatternClauseParser::parsePattern() {
                     return parseAssign(pattern);
                 case Synonym::DesignEntity::WHILE:
                     return parseWhile(pattern);
-                default:
-                {}
+                default: {
+                }
             }
         } else {  // _, -> if
             pqlTokenScanner.restoreState();
@@ -89,7 +89,7 @@ std::unique_ptr<Clause> PatternClauseParser::parseWhile(std::string patternSynon
     }
     pqlTokenScanner.match(Token::Tag::LParen);
     std::unique_ptr<PQLToken> arg1;
-    arg1 = parseEntRef();
+    arg1 = parseVar();
     pqlTokenScanner.match(Token::Tag::Comma);
     pqlTokenScanner.match(Token::Tag::Underscore);
     pqlTokenScanner.match(Token::Tag::RParen);
@@ -103,7 +103,7 @@ std::unique_ptr<Clause> PatternClauseParser::parseIf(std::string patternSynonym)
     }
     pqlTokenScanner.match(Token::Tag::LParen);
     std::unique_ptr<PQLToken> arg1;
-    arg1 = parseEntRef();
+    arg1 = parseVar();
     pqlTokenScanner.match(Token::Tag::Comma);
     pqlTokenScanner.match(Token::Tag::Underscore);
     pqlTokenScanner.match(Token::Tag::Comma);
@@ -111,6 +111,18 @@ std::unique_ptr<Clause> PatternClauseParser::parseIf(std::string patternSynonym)
     pqlTokenScanner.match(Token::Tag::RParen);
 
     return std::move(ClauseFactory::createIfPatternClause(std::move(arg1), patternSynonym));
+}
+
+std::unique_ptr<PQLToken> PatternClauseParser::parseVar() {
+    if (!pqlTokenScanner.isName()) {
+        return std::move(parseEntRef());
+    }
+    std::string synonym = pqlTokenScanner.peekLexeme();
+    Synonym::DesignEntity de = SemanticValidator::getDesignEntity(synonyms, synonym);
+    if (de != Synonym::DesignEntity::VARIABLE) {
+        throw SemanticException();
+    }
+    return std::move(parseEntRef());
 }
 
 std::unique_ptr<PQLToken> PatternClauseParser::parseEntRef() {
