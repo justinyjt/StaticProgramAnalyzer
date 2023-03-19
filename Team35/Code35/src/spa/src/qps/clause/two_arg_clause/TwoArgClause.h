@@ -20,14 +20,15 @@ AssignPattern | Follows | FollowsT | Parent | ParentT | UsesS | UsesP | Modifies
 class TwoArgClause : public Clause {
  public:
     const std::unique_ptr<PQLToken> first;
+
     const std::unique_ptr<PQLToken> second;
 
     TwoArgClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second);
 
+ protected:
     virtual void validateArgs() = 0;
 
- protected:
-    bool equal(const TwoArgClause &rhs) const;
+    bool equal(const TwoArgClause& rhs) const;
 
     int getPairEnum() const;
 

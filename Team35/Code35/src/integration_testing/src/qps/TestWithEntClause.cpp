@@ -1,6 +1,6 @@
 #include <utility>
 
-#include "qps/clause/TwoArgClause/WithEntClause.h"
+#include "qps/clause/two_arg_clause/WithEntClause.h"
 #include "pkb/PKBReader.h"
 #include "pkb/PKBWriter.h"
 #include "commons/types.h"
@@ -49,7 +49,7 @@ TEST_CASE("1. Test WithEntClause") {
     SECTION("Test with syn = ent with print") {
         std::unique_ptr<Synonym> arg1 = std::make_unique<Synonym>(Synonym::DesignEntity::PRINT, "pr");
         std::unique_ptr<Ident> arg2 = std::make_unique<Ident>("a");
-        WithEntClause withEntClause = WithEntClause(std::move(arg1), std::move(arg2));
+        WithEntClause withEntClause(std::move(arg1), std::move(arg2));
         ENT_SET s{"1"};
         TableResult expectedResult("pr", s);
         auto actualResult = withEntClause.evaluate(pkbReaderPtr);
@@ -69,7 +69,7 @@ TEST_CASE("1. Test WithEntClause") {
     SECTION("Test with syn = syn") {
         std::unique_ptr<Synonym> arg1 = std::make_unique<Synonym>(Synonym::DesignEntity::PROCEDURE, "p");
         std::unique_ptr<Synonym> arg2 = std::make_unique<Synonym>(Synonym::DesignEntity::VARIABLE, "v");
-        WithEntClause withEntClause = WithEntClause(std::move(arg1), std::move(arg2));
+        WithEntClause withEntClause(std::move(arg1), std::move(arg2));
         ENT_ENT_SET s{std::make_pair("b", "b")};
         TableResult expectedResult("p", "v", s);
         auto actualResult = withEntClause.evaluate(pkbReaderPtr);

@@ -3,10 +3,9 @@
 #include "SuchThatClauseParser.h"
 #include "qps/pql/PQLNumber.h"
 #include "qps/pql/Wildcard.h"
-#include "qps/clause/TwoArgClause/StmtEntClause.h"
 #include "qps/pql/Ident.h"
 #include "qps/query_parser/SemanticValidator.h"
-#include "qps/clause/TwoArgClause/TwoArgClauseFactory.h"
+#include "qps/clause/ClauseFactory.h"
 #include "qps/query_parser/helper.h"
 
 SuchThatClauseParser::SuchThatClauseParser(PQLTokenScanner &pqlTokenScanner,
@@ -88,7 +87,7 @@ std::unique_ptr<Clause> SuchThatClauseParser::parseUsesModifies(std::string &rel
     arg2 = parseEntRef();
     pqlTokenScanner.match(Token::Tag::RParen);
 
-    return std::move(TwoArgClauseFactory::createClause(std::move(arg1), std::move(arg2), relationship));
+    return std::move(ClauseFactory::createClause(std::move(arg1), std::move(arg2), relationship));
 }
 
 std::unique_ptr<Clause> SuchThatClauseParser::parseStmtStmt(std::string &relationship) {
@@ -102,7 +101,7 @@ std::unique_ptr<Clause> SuchThatClauseParser::parseStmtStmt(std::string &relatio
     arg2 = parseStmtRef();
 
     pqlTokenScanner.match(Token::Tag::RParen);
-    return std::move(TwoArgClauseFactory::createClause(std::move(arg1), std::move(arg2), relationship));
+    return std::move(ClauseFactory::createClause(std::move(arg1), std::move(arg2), relationship));
 }
 
 std::unique_ptr<Clause> SuchThatClauseParser::parseEntEnt(std::string &relationship) {
@@ -116,7 +115,7 @@ std::unique_ptr<Clause> SuchThatClauseParser::parseEntEnt(std::string &relations
     arg2 = parseEntRef();
 
     pqlTokenScanner.match(Token::Tag::RParen);
-    return std::move(TwoArgClauseFactory::createClause(std::move(arg1), std::move(arg2), relationship));
+    return std::move(ClauseFactory::createClause(std::move(arg1), std::move(arg2), relationship));
 }
 
 std::unique_ptr<PQLToken> SuchThatClauseParser::parseEntRef() {

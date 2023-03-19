@@ -5,9 +5,9 @@
 #include "qps/query_parser/declaration_parser/DeclarationParser.h"
 #include "qps/pql/PQLNumber.h"
 #include "qps/pql/Ident.h"
-#include "qps/clause/TwoArgClause/StmtEntClause.h"
-#include "qps/clause/TwoArgClause/StmtStmtClause.h"
-#include "qps/clause/TwoArgClause/EntEntClause.h"
+#include "qps/clause/two_arg_clause/StmtEntClause.h"
+#include "qps/clause/two_arg_clause/StmtStmtClause.h"
+#include "qps/clause/two_arg_clause/EntEntClause.h"
 #include "qps/query_exceptions/SyntaxException.h"
 #include "qps/query_parser/QuerySyntaxValidator.h"
 

@@ -21,8 +21,7 @@ class Result {
     virtual void output(std::list<std::string> &) = 0;
     static std::unique_ptr<Result> join(Result &, Result &);
     static std::unique_ptr<Result> selectJoin(Result &, Result &);
-    bool equal(const Result &rhs) const;
+    static std::unique_ptr<Result> tableJoin(Result &, Result &);
  private:
     Tag tag;
-    static std::unique_ptr<Result> tableJoin(Result &, Result &);
 };

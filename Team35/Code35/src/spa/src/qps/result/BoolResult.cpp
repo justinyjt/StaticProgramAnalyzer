@@ -3,7 +3,7 @@
 BoolResult::BoolResult(bool b) : Result(Tag::BOOL), b(b) {}
 
 void BoolResult::output(std::list<std::string>& list) {
-    b ? list.emplace_back("TRUE") : list.emplace_back("FALSE");
+    list.emplace_back(b ? "TRUE" : "FALSE");
 }
 
 bool BoolResult::operator==(const Result& rhs) const {
