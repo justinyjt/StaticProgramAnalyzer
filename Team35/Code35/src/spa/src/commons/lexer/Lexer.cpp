@@ -194,12 +194,11 @@ std::unique_ptr<Token> Lexer::scanNextName() {
 
 std::unique_ptr<Token> Lexer::scanNextInteger() {
     assert(isDigit(peekChar()));
-    int number = 0;
+    Lexeme integer_lexeme;
     while (!isEof() && isDigit(peekChar())) {
-        number *= 10;
-        number += ConvertCharToInt(readChar());
+        integer_lexeme += readChar();
     }
-    return std::make_unique<Integer>(number, getCurrentLineNumber());
+    return std::make_unique<Integer>(integer_lexeme, getCurrentLineNumber());
 }
 
 std::unique_ptr<Token> Lexer::scanNextCharacter() {
@@ -247,6 +246,7 @@ bool Lexer::isNewLine(char c) const {
 bool Lexer::isControlOrSpace(char c) const {
     return iscntrl(c) || isspace(c);
 }
+
 bool Lexer::operator==(const Lexer &rhs) const {
     return this->source_ == rhs.source_ &&
         this->current_position_ == rhs.current_position_ &&

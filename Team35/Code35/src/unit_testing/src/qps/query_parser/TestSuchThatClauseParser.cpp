@@ -3,7 +3,7 @@
 #include "qps/query_parser/clause_parser/ClauseParser.h"
 #include "commons/lexer/LexerFactory.h"
 #include "qps/query_parser/declaration_parser/DeclarationParser.h"
-#include "qps/pql/StatementNumber.h"
+#include "qps/pql/PQLNumber.h"
 #include "qps/pql/Ident.h"
 #include "qps/clause/two_arg_clause/StmtEntClause.h"
 #include "qps/clause/two_arg_clause/StmtStmtClause.h"
@@ -44,8 +44,8 @@ class setUpStcp {
         synonymConstant = std::make_unique<Synonym>(Synonym::DesignEntity::CONSTANT, "c");
 
         identStr = std::make_unique<Ident>("x");
-        statementNumber1 = std::make_unique<StatementNumber>(1);
-        statementNumber2 = std::make_unique<StatementNumber>(1);
+        statementNumber1 = std::make_unique<PQLNumber>("1");
+        statementNumber2 = std::make_unique<PQLNumber>("1");
         wildcard1 = std::make_unique<Wildcard>();
         wildcard2 = std::make_unique<Wildcard>();
     }
@@ -72,8 +72,8 @@ class setUpStcp {
     std::unique_ptr<Synonym> synonymConstant;
 
     std::unique_ptr<Ident> identStr;
-    std::unique_ptr<StatementNumber> statementNumber1;
-    std::unique_ptr<StatementNumber> statementNumber2;
+    std::unique_ptr<PQLNumber> statementNumber1;
+    std::unique_ptr<PQLNumber> statementNumber2;
     std::unique_ptr<Wildcard> wildcard1;
     std::unique_ptr<Wildcard> wildcard2;
 

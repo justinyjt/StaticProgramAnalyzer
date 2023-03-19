@@ -37,9 +37,13 @@ class DesignExtractor {
     STMT_SET readSet_;
     STMT_SET ifSet_;
     STMT_SET whileSet_;
+    STMT_SET callSet_;
 
     STMT_ENT_SET stmtUsePairSet_;
     STMT_ENT_SET stmtModPairSet_;
+    STMT_ENT_SET stmtCallProcSet_;
+    STMT_ENT_SET stmtReadVarSet_;
+    STMT_ENT_SET stmtPrintVarSet_;
     STMT_ENT_SET ifCondUsePairSet_;
     STMT_ENT_SET whileCondUsePairSet_;
     STMT_ENT_SET containerCallPairSet_;
@@ -84,6 +88,12 @@ class DesignExtractor {
 
     void addStmtParentPairSetToPKB();
 
+    void addCallProcSetToPKB();
+
+    void addReadStmtVarSetToPKB();
+
+    void addPrintStmtVarSetToPKB();
+
     void addPatternsToPKB();
 
     void addStmtTypesToPKB();
@@ -103,6 +113,10 @@ class DesignExtractor {
     void addContainerCallPairSetToPKB();
 
     void analyzeProc();
+
+    void updateStmtUsesPairSetWithContainedCalls();
+
+    void updateStmtModsPairSetWithContainedCalls();
 
     void extractProc(const std::shared_ptr<ASTNode> &);
 

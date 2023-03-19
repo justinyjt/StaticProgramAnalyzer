@@ -28,6 +28,8 @@ const EntityTable<STMT_NUM> &PKB::getStatementTable(StmtType stmtType) const {
             return ifStatementTable_;
         case StmtType::While:
             return whileStatementTable_;
+        case StmtType::Call:
+            return callStatementTable_;
         case StmtType::None:
             return statementTable_;
         default:
@@ -57,6 +59,12 @@ const RelationshipTable<STMT_NUM, ENT_NAME> &PKB::getStmtNameRelationshipTable(S
             return whileCondUsesVarTable_;
         case StmtNameRelationship::ContainerProcedure:
             return containerProcedureTable_;
+        case StmtNameRelationship::CallsProcedure:
+            return callsStmtProcedureTable_;
+        case StmtNameRelationship::ReadStmtVar:
+            return readStmtVarTable_;
+        case StmtNameRelationship::PrintStmtVar:
+            return printStmtVarTable_;
         default:
             assert(false);
     }

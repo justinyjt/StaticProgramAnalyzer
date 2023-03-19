@@ -86,8 +86,15 @@ UsesP::UsesP(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second) 
 
 void UsesP::validateArgs() {
     if (dynamic_cast<Wildcard *>(first.get()) != nullptr) throw SemanticException();
+    Synonym *synonym1 = dynamic_cast<Synonym *>(first.get());
+    Synonym *synonym2 = dynamic_cast<Synonym *>(second.get());
+    if (synonym1 != nullptr && synonym1->de != Synonym::DesignEntity::PROCEDURE) {
+        throw SemanticException();
+    }
+    if (synonym2 != nullptr && synonym2->de != Synonym::DesignEntity::VARIABLE) {
+        throw SemanticException();
+    }
 }
-
 
 ModifiesP::ModifiesP(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second) :
         EntEntClause(std::move(first), std::move(second), NameNameRelationship::Modifies) {
@@ -96,8 +103,15 @@ ModifiesP::ModifiesP(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> 
 
 void ModifiesP::validateArgs() {
     if (dynamic_cast<Wildcard *>(first.get()) != nullptr) throw SemanticException();
+    Synonym *synonym1 = dynamic_cast<Synonym *>(first.get());
+    Synonym *synonym2 = dynamic_cast<Synonym *>(second.get());
+    if (synonym1 != nullptr && synonym1->de != Synonym::DesignEntity::PROCEDURE) {
+        throw SemanticException();
+    }
+    if (synonym2 != nullptr && synonym2->de != Synonym::DesignEntity::VARIABLE) {
+        throw SemanticException();
+    }
 }
-
 
 Calls::Calls(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :
         EntEntClause(std::move(first), std::move(second),
