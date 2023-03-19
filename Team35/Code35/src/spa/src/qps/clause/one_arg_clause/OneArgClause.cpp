@@ -6,25 +6,20 @@ OneArgClause::OneArgClause(std::unique_ptr<PQLToken> first, StmtNameRelationship
                     first(std::move(first)), rs(rs), ident(ident) {}
 
 std::unique_ptr<Result> OneArgClause::evaluate(PKBReader *db) {
-    STMT_SET stmts = db->getStatements(getStmtType());
     switch (first->tag) {
-        case PQLToken::Tag::WILDCARD: {  // ifs(_, _, _) -> bool
-            return std::make_unique<BoolResult>(!stmts.empty());
+        case PQLToken::Tag::WILDCARD: {  // ifs(_, _, _) -> int[]
+            STMT_SET stmts = db->getStatements(getStmtType());
+            return std::make_unique<TableResult>(ident, stmts);
         }
-        case PQLToken::Tag::IDENT: {  // ifs("x", _, _) -> bool
-            STMT_SET s = db->getRelationship(rs,
-                                dynamic_cast<Ident&>(*first).s);
-            return std::make_unique<BoolResult>(!s.empty());
+        case PQLToken::Tag::IDENT: {  // ifs("x", _, _) -> int[]
+            Ident& id = dynamic_cast<Ident&>(*first);
+            STMT_SET stmts = db->getRelationship(rs, id.s);
+            return std::make_unique<TableResult>(ident, stmts);
         }
-        case PQLToken::Tag::SYNONYM: {  // ifs(x, _, _) -> str[]
-            STMT_ENT_SET se = db->getAllRelationships(rs);
-            ENT_SET result;
-            for (auto& p : se) {
-                if (stmts.find(p.first) != stmts.end()) {
-                    result.insert(p.second);
-                }
-            }
-            return std::make_unique<TableResult>(dynamic_cast<Synonym&>(*first).ident, result);
+        case PQLToken::Tag::SYNONYM: {  // ifs(x, _, _) -> <str, str>[]
+            Synonym& syn = dynamic_cast<Synonym&>(*first);
+            STMT_ENT_SET stmtents = db->getAllRelationships(rs);
+            return std::make_unique<TableResult>(ident, syn.ident, stmtents);
         }
         default: throw std::runtime_error("IfPattern");
     }
