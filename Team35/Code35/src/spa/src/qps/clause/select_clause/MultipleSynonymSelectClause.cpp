@@ -9,6 +9,7 @@ MultipleSynonymSelectClause::MultipleSynonymSelectClause(std::vector<std::unique
 
 std::unique_ptr<Result> MultipleSynonymSelectClause::evaluate(PKBReader *db) {
     // loop through synonyms and get tables
+    throw std::runtime_error("");
 }
 
 bool MultipleSynonymSelectClause::operator==(const Clause &rhs) const {
