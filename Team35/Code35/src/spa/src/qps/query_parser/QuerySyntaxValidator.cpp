@@ -121,7 +121,8 @@ bool QuerySyntaxValidator::validateRelCond() {
 }
 
 bool QuerySyntaxValidator::validateRelRef() {
-    if (scanner_.peek(Token::Tag::Follows) || scanner_.peek(Token::Tag::Parent) || scanner_.peek(Token::Tag::Next) || scanner_.peek(Token::Tag::Affects)) {
+    if (scanner_.peek(Token::Tag::Follows) || scanner_.peek(Token::Tag::Parent)
+        || scanner_.peek(Token::Tag::Next) || scanner_.peek(Token::Tag::Affects)) {
         scanner_.next();
         if (scanner_.peek(Token::Tag::Star)) {
             scanner_.next();
