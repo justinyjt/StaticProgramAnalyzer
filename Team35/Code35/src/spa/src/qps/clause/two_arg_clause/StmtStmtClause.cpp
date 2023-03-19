@@ -14,8 +14,22 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Parent/Follows(s1, s2) -> <int, int>[]
         {
             // Follows(s, s) or Parents(s, s) does not exist
-            if (rs != StmtStmtRelationship::NextStar && first->str() == second->str()) {
-                return std::move(std::make_unique<BoolResult>(false));
+            if (first->str() == second->str()) {
+                if (rs != StmtStmtRelationship::NextStar) {
+                    return std::move(std::make_unique<BoolResult>(false));
+                }
+                // TO-DO: (YIYANG, JUSTIN)
+                STMT_STMT_SET s = db->getAllRelationships(rs);
+                STMT_STMT_SET res;
+                for (auto const &stmtStmtPair : s) {
+                    auto &stmt1 = stmtStmtPair.first;
+                    auto &stmt2 = stmtStmtPair.second;
+                    if (stmt1 == stmt2) {
+                        res.emplace(stmt1, stmt2);
+                    }
+                }
+                std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), second->str(), res);
+                return std::move(result);
             }
             STMT_STMT_SET s = db->getAllRelationships(rs);
             STMT_SET filterSetByFirst = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*first).de));
