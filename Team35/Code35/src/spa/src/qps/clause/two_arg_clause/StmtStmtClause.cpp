@@ -37,9 +37,8 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
             std::unique_ptr<Result> intermediateResult1 = std::make_unique<TableResult>(first->str(), filterSetByFirst);
             std::unique_ptr<Result>
                     intermediateResult2 = std::make_unique<TableResult>(second->str(), filterSetBySecond);
-            std::unique_ptr<Result> result =                                                         std::make_unique<TableResult>(first->str(), second->str(), s);
+            std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), second->str(), s);
             std::unique_ptr<Result> joinedResult = Result::join(*result, *intermediateResult1);
-
             return std::move(Result::join(*joinedResult, *intermediateResult2));
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::STMT_NUM):  // Parent/Follows(stmt, 5) -> int[]
