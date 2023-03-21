@@ -1,3 +1,6 @@
+[![CI for Cmake Project - MacOS](https://github.com/nus-cs3203/22s2-cp-spa-team-35/actions/workflows/ci-macos.yml/badge.svg?branch=master&event=push)](https://github.com/nus-cs3203/22s2-cp-spa-team-35/actions/workflows/ci-macos.yml)
+[![CI for Cmake Project - Windows](https://github.com/nus-cs3203/22s2-cp-spa-team-35/actions/workflows/ci-win.yml/badge.svg?branch=master&event=push)](https://github.com/nus-cs3203/22s2-cp-spa-team-35/actions/workflows/ci-win.yml)
+
 # Team 35
 
 ## Target Environment
