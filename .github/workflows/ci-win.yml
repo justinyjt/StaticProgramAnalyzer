@@ -44,11 +44,10 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build Project
         shell: bash
-        working-directory: Team35/Code35
         run: |
           mkdir build
           cd build
-          cmake -A x64 ..
+          cmake -A x64 ../Team35/Code35/
           cmake --build . --target unit_testing --config $BUILD_TYPE
           cmake --build . --target integration_testing --config $BUILD_TYPE
           cmake --build . --target autotester --config $BUILD_TYPE
@@ -56,10 +55,17 @@ jobs:
 
       - name: Run Unit Test
         shell: bash
-        working-directory: Team35/Code35/build
+        working-directory: build
         run: ./src/unit_testing/Release/unit_testing.exe
 
       - name: Run Integration Test
         shell: bash
-        working-directory: Team35/Code35/build
+        working-directory: build
         run: ./src/integration_testing/Release/integration_testing.exe
+
+      - name: Run System Test
+        shell: bash
+        working-directory: build
+        run: |
+          chmod +wx ./src/autotester/Release/autotester.exe
+          bash ../Team35/Code35/autotester.sh
