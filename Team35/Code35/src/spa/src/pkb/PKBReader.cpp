@@ -147,7 +147,7 @@ bool PKBReader::isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const {
             return false;
         }
     }
-    STMT_SET successors = pkb.getStmtByStmtKey(StmtStmtRelationship::Affects, stmt1);
+    STMT_SET successors = pkb.getStmtByStmtKey(StmtStmtRelationship::Next, stmt1);
     STMT_QUEUE frontier;
     for (auto &successor : successors) {
         frontier.push(successor);
@@ -165,7 +165,7 @@ bool PKBReader::isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const {
         }
         if (pkb.isEntityTypeExists(StmtType::While, num)
             || pkb.isEntityTypeExists(StmtType::If, num)) {
-            STMT_SET curr = pkb.getStmtByStmtKey(StmtStmtRelationship::Affects, num);
+            STMT_SET curr = pkb.getStmtByStmtKey(StmtStmtRelationship::Next, num);
             for (auto &currSuccessor : curr) {
                 frontier.push(currSuccessor);
             }
@@ -180,7 +180,7 @@ bool PKBReader::isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const {
         if (isModified) {
             continue;
         }
-        STMT_SET curr = pkb.getStmtByStmtKey(StmtStmtRelationship::Affects, num);
+        STMT_SET curr = pkb.getStmtByStmtKey(StmtStmtRelationship::Next, num);
         for (auto &currSuccessor : curr) {
             frontier.push(currSuccessor);
         }

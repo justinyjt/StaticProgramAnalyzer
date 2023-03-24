@@ -211,8 +211,6 @@ STMT_SET PKB::getStmtByStmtKey(StmtStmtRelationship tableType, STMT_NUM stmt) co
             return cfgManager_.getConnectedStmts(stmt, false, false);
         case StmtStmtRelationship::NextStar:
             return cfgManager_.getConnectedStmts(stmt, false, true);
-        case StmtStmtRelationship::Affects:
-            return cfgManager_.getNext(stmt);
         default:
             return getStmtStmtRelationshipTable(tableType).getValuesByKey(stmt);
     }

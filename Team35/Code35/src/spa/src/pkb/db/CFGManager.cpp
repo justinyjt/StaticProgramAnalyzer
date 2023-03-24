@@ -59,14 +59,6 @@ bool CFGManager::isNext(STMT_NUM first, STMT_NUM second, bool isTransitive) cons
     return curr.isReachable(first, second, !isTransitive);
 }
 
-STMT_SET CFGManager::getNext(STMT_NUM num) const {
-    if (!isValidStmtNum(num)) {
-        return {};
-    }
-    const CFGraph &curr = getCFG(num);
-    return curr.getSuccessors(num, false);
-}
-
 bool CFGManager::isNextExists() {
     return any_of(this->graphs_.begin(), this->graphs_.end(), [](const CFGraph &curr) {
         return curr.getMaxStmtNum() - curr.getMinStmtNum() > 1;

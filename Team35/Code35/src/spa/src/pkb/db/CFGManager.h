@@ -19,8 +19,6 @@ class CFGManager {
 
     bool isNext(STMT_NUM first, STMT_NUM second, bool isTransitive) const;
 
-    STMT_SET getNext(STMT_NUM num) const;
-
     bool isNextExists();
 
     STMT_SET getConnectedStmts(STMT_NUM num, bool isAfter, bool isTransitive) const;
