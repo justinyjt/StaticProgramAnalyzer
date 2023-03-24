@@ -17,11 +17,12 @@ class Result {
  public:
     enum class Tag { BOOL, TABLE, SELECT };
     explicit Result(Tag);
+
     virtual ~Result() = default;
     virtual void output(std::list<std::string> &) = 0;
     static std::unique_ptr<Result> join(Result &, Result &);
     static std::unique_ptr<Result> selectJoin(Result &, Result &);
     static std::unique_ptr<Result> tableJoin(Result &, Result &);
- private:
+//    std::unique_ptr<Result> projectColumns()
     Tag tag;
 };
