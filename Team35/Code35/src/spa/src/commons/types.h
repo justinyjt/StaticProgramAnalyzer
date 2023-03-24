@@ -2,6 +2,7 @@
 #define TEAM35_CODE35_SRC_SPA_SRC_COMMONS_TYPES_H_
 
 #include <memory>
+#include <queue>
 #include <string>
 #include <unordered_set>
 #include <utility>
@@ -21,6 +22,7 @@ typedef std::unordered_set<ENT_NAME> ENT_SET;
 typedef std::unordered_set<STMT_ENT, hash_pair> STMT_ENT_SET;
 typedef std::unordered_set<ENT_ENT, hash_pair> ENT_ENT_SET;
 typedef std::unordered_set<STMT_STMT, hash_pair> STMT_STMT_SET;
+typedef std::queue<STMT_NUM> STMT_QUEUE;
 
 typedef std::shared_ptr<ExprNode> ASSIGN_PAT_RIGHT;
 typedef ENT_NAME ASSIGN_PAT_LEFT;
