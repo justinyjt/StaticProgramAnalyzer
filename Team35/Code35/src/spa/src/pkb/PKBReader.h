@@ -1,9 +1,9 @@
 #pragma once
 
+#include <string>
+
 #include "PKB.h"
 #include "pkb/db/AffectsGraph.h"
-
-#include <string>
 
 class PKBReader {
  public:
@@ -61,19 +61,23 @@ class PKBReader {
 
     bool isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const;
 
+    bool isAffectsT(STMT_NUM first, STMT_NUM second) const;
+
     bool isValidAffectsSuccessor(STMT_NUM stmt) const;
 
     bool isValidAffectsPredecessor(STMT_NUM stmt) const;
 
-    STMT_SET getAffectsBySuccessor(STMT_NUM stmt2) const;
+    STMT_SET getAffectsBySuccessor(STMT_NUM stmt2, bool isTransitive) const;
 
-    STMT_SET getAffectsByPredecessor(STMT_NUM stmt1) const;
+    STMT_SET getAffectsByPredecessor(STMT_NUM stmt1, bool isTransitive) const;
 
-    STMT_STMT_SET getAllAffects() const;
+    STMT_STMT_SET getAllAffects(bool isTransitive) const;
 
     STMT_SET getAllAffectsPredecessors() const;
 
     STMT_SET getAllAffectsSuccessors() const;
+
+    STMT_SET getIntersect(STMT_NUM first, STMT_NUM second) const;
 
     bool hasAffects() const;
 
