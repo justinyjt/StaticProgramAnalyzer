@@ -1,5 +1,4 @@
 #include "qps/QueryEvaluator.h"
-#include "qps/clause/select_clause/SingleSynonymSelectClause.h"
 
 QueryEvaluator::QueryEvaluator(PKBReader *db) : db(db) {}
 
@@ -18,7 +17,7 @@ std::unique_ptr<Result> QueryEvaluator::evaluate(std::pair<std::unique_ptr<Selec
     int i = 1;
     while (i < clauses.size()) {
         std::unique_ptr<Result> next = clauses[i]->evaluate(db);
-        std::unique_ptr<Result> merged = Result::join(*curr, *next);
+        std::unique_ptr<Result> merged = curr->join(*next);
         curr = std::move(merged);
         i++;
     }

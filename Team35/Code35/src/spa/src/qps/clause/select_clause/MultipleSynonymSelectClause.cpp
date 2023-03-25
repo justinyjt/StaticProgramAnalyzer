@@ -5,6 +5,7 @@
 #include "MultipleSynonymSelectClause.h"
 #include "qps/pql/AttrRef.h"
 #include "qps/query_parser/helper.h"
+#include "qps/result/SelectResult.h"
 
 MultipleSynonymSelectClause::MultipleSynonymSelectClause(std::vector<std::unique_ptr<Synonym>>
                                                          selectedSynonyms) : selectedSynonyms(std::move(selectedSynonyms)) {}
@@ -23,10 +24,11 @@ std::unique_ptr<Result> MultipleSynonymSelectClause::evaluate(PKBReader *db) {
     for (int i = 0; i < selectedSynonyms.size(); i++) {
         std::unique_ptr<Synonym> synonym = std::move(selectedSynonyms.at(i));
         idents.emplace_back(selectedSynonyms.at(i)->ident);
+        std::unordered_map<std::string, std::string> synMap;
+        std::vector<std::string> column;
         STMT_ENT_SET ses;
         STMT_SET ss;
         ENT_SET es;
-        std::unordered_map<std::string, std::string> synMap;
         switch (synonym->de) {
             case Synonym::DesignEntity::PROCEDURE:
                 es = db->getEntities(Entity::Procedure);
@@ -86,20 +88,30 @@ std::unique_ptr<Result> MultipleSynonymSelectClause::evaluate(PKBReader *db) {
         // create map from es, ss or ses
         if (synonym->de == Synonym::DesignEntity::PROCEDURE || synonym->de == Synonym::DesignEntity::VARIABLE ||
             synonym->de == Synonym::DesignEntity::CONSTANT) {
-            std::vector<int> column(es.begin(), es.end());
-            //columns.emplace_back(column);
+            for (const auto& elem : es) {
+                synMap.emplace(elem, elem);
+                column.emplace_back(elem);
+            }
+            std::vector<std::string> column(es.begin(), es.end());
+            columns.emplace_back(column);
         } else {
             auto attrRef = dynamic_cast<AttrRef *>(synonym.get());
             if (attrRef != nullptr && (attrRef->ref == VARNAME_KEYWORD || attrRef->ref == PROCNAME_KEYWORD)) {
-                selectedIdent = syn->ident + attrRef->ref;
-                result = std::make_unique<SelectResult>(syn->ident, syn->ident + attrRef->ref,
-                                                        ses, syn->ident + attrRef->ref);
+                for (const auto& elem : ses) {
+                    synMap.insert({std::to_string(elem.first), elem.second});
+                    column.emplace_back(std::to_string(elem.first));
+                }
             } else {
-                selectedIdent = syn->ident;
-                result = std::make_unique<SelectResult>(syn->ident, ss, syn->ident);
+                for (const auto& elem : ss) {
+                    synMap.insert({std::to_string(elem), std::to_string(elem)});
+                    column.emplace_back(std::to_string(elem));
+                }
             }
         }
-
+        synToAttrRefMap.insert({selectedSynonyms.at(i)->ident, synMap});
+        columns.emplace_back(column);
+        std::unique_ptr<SelectResult> selectClause = std::make_unique<SelectResult>(idents, columns, synToAttrRefMap);
+        return std::move(selectClause);
     }
 //    STMT_ENT_SET ses;
 //    STMT_SET ss;

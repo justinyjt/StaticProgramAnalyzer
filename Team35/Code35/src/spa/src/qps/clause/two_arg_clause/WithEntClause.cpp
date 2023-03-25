@@ -42,19 +42,19 @@ std::unique_ptr<Result> WithEntClause::handleSynSyn(PKBReader *db, Synonym syn1,
         STMT_ENT_SET syn2StmtEntSet = getStmtEntSet(db, syn2);
         std::unique_ptr<Result> syn1Res = std::make_unique<TableResult>(syn1.str(), DUMMY_NAME, syn1StmtEntSet);
         std::unique_ptr<Result> syn2Res = std::make_unique<TableResult>(syn2.str(), DUMMY_NAME, syn2StmtEntSet);
-        return std::move(Result::join(*syn1Res, *syn2Res));
+        return std::move(syn1Res->join(*syn2Res));
     } else if (isSyn1Stmt) {
         STMT_ENT_SET syn1StmtEntSet = getStmtEntSet(db, syn1);
         ENT_SET syn2EntSet = getEntSet(db, syn2);
         std::unique_ptr<Result> syn1Res = std::make_unique<TableResult>(syn1.str(), syn2.str(), syn1StmtEntSet);
         std::unique_ptr<Result> syn2Res = std::make_unique<TableResult>(syn2.str(), syn2EntSet);
-        return std::move(Result::join(*syn1Res, *syn2Res));
+        return std::move(syn1Res->join(*syn2Res));
     } else if (isSyn2Stmt) {
         STMT_ENT_SET syn2StmtEntSet = getStmtEntSet(db, syn2);
         ENT_SET syn1EntSet = getEntSet(db, syn1);
         std::unique_ptr<Result> syn1Res = std::make_unique<TableResult>(syn2.str(), syn1.str(), syn2StmtEntSet);
         std::unique_ptr<Result> syn2Res = std::make_unique<TableResult>(syn1.str(), syn1EntSet);
-        return std::move(Result::join(*syn1Res, *syn2Res));
+        return std::move(syn1Res->join(*syn2Res));
     } else {
         ENT_SET syn1EntSet = getEntSet(db, syn1);
         ENT_SET syn2EntSet = getEntSet(db, syn2);

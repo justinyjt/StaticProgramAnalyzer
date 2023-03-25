@@ -52,7 +52,7 @@ class TableResult : public Result {
 //    explicit TableResult(SelectResult &selectResult);
 
     std::unique_ptr<TableResult> projectColumns(std::vector<std::string> projectedColumns);
-    std::unique_ptr<TableResult> join(Result &lhs);
+    std::unique_ptr<Result> join(Result &lhs);
 
     void output(std::list<std::string> &list) override;
 

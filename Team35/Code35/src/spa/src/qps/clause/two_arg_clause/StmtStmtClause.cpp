@@ -38,8 +38,8 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
             std::unique_ptr<Result>
                     intermediateResult2 = std::make_unique<TableResult>(second->str(), filterSetBySecond);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), second->str(), s);
-            std::unique_ptr<Result> joinedResult = Result::join(*result, *intermediateResult1);
-            return std::move(Result::join(*joinedResult, *intermediateResult2));
+            std::unique_ptr<Result> joinedResult = result->join(*intermediateResult1);
+            return std::move(joinedResult->join(*intermediateResult2));
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::STMT_NUM):  // Parent/Follows(stmt, 5) -> int[]
         {
@@ -48,7 +48,7 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
             STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*first).de));
             std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(first->str(), filterSet);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), set);
-            return std::move(Result::join(*result, *intermediateResult));
+            return std::move(result->join(*intermediateResult));
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // Parent/Follows(stmt, _) -> int[]
         {
@@ -56,7 +56,7 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
             STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*first).de));
             std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(first->str(), filterSet);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), parentStmtSet);
-            return std::move(Result::join(*result, *intermediateResult));
+            return std::move(result->join(*intermediateResult));
         }
         case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::SYNONYM):  // Parent/Follows(1, stmt) -> int[]
         {
@@ -65,7 +65,7 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
             STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*second).de));
             std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(second->str(), filterSet);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), set);
-            return std::move(Result::join(*result, *intermediateResult));
+            return std::move(result->join(*intermediateResult));
         }
         case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::STMT_NUM):  // Parent/Follows(1, 2) -> bool
         {
@@ -88,7 +88,7 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
             STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*second).de));
             std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(second->str(), filterSet);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), parentStmtSet);
-            return std::move(Result::join(*result, *intermediateResult));
+            return std::move(result->join(*intermediateResult));
         }
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::STMT_NUM):  // Parent/Follows(_, 3) -> bool
         {

@@ -24,7 +24,7 @@ class SelectResult : public Result {
                 const std::unordered_map<std::string, std::unordered_map<std::string, std::string>> &_synToAttrRefMap);
 
 //    // constructor for empty table
-//    SelectResult();
+    SelectResult();
 //
 //    // for 2 cols with STMT_ENT_SET
 //    SelectResult(const std::string &ident1, const std::string &ident2,
@@ -61,7 +61,7 @@ class SelectResult : public Result {
 
     std::unique_ptr<Result> getFinalResult(TableResult intermediateResultTable);
 
-
+    std::unique_ptr<Result> join(Result &);
 
 
 

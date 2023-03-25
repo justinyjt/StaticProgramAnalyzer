@@ -4,7 +4,6 @@
 
 #include "SelectionParser.h"
 #include "qps/query_exceptions/SemanticException.h"
-#include "qps/clause/select_clause/SingleSynonymSelectClause.h"
 #include "qps/clause/select_clause/BooleanSelectClause.h"
 #include "qps/query_parser/SemanticValidator.h"
 #include "qps/query_parser/helper.h"

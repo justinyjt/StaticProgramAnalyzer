@@ -5,7 +5,6 @@
 
 #include "SelectClause.h"
 #include "qps/pql/Synonym.h"
-#include "SingleSynonymSelectClause.h"
 
 class MultipleSynonymSelectClause : public SelectClause {
  public:

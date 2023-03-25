@@ -14,6 +14,10 @@ SelectResult::SelectResult(std::vector<std::string> &_idents,
     }
 }
 
+std::unique_ptr<Result> SelectResult::join(Result &) {
+    throw std::runtime_error("");
+}
+
 //std::vector<std::vector<std::string>> SelectResult::getColumn(int colNum) {
 //    std::vector<std::vector<std::string>> resultCol;
 //    std::vector<std::string> currRow;
@@ -35,10 +39,10 @@ std::unique_ptr<Result> SelectResult::crossProductHeaders(std::vector<std::strin
                 crossProduct = std::make_unique<TableResult>(std::vector<std::string>({idents[i]}),
                                                              std::vector<std::vector<std::string>>({cols[i]}));
             } else {
-                std::unique_ptr<TableResult> t = std::make_unique<TableResult>(
+                std::unique_ptr<Result> t = std::make_unique<TableResult>(
                     TableResult(std::vector<std::string>({idents[i]}),
                                 std::vector<std::vector<std::string>>({cols[i]})));
-                crossProduct = Result::join(*crossProduct, *t);
+                crossProduct = crossProduct->join(*t);
             }
             currHeader++;
         }
@@ -117,7 +121,7 @@ std::unique_ptr<Result> SelectResult::getFinalResult(TableResult intermediateRes
         std::unique_ptr<Result> overlappingIntermediate = intermediateResultTable.
             projectColumns(overlappingHeaders);
         std::unique_ptr<Result> nonOverlappingCP = crossProductHeaders(nonOverlappingHeaders);
-        finalRes = Result::join(*overlappingIntermediate, *nonOverlappingCP);
+        finalRes = overlappingIntermediate->join(*nonOverlappingCP);
         // a, b, c, d      a, b
         // get a and b intermediate table
         // for each non overlapping column

@@ -33,32 +33,32 @@ std::unique_ptr<Result> AssignPattern::evaluate(PKBReader *db) {
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::EXPR):  // a(_, _"x"_) -> int[]
         {
             std::unique_ptr<Result> result = std::make_unique<TableResult>(this->ident, stmtSet2);
-            return std::move(Result::join(*result, *filterSet));
+            return std::move(result->join(*filterSet));
         }
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::WILDCARD):  // a(_, _) -> int[]
         {
             STMT_SET stmtSet = db->getStatements(StmtType::Assign);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(this->ident, stmtSet);
-            return std::move(Result::join(*result, *filterSet));
+            return std::move(result->join(*filterSet));
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::EXPR):  // a(v, _"x"_) -> pair<int, str>[]
         {
             const std::string &synonymIdent = dynamic_cast<Synonym &>(*first).ident;
-            std::vector<std::list<std::string>> vec;
+            std::vector<std::vector<std::string>> vec;
             for (STMT_NUM s : stmtSet2) {  // for each statement, find entity that is modified
                 ENT_SET entSet = db->getRelationship(StmtNameRelationship::Modifies, s);
                 for (const std::string &ent : entSet)
                     vec.push_back({std::to_string(s), ent});
             }
             std::unique_ptr<Result> result = std::make_unique<TableResult>(this->ident, synonymIdent, vec);
-            return std::move(Result::join(*result, *filterSet));
+            return std::move(result->join(*filterSet));
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // a(v, _) -> pair<int, str>[]
         {
             const std::string &synonymIdent = dynamic_cast<Synonym &>(*first).ident;
             STMT_ENT_SET stmtEntSet = db->getAllRelationships(StmtNameRelationship::Modifies);
             std::unique_ptr<Result> result = std::make_unique<TableResult>(this->ident, synonymIdent, stmtEntSet);
-            return std::move(Result::join(*result, *filterSet));
+            return std::move(result->join(*filterSet));
         }
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::EXPR):  // a("x", "_1_") -> int[]
         {
@@ -70,13 +70,13 @@ std::unique_ptr<Result> AssignPattern::evaluate(PKBReader *db) {
                 }
             }
             std::unique_ptr<Result> result = std::make_unique<TableResult>(this->ident, stmtSetResult);
-            return std::move(Result::join(*result, *filterSet));
+            return std::move(result->join(*filterSet));
         }
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::WILDCARD):  // a("x", _) -> int[]
         {
             STMT_SET stmtSet1 = db->getRelationship(StmtNameRelationship::Modifies, first->str());
             std::unique_ptr<Result> result = std::make_unique<TableResult>(this->ident, stmtSet1);
-            return std::move(Result::join(*result, *filterSet));
+            return std::move(result->join(*filterSet));
         }
         default:throw std::runtime_error("AssignPattern.cpp");
     }

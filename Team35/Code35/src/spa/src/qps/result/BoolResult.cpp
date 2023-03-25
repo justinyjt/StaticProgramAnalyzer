@@ -1,7 +1,10 @@
 #include "BoolResult.h"
-#include "TableResult.h"
 
 BoolResult::BoolResult(bool b) : Result(Tag::BOOL), b(b) {}
+
+std::unique_ptr<Result> BoolResult::join(Result &) {
+    throw std::runtime_error("");
+}
 
 std::unique_ptr<Result> BoolResult::getFinalResult(TableResult intermediateResultTable) {
     return std::move(std::make_unique<BoolResult>(intermediateResultTable.rows.size() == 0));

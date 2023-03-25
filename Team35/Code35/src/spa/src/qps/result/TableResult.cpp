@@ -118,7 +118,7 @@ std::unique_ptr<TableResult> TableResult::projectColumns(std::vector<std::string
     return std::move(tableResult);
 }
 
-std::unique_ptr<TableResult> TableResult::join(Result &rhs) {
+std::unique_ptr<Result> TableResult::join(Result &rhs) {
     TableResult &t2 = dynamic_cast<TableResult &>(rhs);
 
     std::vector<std::string> headers1(idents.begin(), idents.end());

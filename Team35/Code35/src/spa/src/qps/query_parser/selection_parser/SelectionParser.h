@@ -10,7 +10,6 @@
 #include "qps/clause/select_clause/SelectClause.h"
 #include "commons/token_scanner/TokenScanner.h"
 #include "commons/token_scanner/PQLTokenScanner.h"
-#include "qps/clause/select_clause/SingleSynonymSelectClause.h"
 #include "qps/clause/select_clause/MultipleSynonymSelectClause.h"
 
 class SelectionParser {
