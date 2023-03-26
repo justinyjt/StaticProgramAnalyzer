@@ -119,6 +119,17 @@ std::unique_ptr<TableResult> TableResult::projectColumns(std::vector<std::string
 }
 
 std::unique_ptr<Result> TableResult::join(Result &rhs) {
+    if (rhs.tag == Tag::BOOL) {
+        BoolResult &boolResult = dynamic_cast<BoolResult &>(rhs);
+        std::unique_ptr<Result> res;
+        if (boolResult.b) {
+            res = std::make_unique<TableResult>(std::move(*this));
+        } else {
+            res = std::make_unique<BoolResult>(boolResult.b);
+        }
+        return res;
+    }
+
     TableResult &t2 = dynamic_cast<TableResult &>(rhs);
 
     std::vector<std::string> headers1(idents.begin(), idents.end());

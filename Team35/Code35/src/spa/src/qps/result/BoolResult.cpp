@@ -2,12 +2,17 @@
 
 BoolResult::BoolResult(bool b) : Result(Tag::BOOL), b(b) {}
 
-std::unique_ptr<Result> BoolResult::join(Result &) {
-    throw std::runtime_error("");
-}
-
-std::unique_ptr<Result> BoolResult::getFinalResult(TableResult intermediateResultTable) {
-    return std::move(std::make_unique<BoolResult>(intermediateResultTable.rows.size() == 0));
+std::unique_ptr<Result> BoolResult::join(Result &rhs) {
+    if (!b) {
+        return std::make_unique<BoolResult>(std::move(*this));
+    }
+    if (rhs.tag == Tag::BOOL) {
+        BoolResult &boolResult = dynamic_cast<BoolResult &>(rhs);
+        return std::make_unique<BoolResult>(this->b && boolResult.b);
+    } else {
+        TableResult &tableResult = dynamic_cast<TableResult &>(rhs);
+        return std::make_unique<BoolResult>(tableResult.rows.size() != 0);
+    }
 }
 
 void BoolResult::output(std::list<std::string>& list) {

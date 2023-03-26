@@ -4,14 +4,10 @@
 
 // general constructor for n-cols
 SelectResult::SelectResult(std::vector<std::string> &_idents,
-                           const std::vector<std::vector<std::string>> &_cols,
-                           const std::unordered_map<std::string, std::unordered_map<std::string, std::string>> &_synToAttrRefMap) :
+                           const std::vector<TableResult> &_cols) :
         Result(Tag::SELECT) {
     idents.insert(idents.end(), _idents.begin(), _idents.end());
     cols.insert(cols.end(), _cols.begin(), _cols.end());
-    for (auto const &synMapPair : _synToAttrRefMap) {
-        synToAttrRefMap.insert({synMapPair.first, synMapPair.second});
-    }
 }
 
 std::unique_ptr<Result> SelectResult::join(Result &) {

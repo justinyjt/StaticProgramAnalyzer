@@ -14,14 +14,12 @@
 class SelectResult : public Result {
  public:
     std::vector<std::string> idents;  // eg list<"v", "s1">
-    std::vector<std::vector<std::string>> cols;  // eg vector<list<"x",1>, list<"y",2>, ...>
-    std::unordered_map<std::string, std::unordered_map<std::string, std::string>> synToAttrRefMap;
+    std::vector<TableResult> cols;  // eg vector<list<"x",1>, list<"y",2>, ...>
 //    std::list<std::string> selected;
 
     // general constructor for n-cols
     SelectResult(std::vector<std::string> &_idents,
-                const std::vector<std::vector<std::string>> &_cols,
-                const std::unordered_map<std::string, std::unordered_map<std::string, std::string>> &_synToAttrRefMap);
+                const std::vector<TableResult> &_cols);
 
 //    // constructor for empty table
     SelectResult();
