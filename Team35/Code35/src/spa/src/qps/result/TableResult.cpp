@@ -263,9 +263,22 @@ std::unique_ptr<Result> TableResult::join(Result &rhs) {
 
 void TableResult::output(std::list<std::string> &list) {
     if (order.has_value()) {
+        int order_size = order.value().size();
         for (auto const &row : rows) {
-            for (int i = 0; i < order.value().size(); i++) {
-                list.push_back(row[order.value()[i]]);
+            std::string curr_res;
+            for (int i = 0; i < order_size; i++) {
+                curr_res += row[order.value()[i]];
+
+                if (i != order_size - 1) {
+                    curr_res += " ";
+                }
+            }
+            list.push_back(curr_res);
+        }
+    } else {
+        for (auto const &row : rows) {
+            for (auto const &ele : row) {
+                list.push_back(ele);
             }
         }
     }

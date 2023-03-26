@@ -46,8 +46,8 @@ std::vector<std::unique_ptr<Synonym>> SelectionParser::parseMultiSelect() {
         if (pqlTokenScanner.peek(Token::Tag::Comma)) {
             pqlTokenScanner.match(Token::Tag::Comma);
             continue;
-        } else if (pqlTokenScanner.peek(Token::Tag::SemiColon)) {
-            pqlTokenScanner.match(Token::Tag::SemiColon);
+        } else if (pqlTokenScanner.peek(Token::Tag::GreaterThan)) {
+            pqlTokenScanner.match(Token::Tag::GreaterThan);
             break;
         }
     }

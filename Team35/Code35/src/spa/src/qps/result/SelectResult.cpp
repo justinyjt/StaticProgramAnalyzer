@@ -1,4 +1,5 @@
 #include "SelectResult.h"
+#include "IdentityResult.h"
 
 #include <iterator>
 
@@ -9,27 +10,37 @@ SelectResult::SelectResult(std::vector<std::string> &_idents, const std::vector<
     cols.insert(cols.end(), _cols.begin(), _cols.end());
 }
 
+std::unique_ptr<Result> SelectResult::getColsCrossProduct() {
+    TableResult finalRes = cols[0];
+    for (int i = 1; i < cols.size(); ++i) {
+        finalRes.join(cols[i]);
+    }
+    return std::make_unique<TableResult>(finalRes);
+}
+
+
 std::unique_ptr<Result> SelectResult::join(Result &rhs) {
     TableResult &t2 = dynamic_cast<TableResult &>(rhs);
     std::unordered_set<std::string> intermediateIdentsSet(t2.idents.begin(), t2.idents.end());
-    TableResult finalRes = TableResult(t2);
+    std::unique_ptr<Result> finalRes = std::make_unique<TableResult>(TableResult(t2));
     for (int i = 0; i < idents.size(); i++) {
         if (intermediateIdentsSet.find(idents[i]) == intermediateIdentsSet.end()) { // if non-overlapping
-            finalRes.join(cols[i]);
+            finalRes = finalRes->join(cols[i]);
         }
     }
 
+    TableResult& finalTableRes = dynamic_cast<TableResult&>(*finalRes);
     // get vector of indexes in order to be printed
     std::vector<int> order;
     for (int i = 0; i < idents.size(); i++) {
-        for (int j = 0; j < finalRes.idents.size(); j++) {
-            if (idents[i] == finalRes.idents[j]) {
+        for (int j = 0; j < finalTableRes.idents.size(); j++) {
+            if (idents[i] == finalTableRes.idents[j]) {
                 order.push_back(j);
             }
         }
     }
 
-    return std::make_unique<TableResult>(finalRes.idents, finalRes.rows, order);
+    return std::make_unique<TableResult>(finalTableRes.idents, finalTableRes.rows, order);
 }
 
 void SelectResult::output(std::list<std::string> &list) {

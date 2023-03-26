@@ -1,4 +1,5 @@
 #include "qps/QueryEvaluator.h"
+#include "qps/result/SelectResult.h"
 
 QueryEvaluator::QueryEvaluator(PKBReader *db) : db(db) {}
 
@@ -11,7 +12,8 @@ std::unique_ptr<Result> QueryEvaluator::evaluate(std::pair<std::unique_ptr<Selec
     // if no clauses, just return select list
     if (clauses.size() == 0) {
         selectList = selectClause->evaluate(db);
-        return selectList;
+        SelectResult s = dynamic_cast<SelectResult&>(*selectList);
+        return s.getColsCrossProduct();
     }
     std::unique_ptr<Result> curr = clauses[0]->evaluate(db);
     int i = 1;

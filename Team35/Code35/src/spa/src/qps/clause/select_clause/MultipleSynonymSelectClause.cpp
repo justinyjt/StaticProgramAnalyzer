@@ -89,7 +89,7 @@ std::unique_ptr<Result> MultipleSynonymSelectClause::evaluate(PKBReader *db) {
         } else {
             auto attrRef = dynamic_cast<AttrRef *>(synonym.get());
             if (attrRef != nullptr && (attrRef->ref == VARNAME_KEYWORD || attrRef->ref == PROCNAME_KEYWORD)) {
-                idents.emplace_back(synonym->ident);
+//                idents.emplace_back(synonym->ident);
                 idents.emplace_back(synonym->ident + "." + attrRef->ref);
                 selectTables.emplace_back(TableResult(synonym->ident, synonym->ident + "." + attrRef->ref, ses));
             } else {
