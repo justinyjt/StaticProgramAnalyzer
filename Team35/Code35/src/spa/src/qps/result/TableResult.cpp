@@ -2,12 +2,22 @@
 #include "BoolResult.h"
 
 #include <iterator>
+#include <set>
 
 // general constructor for n-cols
 TableResult::TableResult(const std::vector<std::string> &_idents,
                          const std::vector<std::vector<std::string>> &_rows) : Result(Tag::TABLE) {
     idents.insert(idents.end(), _idents.begin(), _idents.end());
     rows.insert(rows.end(), _rows.begin(), _rows.end());
+}
+
+// constructor for SelectResult Output
+TableResult::TableResult(const std::vector<std::string> &_idents,
+            const std::vector<std::vector<std::string>> &_rows,
+            const std::vector<int> &_order) : Result(Tag::TABLE) {
+    idents.insert(idents.end(), _idents.begin(), _idents.end());
+    rows.insert(rows.end(), _rows.begin(), _rows.end());
+    order = std::make_optional(_order);
 }
 
 // constructor for empty table
@@ -96,25 +106,25 @@ TableResult::TableResult(const std::string &ident1, const std::string &ident2,
 //    return cols.size() == 0;
 //}
 
-std::unique_ptr<TableResult> TableResult::projectColumns(std::vector<std::string> projectedColumns) {
+std::unique_ptr<TableResult> TableResult::projectColumns(std::unordered_set<std::string> projectedColumns) { //
     std::vector<std::string> projectedIdents;
-    std::vector<std::vector<std::string>> projectedRows;
+    std::vector<std::vector<std::string>> projectedRowsWithDuplicates(rows.size(), std::vector<std::string>());
 
-    for (auto const &header : projectedColumns) {
-        // get index of header
-        int index = std::distance(idents.begin(),
-                                  std::find(idents.begin(),
-                                            idents.end(), header));
-
-        projectedIdents.emplace_back(idents[index]);
-        std::vector<std::string> currCol;
-        for (auto const &row : rows) {
-            currCol.emplace_back(row[index]);
+    for (int i = 0; i < idents.size(); i++) {
+        if (projectedColumns.find(idents[i]) == projectedColumns.end()) {
+            continue;
         }
-        projectedRows.emplace_back(currCol);
+        projectedIdents.emplace_back(idents[i]);
+        for (int j = 0; j < rows.size(); j++) {
+            projectedRowsWithDuplicates[j].emplace_back(rows[j][i]);
+        }
     }
 
-    std::unique_ptr<TableResult> tableResult = std::make_unique<TableResult>(projectedIdents, projectedRows);
+    // remove duplicated rows
+    std::set<std::vector<std::string>> rowSet(projectedRowsWithDuplicates.begin(), projectedRowsWithDuplicates.end());
+    std::vector<std::vector<std::string>> projectedRowsWithoutDuplicates;
+    projectedRowsWithoutDuplicates.assign(rowSet.begin(), rowSet.end());
+    std::unique_ptr<TableResult> tableResult = std::make_unique<TableResult>(projectedIdents, projectedRowsWithDuplicates);
     return std::move(tableResult);
 }
 
@@ -252,9 +262,12 @@ std::unique_ptr<Result> TableResult::join(Result &rhs) {
 }
 
 void TableResult::output(std::list<std::string> &list) {
-    // results already finalised from selectJoin, cols/tuples assumed to be a single element for now
-    for (auto &elem : rows) {
-        list.push_back(elem.front());
+    if (order.has_value()) {
+        for (auto const &row : rows) {
+            for (int i = 0; i < order.value().size(); i++) {
+                list.push_back(row[order.value()[i]]);
+            }
+        }
     }
 }
 
