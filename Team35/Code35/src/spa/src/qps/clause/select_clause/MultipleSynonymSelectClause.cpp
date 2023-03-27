@@ -104,5 +104,9 @@ std::unique_ptr<Result> MultipleSynonymSelectClause::evaluate(PKBReader *db) {
 
 bool MultipleSynonymSelectClause::operator==(const Clause &rhs) const {
     const auto *pRhs = dynamic_cast<const MultipleSynonymSelectClause *>(&rhs);
-    return pRhs != nullptr && selectedSynonyms == pRhs->selectedSynonyms;
+    return pRhs != nullptr &&
+           std::equal(selectedSynonyms.begin(), selectedSynonyms.end(),pRhs->selectedSynonyms.begin(),
+                      [](const std::unique_ptr<Synonym>& lhs, const std::unique_ptr<Synonym>& rhs)
+                      { return *lhs == * rhs; }
+           );
 }
