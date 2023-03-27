@@ -1,6 +1,10 @@
 #include "BoolResult.h"
 
-BoolResult::BoolResult(bool b) : Result(Tag::BOOL), b(b) {}
+BoolResult::BoolResult(bool b) : Result(Tag::BOOL), b(b) {
+    isSelectBool = false;
+}
+
+BoolResult::BoolResult(bool b, bool isSelectBool) : Result(Tag::BOOL), b(b), isSelectBool(isSelectBool) {}
 
 std::unique_ptr<Result> BoolResult::join(Result &rhs) {
     if (!b) {
@@ -10,8 +14,13 @@ std::unique_ptr<Result> BoolResult::join(Result &rhs) {
         BoolResult &boolResult = dynamic_cast<BoolResult &>(rhs);
         return std::make_unique<BoolResult>(this->b && boolResult.b);
     } else {
-        TableResult &tableResult = dynamic_cast<TableResult &>(rhs);
-        return std::make_unique<BoolResult>(tableResult.rows.size() != 0);
+        if (isSelectBool) {
+            TableResult &tableResult = dynamic_cast<TableResult &>(rhs);
+            return std::make_unique<BoolResult>(BoolResult(!tableResult.rows.empty()));
+        } else {
+            TableResult &tableResult = dynamic_cast<TableResult &>(rhs);
+            return std::make_unique<TableResult>(tableResult.idents, tableResult.rows);
+        }
     }
 }
 

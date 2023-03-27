@@ -11,15 +11,27 @@ SelectResult::SelectResult(std::vector<std::string> &_idents, const std::vector<
 }
 
 std::unique_ptr<Result> SelectResult::getColsCrossProduct() {
-    TableResult finalRes = cols[0];
-    for (int i = 1; i < cols.size(); ++i) {
-        finalRes.join(cols[i]);
+    std::unique_ptr<Result> finalRes = std::make_unique<TableResult>(TableResult(cols[0]));
+    std::vector<int> order(1, 0);
+    for (int i = 1; i < cols.size(); i++) {
+        finalRes = finalRes->join(cols[i]);
+        order.push_back(i);
     }
-    return std::make_unique<TableResult>(finalRes);
+    TableResult& finalTableRes = dynamic_cast<TableResult&>(*finalRes);
+
+    return std::make_unique<TableResult>(TableResult(finalTableRes.idents, finalTableRes.rows, order));
 }
 
 
 std::unique_ptr<Result> SelectResult::join(Result &rhs) {
+    if (rhs.tag == Tag::BOOL) {
+        BoolResult &boolRes = dynamic_cast<BoolResult &>(rhs);
+        if (boolRes.b) {
+            return getColsCrossProduct();
+        }
+        return std::make_unique<TableResult>(TableResult());
+    }
+
     TableResult &t2 = dynamic_cast<TableResult &>(rhs);
     std::unordered_set<std::string> intermediateIdentsSet(t2.idents.begin(), t2.idents.end());
     std::unique_ptr<Result> finalRes = std::make_unique<TableResult>(TableResult(t2));

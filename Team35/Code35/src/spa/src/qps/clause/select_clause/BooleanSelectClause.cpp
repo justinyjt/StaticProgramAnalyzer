@@ -4,7 +4,7 @@
 BooleanSelectClause::BooleanSelectClause() = default;
 
 std::unique_ptr<Result> BooleanSelectClause::evaluate(PKBReader *db) {
-    return std::make_unique<BoolResult>(true);
+    return std::make_unique<BoolResult>(true, true);
 }
 
 bool BooleanSelectClause::operator==(const Clause &rhs) const {

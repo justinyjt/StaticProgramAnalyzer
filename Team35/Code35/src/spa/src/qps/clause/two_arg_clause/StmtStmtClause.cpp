@@ -20,11 +20,12 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
                 }
                 // TO-DO: (YIYANG, JUSTIN)
                 STMT_STMT_SET s = db->getAllRelationships(rs);
+                STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*first).de));
                 STMT_STMT_SET res;
                 for (auto const &stmtStmtPair : s) {
                     auto &stmt1 = stmtStmtPair.first;
                     auto &stmt2 = stmtStmtPair.second;
-                    if (stmt1 == stmt2) {
+                    if (stmt1 == stmt2 && filterSet.find(stmt1) != filterSet.end()) {
                         res.emplace(stmt1, stmt2);
                     }
                 }

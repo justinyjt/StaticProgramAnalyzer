@@ -21,6 +21,19 @@ STMT_ENT_SET WithEntClause::getStmtEntSet(PKBReader *db, Synonym syn) {
     }
 }
 
+STMT_SET WithEntClause::getStmtSet(PKBReader *db, Synonym syn) {
+    switch (syn.de) {
+        case Synonym::DesignEntity::CALL :
+            return db->getStatements(StmtType::Call);
+        case Synonym::DesignEntity::PRINT :
+            return db->getStatements(StmtType::Print);
+        case Synonym::DesignEntity::READ :
+            return db->getStatements(StmtType::Read);
+        default:
+            assert(false);
+    }
+}
+
 ENT_SET WithEntClause::getEntSet(PKBReader *db, Synonym syn) {
     switch (syn.de) {
         case Synonym::DesignEntity::PROCEDURE :
@@ -32,11 +45,30 @@ ENT_SET WithEntClause::getEntSet(PKBReader *db, Synonym syn) {
     }
 }
 
+bool WithEntClause::isStmtSyn(Synonym syn) {
+    return syn.de == Synonym::DesignEntity::CALL || syn.de == Synonym::DesignEntity::READ
+        || syn.de == Synonym::DesignEntity::PRINT;
+}
+
+std::unique_ptr<Result> WithEntClause::handleSameSynCase(PKBReader *db, Synonym syn) {
+    std::unique_ptr<Result> res;
+    if (isStmtSyn(syn)) {
+        STMT_SET stmtSet = getStmtSet(db, syn);
+        res = std::make_unique<TableResult>(syn.str(), stmtSet);
+    } else {
+        ENT_SET entSet = getEntSet(db, syn);
+        res = std::make_unique<TableResult>(syn.str(), entSet);
+    }
+    return std::move(res);
+}
+
 std::unique_ptr<Result> WithEntClause::handleSynSyn(PKBReader *db, Synonym syn1, Synonym syn2) {
-    bool isSyn1Stmt = syn1.de == Synonym::DesignEntity::CALL || syn1.de == Synonym::DesignEntity::READ
-                      || syn1.de == Synonym::DesignEntity::PRINT;
-    bool isSyn2Stmt = syn2.de == Synonym::DesignEntity::CALL || syn2.de == Synonym::DesignEntity::READ
-                      || syn2.de == Synonym::DesignEntity::PRINT;
+    if (syn1.str() == syn2.str()) {
+        return handleSameSynCase(db, syn1);
+    }
+    bool isSyn1Stmt = isStmtSyn(syn1);
+    bool isSyn2Stmt = isStmtSyn(syn2);
+
     if (isSyn1Stmt && isSyn2Stmt) {
         STMT_ENT_SET syn1StmtEntSet = getStmtEntSet(db, syn1);
         STMT_ENT_SET syn2StmtEntSet = getStmtEntSet(db, syn2);
@@ -66,10 +98,7 @@ std::unique_ptr<Result> WithEntClause::handleSynSyn(PKBReader *db, Synonym syn1,
                 }
             }
         }
-        /* p        | q
-         * proc1    | proc 1
-         * proc2    | proc 2
-         */
+
         std::unique_ptr<Result> res = std::make_unique<TableResult>(syn1.str(), syn2.str(), resultVec);
         return std::move(res);
     }
