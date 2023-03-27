@@ -1,35 +1,28 @@
 #include "OneArgClause.h"
 
-#include <cassert>
+#include <utility>
 
 OneArgClause::OneArgClause(std::unique_ptr<PQLToken> first, StmtNameRelationship rs, std::string ident) :
-                    first(std::move(first)), rs(rs), ident(ident) {}
+    first(std::move(first)), rs(rs), ident(std::move(ident)) {}
 
 std::unique_ptr<Result> OneArgClause::evaluate(PKBReader *db) {
     switch (first->tag) {
         case PQLToken::Tag::WILDCARD: {  // ifs(_, _, _) -> int[]
-            STMT_SET stmts = db->getStatements(getStmtType());
+            STMT_SET stmts = db->getStmtByRelationship(rs);
             return std::make_unique<TableResult>(ident, stmts);
         }
         case PQLToken::Tag::IDENT: {  // ifs("x", _, _) -> int[]
-            Ident& id = dynamic_cast<Ident&>(*first);
+            auto &id = dynamic_cast<Ident &>(*first);
             STMT_SET stmts = db->getRelationship(rs, id.s);
             return std::make_unique<TableResult>(ident, stmts);
         }
         case PQLToken::Tag::SYNONYM: {  // ifs(x, _, _) -> <str, str>[]
-            Synonym& syn = dynamic_cast<Synonym&>(*first);
-            STMT_ENT_SET stmtents = db->getAllRelationships(rs);
-            return std::make_unique<TableResult>(ident, syn.ident, stmtents);
+            auto &syn = dynamic_cast<Synonym &>(*first);
+            STMT_ENT_SET stmt_ent_set = db->getAllRelationships(rs);
+            return std::make_unique<TableResult>(ident, syn.ident, stmt_ent_set);
         }
-        default: throw std::runtime_error("IfPattern");
-    }
-}
-
-StmtType OneArgClause::getStmtType() const {
-    switch (rs) {
-        case StmtNameRelationship::IfCondVarUses: return StmtType::If;
-        case StmtNameRelationship::WhileCondVarUses: return StmtType::While;
-        default: throw std::runtime_error("OneArgClause");
+        default:
+            throw std::runtime_error("IfPattern");
     }
 }
 
@@ -39,22 +32,20 @@ bool OneArgClause::operator==(const Clause &rhs) const {
 }
 
 void OneArgClause::validateArgs() {
-    Synonym* synonym = dynamic_cast<Synonym*>(first.get());
+    auto *synonym = dynamic_cast<Synonym *>(first.get());
     if (synonym != nullptr && !(synonym->de == Synonym::DesignEntity::PROCEDURE ||
-            synonym->de == Synonym::DesignEntity::VARIABLE ||
-            synonym->de == Synonym::DesignEntity::CONSTANT)) {
+        synonym->de == Synonym::DesignEntity::VARIABLE ||
+        synonym->de == Synonym::DesignEntity::CONSTANT)) {
         throw SemanticException();
     }
 }
 
-
 IfPattern::IfPattern(std::unique_ptr<PQLToken> first, std::string ident) :
-                OneArgClause(std::move(first), StmtNameRelationship::IfCondVarUses, ident) {
+    OneArgClause(std::move(first), StmtNameRelationship::IfCondVarUses, std::move(ident)) {
     validateArgs();
 }
 
-
 WhilePattern::WhilePattern(std::unique_ptr<PQLToken> first, std::string ident) :
-                OneArgClause(std::move(first), StmtNameRelationship::WhileCondVarUses, ident) {
+    OneArgClause(std::move(first), StmtNameRelationship::WhileCondVarUses, std::move(ident)) {
     validateArgs();
 }
