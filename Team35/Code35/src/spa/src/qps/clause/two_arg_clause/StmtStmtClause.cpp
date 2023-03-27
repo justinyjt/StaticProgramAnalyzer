@@ -15,7 +15,9 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
         {
             // Follows(s, s) or Parents(s, s) does not exist
             if (first->str() == second->str()) {
-                if (rs != StmtStmtRelationship::NextStar && rs != StmtStmtRelationship::Affects) {
+                if (rs != StmtStmtRelationship::NextStar
+                    && rs != StmtStmtRelationship::Affects
+                    && rs != StmtStmtRelationship::AffectsStar) {
                     return std::move(std::make_unique<BoolResult>(false));
                 }
                 // TO-DO: (YIYANG, JUSTIN)
