@@ -102,10 +102,6 @@ TableResult::TableResult(const std::string &ident1, const std::string &ident2,
     }
 }
 
-//bool TableResult::isEmpty() {
-//    return cols.size() == 0;
-//}
-
 std::unique_ptr<TableResult> TableResult::projectColumns(std::unordered_set<std::string> projectedColumns) { //
     std::vector<std::string> projectedIdents;
     std::vector<std::vector<std::string>> projectedRowsWithDuplicates(rows.size(), std::vector<std::string>());
@@ -144,10 +140,10 @@ std::unique_ptr<Result> TableResult::join(Result &rhs) {
 
     std::vector<std::string> headers1(idents.begin(), idents.end());
     std::vector<std::string> headers2(t2.idents.begin(), t2.idents.end());
-    std::list<int> commonHeaders1;
-    std::list<int> commonHeaders2;
-    std::list<int> nonCommonHeaders1;
-    std::list<int> nonCommonHeaders2;
+    std::vector<int> commonHeaders1;
+    std::vector<int> commonHeaders2;
+    std::vector<int> nonCommonHeaders1;
+    std::vector<int> nonCommonHeaders2;
     std::vector<std::string> outputHeaders;
     std::vector<std::vector<std::string>> outputColumns;
 
@@ -193,66 +189,41 @@ std::unique_ptr<Result> TableResult::join(Result &rhs) {
         }
     } else {
         // there are matching column headers, inner join
-
         // produce output headers
-        for (int idx : commonHeaders1) {
-            outputHeaders.push_back(headers1[idx]);
-        }
-        for (int idx : nonCommonHeaders1) {
-            outputHeaders.push_back(headers1[idx]);
-        }
+        outputHeaders.insert(outputHeaders.end(), idents.begin(), idents.end());
         for (int idx : nonCommonHeaders2) {
             outputHeaders.push_back(headers2[idx]);
         }
 
-        // separate cols in table into keys and values
-
-        std::vector<std::pair<std::vector<std::string>, std::vector<std::string>>> hashmap1;
-        for (std::vector<std::string> &row : rows) {
-            std::vector<std::string> rowVector(row.begin(), row.end());
-            std::vector<std::string> keys;
-            std::vector<std::string> values;
-            for (auto i : commonHeaders1) {
-                keys.push_back(rowVector.at(i));
-            }
-            for (auto i : nonCommonHeaders1) {
-                values.push_back(rowVector.at(i));
-            }
-            hashmap1.push_back(std::make_pair(keys, values));
-        }
-
-        std::vector<std::pair<std::vector<std::string>, std::vector<std::string>>> hashmap2;
-        for (std::vector
-            <std::string> &row : t2.rows) {
-            std::vector<std::string> rowVector(row.begin(), row.end());
-            std::vector<std::string> keys;
-            std::vector<std::string> values;
-            for (auto i : commonHeaders2) {
-                keys.push_back(rowVector.at(i));
-            }
-            for (auto i : nonCommonHeaders2) {
-                values.push_back(rowVector.at(i));
-            }
-            hashmap2.push_back(std::make_pair(keys, values));
-        }
-
-        // generate new table
-        for (auto &kv : hashmap1) {
-            std::vector<std::string> &key1 = kv.first;
-            std::vector<std::string> &value1 = kv.second;
-
-            // Look up the key in the second table
-            for (auto &kv2 : hashmap2) {
-                std::vector<std::string> &key2 = kv2.first;
-                std::vector<std::string> &value2 = kv2.second;
-                if (key1 == key2) {
-                    // append values from t1 and t2
-                    std::vector<std::string> res;
-                    res.insert(res.end(), key1.begin(), key1.end());
-                    res.insert(res.end(), value1.begin(), value1.end());
-                    res.insert(res.end(), value2.begin(), value2.end());
-                    outputColumns.push_back(res);
+        for (int i = 0; i < rows.size(); ++i) {
+            for (int j = 0; j < t2.rows.size(); ++j) {
+                bool match = true;
+                for (int k = 0; k < commonHeaders1.size(); ++k) {
+                    if (rows[i][commonHeaders1[k]] != t2.rows[j][commonHeaders2[k]]) {
+                        match = false;
+                        break;
+                    }
                 }
+                if (!match) {
+                    continue;
+                }
+                std::vector<std::string> concat;
+                for (auto &value : rows[i]) {
+                    concat.push_back(value);
+                }
+                for (int k = 0; k < t2.rows[j].size(); ++k) {
+                    bool canAdd = true;
+                    for (auto &header : commonHeaders2) {
+                        if (header == k) {
+                            canAdd = false;
+                            break;
+                        }
+                    }
+                    if (canAdd) {
+                        concat.push_back(t2.rows[j][k]);
+                    }
+                }
+                outputColumns.push_back(concat);
             }
         }
     }
@@ -283,12 +254,6 @@ void TableResult::output(std::list<std::string> &list) {
         }
     }
 }
-
-//// general constructor for n-cols
-//TableResult::TableResult(SelectResult &selectResult) : Result(Tag::TABLE) {
-//    idents = selectResult.idents;
-//    cols = selectResult.cols;
-//}
 
 bool TableResult::operator==(const Result &rhs) const {
     const TableResult *pRhs = dynamic_cast<const TableResult *>(&rhs);
