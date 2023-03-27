@@ -43,18 +43,21 @@ std::unique_ptr<Result> SelectResult::join(Result &rhs) {
         }
     }
 
-    TableResult& finalTableRes = dynamic_cast<TableResult&>(*finalRes);
+    std::unique_ptr<TableResult> finalTableRes = std::make_unique<TableResult>(dynamic_cast<TableResult&>(*finalRes));
+    std::unordered_set<std::string> selectIdents(idents.begin(), idents.end());
+    finalTableRes = finalTableRes->projectColumns(selectIdents);
+
     // get vector of indexes in order to be printed
     std::vector<int> order;
     for (int i = 0; i < idents.size(); i++) {
-        for (int j = 0; j < finalTableRes.idents.size(); j++) {
-            if (idents[i] == finalTableRes.idents[j]) {
+        for (int j = 0; j < finalTableRes->idents.size(); j++) {
+            if (idents[i] == finalTableRes->idents[j]) {
                 order.push_back(j);
             }
         }
     }
 
-    return std::make_unique<TableResult>(finalTableRes.idents, finalTableRes.rows, order);
+    return std::make_unique<TableResult>(finalTableRes->idents, finalTableRes->rows, order);
 }
 
 void SelectResult::output(std::list<std::string> &list) {

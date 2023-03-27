@@ -123,7 +123,7 @@ std::unique_ptr<TableResult> TableResult::projectColumns(std::unordered_set<std:
     std::vector<std::vector<std::string>> projectedRowsWithoutDuplicates;
     projectedRowsWithoutDuplicates.assign(rowSet.begin(), rowSet.end());
     std::unique_ptr<TableResult> tableResult = std::make_unique<TableResult>(
-        projectedIdents, projectedRowsWithDuplicates);
+        projectedIdents, projectedRowsWithoutDuplicates);
     return std::move(tableResult);
 }
 
