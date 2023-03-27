@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "qps/pql/Synonym.h"
 #include "commons/lexer/Lexer.h"

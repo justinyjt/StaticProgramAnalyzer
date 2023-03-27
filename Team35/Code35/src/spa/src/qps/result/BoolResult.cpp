@@ -1,5 +1,8 @@
 #include "BoolResult.h"
 
+#include <memory>
+#include <utility>
+
 BoolResult::BoolResult(bool b) : Result(Tag::BOOL), b(b) {
     isSelectBool = false;
 }

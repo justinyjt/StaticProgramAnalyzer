@@ -2,6 +2,8 @@
 #include "BoolResult.h"
 
 #include <iterator>
+#include <memory>
+#include <utility>
 #include <set>
 
 // general constructor for n-cols
@@ -102,7 +104,7 @@ TableResult::TableResult(const std::string &ident1, const std::string &ident2,
     }
 }
 
-std::unique_ptr<TableResult> TableResult::projectColumns(std::unordered_set<std::string> projectedColumns) { //
+std::unique_ptr<TableResult> TableResult::projectColumns(std::unordered_set<std::string> projectedColumns) {
     std::vector<std::string> projectedIdents;
     std::vector<std::vector<std::string>> projectedRowsWithDuplicates(rows.size(), std::vector<std::string>());
 
@@ -120,7 +122,8 @@ std::unique_ptr<TableResult> TableResult::projectColumns(std::unordered_set<std:
     std::set<std::vector<std::string>> rowSet(projectedRowsWithDuplicates.begin(), projectedRowsWithDuplicates.end());
     std::vector<std::vector<std::string>> projectedRowsWithoutDuplicates;
     projectedRowsWithoutDuplicates.assign(rowSet.begin(), rowSet.end());
-    std::unique_ptr<TableResult> tableResult = std::make_unique<TableResult>(projectedIdents, projectedRowsWithDuplicates);
+    std::unique_ptr<TableResult> tableResult = std::make_unique<TableResult>(
+        projectedIdents, projectedRowsWithDuplicates);
     return std::move(tableResult);
 }
 

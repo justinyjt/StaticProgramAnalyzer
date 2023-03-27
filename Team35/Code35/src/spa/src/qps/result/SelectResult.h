@@ -1,11 +1,12 @@
 #pragma once
-#include <string>
-#include <list>
-#include <vector>
 #include <iostream>
 #include <iterator>
+#include <list>
+#include <memory>
+#include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 #include "Result.h"
 #include "TableResult.h"

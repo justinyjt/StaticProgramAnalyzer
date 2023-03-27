@@ -1,5 +1,6 @@
 #include <cassert>
 #include <vector>
+#include <string>
 
 #include "SelectClause.h"
 #include "MultipleSynonymSelectClause.h"
@@ -7,8 +8,8 @@
 #include "qps/query_parser/helper.h"
 #include "qps/result/SelectResult.h"
 
-MultipleSynonymSelectClause::MultipleSynonymSelectClause(std::vector<std::unique_ptr<Synonym>>
-                                                         selectedSynonyms) : selectedSynonyms(std::move(selectedSynonyms)) {}
+MultipleSynonymSelectClause::MultipleSynonymSelectClause(std::vector<std::unique_ptr<Synonym>> selectedSynonyms) :
+    selectedSynonyms(std::move(selectedSynonyms)) {}
 
 std::unique_ptr<Result> MultipleSynonymSelectClause::evaluate(PKBReader *db) {
     // loop through synonyms and get tables

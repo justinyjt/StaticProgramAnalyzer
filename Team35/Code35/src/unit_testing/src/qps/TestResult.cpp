@@ -1,7 +1,6 @@
 #include "catch.hpp"
 #include "../TestHelper.h"
 #include "qps/result/TableResult.h"
-#include "qps/result/BoolResult.h"
 
 TEST_CASE("Test join: 1 common column") {
     std::vector<std::string> header1 = {"s", "v"};
@@ -25,78 +24,6 @@ TEST_CASE("Test join: 1 common column") {
 
     requireTrue(expectedResult == tableResult1->join(*tableResult2));
 }
-
-//TEST_CASE("Test join: true and true") {
-//    std::unique_ptr<BoolResult> boolResult1 = std::make_unique<BoolResult>(true);
-//
-//    std::unique_ptr<BoolResult> boolResult2 = std::make_unique<BoolResult>(true);
-//
-//    std::unique_ptr<BoolResult> expectedResult = std::make_unique<BoolResult>(true);
-//
-//    requireTrue(*expectedResult == *(Result::join(*boolResult1, *boolResult2)));
-//}
-//
-//TEST_CASE("Test join: true and false") {
-//    std::unique_ptr<BoolResult> boolResult1 = std::make_unique<BoolResult>(true);
-//
-//    std::unique_ptr<BoolResult> boolResult2 = std::make_unique<BoolResult>(false);
-//
-//    std::unique_ptr<BoolResult> expectedResult = std::make_unique<BoolResult>(false);
-//
-//    requireTrue(*expectedResult == *(Result::join(*boolResult1, *boolResult2)));
-//}
-//
-//TEST_CASE("Test join: false and true") {
-//    std::unique_ptr<BoolResult> boolResult1 = std::make_unique<BoolResult>(false);
-//
-//    std::unique_ptr<BoolResult> boolResult2 = std::make_unique<BoolResult>(true);
-//
-//    std::unique_ptr<BoolResult> expectedResult = std::make_unique<BoolResult>(false);
-//
-//    requireTrue(*expectedResult == *(Result::join(*boolResult1, *boolResult2)));
-//}
-//
-//TEST_CASE("Test join: false and false") {
-//    std::unique_ptr<BoolResult> boolResult1 = std::make_unique<BoolResult>(true);
-//
-//    std::unique_ptr<BoolResult> boolResult2 = std::make_unique<BoolResult>(true);
-//
-//    std::unique_ptr<BoolResult> expectedResult = std::make_unique<BoolResult>(true);
-//
-//    requireTrue(*expectedResult == *(Result::join(*boolResult1, *boolResult2)));
-//}
-//
-//TEST_CASE("Test join: true and table") {
-//    std::unique_ptr<BoolResult> boolResult = std::make_unique<BoolResult>(true);
-//
-//    std::vector<std::string> header2 = {"a", "v"};
-//    std::vector<std::vector<std::string>> rows2;
-//    rows2.push_back({"1", "x"});
-//    rows2.push_back({"1", "z"});
-//    std::unique_ptr<TableResult> tableResult2 = std::make_unique<TableResult>(header2, rows2);
-//
-//    std::vector<std::string> resultHeader = {"a", "v"};
-//    std::vector<std::vector<std::string>> resultRows;
-//    resultRows.push_back({"1", "x"});
-//    resultRows.push_back({"1", "z"});
-//    std::unique_ptr<TableResult> expectedResult = std::make_unique<TableResult>(resultHeader, resultRows);
-//
-//    requireTrue(*expectedResult == *(Result::join(*boolResult, *tableResult2)));
-//}
-//
-//TEST_CASE("Test join: false and table") {
-//    std::unique_ptr<BoolResult> boolResult = std::make_unique<BoolResult>(false);
-//
-//    std::vector<std::string> header2 = {"a", "v"};
-//    std::vector<std::vector<std::string>> rows2;
-//    rows2.push_back({"1", "x"});
-//    rows2.push_back({"1", "z"});
-//    std::unique_ptr<TableResult> tableResult2 = std::make_unique<TableResult>(header2, rows2);
-//
-//    std::unique_ptr<BoolResult> expectedResult = std::make_unique<BoolResult>(false);
-//
-//    requireTrue(*expectedResult == *(Result::join(*boolResult, *tableResult2)));
-//}
 
 TEST_CASE("Test join: 2 common columns") {
     std::vector<std::string> header1 = {"s", "v", "c"};
@@ -215,33 +142,3 @@ TEST_CASE("Test output") {
     std::unique_ptr<TableResult> outputTable = std::make_unique<TableResult>(outputHeaders, outputRows);
     requireTrue(*outputTable == *resultTable);
 }
-
-//TEST_CASE("Test output selected does not match") {
-//    std::vector<std::string> result;
-//    std::unique_ptr<BoolResult> boolResult = std::make_unique<BoolResult>(false);
-//
-//    std::vector<std::string> header2 = {"a", "b"};
-//    std::vector<std::vector<std::string>> rows2;
-//    rows2.push_back({"1", "x"});
-//    rows2.push_back({"2", "x"});
-//    std::unique_ptr<TableResult> tableResult2 = std::make_unique<TableResult>(header2, rows2);
-//
-//    std::unique_ptr<Result> resultTable = Result::join(*boolResult, *tableResult2);
-//    std::unique_ptr<BoolResult> outputTable = std::make_unique<BoolResult>(false);
-//    std::string col = "c";
-//    resultTable->output(result);
-//
-//    requireTrue(*outputTable == *(Result::join(*boolResult, *tableResult2)));
-//}
-//
-//TEST_CASE("Test output empty") {
-//    std::vector<std::string> result;
-//    std::vector<std::string> header2 = {"a"};
-//    std::vector<std::vector<std::string>> rows2;
-//    std::unique_ptr<TableResult> tableResult2 = std::make_unique<TableResult>(header2, rows2);
-//
-//    std::string col = "a";
-//    tableResult2->output(result);
-//
-//    requireTrue(result.size() == 0);
-//}

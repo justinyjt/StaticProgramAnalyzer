@@ -1,7 +1,9 @@
 #include "SelectResult.h"
-#include "IdentityResult.h"
 
 #include <iterator>
+#include <memory>
+
+#include "BoolResult.h"
 
 // general constructor for n-cols
 SelectResult::SelectResult(std::vector<std::string> &_idents, const std::vector<TableResult> &_cols) :
@@ -36,7 +38,7 @@ std::unique_ptr<Result> SelectResult::join(Result &rhs) {
     std::unordered_set<std::string> intermediateIdentsSet(t2.idents.begin(), t2.idents.end());
     std::unique_ptr<Result> finalRes = std::make_unique<TableResult>(TableResult(t2));
     for (int i = 0; i < idents.size(); i++) {
-        if (intermediateIdentsSet.find(idents[i]) == intermediateIdentsSet.end()) { // if non-overlapping
+        if (intermediateIdentsSet.find(idents[i]) == intermediateIdentsSet.end()) {  // if non-overlapping
             finalRes = finalRes->join(cols[i]);
         }
     }

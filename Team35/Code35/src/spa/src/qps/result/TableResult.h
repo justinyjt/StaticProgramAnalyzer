@@ -7,16 +7,16 @@
 #include <iterator>
 #include <unordered_set>
 #include <set>
+#include <memory>
 
 #include "Result.h"
-//#include "SelectResult.h"
 
 // n-col result
 class TableResult : public Result {
  public:
     std::vector<std::string> idents;  // eg list<"r", "s1">
     std::vector<std::vector<std::string>> rows;  // eg vector<list<1,1>, list<3,2>, ...>
-    std::optional<std::vector<int>> order; // Order in which to output result
+    std::optional<std::vector<int>> order;  // Order in which to output result
 
     // general constructor for n-cols
     TableResult(const std::vector<std::string> &_idents,
@@ -55,10 +55,8 @@ class TableResult : public Result {
     // 2 col with ENT_SET
     TableResult(const std::string &ident, const std::string &ident2, const std::vector<ENT_NAME> &set);
 
-    // SelectResult
-//    explicit TableResult(SelectResult &selectResult);
-
     std::unique_ptr<TableResult> projectColumns(std::unordered_set<std::string> projectedColumns);
+
     std::unique_ptr<Result> join(Result &rhs);
 
     void output(std::list<std::string> &list) override;
