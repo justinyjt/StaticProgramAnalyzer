@@ -44,24 +44,31 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Create Build Environment
-        run: cmake -E make_directory ${{runner.workspace}}/build
+        run: cmake -E make_directory ${{runner.workspace}}/22s2-cp-spa-team-35/build
 
       - name: Configure CMake
         shell: bash
-        working-directory: ${{runner.workspace}}/build
+        working-directory: ${{runner.workspace}}/22s2-cp-spa-team-35/build
         run: cmake $GITHUB_WORKSPACE/Team35/Code35/ -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
       - name: Build Project
-        working-directory: ${{runner.workspace}}/build
+        working-directory: ${{runner.workspace}}/22s2-cp-spa-team-35/build
         shell: bash
         run: cmake --build . --config $BUILD_TYPE
 
       - name: Run Unit Test
-        working-directory: ${{runner.workspace}}/build
+        working-directory: ${{runner.workspace}}/22s2-cp-spa-team-35/build
         shell: bash
         run: ./src/unit_testing/unit_testing
 
       - name: Run Integration Test
-        working-directory: ${{runner.workspace}}/build
+        working-directory: ${{runner.workspace}}/22s2-cp-spa-team-35/build
         shell: bash
         run: ./src/integration_testing/integration_testing
+# root
+      - name: Run System Test
+        working-directory: ${{runner.workspace}}/22s2-cp-spa-team-35/build
+        shell: bash
+        run: |
+          chmod +wx ./src/autotester/autotester
+          bash ../Team35/Code35/autotester.sh
