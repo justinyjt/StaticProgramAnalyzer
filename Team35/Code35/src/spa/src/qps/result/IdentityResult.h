@@ -8,7 +8,7 @@
 // scalar result
 class IdentityResult : public Result {
  public:
-    explicit IdentityResult();
+    IdentityResult();
 
     std::unique_ptr<Result> join(Result &rhs);
 

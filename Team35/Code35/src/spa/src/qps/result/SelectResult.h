@@ -29,5 +29,4 @@ class SelectResult : public Result {
 
  private:
     std::unique_ptr<Result> getColsCrossProduct();
-
 };
