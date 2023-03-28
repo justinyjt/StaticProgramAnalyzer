@@ -2,7 +2,6 @@
 
 #include "qps/query_exceptions/SyntaxException.h"
 #include "qps/query_exceptions/SemanticException.h"
-#include "qps/clause/select_clause/SingleSynonymSelectClause.h"
 
 QPS::QPS(PKBReader *pkbReader)
     : queryEvaluator(std::make_unique<QueryEvaluator>(pkbReader)), queryParser(std::make_unique<QueryParser>()) {}

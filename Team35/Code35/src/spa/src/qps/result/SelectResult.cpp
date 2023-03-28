@@ -1,89 +1,72 @@
 #include "SelectResult.h"
 
 #include <iterator>
+#include <memory>
+
+#include "BoolResult.h"
 
 // general constructor for n-cols
-SelectResult::SelectResult(std::list<std::string> &_idents,
-                           const std::vector<std::list<std::string>> &_rows, std::string selected) :
-        Result(Tag::SELECT), selected(selected) {
+SelectResult::SelectResult(std::vector<std::string> &_idents, const std::vector<TableResult> &_cols) :
+        Result(Tag::SELECT) {
     idents.insert(idents.end(), _idents.begin(), _idents.end());
-    rows.insert(rows.end(), _rows.begin(), _rows.end());
+    cols.insert(cols.end(), _cols.begin(), _cols.end());
 }
 
-// constructor for empty table
-SelectResult::SelectResult() : Result(Tag::SELECT) {}
-
-// for 2 cols with STMT_ENT_SET
-SelectResult::SelectResult(const std::string &ident1, const std::string &ident2,
-                         STMT_ENT_SET &set, std::string selected) : Result(Tag::SELECT), selected(selected) {
-    idents.push_back(ident1);
-    idents.push_back(ident2);
-    for (auto &p : set) {
-        rows.emplace_back(
-                std::initializer_list<std::string>
-                        {std::to_string(p.first), p.second});
+std::unique_ptr<Result> SelectResult::getColsCrossProduct() {
+    std::unique_ptr<Result> finalRes = std::make_unique<TableResult>(TableResult(cols[0]));
+    std::vector<int> order(1, 0);
+    for (int i = 1; i < cols.size(); i++) {
+        finalRes = finalRes->join(cols[i]);
+        order.push_back(i);
     }
+    TableResult& finalTableRes = dynamic_cast<TableResult&>(*finalRes);
+
+    return std::make_unique<TableResult>(TableResult(finalTableRes.idents, finalTableRes.rows, order));
 }
 
-// for 2 cols with STMT_STMT_SET
-SelectResult::SelectResult(const std::string &ident1, const std::string &ident2,
-                         STMT_STMT_SET &set, std::string selected) : Result(Tag::SELECT), selected(selected) {
-    idents.push_back(ident1);
-    idents.push_back(ident2);
-    for (auto &p : set) {
-        rows.emplace_back(
-                std::initializer_list<std::string>
-                        {std::to_string(p.first), std::to_string(p.second)});
+
+std::unique_ptr<Result> SelectResult::join(Result &rhs) {
+    if (rhs.tag == Result::Tag::IDENTITY) {
+        return getColsCrossProduct();
     }
-}
-
-// for 2 cols with ENT_ENT_SET
-SelectResult::SelectResult(const std::string &ident1, const std::string &ident2,
-                         ENT_ENT_SET &set, std::string selected) : Result(Tag::SELECT), selected(selected) {
-    idents.push_back(ident1);
-    idents.push_back(ident2);
-    for (auto &p : set) {
-        rows.emplace_back(
-                std::initializer_list<std::string>
-                        {p.first, p.second});
+    if (rhs.tag == Tag::BOOL) {
+        BoolResult &boolRes = dynamic_cast<BoolResult &>(rhs);
+        if (boolRes.b) {
+            return getColsCrossProduct();
+        }
+        return std::make_unique<TableResult>(TableResult());
     }
-}
 
-// for 2 cols with vector<list<string>>
-SelectResult::SelectResult(const std::string &ident1, const std::string &ident2,
-                           const std::vector<std::list<std::string>> &vec, std::string selected) :
-        Result(Tag::SELECT), selected(selected) {
-    idents.push_back(ident1);
-    idents.push_back(ident2);
-    rows.insert(rows.end(), vec.begin(), vec.end());
-}
+    TableResult &t2 = dynamic_cast<TableResult &>(rhs);
+    std::unordered_set<std::string> intermediateIdentsSet(t2.idents.begin(), t2.idents.end());
+    std::unique_ptr<Result> finalRes = std::make_unique<TableResult>(TableResult(t2));
+    for (int i = 0; i < idents.size(); i++) {
+        if (intermediateIdentsSet.find(idents[i]) == intermediateIdentsSet.end()) {  // if non-overlapping
+            finalRes = finalRes->join(cols[i]);
+        }
+    }
 
-// for 1 col with ENT_SET
-SelectResult::SelectResult(const std::string &ident, ENT_SET &set, std::string selected)
-        : Result(Tag::SELECT), selected(selected) {
-    idents.push_back(ident);
-    for (auto &elem : set)
-        rows.emplace_back(
-                std::initializer_list<std::string>{elem});
-}
+    std::unique_ptr<TableResult> finalTableRes = std::make_unique<TableResult>(dynamic_cast<TableResult&>(*finalRes));
+    std::unordered_set<std::string> selectIdents(idents.begin(), idents.end());
+    finalTableRes = finalTableRes->projectColumns(selectIdents);
 
-// for 1 col with STMT_SET
-SelectResult::SelectResult(const std::string &ident, STMT_SET &set, std::string selected) :
-        Result(Tag::SELECT), selected(selected) {
-    idents.push_back(ident);
-    for (auto &elem : set)
-        rows.emplace_back(
-                std::initializer_list<std::string>{std::to_string(elem)});
+    // get vector of indexes in order to be printed
+    std::vector<int> order;
+    for (int i = 0; i < idents.size(); i++) {
+        for (int j = 0; j < finalTableRes->idents.size(); j++) {
+            if (idents[i] == finalTableRes->idents[j]) {
+                order.push_back(j);
+            }
+        }
+    }
+
+    return std::make_unique<TableResult>(finalTableRes->idents, finalTableRes->rows, order);
 }
 
 void SelectResult::output(std::list<std::string> &list) {
-    // results already finalised from selectJoin, rows/tuples assumed to be a single element for now
-    for (auto &elem : rows) {
-        list.push_back(elem.front());
-    }
 }
 
 bool SelectResult::operator==(const Result &rhs) const {
     const SelectResult *pRhs = dynamic_cast<const SelectResult *>(&rhs);
-    return pRhs != nullptr && idents == pRhs->idents && rows == pRhs->rows;
+    return pRhs != nullptr && idents == pRhs->idents && cols == pRhs->cols;
 }

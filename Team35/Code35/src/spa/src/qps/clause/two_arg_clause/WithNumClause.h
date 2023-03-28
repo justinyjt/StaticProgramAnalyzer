@@ -28,5 +28,8 @@ class WithNumClause : public TwoArgClause {
 
     static std::unique_ptr<Result> handleNoConstCaseNum(PKBReader *db, Synonym syn, STMT_NUM num);
 
+    static std::unique_ptr<Result> handleSameSynCase(PKBReader *db, Synonym syn);
+
+
     bool operator==(const Clause &rhs) const override;
 };

@@ -95,6 +95,19 @@ std::unique_ptr<Result> WithNumClause::handleNoConstCaseNum(PKBReader *db, Synon
     return std::move(res);
 }
 
+std::unique_ptr<Result> WithNumClause::handleSameSynCase(PKBReader *db, Synonym syn) {
+    std::unique_ptr<Result> res;
+    if (syn.de == Synonym::DesignEntity::CONSTANT) {
+        ENT_SET constSet = db->getEntities(Entity::Constant);
+        res = std::make_unique<TableResult>(syn.str(), constSet);
+    } else {
+        STMT_SET stmtSet = getStmtNumsFromSyn(syn, db);
+        res = std::make_unique<TableResult>(syn.str(), stmtSet);
+    }
+    return std::move(res);
+}
+
+
 std::unique_ptr<Result> WithNumClause::evaluate(PKBReader *db) {
     /* <SYNONYM | NUM>, <SYNONYM | NUM> */
 
@@ -103,6 +116,11 @@ std::unique_ptr<Result> WithNumClause::evaluate(PKBReader *db) {
         {
             Synonym syn1 = dynamic_cast<Synonym &>(*first);
             Synonym syn2 = dynamic_cast<Synonym &>(*second);
+
+            if (first->str() == second->str()) {
+                return handleSameSynCase(db, syn1);
+            }
+
             if (syn1.de == Synonym::DesignEntity::CONSTANT && syn2.de == Synonym::DesignEntity::CONSTANT) {
                 return handleTwoConstCase(db, syn1.str(), syn2.str());
             } else if (syn1.de == Synonym::DesignEntity::CONSTANT) {

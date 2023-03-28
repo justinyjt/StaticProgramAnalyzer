@@ -82,10 +82,11 @@ TEST_CASE("1. Test WithEntClause") {
         WithEntClause withEntClause = WithEntClause(std::move(arg1), std::move(arg2));
         STMT_ENT_SET printSet{STMT_ENT(1, "a"), STMT_ENT(2, "b")};
         STMT_ENT_SET readSet{STMT_ENT(3, "b"), STMT_ENT(4, "c")};
-        auto expectedResult = dynamic_cast<TableResult &>(*Result::join(*std::make_unique<TableResult>(
-            TableResult("pr", "common-name", printSet)),
-           *std::make_unique<TableResult>(TableResult("r", "common-name", readSet))));
+        auto expectedResult =
+                std::make_unique<TableResult>(TableResult("pr", "common-name", printSet))->join(
+           *std::make_unique<TableResult>(TableResult("r", "common-name", readSet)));
         auto actualResult = withEntClause.evaluate(pkbReaderPtr);
-        requireTrue(expectedResult == *actualResult);
+        requireTrue(*(dynamic_cast<TableResult*>(expectedResult.get()))
+                    == *(dynamic_cast<TableResult*>(actualResult.get())));
     }
 }
