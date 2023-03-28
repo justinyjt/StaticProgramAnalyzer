@@ -1,5 +1,6 @@
 #include "qps/QueryEvaluator.h"
 #include "qps/result/SelectResult.h"
+#include "qps/result/IdentityResult.h"
 
 QueryEvaluator::QueryEvaluator(PKBReader *db) : db(db) {}
 
@@ -7,13 +8,13 @@ std::unique_ptr<Result> QueryEvaluator::evaluate(std::pair<std::unique_ptr<Selec
         std::vector<std::unique_ptr<Clause>>> clausePair) const {
     std::unique_ptr<SelectClause> selectClause = std::move(clausePair.first);
     std::vector<std::unique_ptr<Clause>> clauses = std::move(clausePair.second);
-    std::unique_ptr<Result> selectList;
+    std::unique_ptr<Result> selectRes;
 
     // if no clauses, just return select list
     if (clauses.size() == 0) {
-        selectList = selectClause->evaluate(db);
-        SelectResult s = dynamic_cast<SelectResult&>(*selectList);
-        return s.getColsCrossProduct();
+        selectRes = selectClause->evaluate(db);
+        std::unique_ptr<Result> identRes = std::make_unique<IdentityResult>();
+        return selectRes->join(*identRes);
     }
     std::unique_ptr<Result> curr = clauses[0]->evaluate(db);
     int i = 1;
@@ -25,7 +26,7 @@ std::unique_ptr<Result> QueryEvaluator::evaluate(std::pair<std::unique_ptr<Selec
     }
 
     // finally, join with the select clause
-    selectList = selectClause->evaluate(db);
-    std::unique_ptr<Result> finalRes = selectList->join(*curr);
+    selectRes = selectClause->evaluate(db);
+    std::unique_ptr<Result> finalRes = selectRes->join(*curr);
     return std::move(finalRes);
 }

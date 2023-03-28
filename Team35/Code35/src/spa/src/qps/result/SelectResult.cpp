@@ -26,6 +26,9 @@ std::unique_ptr<Result> SelectResult::getColsCrossProduct() {
 
 
 std::unique_ptr<Result> SelectResult::join(Result &rhs) {
+    if (rhs.tag == Result::Tag::IDENTITY) {
+        return getColsCrossProduct();
+    }
     if (rhs.tag == Tag::BOOL) {
         BoolResult &boolRes = dynamic_cast<BoolResult &>(rhs);
         if (boolRes.b) {

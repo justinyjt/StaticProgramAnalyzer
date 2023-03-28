@@ -15,14 +15,18 @@ or query evaluation (multiple clause evaluations)
 
 class Result {
  public:
-    enum class Tag { BOOL, TABLE, SELECT };
+    enum class Tag { BOOL, TABLE, SELECT, IDENTITY };
     explicit Result(Tag);
 
     virtual ~Result() = default;
+
     virtual void output(std::list<std::string> &) = 0;
+
     virtual std::unique_ptr<Result> join(Result &) = 0;
+
     static std::unique_ptr<Result> selectJoin(Result &, Result &);
+
     static std::unique_ptr<Result> tableJoin(Result &, Result &);
-//    std::unique_ptr<Result> projectColumns()
+
     Tag tag;
 };
