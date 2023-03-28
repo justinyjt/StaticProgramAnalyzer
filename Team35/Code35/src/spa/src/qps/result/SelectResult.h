@@ -20,11 +20,14 @@ class SelectResult : public Result {
     // general constructor for n-cols
     SelectResult(std::vector<std::string> &_idents, const std::vector<TableResult> &_cols);
 
-    std::unique_ptr<Result> getColsCrossProduct();
 
     std::unique_ptr<Result> join(Result &rhs);
 
     void output(std::list<std::string> &list) override;
 
     bool operator==(const Result &rhs) const;
+
+ private:
+    std::unique_ptr<Result> getColsCrossProduct();
+
 };

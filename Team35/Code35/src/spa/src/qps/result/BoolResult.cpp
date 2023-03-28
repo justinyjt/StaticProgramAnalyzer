@@ -10,7 +10,7 @@ BoolResult::BoolResult(bool b) : Result(Tag::BOOL), b(b) {
 BoolResult::BoolResult(bool b, bool isSelectBool) : Result(Tag::BOOL), b(b), isSelectBool(isSelectBool) {}
 
 std::unique_ptr<Result> BoolResult::join(Result &rhs) {
-    if (!b) {
+    if (!b || rhs.tag == Result::Tag::IDENTITY) {
         return std::make_unique<BoolResult>(std::move(*this));
     }
     if (rhs.tag == Tag::BOOL) {
