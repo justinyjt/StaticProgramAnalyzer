@@ -1,4 +1,3 @@
-#include <cassert>
 #include <string>
 #include <utility>
 
@@ -38,7 +37,6 @@ bool QuerySyntaxValidator::validateDeclarationLst() {
 
 
 bool QuerySyntaxValidator::validateDeclaration() {
-    assert(scanner_.peekDesignEntity());
     scanner_.next();
     if (!scanner_.isName() && !scanner_.peek(Token::Tag::Bool)) {
         return false;
@@ -100,9 +98,7 @@ bool QuerySyntaxValidator::validateClause() {
 }
 
 bool QuerySyntaxValidator::validateSuchThatClause() {
-    assert(scanner_.peek(Token::Tag::Such));
     scanner_.next();
-    assert(scanner_.peek(Token::Tag::That));
     scanner_.next();
     return validateRelCond();
 }
@@ -220,7 +216,6 @@ bool QuerySyntaxValidator::validateModifiesUsesRef() {
 }
 
 bool QuerySyntaxValidator::validatePatternClause() {
-    assert(scanner_.peek(Token::Tag::Pattern));
     scanner_.next();
     return validatePatternCond();
 }
@@ -347,7 +342,6 @@ bool QuerySyntaxValidator::validateIfPattern() {
 }
 
 bool QuerySyntaxValidator::validateWithClause() {
-    assert(scanner_.peek(Token::Tag::With));
     scanner_.next();
     return validateAttrCond();
 }
@@ -479,7 +473,6 @@ bool QuerySyntaxValidator::validateTuple() {
 }
 
 bool QuerySyntaxValidator::validateMultipleElem() {
-    assert(scanner_.peek(Token::Tag::LessThan));
     scanner_.next();
     if (!validateElem()) {
         return false;
