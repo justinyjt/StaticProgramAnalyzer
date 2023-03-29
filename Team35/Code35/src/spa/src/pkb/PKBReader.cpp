@@ -94,6 +94,36 @@ STMT_STMT_SET PKBReader::getAllRelationships(StmtStmtRelationship tableType) {
     }
 }
 
+STMT_STMT_SET PKBReader::getAllRelationshipsWithFilter(StmtStmtRelationship tableType, StmtType stmtType) {
+    STMT_STMT_SET s = this->getAllRelationships(tableType);
+    STMT_SET filterSet = this->getStatements(stmtType);
+    STMT_STMT_SET result;
+    for (auto const &stmtStmtPair : s) {
+        auto &stmt1 = stmtStmtPair.first;
+        auto &stmt2 = stmtStmtPair.second;
+        if (stmt1 == stmt2 && filterSet.find(stmt1) != filterSet.end()) {
+            result.emplace(stmt1, stmt2);
+        }
+    }
+    return result;
+}
+
+STMT_STMT_SET
+PKBReader::getAllRelationshipsWithFilter(StmtStmtRelationship tableType, StmtType first, StmtType second) {
+    STMT_STMT_SET s = this->getAllRelationships(tableType);
+    STMT_SET filterFirst = this->getStatements(first);
+    STMT_SET filterSecond = this->getStatements(second);
+    STMT_STMT_SET result;
+    for (auto const &stmtStmtPair : s) {
+        auto &stmt1 = stmtStmtPair.first;
+        auto &stmt2 = stmtStmtPair.second;
+        if (filterFirst.find(stmt1) != filterFirst.end() && filterSecond.find(stmt2) != filterSecond.end()) {
+            result.emplace(stmt1, stmt2);
+        }
+    }
+    return result;
+}
+
 STMT_SET PKBReader::getKeyStmtByRelationship(StmtStmtRelationship tableType) const {
     switch (tableType) {
         case StmtStmtRelationship::AffectsStar:

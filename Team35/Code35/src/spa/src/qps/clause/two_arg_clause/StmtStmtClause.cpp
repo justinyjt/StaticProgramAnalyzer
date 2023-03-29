@@ -20,30 +20,15 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
                     && rs != StmtStmtRelationship::AffectsStar) {
                     return std::make_unique<BoolResult>(false);
                 }
-                // TO-DO: (YIYANG, JUSTIN)
                 // Next*(s, s), Affects(s, s), Affects*(s,s)
-                STMT_STMT_SET s = db->getAllRelationships(rs);
-                STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*first).de));
-                STMT_STMT_SET res;
-                for (auto const &stmtStmtPair : s) {
-                    auto &stmt1 = stmtStmtPair.first;
-                    auto &stmt2 = stmtStmtPair.second;
-                    if (stmt1 == stmt2 && filterSet.find(stmt1) != filterSet.end()) {
-                        res.emplace(stmt1, stmt2);
-                    }
-                }
-                std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), second->str(), res);
-                return std::move(result);
+                STMT_STMT_SET res = db->getAllRelationshipsWithFilter(rs,
+                                                                      getStmtType(dynamic_cast<Synonym &>(*first).de));
+                return std::make_unique<TableResult>(first->str(), second->str(), res);
             }
-            STMT_STMT_SET s = db->getAllRelationships(rs);
-            STMT_SET filterSetByFirst = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*first).de));
-            STMT_SET filterSetBySecond = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*second).de));
-            std::unique_ptr<Result> intermediateResult1 = std::make_unique<TableResult>(first->str(), filterSetByFirst);
-            std::unique_ptr<Result>
-                    intermediateResult2 = std::make_unique<TableResult>(second->str(), filterSetBySecond);
-            std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), second->str(), s);
-            std::unique_ptr<Result> joinedResult = result->join(*intermediateResult1);
-            return std::move(joinedResult->join(*intermediateResult2));
+            STMT_STMT_SET res = db->getAllRelationshipsWithFilter(rs,
+                                                                  getStmtType(dynamic_cast<Synonym &>(*first).de),
+                                                                  getStmtType(dynamic_cast<Synonym &>(*second).de));
+            return std::make_unique<TableResult>(first->str(), second->str(), res);
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::STMT_NUM):  // Parent/Follows(stmt, 5) -> int[]
         {
