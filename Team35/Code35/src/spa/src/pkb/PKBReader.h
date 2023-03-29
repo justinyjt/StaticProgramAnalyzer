@@ -39,13 +39,16 @@ class PKBReader {
 
     STMT_SET getRelationshipByVal(StmtStmtRelationship tableType, STMT_NUM valName) const;
 
+    STMT_SET
+    getRelationshipByStmtWithFilter(StmtStmtRelationship tableType, STMT_NUM stmt, StmtType stmtType, bool isKey) const;
+
     STMT_STMT_SET getAllRelationships(StmtStmtRelationship tableType);
 
     STMT_SET getKeyStmtByRelationship(StmtStmtRelationship tableType) const;
 
     STMT_SET getValueStmtByRelationship(StmtStmtRelationship tableType) const;
 
-    STMT_SET getValueStmtByRelationshipWithFilter(StmtStmtRelationship tableType, StmtType stmtType) const;
+    STMT_SET getStmtByRelationshipWithFilter(StmtStmtRelationship tableType, StmtType stmtType, bool isKey) const;
 
     STMT_SET getStmtByRs(StmtStmtRelationship tableType) const;
 
@@ -87,5 +90,14 @@ class PKBReader {
 
     bool isModifies(STMT_NUM key, const ENT_NAME &val) const;
 
-    STMT_SET getInnerJoin(STMT_SET first, STMT_SET second) const;
+    template<typename T>
+    unordered_set<T> getInnerJoin(unordered_set<T> first, unordered_set<T> second) const {
+        unordered_set<T> result;
+        for (auto &stmt : first) {
+            if (second.find(stmt) != second.end()) {
+                result.insert(stmt);
+            }
+        }
+        return result;
+    }
 };

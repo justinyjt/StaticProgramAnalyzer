@@ -74,6 +74,15 @@ STMT_SET PKBReader::getRelationshipByVal(StmtStmtRelationship tableType, STMT_NU
     }
 }
 
+STMT_SET PKBReader::getRelationshipByStmtWithFilter(StmtStmtRelationship tableType, STMT_NUM stmt, StmtType stmtType,
+                                                    bool isKey) const {
+    STMT_SET parentStmtSet = isKey
+                             ? this->getRelationshipByKey(tableType, stmt)
+                             : this->getRelationshipByVal(tableType, stmt);
+    STMT_SET filterSet = this->getStatements(stmtType);
+    return this->getInnerJoin(parentStmtSet, filterSet);
+}
+
 STMT_STMT_SET PKBReader::getAllRelationships(StmtStmtRelationship tableType) {
     switch (tableType) {
         case StmtStmtRelationship::AffectsStar:
@@ -138,23 +147,13 @@ bool PKBReader::hasRelationship(StmtStmtRelationship tableType) const {
     }
 }
 
-STMT_SET PKBReader::getValueStmtByRelationshipWithFilter(StmtStmtRelationship tableType, StmtType stmtType) const {
-    STMT_SET parentStmtSet = this->getValueStmtByRelationship(tableType);
+STMT_SET
+PKBReader::getStmtByRelationshipWithFilter(StmtStmtRelationship tableType, StmtType stmtType, bool isKey) const {
+    STMT_SET parentStmtSet = isKey
+                             ? this->getKeyStmtByRelationship(tableType)
+                             : this->getValueStmtByRelationship(tableType);
     STMT_SET filterSet = this->getStatements(stmtType);
     return this->getInnerJoin(parentStmtSet, filterSet);
-}
-
-
-STMT_SET PKBReader::getInnerJoin(STMT_SET first, STMT_SET second) const {
-    STMT_SET result;
-    for (auto &stmt1 : first) {
-        for (auto &stmt2 : second) {
-            if (stmt1 == stmt2) {
-                result.insert(stmt1);
-            }
-        }
-    }
-    return result;
 }
 
 STMT_SET PKBReader::getStmtWithExactPatternMatch(ASSIGN_PAT_RIGHT &pattern) const {
