@@ -102,8 +102,8 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
         }
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::WILDCARD):  // Parent/Follows(_, _) -> bool
         {
-            STMT_STMT_SET s = db->getAllRelationships(rs);
-            std::unique_ptr<Result> result = std::make_unique<BoolResult>(!s.empty());
+//            STMT_STMT_SET s = db->getAllRelationships(rs);
+            std::unique_ptr<Result> result = std::make_unique<BoolResult>(db->hasRelationship(rs));
             return std::move(result);
         }
         default:

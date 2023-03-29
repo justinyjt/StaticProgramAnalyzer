@@ -128,6 +128,18 @@ bool PKBReader::isRelationshipExists(StmtStmtRelationship tableType, STMT_NUM ke
     }
 }
 
+bool PKBReader::hasRelationship(StmtStmtRelationship tableType) const {
+    switch (tableType) {
+        case StmtStmtRelationship::AffectsStar:
+        case StmtStmtRelationship::Affects:
+            return this->hasAffects();
+        default:
+            return pkb.isRelationshipExists(tableType);
+
+
+    }
+}
+
 STMT_SET PKBReader::getStmtWithExactPatternMatch(ASSIGN_PAT_RIGHT &pattern) const {
     return pkb.getPatternTable().getExactPatternMatch(pattern);
 }

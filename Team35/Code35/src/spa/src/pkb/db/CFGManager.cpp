@@ -59,7 +59,7 @@ bool CFGManager::isNext(STMT_NUM first, STMT_NUM second, bool isTransitive) cons
     return curr.isReachable(first, second, !isTransitive);
 }
 
-bool CFGManager::isNextExists() {
+bool CFGManager::isNextExists() const {
     return any_of(this->graphs_.begin(), this->graphs_.end(), [](const CFGraph &curr) {
         return curr.getMaxStmtNum() - curr.getMinStmtNum() > 1;
     });

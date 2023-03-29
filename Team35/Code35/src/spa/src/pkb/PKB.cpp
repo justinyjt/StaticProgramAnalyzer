@@ -276,3 +276,14 @@ bool PKB::isStmtStmtPairExists(StmtStmtRelationship tableType, STMT_NUM key, STM
 bool PKB::isEntityTypeExists(StmtType tableType, STMT_NUM key) const {
     return this->getStatementTable(tableType).hasEntity(key);
 }
+
+bool PKB::isRelationshipExists(StmtStmtRelationship tableType) {
+    switch (tableType) {
+        case StmtStmtRelationship::NextStar:
+        case StmtStmtRelationship::Next:
+            return cfgManager_.isNextExists();
+        default:
+            return !this->getStmtStmtSet(tableType).empty();
+
+    }
+}

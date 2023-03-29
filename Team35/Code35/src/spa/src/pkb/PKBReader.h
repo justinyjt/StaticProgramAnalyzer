@@ -51,6 +51,8 @@ class PKBReader {
 
     bool isRelationshipExists(StmtStmtRelationship tableType, STMT_NUM keyName, STMT_NUM valName) const;
 
+    bool hasRelationship(StmtStmtRelationship tableType) const;
+
     STMT_SET getStmtWithExactPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;
 
     STMT_SET getStmtWithPartialPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;
