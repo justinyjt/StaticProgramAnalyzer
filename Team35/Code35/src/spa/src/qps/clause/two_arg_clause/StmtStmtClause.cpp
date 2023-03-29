@@ -87,11 +87,9 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
         }
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::SYNONYM):  // Parent/Follows(_, stmt) -> int[]
         {
-            STMT_SET parentStmtSet = db->getValueStmtByRelationship(rs);
-            STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*second).de));
-            std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(second->str(), filterSet);
-            std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), parentStmtSet);
-            return std::move(result->join(*intermediateResult));
+            STMT_SET s = db->getValueStmtByRelationshipWithFilter(rs, getStmtType(dynamic_cast<Synonym &>(*second).de));
+            std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), s);
+            return std::move(result);
         }
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::STMT_NUM):  // Parent/Follows(_, 3) -> bool
         {
@@ -102,7 +100,6 @@ std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
         }
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::WILDCARD):  // Parent/Follows(_, _) -> bool
         {
-//            STMT_STMT_SET s = db->getAllRelationships(rs);
             std::unique_ptr<Result> result = std::make_unique<BoolResult>(db->hasRelationship(rs));
             return std::move(result);
         }

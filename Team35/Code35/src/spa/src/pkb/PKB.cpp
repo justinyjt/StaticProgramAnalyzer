@@ -284,6 +284,5 @@ bool PKB::isRelationshipExists(StmtStmtRelationship tableType) {
             return cfgManager_.isNextExists();
         default:
             return !this->getStmtStmtSet(tableType).empty();
-
     }
 }

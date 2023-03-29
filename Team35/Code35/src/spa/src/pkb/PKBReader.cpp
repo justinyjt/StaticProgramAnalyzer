@@ -135,9 +135,26 @@ bool PKBReader::hasRelationship(StmtStmtRelationship tableType) const {
             return this->hasAffects();
         default:
             return pkb.isRelationshipExists(tableType);
-
-
     }
+}
+
+STMT_SET PKBReader::getValueStmtByRelationshipWithFilter(StmtStmtRelationship tableType, StmtType stmtType) const {
+    STMT_SET parentStmtSet = this->getValueStmtByRelationship(tableType);
+    STMT_SET filterSet = this->getStatements(stmtType);
+    return this->getInnerJoin(parentStmtSet, filterSet);
+}
+
+
+STMT_SET PKBReader::getInnerJoin(STMT_SET first, STMT_SET second) const {
+    STMT_SET result;
+    for (auto &stmt1 : first) {
+        for (auto &stmt2 : second) {
+            if (stmt1 == stmt2) {
+                result.insert(stmt1);
+            }
+        }
+    }
+    return result;
 }
 
 STMT_SET PKBReader::getStmtWithExactPatternMatch(ASSIGN_PAT_RIGHT &pattern) const {

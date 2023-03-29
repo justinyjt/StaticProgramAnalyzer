@@ -45,6 +45,8 @@ class PKBReader {
 
     STMT_SET getValueStmtByRelationship(StmtStmtRelationship tableType) const;
 
+    STMT_SET getValueStmtByRelationshipWithFilter(StmtStmtRelationship tableType, StmtType stmtType) const;
+
     STMT_SET getStmtByRs(StmtStmtRelationship tableType) const;
 
     STMT_SET getStmtByProc(const ENT_NAME &procName) const;
@@ -84,4 +86,6 @@ class PKBReader {
     bool hasAffects() const;
 
     bool isModifies(STMT_NUM key, const ENT_NAME &val) const;
+
+    STMT_SET getInnerJoin(STMT_SET first, STMT_SET second) const;
 };
