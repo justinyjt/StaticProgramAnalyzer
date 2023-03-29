@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_set>
 
 #include "PKB.h"
 #include "pkb/db/AffectsGraph.h"
