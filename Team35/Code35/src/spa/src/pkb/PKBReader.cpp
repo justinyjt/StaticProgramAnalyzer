@@ -21,12 +21,38 @@ STMT_SET PKBReader::getRelationship(StmtNameRelationship tableType, const ENT_NA
     return pkb.getStmtByEntVal(tableType, name);
 }
 
+STMT_SET
+PKBReader::getRelationshipWithFilter(StmtNameRelationship tableType, const ENT_NAME &name, StmtType stmtType) const {
+    STMT_SET s = this->getRelationship(tableType, name);
+    STMT_SET filterSet = this->getStatements(stmtType);
+    return this->getInnerJoin(s, filterSet);
+}
+
 STMT_ENT_SET PKBReader::getAllRelationships(StmtNameRelationship tableType) const {
     return pkb.getStmtEntSet(tableType);
 }
 
+STMT_ENT_SET PKBReader::getAllRelationshipsWithFilter(StmtNameRelationship tableType, StmtType stmtType) const {
+    STMT_ENT_SET s = this->getAllRelationships(tableType);
+    STMT_SET filterSet = this->getStatements(stmtType);
+    STMT_ENT_SET result;
+    for (auto const &stmtEntPair : s) {
+        auto &stmt = stmtEntPair.first;
+        if (filterSet.find(stmt) != filterSet.end()) {
+            result.emplace(stmt, stmtEntPair.second);
+        }
+    }
+    return result;
+}
+
 STMT_SET PKBReader::getStmtByRelationship(StmtNameRelationship tableType) const {
     return pkb.getStmtByRs(tableType);
+}
+
+STMT_SET PKBReader::getStmtByRelationshipWithFilter(StmtNameRelationship tableType, StmtType stmtType) const {
+    STMT_SET parentStmtSet = this->getStmtByRelationship(tableType);
+    STMT_SET filterSet = this->getStatements(stmtType);
+    return this->getInnerJoin(parentStmtSet, filterSet);
 }
 
 bool PKBReader::isRelationshipExists(StmtNameRelationship tableType, STMT_NUM stmt, const ENT_NAME &name) const {
@@ -176,7 +202,6 @@ bool PKBReader::hasRelationship(StmtStmtRelationship tableType) const {
             return pkb.isRelationshipExists(tableType);
     }
 }
-
 
 STMT_SET
 PKBReader::getStmtByRelationshipWithFilter(StmtStmtRelationship tableType, StmtType stmtType, bool isKey) const {
