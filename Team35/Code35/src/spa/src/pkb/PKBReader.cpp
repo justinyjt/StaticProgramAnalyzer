@@ -177,6 +177,7 @@ bool PKBReader::hasRelationship(StmtStmtRelationship tableType) const {
     }
 }
 
+
 STMT_SET
 PKBReader::getStmtByRelationshipWithFilter(StmtStmtRelationship tableType, StmtType stmtType, bool isKey) const {
     STMT_SET parentStmtSet = isKey
