@@ -12,15 +12,26 @@ SelectResult::SelectResult(std::vector<std::string> &_idents, const std::vector<
     cols.insert(cols.end(), _cols.begin(), _cols.end());
 }
 
+std::vector<int> SelectResult::getOutputOrder(TableResult &intermediateRes) {
+    std::vector<int> order;
+    for (int i = 0; i < idents.size(); i++) {
+        for (int j = 0; j < intermediateRes.idents.size(); j++) {
+            if (idents[i] == intermediateRes.idents[j]) {
+                order.push_back(j);
+            }
+        }
+    }
+    return order;
+}
+
 std::unique_ptr<Result> SelectResult::getColsCrossProduct() {
     std::unique_ptr<Result> finalRes = std::make_unique<TableResult>(TableResult(cols[0]));
-    std::vector<int> order(1, 0);
     for (int i = 1; i < cols.size(); i++) {
         finalRes = finalRes->join(cols[i]);
-        order.push_back(i);
     }
-    auto &finalTableRes = dynamic_cast<TableResult &>(*finalRes);
 
+    TableResult &finalTableRes = dynamic_cast<TableResult&>(*finalRes);
+    std::vector<int> order = getOutputOrder(finalTableRes);
     return std::make_unique<TableResult>(TableResult(finalTableRes.idents, finalTableRes.rows, order));
 }
 
@@ -50,14 +61,7 @@ std::unique_ptr<Result> SelectResult::join(Result &rhs) {
     finalTableRes = finalTableRes->projectColumns(selectIdents);
 
     // get vector of indexes in order to be printed
-    std::vector<int> order;
-    for (const auto &ident : idents) {
-        for (int j = 0; j < finalTableRes->idents.size(); j++) {
-            if (ident == finalTableRes->idents[j]) {
-                order.push_back(j);
-            }
-        }
-    }
+    std::vector<int> order = getOutputOrder(*finalTableRes);
 
     return std::make_unique<TableResult>(finalTableRes->idents, finalTableRes->rows, order);
 }
