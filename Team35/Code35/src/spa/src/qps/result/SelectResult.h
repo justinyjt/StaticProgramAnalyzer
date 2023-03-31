@@ -29,5 +29,7 @@ class SelectResult : public Result {
     bool empty() const override;
 
  private:
+    std::vector<int> getOutputOrder(TableResult intermediateRes);
+
     std::unique_ptr<Result> getColsCrossProduct();
 };
