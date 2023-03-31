@@ -93,7 +93,7 @@ class PKBReader {
 
     STMT_SET getAllAffectsSuccessors();
 
-    STMT_SET getIntersect(STMT_NUM first, STMT_NUM second) const;
+    STMT_SET getIntersect(STMT_NUM first, STMT_NUM second);
 
     bool hasAffects();
 
