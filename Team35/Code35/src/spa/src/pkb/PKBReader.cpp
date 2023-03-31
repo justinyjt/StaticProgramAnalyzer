@@ -136,7 +136,7 @@ STMT_SET PKBReader::getStmtWithPartialPatternMatch(ASSIGN_PAT_RIGHT &pattern) co
     return pkb.getPatternTable().getPartialPatternMatch(pattern);
 }
 
-bool PKBReader::isAffects(STMT_NUM stmt1, STMT_NUM stmt2) {
+bool PKBReader::isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const {
     if (!pkb.isEntityTypeExists(StmtType::Assign, stmt1) ||
         !pkb.isEntityTypeExists(StmtType::Assign, stmt2)) {
         return false;
@@ -163,7 +163,6 @@ bool PKBReader::isAffects(STMT_NUM stmt1, STMT_NUM stmt2) {
         }
         visited.insert(num);
         if (num == stmt2) {
-            affects_graph_.addAffectsEdge(stmt1, stmt2);
             return true;
         }
         if (pkb.isEntityTypeExists(StmtType::While, num)
@@ -199,19 +198,19 @@ bool PKBReader::isAffectsT(STMT_NUM first, STMT_NUM second) {
     if (!pkb.isStmtStmtPairExists(StmtStmtRelationship::NextStar, first, second)) {
         return false;
     }
-    if (affects_graph_.isEdgeExist(first, second)) {
-        return true;
+    if (affects_graph_.hasAffectsRelationship(first, second)) {
+        return affects_graph_.isAffectsRelationshipTrue(first, second);
     }
     STMT_SET intersect = getIntersect(first, second);
     for (auto &stmt1 : intersect) {
         for (auto &stmt2 : intersect) {
-            if (affects_graph_.isEdgeExist(stmt1, stmt2)) {
+            if (affects_graph_.hasAffectsRelationship(stmt1, stmt2)) {
                 continue;
             }
-            isAffects(stmt1, stmt2);
+            affects_graph_.addAffectsEdge(stmt1, stmt2, isAffects(stmt1, stmt2));
         }
     }
-    return affects_graph_.isEdgeExist(first, second);
+    return affects_graph_.isReachable(first, second, false);
 }
 
 STMT_SET PKBReader::getIntersect(STMT_NUM first, STMT_NUM second) const {
@@ -281,7 +280,9 @@ STMT_SET PKBReader::getAffectsByPredecessor(STMT_NUM stmt, bool isTransitive) {
         }
     } else {
         for (auto &successor : successors) {
-            if (isAffectsT(stmt, successor)) {
+            bool isAffectsTransitive = isAffectsT(stmt, successor);
+            affects_graph_.addAffectsEdge(stmt, successor, isAffectsTransitive);
+            if (isAffectsTransitive) {
                 affectsSuccessors.insert(successor);
             }
         }

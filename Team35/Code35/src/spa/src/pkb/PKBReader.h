@@ -59,7 +59,7 @@ class PKBReader {
     PKB &pkb;
     AffectsGraph affects_graph_;
 
-    bool isAffects(STMT_NUM stmt1, STMT_NUM stmt2);
+    bool isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const;
 
     bool isAffectsT(STMT_NUM first, STMT_NUM second);
 
