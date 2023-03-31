@@ -55,11 +55,13 @@ class TableResult : public Result {
     // 2 col with ENT_SET
     TableResult(const std::string &ident, const std::string &ident2, const std::vector<ENT_NAME> &set);
 
-    std::unique_ptr<TableResult> projectColumns(std::unordered_set<std::string> projectedColumns);
+    std::unique_ptr<TableResult> projectColumns(const std::unordered_set<std::string> &projectedColumns) const;
 
-    std::unique_ptr<Result> join(Result &rhs);
+    std::unique_ptr<Result> join(Result &rhs) override;
 
     void output(std::list<std::string> &list) override;
 
     bool operator==(const Result &rhs) const;
+
+    bool empty() const override;
 };

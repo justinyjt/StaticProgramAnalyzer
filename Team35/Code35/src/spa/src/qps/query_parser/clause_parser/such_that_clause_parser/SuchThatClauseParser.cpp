@@ -10,10 +10,10 @@
 
 SuchThatClauseParser::SuchThatClauseParser(PQLTokenScanner &pqlTokenScanner,
                                            std::unordered_map<std::string, Synonym::DesignEntity> &synonyms) :
-        pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
+    pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
 
-std::vector<std::unique_ptr<Clause>> SuchThatClauseParser::parse() {
-    std::vector<std::unique_ptr<Clause>> clauses;
+std::vector<std::unique_ptr<OptimisableClause>> SuchThatClauseParser::parse() {
+    std::vector<std::unique_ptr<OptimisableClause>> clauses;
     pqlTokenScanner.match(Token::Tag::Such);
     pqlTokenScanner.match(Token::Tag::That);
 
@@ -27,14 +27,14 @@ std::vector<std::unique_ptr<Clause>> SuchThatClauseParser::parse() {
     return clauses;
 }
 
-std::unique_ptr<Clause> SuchThatClauseParser::parseRelationship() {
+std::unique_ptr<OptimisableClause> SuchThatClauseParser::parseRelationship() {
     std::string relationship;
     if (pqlTokenScanner.peek(Token::Tag::Modifies) || pqlTokenScanner.peek(Token::Tag::Uses)) {
         relationship += pqlTokenScanner.peekLexeme();
         pqlTokenScanner.next();
         return std::move(parseUsesModifies(relationship));
     } else if (pqlTokenScanner.peek(Token::Tag::Parent) || pqlTokenScanner.peek(Token::Tag::Follows)
-                || pqlTokenScanner.peek(Token::Tag::Next) || pqlTokenScanner.peek(Token::Tag::Affects)) {
+        || pqlTokenScanner.peek(Token::Tag::Next) || pqlTokenScanner.peek(Token::Tag::Affects)) {
         relationship += pqlTokenScanner.peekLexeme();
         pqlTokenScanner.next();
         if (pqlTokenScanner.peek(Token::Tag::Star)) {
@@ -53,7 +53,7 @@ std::unique_ptr<Clause> SuchThatClauseParser::parseRelationship() {
     }
 }
 
-std::unique_ptr<Clause> SuchThatClauseParser::parseUsesModifies(std::string &relationship) {
+std::unique_ptr<OptimisableClause> SuchThatClauseParser::parseUsesModifies(std::string &relationship) {
     std::unique_ptr<PQLToken> arg1;
     std::unique_ptr<PQLToken> arg2;
     pqlTokenScanner.match(Token::Tag::LParen);
@@ -91,7 +91,7 @@ std::unique_ptr<Clause> SuchThatClauseParser::parseUsesModifies(std::string &rel
     return std::move(ClauseFactory::createClause(std::move(arg1), std::move(arg2), relationship));
 }
 
-std::unique_ptr<Clause> SuchThatClauseParser::parseStmtStmt(std::string &relationship) {
+std::unique_ptr<OptimisableClause> SuchThatClauseParser::parseStmtStmt(std::string &relationship) {
     std::unique_ptr<PQLToken> arg1;
     std::unique_ptr<PQLToken> arg2;
 
@@ -105,7 +105,7 @@ std::unique_ptr<Clause> SuchThatClauseParser::parseStmtStmt(std::string &relatio
     return std::move(ClauseFactory::createClause(std::move(arg1), std::move(arg2), relationship));
 }
 
-std::unique_ptr<Clause> SuchThatClauseParser::parseEntEnt(std::string &relationship) {
+std::unique_ptr<OptimisableClause> SuchThatClauseParser::parseEntEnt(std::string &relationship) {
     std::unique_ptr<PQLToken> arg1;
     std::unique_ptr<PQLToken> arg2;
 

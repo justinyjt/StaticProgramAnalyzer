@@ -8,8 +8,13 @@
 #include "qps/query_parser/helper.h"
 #include "qps/result/SelectResult.h"
 
-MultipleSynonymSelectClause::MultipleSynonymSelectClause(std::vector<std::unique_ptr<Synonym>> selectedSynonyms) :
-    selectedSynonyms(std::move(selectedSynonyms)) {}
+MultipleSynonymSelectClause::MultipleSynonymSelectClause(std::vector<std::unique_ptr<Synonym>> selectedSynonyms)
+    : SelectClause(SelectType::Synonym),
+      selectedSynonyms_(std::move(selectedSynonyms)) {
+    for (const auto &synonym : selectedSynonyms_) {
+        this->addHeader(synonym->ident);
+    }
+}
 
 std::unique_ptr<Result> MultipleSynonymSelectClause::evaluate(PKBReader *db) {
     // loop through synonyms and get tables
@@ -21,8 +26,8 @@ std::unique_ptr<Result> MultipleSynonymSelectClause::evaluate(PKBReader *db) {
     std::vector<std::string> idents;
     std::vector<TableResult> selectTables;
 
-    for (int i = 0; i < selectedSynonyms.size(); i++) {
-        std::unique_ptr<Synonym> synonym = std::move(selectedSynonyms.at(i));
+    for (auto &selectedSynonym : selectedSynonyms_) {
+        std::unique_ptr<Synonym> synonym = std::move(selectedSynonym);
         STMT_ENT_SET ses;
         STMT_SET ss;
         ENT_SET es;
@@ -41,7 +46,7 @@ std::unique_ptr<Result> MultipleSynonymSelectClause::evaluate(PKBReader *db) {
                 break;
             case Synonym::DesignEntity::READ: {
                 // check if varName - get stmt-ent-set, else get stmt-set
-                auto attrRef = dynamic_cast<AttrRef*>(synonym.get());
+                auto attrRef = dynamic_cast<AttrRef *>(synonym.get());
                 if (attrRef != nullptr && attrRef->ref == VARNAME_KEYWORD) {
                     ses = db->getAllRelationships(StmtNameRelationship::ReadStmtVar);
                 } else {
@@ -61,7 +66,7 @@ std::unique_ptr<Result> MultipleSynonymSelectClause::evaluate(PKBReader *db) {
             }
             case Synonym::DesignEntity::CALL: {
                 // check if varName - get stmt-ent-set, else get stmt-set
-                auto attrRef = dynamic_cast<AttrRef*>(synonym.get());
+                auto attrRef = dynamic_cast<AttrRef *>(synonym.get());
                 if (attrRef != nullptr && attrRef->ref == PROCNAME_KEYWORD) {
                     ses = db->getAllRelationships(StmtNameRelationship::CallsProcedure);
                 } else {
@@ -86,15 +91,15 @@ std::unique_ptr<Result> MultipleSynonymSelectClause::evaluate(PKBReader *db) {
         if (synonym->de == Synonym::DesignEntity::PROCEDURE || synonym->de == Synonym::DesignEntity::VARIABLE ||
             synonym->de == Synonym::DesignEntity::CONSTANT) {
             idents.emplace_back(synonym->ident);
-            selectTables.emplace_back(TableResult(synonym->ident, es));
+            selectTables.emplace_back(synonym->ident, es);
         } else {
             auto attrRef = dynamic_cast<AttrRef *>(synonym.get());
             if (attrRef != nullptr && (attrRef->ref == VARNAME_KEYWORD || attrRef->ref == PROCNAME_KEYWORD)) {
                 idents.emplace_back(synonym->ident + "." + attrRef->ref);
-                selectTables.emplace_back(TableResult(synonym->ident, synonym->ident + "." + attrRef->ref, ses));
+                selectTables.emplace_back(synonym->ident, synonym->ident + "." + attrRef->ref, ses);
             } else {
                 idents.emplace_back(synonym->ident);
-                selectTables.emplace_back(TableResult(synonym->ident, ss));
+                selectTables.emplace_back(synonym->ident, ss);
             }
         }
     }
@@ -105,7 +110,8 @@ std::unique_ptr<Result> MultipleSynonymSelectClause::evaluate(PKBReader *db) {
 bool MultipleSynonymSelectClause::operator==(const Clause &rhs) const {
     const auto *pRhs = dynamic_cast<const MultipleSynonymSelectClause *>(&rhs);
     return pRhs != nullptr &&
-           std::equal(selectedSynonyms.begin(), selectedSynonyms.end(), pRhs->selectedSynonyms.begin(),
-                      [](const std::unique_ptr<Synonym>& lhs, const std::unique_ptr<Synonym>& rhs)
-                      { return *lhs == * rhs; });
+        std::equal(selectedSynonyms_.begin(), selectedSynonyms_.end(), pRhs->selectedSynonyms_.begin(),
+                   [](const std::unique_ptr<Synonym> &lhs, const std::unique_ptr<Synonym> &rhs) {
+                     return *lhs == *rhs;
+                   });
 }

@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <utility>
 
+#include "qps/clause/OptimisableClause.h"
 #include "qps/query_parser/clause_parser/such_that_clause_parser/SuchThatClauseParser.h"
 #include "qps/query_parser/clause_parser/pattern_clause_parser/PatternClauseParser.h"
 #include "qps/pql/Synonym.h"
@@ -15,12 +16,12 @@
 
 class ClauseParser {
  public:
-    ClauseParser(PQLTokenScanner& pqlTokenScanner, std::unordered_map<std::string, Synonym::DesignEntity>& synonyms);
-    std::vector<std::unique_ptr<Clause>> parse();
+    ClauseParser(PQLTokenScanner &pqlTokenScanner, std::unordered_map<std::string, Synonym::DesignEntity> &synonyms);
+    std::vector<std::unique_ptr<OptimisableClause>> parse();
  private:
     PatternClauseParser patternClauseParser;
     SuchThatClauseParser suchThatClauseParser;
     WithClauseParser withClauseParser;
-    PQLTokenScanner& pqlTokenScanner;
-    std::unordered_map<std::string, Synonym::DesignEntity>& synonyms;
+    PQLTokenScanner &pqlTokenScanner;
+    std::unordered_map<std::string, Synonym::DesignEntity> &synonyms;
 };

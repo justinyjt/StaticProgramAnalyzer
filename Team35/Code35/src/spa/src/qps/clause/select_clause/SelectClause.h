@@ -7,5 +7,10 @@
 
 class SelectClause : public Clause {
  public:
-    SelectClause() = default;
+    enum class SelectType {
+        Boolean,
+        Synonym
+    };
+    const SelectType type_;
+    explicit SelectClause(SelectClause::SelectType type);
 };

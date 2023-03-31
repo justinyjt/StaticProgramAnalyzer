@@ -17,9 +17,11 @@ class BoolResult : public Result {
 
     explicit BoolResult(bool b, bool isSelectBool);
 
-    std::unique_ptr<Result> join(Result &rhs);
+    std::unique_ptr<Result> join(Result &rhs) override;
 
     void output(std::list<std::string> &list) override;
 
     bool operator==(const Result &rhs) const;
+
+    bool empty() const override;
 };

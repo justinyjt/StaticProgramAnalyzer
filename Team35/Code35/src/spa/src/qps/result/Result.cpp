@@ -1,3 +1,3 @@
 #include "Result.h"
 
-Result::Result(Result::Tag _tag) : tag(_tag) {}
+Result::Result(Result::Tag tag) : tag(tag) {}

@@ -8,8 +8,10 @@
 
 class MultipleSynonymSelectClause : public SelectClause {
  public:
-    std::vector<std::unique_ptr<Synonym>> selectedSynonyms;
     explicit MultipleSynonymSelectClause(std::vector<std::unique_ptr<Synonym>> selectedSynonyms);
-    std::unique_ptr<Result> evaluate(PKBReader *db);
-    bool operator==(const Clause &rhs) const;
+    std::unique_ptr<Result> evaluate(PKBReader *db) override;
+    bool operator==(const Clause &rhs) const override;
+
+ private:
+    std::vector<std::unique_ptr<Synonym>> selectedSynonyms_;
 };

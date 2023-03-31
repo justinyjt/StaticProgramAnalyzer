@@ -8,15 +8,15 @@
 #include "qps/query_parser/helper.h"
 
 std::unique_ptr<TwoArgClause> ClauseFactory::createAssignPatternClause(std::unique_ptr<PQLToken> token1,
-                                                                             std::unique_ptr<PQLToken> token2,
-                                                                             std::string patternStr) {
+                                                                       std::unique_ptr<PQLToken> token2,
+                                                                       const std::string &patternStr) {
     std::unique_ptr<TwoArgClause> a = std::make_unique<AssignPattern>(std::move(token1), std::move(token2), patternStr);
     return std::move(a);
 }
 
 std::unique_ptr<TwoArgClause> ClauseFactory::createClause(std::unique_ptr<PQLToken> token1,
-                                                                std::unique_ptr<PQLToken> token2,
-                                                                std::string relationship) {
+                                                          std::unique_ptr<PQLToken> token2,
+                                                          const std::string &relationship) {
     if (relationship == WITHENT_KEYWORD) {
         std::unique_ptr<WithEntClause> w = std::make_unique<WithEntClause>(std::move(token1), std::move(token2));
         return std::move(w);
@@ -69,13 +69,13 @@ std::unique_ptr<TwoArgClause> ClauseFactory::createClause(std::unique_ptr<PQLTok
 }
 
 std::unique_ptr<OneArgClause> ClauseFactory::createIfPatternClause(std::unique_ptr<PQLToken> token1,
-                                                                         std::string patternStr) {
+                                                                   const std::string &patternStr) {
     std::unique_ptr<OneArgClause> a = std::make_unique<IfPattern>(std::move(token1), patternStr);
     return std::move(a);
 }
 
 std::unique_ptr<OneArgClause> ClauseFactory::createWhilePatternClause(std::unique_ptr<PQLToken> token1,
-                                                                         std::string patternStr) {
+                                                                      const std::string &patternStr) {
     std::unique_ptr<OneArgClause> a = std::make_unique<WhilePattern>(std::move(token1), patternStr);
     return std::move(a);
 }

@@ -1,7 +1,7 @@
 #include "catch.hpp"
 #include "../../TestHelper.h"
 #include "qps/query_parser/declaration_parser/DeclarationParser.h"
-#include "qps/clause/Clause.h"
+#include "qps/clause/OptimisableClause.h"
 #include "qps/clause/two_arg_clause/StmtEntClause.h"
 #include "qps/clause/two_arg_clause/StmtStmtClause.h"
 #include "qps/pql/Expression.h"
@@ -14,7 +14,7 @@ TEST_CASE("1. Query parser") {
     std::string query = "variable v, x; assign a, b, c; read y; Select c such that Parent*(a,b) pattern "
                         "a ( _ , _\"x\"_)";
     QueryParser qp;
-    std::pair<std::unique_ptr<SelectClause>, std::vector<std::unique_ptr<Clause>>> clauses = qp.parse(query);
+    std::pair<std::unique_ptr<SelectClause>, std::vector<std::unique_ptr<OptimisableClause>>> clauses = qp.parse(query);
 
     requireTrue(clauses.second.size() == 2);
 
@@ -27,7 +27,7 @@ TEST_CASE("1. Query parser") {
     std::unique_ptr<Wildcard> w = std::make_unique<Wildcard>();
     std::string exprStr = "x";
     std::unique_ptr<ILexer> lxr =
-            LexerFactory::createLexer(exprStr, LexerFactory::LexerType::Expression);
+        LexerFactory::createLexer(exprStr, LexerFactory::LexerType::Expression);
     TokenScanner scanner(std::move(lxr));
     ExprParser parser(scanner);
     ASSIGN_PAT_RIGHT pattern = parser.parseExpr();

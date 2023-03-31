@@ -3,23 +3,27 @@
 #include <utility>
 
 OneArgClause::OneArgClause(std::unique_ptr<PQLToken> first, StmtNameRelationship rs, std::string ident) :
-    first(std::move(first)), rs(rs), ident(std::move(ident)) {}
+    first_(std::move(first)), rs_(rs), ident_(std::move(ident)) {
+    this->addHeader(ident_);
+    if (first_->tag == PQLToken::Tag::SYNONYM)
+        this->addHeader(dynamic_cast<Synonym &>(*first_).ident);
+}
 
 std::unique_ptr<Result> OneArgClause::evaluate(PKBReader *db) {
-    switch (first->tag) {
+    switch (first_->tag) {
         case PQLToken::Tag::WILDCARD: {  // ifs(_, _, _) -> int[]
-            STMT_SET stmts = db->getStmtByRelationship(rs);
-            return std::make_unique<TableResult>(ident, stmts);
+            STMT_SET stmts = db->getStmtByRelationship(rs_);
+            return std::make_unique<TableResult>(ident_, stmts);
         }
         case PQLToken::Tag::IDENT: {  // ifs("x", _, _) -> int[]
-            auto &id = dynamic_cast<Ident &>(*first);
-            STMT_SET stmts = db->getRelationship(rs, id.s);
-            return std::make_unique<TableResult>(ident, stmts);
+            auto &id = dynamic_cast<Ident &>(*first_);
+            STMT_SET stmts = db->getRelationship(rs_, id.s);
+            return std::make_unique<TableResult>(ident_, stmts);
         }
         case PQLToken::Tag::SYNONYM: {  // ifs(x, _, _) -> <str, str>[]
-            auto &syn = dynamic_cast<Synonym &>(*first);
-            STMT_ENT_SET stmt_ent_set = db->getAllRelationships(rs);
-            return std::make_unique<TableResult>(ident, syn.ident, stmt_ent_set);
+            auto &syn = dynamic_cast<Synonym &>(*first_);
+            STMT_ENT_SET stmt_ent_set = db->getAllRelationships(rs_);
+            return std::make_unique<TableResult>(ident_, syn.ident, stmt_ent_set);
         }
         default:
             throw std::runtime_error("IfPattern");
@@ -28,11 +32,11 @@ std::unique_ptr<Result> OneArgClause::evaluate(PKBReader *db) {
 
 bool OneArgClause::operator==(const Clause &rhs) const {
     const auto *pRhs = dynamic_cast<const OneArgClause *>(&rhs);
-    return pRhs != nullptr && rs == pRhs->rs && ident == pRhs->ident && *first == *(pRhs->first);
+    return pRhs != nullptr && rs_ == pRhs->rs_ && ident_ == pRhs->ident_ && *first_ == *(pRhs->first_);
 }
 
 void OneArgClause::validateArgs() {
-    auto *synonym = dynamic_cast<Synonym *>(first.get());
+    auto *synonym = dynamic_cast<Synonym *>(first_.get());
     if (synonym != nullptr && !(synonym->de == Synonym::DesignEntity::PROCEDURE ||
         synonym->de == Synonym::DesignEntity::VARIABLE ||
         synonym->de == Synonym::DesignEntity::CONSTANT)) {

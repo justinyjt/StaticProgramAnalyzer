@@ -12,10 +12,10 @@
 
 WithClauseParser::WithClauseParser(PQLTokenScanner &pqlTokenScanner,
                                    std::unordered_map<std::string, Synonym::DesignEntity> &synonyms) :
-        pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
+    pqlTokenScanner(pqlTokenScanner), synonyms(synonyms) {}
 
-std::vector<std::unique_ptr<Clause>> WithClauseParser::parse() {
-    std::vector<std::unique_ptr<Clause>> clauses;
+std::vector<std::unique_ptr<OptimisableClause>> WithClauseParser::parse() {
+    std::vector<std::unique_ptr<OptimisableClause>> clauses;
     pqlTokenScanner.match(Token::Tag::With);
 
     clauses.push_back(parseWith());
@@ -28,7 +28,7 @@ std::vector<std::unique_ptr<Clause>> WithClauseParser::parse() {
     return clauses;
 }
 
-std::unique_ptr<Clause> WithClauseParser::parseWith() {
+std::unique_ptr<OptimisableClause> WithClauseParser::parseWith() {
     std::unique_ptr<PQLToken> arg1;
     std::unique_ptr<PQLToken> arg2;
     arg1 = parseRef();

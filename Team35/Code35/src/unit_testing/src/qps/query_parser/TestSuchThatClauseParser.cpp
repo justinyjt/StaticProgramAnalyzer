@@ -5,6 +5,7 @@
 #include "qps/query_parser/declaration_parser/DeclarationParser.h"
 #include "qps/pql/PQLNumber.h"
 #include "qps/pql/Ident.h"
+#include "qps/clause/OptimisableClause.h"
 #include "qps/clause/two_arg_clause/StmtEntClause.h"
 #include "qps/clause/two_arg_clause/StmtStmtClause.h"
 #include "qps/clause/two_arg_clause/EntEntClause.h"
@@ -77,7 +78,7 @@ class setUpStcp {
     std::unique_ptr<Wildcard> wildcard1;
     std::unique_ptr<Wildcard> wildcard2;
 
-    std::vector<std::unique_ptr<Clause>> clause;
+    std::vector<std::unique_ptr<OptimisableClause>> clause;
     std::unique_ptr<ModifiesS> modifiesS;
     std::unique_ptr<UsesS> usesS;
     std::unique_ptr<ModifiesP> modifiesP;
@@ -626,7 +627,7 @@ TEST_CASE_METHOD(setUpStcp, "invalid Modifies, statement and statement, semantic
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     requireThrowAs<SemanticException>([&stcp]() {
-        stcp.parse();
+      stcp.parse();
     });
 }
 
@@ -636,7 +637,7 @@ TEST_CASE_METHOD(setUpStcp, "invalid Modifies, wildcard and statement, semantic 
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     requireThrowAs<SemanticException>([&stcp]() {
-        stcp.parse();
+      stcp.parse();
     });
 }
 
@@ -646,7 +647,7 @@ TEST_CASE_METHOD(setUpStcp, "invalid Follows, statement and variable, semantic e
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     requireThrowAs<SemanticException>([&stcp]() {
-        stcp.parse();
+      stcp.parse();
     });
 }
 
@@ -656,7 +657,7 @@ TEST_CASE_METHOD(setUpStcp, "invalid Follows, variable and statement, semantic e
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     requireThrowAs<SemanticException>([&stcp]() {
-        stcp.parse();
+      stcp.parse();
     });
 }
 
@@ -700,7 +701,7 @@ TEST_CASE_METHOD(setUpStcp, "Calls, stmt and procedure, semantic error") {
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
     requireThrowAs<SemanticException>([&stcp]() {
-        stcp.parse();
+      stcp.parse();
     });
 }
 

@@ -10,9 +10,9 @@
 class ClauseFactory {
  public:
     static std::unique_ptr<TwoArgClause> createAssignPatternClause(std::unique_ptr<PQLToken>,
-            std::unique_ptr<PQLToken>, std::string);
+                                                                   std::unique_ptr<PQLToken>, const std::string &);
     static std::unique_ptr<TwoArgClause> createClause(std::unique_ptr<PQLToken>,
-            std::unique_ptr<PQLToken>, std::string);
-    static std::unique_ptr<OneArgClause> createIfPatternClause(std::unique_ptr<PQLToken>, std::string);
-    static std::unique_ptr<OneArgClause> createWhilePatternClause(std::unique_ptr<PQLToken>, std::string);
+                                                      std::unique_ptr<PQLToken>, const std::string &);
+    static std::unique_ptr<OneArgClause> createIfPatternClause(std::unique_ptr<PQLToken>, const std::string &);
+    static std::unique_ptr<OneArgClause> createWhilePatternClause(std::unique_ptr<PQLToken>, const std::string &);
 };
