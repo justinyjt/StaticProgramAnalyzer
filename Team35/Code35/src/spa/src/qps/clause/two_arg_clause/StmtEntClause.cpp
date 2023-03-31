@@ -13,46 +13,36 @@ std::unique_ptr<Result> StmtEntClause::evaluate(PKBReader *db) {
         {
             std::string stmtNum = dynamic_cast<PQLNumber &>(*first).n;
             ENT_SET set = db->getRelationship(rs, std::stoi(stmtNum));
-            std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), set);
-            return std::move(result);
+            return std::make_unique<TableResult>(second->str(), set);
         }
         case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::WILDCARD):  // Uses/Modifies(1, _) -> bool
         {
             std::string stmtNum = dynamic_cast<PQLNumber &>(*first).n;
             ENT_SET set = db->getRelationship(rs, std::stoi(stmtNum));
-            std::unique_ptr<Result> result = std::make_unique<BoolResult>(!set.empty());
-            return std::move(result);
+            return std::make_unique<BoolResult>(!set.empty());
         }
         case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::IDENT):  // Uses/Modifies(1, "x") -> bool
         {
             std::string stmtNum = dynamic_cast<PQLNumber &>(*first).n;
             bool b = db->isRelationshipExists(rs, std::stoi(stmtNum), second->str());
-            std::unique_ptr<Result> result = std::make_unique<BoolResult>(b);
-            return std::move(result);
+            return std::make_unique<BoolResult>(b);
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Uses/Mod(stmt, var) -> <int, string>[]
         {
-            STMT_ENT_SET stmtEntSet = db->getAllRelationships(rs);
-            STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*first).de));
-            std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(first->str(), filterSet);
-            std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), second->str(), stmtEntSet);
-            return std::move(result->join(*intermediateResult));
+            STMT_ENT_SET res = db->getAllRelationshipsWithFilter(rs, getStmtType(dynamic_cast<Synonym &>(*first).de));
+            return std::make_unique<TableResult>(first->str(), second->str(), res);
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // Uses/Modifies(stmt, _) -> int[]
         {
-            STMT_SET stmtSet = db->getStmtByRelationship(rs);
-            STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*first).de));
-            std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(first->str(), filterSet);
-            std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), stmtSet);
-            return std::move(result->join(*intermediateResult));
+            STMT_SET res = db->getStmtByRelationshipWithFilter(rs, getStmtType(dynamic_cast<Synonym &>(*first).de));
+            return std::make_unique<TableResult>(first->str(), res);
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::IDENT):  // Uses/Modifies(stmt, "x") -> int[]
         {
-            STMT_SET stmtSet = db->getRelationship(rs, second->str());
-            STMT_SET filterSet = db->getStatements(getStmtType(dynamic_cast<Synonym &>(*first).de));
-            std::unique_ptr<Result> intermediateResult = std::make_unique<TableResult>(first->str(), filterSet);
-            std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), stmtSet);
-            return std::move(result->join(*intermediateResult));
+            STMT_SET res = db->getRelationshipWithFilter(rs,
+                                                         second->str(),
+                                                         getStmtType(dynamic_cast<Synonym &>(*first).de));
+            return std::make_unique<TableResult>(first->str(), res);
         }
         default:
             throw std::runtime_error("");
