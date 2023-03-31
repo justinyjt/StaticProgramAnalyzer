@@ -12,7 +12,7 @@ SelectResult::SelectResult(std::vector<std::string> &_idents, const std::vector<
     cols.insert(cols.end(), _cols.begin(), _cols.end());
 }
 
-std::vector<int> SelectResult::getOutputOrder(TableResult intermediateRes) {
+std::vector<int> SelectResult::getOutputOrder(TableResult &intermediateRes) {
     std::vector<int> order;
     for (int i = 0; i < idents.size(); i++) {
         for (int j = 0; j < intermediateRes.idents.size(); j++) {
