@@ -283,13 +283,13 @@ bool PKBReader::isAffectsT(STMT_NUM first, STMT_NUM second) {
     if (!pkb.isStmtStmtPairExists(StmtStmtRelationship::NextStar, first, second)) {
         return false;
     }
-    if (affects_graph_.hasAffectsRelationship(first, second)) {
+    if (affects_graph_.isAffectsRelationshipTrue(first, second)) {
         return affects_graph_.isAffectsRelationshipTrue(first, second);
     }
     STMT_SET intersect = getIntersect(first, second);
     for (auto &stmt1 : intersect) {
         for (auto &stmt2 : intersect) {
-            if (affects_graph_.hasAffectsRelationship(stmt1, stmt2)) {
+            if (affects_graph_.isAffectsRelationshipTrue(stmt1, stmt2)) {
                 continue;
             }
             affects_graph_.addAffectsEdge(stmt1, stmt2, isAffects(stmt1, stmt2));
@@ -399,12 +399,15 @@ STMT_SET PKBReader::getAffectsBySuccessor(STMT_NUM stmt, bool isTransitive) {
 
 STMT_STMT_SET PKBReader::getAllAffects(bool isTransitive) {
     STMT_STMT_SET result;
-    for (auto &predecessor : pkb.getKeyStmtByRs(StmtStmtRelationship::NextStar)) {
-        for (auto &successor : this->getAffectsByPredecessor(predecessor, isTransitive)) {
-            result.emplace(predecessor, successor);
+    AffectsGraph graph;
+    for (auto &predecessor : this->getStatements(StmtType::Assign)) {
+        for (auto &successor : this->getStatements(StmtType::Assign)) {
+            if (isAffects(predecessor, successor)) {
+                graph.addAffectsEdge(predecessor, successor);
+            }
         }
     }
-    return result;
+    return graph.getAllAffectsRelationships();
 }
 
 STMT_SET PKBReader::getAllAffectsPredecessors() {

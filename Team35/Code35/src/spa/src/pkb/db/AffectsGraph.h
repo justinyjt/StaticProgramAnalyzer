@@ -17,6 +17,8 @@ class AffectsGraph : public Graph<STMT_NUM> {
 
     bool isAffectsRelationshipTrue(STMT_NUM first, STMT_NUM second);
 
+    STMT_STMT_SET getAllAffectsRelationships();
+
  private:
     std::unordered_map<STMT_STMT, bool, hash_pair> is_affects_map;
 };
