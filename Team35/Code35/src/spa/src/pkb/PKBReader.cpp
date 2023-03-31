@@ -160,6 +160,16 @@ STMT_SET PKBReader::getKeyStmtByRelationship(StmtStmtRelationship tableType) {
     }
 }
 
+STMT_SET PKBReader::getValueStmtByRelationship(StmtStmtRelationship tableType) {
+    switch (tableType) {
+        case StmtStmtRelationship::AffectsStar:
+        case StmtStmtRelationship::Affects:
+            return this->getAllAffectsSuccessors();
+        default:
+            return pkb.getValStmtByRs(tableType);
+    }
+}
+
 STMT_SET PKBReader::getStmtByProc(const ENT_NAME &procName) const {
     return pkb.getStmtByProc(procName);
 }
