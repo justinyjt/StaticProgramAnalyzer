@@ -10,7 +10,7 @@ QueryEvaluator::QueryEvaluator(PKBReader *db) : db(db) {}
 
 std::unique_ptr<Result> QueryEvaluator::evaluate(std::unique_ptr<SelectClause> selectClause,
                                                  std::vector<std::unique_ptr<OptimisableClause>> clauses) const {
-    ut bool isBooleanSelect = selectClause->type_ == SelectClause::SelectType::Boolean;
+    bool isBooleanSelect = selectClause->type_ == SelectClause::SelectType::Boolean;
     const HEADER_SET &selectHeaders = selectClause->getHeaders();
     std::unique_ptr<Result> selectRes = selectClause->evaluate(db);
 
