@@ -52,7 +52,7 @@ bool PKBReader::isRelationshipExists(NameNameRelationship tableType, const ENT_N
 }
 
 // Statement-Statement Relationship
-STMT_SET PKBReader::getRelationshipByKey(StmtStmtRelationship tableType, STMT_NUM keyName) const {
+STMT_SET PKBReader::getRelationshipByKey(StmtStmtRelationship tableType, STMT_NUM keyName) {
     switch (tableType) {
         case StmtStmtRelationship::AffectsStar:
             return this->getAffectsByPredecessor(keyName, true);
@@ -63,7 +63,7 @@ STMT_SET PKBReader::getRelationshipByKey(StmtStmtRelationship tableType, STMT_NU
     }
 }
 
-STMT_SET PKBReader::getRelationshipByVal(StmtStmtRelationship tableType, STMT_NUM valName) const {
+STMT_SET PKBReader::getRelationshipByVal(StmtStmtRelationship tableType, STMT_NUM valName) {
     switch (tableType) {
         case StmtStmtRelationship::AffectsStar:
             return this->getAffectsBySuccessor(valName, true);
@@ -85,7 +85,7 @@ STMT_STMT_SET PKBReader::getAllRelationships(StmtStmtRelationship tableType) {
     }
 }
 
-STMT_SET PKBReader::getKeyStmtByRelationship(StmtStmtRelationship tableType) const {
+STMT_SET PKBReader::getKeyStmtByRelationship(StmtStmtRelationship tableType) {
     switch (tableType) {
         case StmtStmtRelationship::AffectsStar:
         case StmtStmtRelationship::Affects:
@@ -95,7 +95,7 @@ STMT_SET PKBReader::getKeyStmtByRelationship(StmtStmtRelationship tableType) con
     }
 }
 
-STMT_SET PKBReader::getValueStmtByRelationship(StmtStmtRelationship tableType) const {
+STMT_SET PKBReader::getValueStmtByRelationship(StmtStmtRelationship tableType) {
     switch (tableType) {
         case StmtStmtRelationship::AffectsStar:
         case StmtStmtRelationship::Affects:
@@ -117,7 +117,7 @@ ENT_SET PKBReader::getValueNameByRelationship(NameNameRelationship tableType) co
     return pkb.getValNameByRs(tableType);
 }
 
-bool PKBReader::isRelationshipExists(StmtStmtRelationship tableType, STMT_NUM keyName, STMT_NUM valName) const {
+bool PKBReader::isRelationshipExists(StmtStmtRelationship tableType, STMT_NUM keyName, STMT_NUM valName) {
     switch (tableType) {
         case StmtStmtRelationship::AffectsStar:
             return this->isAffectsT(keyName, valName);
@@ -136,7 +136,7 @@ STMT_SET PKBReader::getStmtWithPartialPatternMatch(ASSIGN_PAT_RIGHT &pattern) co
     return pkb.getPatternTable().getPartialPatternMatch(pattern);
 }
 
-bool PKBReader::isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const {
+bool PKBReader::isAffects(STMT_NUM stmt1, STMT_NUM stmt2) {
     if (!pkb.isEntityTypeExists(StmtType::Assign, stmt1) ||
         !pkb.isEntityTypeExists(StmtType::Assign, stmt2)) {
         return false;
@@ -163,6 +163,7 @@ bool PKBReader::isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const {
         }
         visited.insert(num);
         if (num == stmt2) {
+            affects_graph_.addAffectsEdge(stmt1, stmt2);
             return true;
         }
         if (pkb.isEntityTypeExists(StmtType::While, num)
@@ -190,7 +191,7 @@ bool PKBReader::isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const {
     return false;
 }
 
-bool PKBReader::isAffectsT(STMT_NUM first, STMT_NUM second) const {
+bool PKBReader::isAffectsT(STMT_NUM first, STMT_NUM second) {
     if (!pkb.isEntityTypeExists(StmtType::Assign, first) ||
         !pkb.isEntityTypeExists(StmtType::Assign, second)) {
         return false;
@@ -198,16 +199,19 @@ bool PKBReader::isAffectsT(STMT_NUM first, STMT_NUM second) const {
     if (!pkb.isStmtStmtPairExists(StmtStmtRelationship::NextStar, first, second)) {
         return false;
     }
-    AffectsGraph graph;
+    if (affects_graph_.isEdgeExist(first, second)) {
+        return true;
+    }
     STMT_SET intersect = getIntersect(first, second);
     for (auto &stmt1 : intersect) {
         for (auto &stmt2 : intersect) {
-            if (isAffects(stmt1, stmt2)) {
-                graph.addEdge(stmt1, stmt2);
+            if (affects_graph_.isEdgeExist(stmt1, stmt2)) {
+                continue;
             }
+            isAffects(stmt1, stmt2);
         }
     }
-    return graph.isReachable(first, second, false);
+    return affects_graph_.isEdgeExist(first, second);
 }
 
 STMT_SET PKBReader::getIntersect(STMT_NUM first, STMT_NUM second) const {
@@ -237,7 +241,7 @@ bool PKBReader::isModifies(STMT_NUM key, const ENT_NAME &val) const {
     return isCallModifies;
 }
 
-bool PKBReader::isValidAffectsSuccessor(STMT_NUM stmt) const {
+bool PKBReader::isValidAffectsSuccessor(STMT_NUM stmt) {
     if (!pkb.isEntityTypeExists(StmtType::Assign, stmt)) {
         return false;
     }
@@ -252,7 +256,7 @@ bool PKBReader::isValidAffectsSuccessor(STMT_NUM stmt) const {
                        });
 }
 
-bool PKBReader::isValidAffectsPredecessor(STMT_NUM stmt) const {
+bool PKBReader::isValidAffectsPredecessor(STMT_NUM stmt) {
     if (!pkb.isEntityTypeExists(StmtType::Assign, stmt)) {
         return false;
     }
@@ -263,7 +267,7 @@ bool PKBReader::isValidAffectsPredecessor(STMT_NUM stmt) const {
                        });
 }
 
-STMT_SET PKBReader::getAffectsByPredecessor(STMT_NUM stmt, bool isTransitive) const {
+STMT_SET PKBReader::getAffectsByPredecessor(STMT_NUM stmt, bool isTransitive) {
     if (!pkb.isEntityTypeExists(StmtType::Assign, stmt)) {
         return {};
     }
@@ -285,7 +289,7 @@ STMT_SET PKBReader::getAffectsByPredecessor(STMT_NUM stmt, bool isTransitive) co
     return affectsSuccessors;
 }
 
-STMT_SET PKBReader::getAffectsBySuccessor(STMT_NUM stmt, bool isTransitive) const {
+STMT_SET PKBReader::getAffectsBySuccessor(STMT_NUM stmt, bool isTransitive) {
     if (!pkb.isEntityTypeExists(StmtType::Assign, stmt)) {
         return {};
     }
@@ -307,7 +311,7 @@ STMT_SET PKBReader::getAffectsBySuccessor(STMT_NUM stmt, bool isTransitive) cons
     return affectsPredecessors;
 }
 
-STMT_STMT_SET PKBReader::getAllAffects(bool isTransitive) const {
+STMT_STMT_SET PKBReader::getAllAffects(bool isTransitive) {
     STMT_STMT_SET result;
     if (!isTransitive) {
         for (auto &predecessor : pkb.getKeyStmtByRs(StmtStmtRelationship::NextStar)) {
@@ -325,7 +329,7 @@ STMT_STMT_SET PKBReader::getAllAffects(bool isTransitive) const {
     return result;
 }
 
-STMT_SET PKBReader::getAllAffectsPredecessors() const {
+STMT_SET PKBReader::getAllAffectsPredecessors() {
     STMT_SET result;
     for (auto &predecessor : pkb.getKeyStmtByRs(StmtStmtRelationship::NextStar)) {
         if (this->isValidAffectsPredecessor(predecessor)) {
@@ -335,7 +339,7 @@ STMT_SET PKBReader::getAllAffectsPredecessors() const {
     return result;
 }
 
-STMT_SET PKBReader::getAllAffectsSuccessors() const {
+STMT_SET PKBReader::getAllAffectsSuccessors() {
     STMT_SET result;
     for (auto &successor : pkb.getValStmtByRs(StmtStmtRelationship::NextStar)) {
         if (this->isValidAffectsSuccessor(successor)) {
@@ -345,7 +349,7 @@ STMT_SET PKBReader::getAllAffectsSuccessors() const {
     return result;
 }
 
-bool PKBReader::hasAffects() const {
+bool PKBReader::hasAffects() {
     const auto &nextStar = pkb.getKeyStmtByRs(StmtStmtRelationship::NextStar);
     return std::any_of(nextStar.begin(), nextStar.end(), [this](auto &predecessor) {
         return this->isValidAffectsPredecessor(predecessor);
