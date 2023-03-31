@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_set>
 
 #include "PKB.h"
 #include "pkb/db/AffectsGraph.h"
@@ -17,9 +18,15 @@ class PKBReader {
 
     STMT_SET getRelationship(StmtNameRelationship tableType, const ENT_NAME &name) const;
 
+    STMT_SET getRelationshipWithFilter(StmtNameRelationship tableType, const ENT_NAME &name, StmtType stmtType) const;
+
     STMT_ENT_SET getAllRelationships(StmtNameRelationship tableType) const;
 
+    STMT_ENT_SET getAllRelationshipsWithFilter(StmtNameRelationship tableType, StmtType stmtType) const;
+
     STMT_SET getStmtByRelationship(StmtNameRelationship tableType) const;
+
+    STMT_SET getStmtByRelationshipWithFilter(StmtNameRelationship tableType, StmtType stmtType) const;
 
     bool isRelationshipExists(StmtNameRelationship tableType, STMT_NUM stmt, const ENT_NAME &name) const;
 
@@ -39,17 +46,28 @@ class PKBReader {
 
     STMT_SET getRelationshipByVal(StmtStmtRelationship tableType, STMT_NUM valName);
 
-    STMT_STMT_SET getAllRelationships(StmtStmtRelationship tableType);
+    STMT_SET getRelationshipByStmtWithFilter(StmtStmtRelationship tableType,
+                                             STMT_NUM stmt,
+                                             StmtType stmtType,
+                                             bool isKey);
+
+    STMT_STMT_SET getAllRelationshipsWithFilter(StmtStmtRelationship tableType, StmtType first, StmtType second);
+
+    STMT_STMT_SET getAllRelationshipsWithFilter(StmtStmtRelationship tableType, StmtType stmtType);
 
     STMT_SET getKeyStmtByRelationship(StmtStmtRelationship tableType);
 
     STMT_SET getValueStmtByRelationship(StmtStmtRelationship tableType);
+
+    STMT_SET getStmtByRelationshipWithFilter(StmtStmtRelationship tableType, StmtType stmtType, bool isKey);
 
     STMT_SET getStmtByRs(StmtStmtRelationship tableType);
 
     STMT_SET getStmtByProc(const ENT_NAME &procName) const;
 
     bool isRelationshipExists(StmtStmtRelationship tableType, STMT_NUM keyName, STMT_NUM valName);
+
+    bool hasRelationship(StmtStmtRelationship tableType);
 
     STMT_SET getStmtWithExactPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;
 
@@ -82,4 +100,17 @@ class PKBReader {
     bool hasAffects();
 
     bool isModifies(STMT_NUM key, const ENT_NAME &val) const;
+
+    STMT_STMT_SET getAllRelationships(StmtStmtRelationship tableType);
+
+    template<typename T>
+    unordered_set<T> getInnerJoin(unordered_set<T> first, unordered_set<T> second) const {
+        unordered_set<T> result;
+        for (auto &stmt : first) {
+            if (second.find(stmt) != second.end()) {
+                result.insert(stmt);
+            }
+        }
+        return result;
+    }
 };

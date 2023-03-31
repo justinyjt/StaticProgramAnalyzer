@@ -1,7 +1,7 @@
 #include "catch.hpp"
 #include "../../TestHelper.h"
 #include "qps/pql/Synonym.h"
-#include "qps/clause/Clause.h"
+#include "qps/clause/OptimisableClause.h"
 #include "qps/query_parser/clause_parser/pattern_clause_parser/PatternClauseParser.h"
 #include "commons/lexer/LexerFactory.h"
 #include "qps/pql/Ident.h"
@@ -53,7 +53,7 @@ class setUpMcp {
         identStr = std::make_unique<Ident>("x");
         std::string exprStr = "x";
         std::unique_ptr<ILexer> lxr =
-                LexerFactory::createLexer(exprStr, LexerFactory::LexerType::Expression);
+            LexerFactory::createLexer(exprStr, LexerFactory::LexerType::Expression);
         TokenScanner scanner(std::move(lxr));
         ExprParser parser(scanner);
         ASSIGN_PAT_RIGHT pattern = parser.parseExpr();
@@ -93,8 +93,8 @@ class setUpMcp {
     std::unique_ptr<Wildcard> wildcard1;
     std::unique_ptr<Wildcard> wildcard2;
 
-    std::vector<std::unique_ptr<Clause>> clause;
-    std::vector<std::unique_ptr<Clause>> expected;
+    std::vector<std::unique_ptr<OptimisableClause>> clause;
+    std::vector<std::unique_ptr<OptimisableClause>> expected;
     std::unique_ptr<ModifiesS> modifiesS;
     std::unique_ptr<UsesS> usesS;
     std::unique_ptr<ModifiesP> modifiesP;
@@ -116,7 +116,7 @@ TEST_CASE_METHOD(setUpMcp, "modifiesS, usesS, invalid syntax") {
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     ClauseParser cp(pqlTokenScanner, declarationList);
     requireThrowAs<SyntaxException>([&cp]() {
-        cp.parse();
+      cp.parse();
     });
 }
 
@@ -126,7 +126,7 @@ TEST_CASE_METHOD(setUpMcp, "and start, invalid syntax") {
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     ClauseParser cp(pqlTokenScanner, declarationList);
     requireThrowAs<SyntaxException>([&cp]() {
-        cp.parse();
+      cp.parse();
     });
 }
 

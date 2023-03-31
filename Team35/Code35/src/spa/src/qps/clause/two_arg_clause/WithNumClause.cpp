@@ -107,17 +107,16 @@ std::unique_ptr<Result> WithNumClause::handleSameSynCase(PKBReader *db, Synonym 
     return std::move(res);
 }
 
-
 std::unique_ptr<Result> WithNumClause::evaluate(PKBReader *db) {
     /* <SYNONYM | NUM>, <SYNONYM | NUM> */
 
     switch (getPairEnum()) {
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // with syn.x = syn.y -> syn_type[]
         {
-            Synonym syn1 = dynamic_cast<Synonym &>(*first);
-            Synonym syn2 = dynamic_cast<Synonym &>(*second);
+            Synonym syn1 = dynamic_cast<Synonym &>(*first_);
+            Synonym syn2 = dynamic_cast<Synonym &>(*second_);
 
-            if (first->str() == second->str()) {
+            if (first_->str() == second_->str()) {
                 return handleSameSynCase(db, syn1);
             }
 
@@ -132,8 +131,8 @@ std::unique_ptr<Result> WithNumClause::evaluate(PKBReader *db) {
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::STMT_NUM):  // with syn.x = "x" -> syn_type[]
         {
-            Synonym syn1 = dynamic_cast<Synonym &>(*first);
-            std::string num = (dynamic_cast<PQLNumber &>(*second)).n;
+            Synonym syn1 = dynamic_cast<Synonym &>(*first_);
+            std::string num = (dynamic_cast<PQLNumber &>(*second_)).n;
             if (syn1.de == Synonym::DesignEntity::CONSTANT) {
                 return handleOneConstCaseNum(db, syn1.str(), num);
             }
@@ -141,8 +140,8 @@ std::unique_ptr<Result> WithNumClause::evaluate(PKBReader *db) {
         }
         case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::SYNONYM):  // with syn.x = "x" -> syn_type[]
         {
-            Synonym syn2 = dynamic_cast<Synonym &>(*second);
-            std::string num = (dynamic_cast<PQLNumber &>(*first)).n;
+            Synonym syn2 = dynamic_cast<Synonym &>(*second_);
+            std::string num = (dynamic_cast<PQLNumber &>(*first_)).n;
             if (syn2.de == Synonym::DesignEntity::CONSTANT) {
                 return handleOneConstCaseNum(db, syn2.str(), num);
             }
@@ -150,8 +149,8 @@ std::unique_ptr<Result> WithNumClause::evaluate(PKBReader *db) {
         }
         case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::STMT_NUM):  // Uses/Modifies(1, "x") -> bool
         {
-            std::string num1 = (dynamic_cast<PQLNumber &>(*first)).n;
-            std::string num2 = (dynamic_cast<PQLNumber &>(*second)).n;
+            std::string num1 = (dynamic_cast<PQLNumber &>(*first_)).n;
+            std::string num2 = (dynamic_cast<PQLNumber &>(*second_)).n;
             std::unique_ptr<Result> result = std::make_unique<BoolResult>(num1 == num2);
             return std::move(result);
         }

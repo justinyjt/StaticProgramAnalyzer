@@ -10,7 +10,9 @@ class IdentityResult : public Result {
  public:
     IdentityResult();
 
-    std::unique_ptr<Result> join(Result &rhs);
+    std::unique_ptr<Result> join(Result &rhs) override;
 
     void output(std::list<std::string> &list) override;
+
+    bool empty() const override;
 };

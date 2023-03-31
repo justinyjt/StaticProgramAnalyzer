@@ -1,7 +1,7 @@
 #include "SelectClause.h"
 #include "BooleanSelectClause.h"
 
-BooleanSelectClause::BooleanSelectClause() = default;
+BooleanSelectClause::BooleanSelectClause() : SelectClause(SelectType::Boolean) {}
 
 std::unique_ptr<Result> BooleanSelectClause::evaluate(PKBReader *db) {
     return std::make_unique<BoolResult>(true, true);

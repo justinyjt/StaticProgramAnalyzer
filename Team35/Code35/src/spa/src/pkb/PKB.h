@@ -92,6 +92,8 @@ class PKB {
 
     bool isEntityTypeExists(StmtType tableType, STMT_NUM key) const;
 
+    bool isRelationshipExists(StmtStmtRelationship tableType);
+
  private:
     // Entity related tables
     EntityTable<ENT_NAME> variableTable_;

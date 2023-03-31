@@ -1,10 +1,11 @@
 #include "TableResult.h"
-#include "BoolResult.h"
 
 #include <iterator>
 #include <memory>
 #include <utility>
 #include <set>
+
+#include "BoolResult.h"
 
 // general constructor for n-cols
 TableResult::TableResult(const std::vector<std::string> &_idents,
@@ -15,8 +16,8 @@ TableResult::TableResult(const std::vector<std::string> &_idents,
 
 // constructor for SelectResult Output
 TableResult::TableResult(const std::vector<std::string> &_idents,
-            const std::vector<std::vector<std::string>> &_rows,
-            const std::vector<int> &_order) : Result(Tag::TABLE) {
+                         const std::vector<std::vector<std::string>> &_rows,
+                         const std::vector<int> &_order) : Result(Tag::TABLE) {
     idents.insert(idents.end(), _idents.begin(), _idents.end());
     rows.insert(rows.end(), _rows.begin(), _rows.end());
     order = std::make_optional(_order);
@@ -32,8 +33,8 @@ TableResult::TableResult(const std::string &ident1, const std::string &ident2,
     idents.push_back(ident2);
     for (auto &p : set) {
         rows.emplace_back(
-                std::vector<std::string>
-                        {std::to_string(p.first), p.second});
+            std::vector<std::string>
+                {std::to_string(p.first), p.second});
     }
 }
 
@@ -44,16 +45,16 @@ TableResult::TableResult(const std::string &ident1, const std::string &ident2,
         idents.push_back(ident1);
         for (auto &p : set) {
             rows.emplace_back(
-                    std::vector<std::string>
-                            {std::to_string(p.first)});
+                std::vector<std::string>
+                    {std::to_string(p.first)});
         }
     } else {
         idents.push_back(ident1);
         idents.push_back(ident2);
         for (auto &p : set) {
             rows.emplace_back(
-                    std::vector<std::string>
-                            {std::to_string(p.first), std::to_string(p.second)});
+                std::vector<std::string>
+                    {std::to_string(p.first), std::to_string(p.second)});
         }
     }
 }
@@ -65,8 +66,8 @@ TableResult::TableResult(const std::string &ident1, const std::string &ident2,
     idents.push_back(ident2);
     for (auto &p : set) {
         rows.emplace_back(
-                std::vector<std::string>
-                        {p.first, p.second});
+            std::vector<std::string>
+                {p.first, p.second});
     }
 }
 
@@ -83,7 +84,7 @@ TableResult::TableResult(const std::string &ident, ENT_SET &set) : Result(Tag::T
     idents.push_back(ident);
     for (auto &elem : set)
         rows.emplace_back(
-                std::initializer_list<std::string>{elem});
+            std::initializer_list<std::string>{elem});
 }
 
 // for 1 col with STMT_SET
@@ -91,7 +92,7 @@ TableResult::TableResult(const std::string &ident, STMT_SET &set) : Result(Tag::
     idents.push_back(ident);
     for (auto &elem : set)
         rows.emplace_back(
-                std::vector<std::string>{std::to_string(elem)});
+            std::vector<std::string>{std::to_string(elem)});
 }
 
 // 2 col with ENT_SET
@@ -104,7 +105,8 @@ TableResult::TableResult(const std::string &ident1, const std::string &ident2,
     }
 }
 
-std::unique_ptr<TableResult> TableResult::projectColumns(std::unordered_set<std::string> projectedColumns) {
+std::unique_ptr<TableResult> TableResult::projectColumns(const
+                                                         std::unordered_set<std::string> &projectedColumns) const {
     std::vector<std::string> projectedIdents;
     std::vector<std::vector<std::string>> projectedRowsWithDuplicates(rows.size(), std::vector<std::string>());
 
@@ -129,7 +131,7 @@ std::unique_ptr<TableResult> TableResult::projectColumns(std::unordered_set<std:
 
 std::unique_ptr<Result> TableResult::join(Result &rhs) {
     if (rhs.tag == Tag::BOOL) {
-        BoolResult &boolResult = dynamic_cast<BoolResult &>(rhs);
+        auto &boolResult = dynamic_cast<BoolResult &>(rhs);
         std::unique_ptr<Result> res;
         if (boolResult.b) {
             res = std::make_unique<TableResult>(std::move(*this));
@@ -139,7 +141,7 @@ std::unique_ptr<Result> TableResult::join(Result &rhs) {
         return res;
     }
 
-    TableResult &t2 = dynamic_cast<TableResult &>(rhs);
+    auto &t2 = dynamic_cast<TableResult &>(rhs);
 
     std::vector<std::string> headers1(idents.begin(), idents.end());
     std::vector<std::string> headers2(t2.idents.begin(), t2.idents.end());
@@ -177,7 +179,7 @@ std::unique_ptr<Result> TableResult::join(Result &rhs) {
     }
 
     // if no matching headers
-    if (commonHeaders1.size() == 0) {
+    if (commonHeaders1.empty()) {
         // append all headers
         outputHeaders.insert(outputHeaders.end(), headers1.begin(), headers1.end());
         outputHeaders.insert(outputHeaders.end(), headers2.begin(), headers2.end());
@@ -198,11 +200,11 @@ std::unique_ptr<Result> TableResult::join(Result &rhs) {
             outputHeaders.push_back(headers2[idx]);
         }
 
-        for (int i = 0; i < rows.size(); ++i) {
-            for (int j = 0; j < t2.rows.size(); ++j) {
+        for (auto &row : rows) {
+            for (auto &j : t2.rows) {
                 bool match = true;
                 for (int k = 0; k < commonHeaders1.size(); ++k) {
-                    if (rows[i][commonHeaders1[k]] != t2.rows[j][commonHeaders2[k]]) {
+                    if (row[commonHeaders1[k]] != j[commonHeaders2[k]]) {
                         match = false;
                         break;
                     }
@@ -211,10 +213,10 @@ std::unique_ptr<Result> TableResult::join(Result &rhs) {
                     continue;
                 }
                 std::vector<std::string> concat;
-                for (auto &value : rows[i]) {
+                for (auto &value : row) {
                     concat.push_back(value);
                 }
-                for (int k = 0; k < t2.rows[j].size(); ++k) {
+                for (int k = 0; k < j.size(); ++k) {
                     bool canAdd = true;
                     for (auto &header : commonHeaders2) {
                         if (header == k) {
@@ -223,7 +225,7 @@ std::unique_ptr<Result> TableResult::join(Result &rhs) {
                         }
                     }
                     if (canAdd) {
-                        concat.push_back(t2.rows[j][k]);
+                        concat.push_back(j[k]);
                     }
                 }
                 outputColumns.push_back(concat);
@@ -259,24 +261,28 @@ void TableResult::output(std::list<std::string> &list) {
 }
 
 bool TableResult::operator==(const Result &rhs) const {
-    const TableResult *pRhs = dynamic_cast<const TableResult *>(&rhs);
+    const auto *pRhs = dynamic_cast<const TableResult *>(&rhs);
     if (pRhs == nullptr || idents != pRhs->idents || rows.size() != pRhs->rows.size()) {
         return false;
     }
 
     std::unordered_set<std::string> a;
     for (auto &row : rows) {
-        std::string s{""};
+        std::string s;
         for (auto &elem : row) s += elem;
         a.insert(s);
     }
 
     std::unordered_set<std::string> b;
     for (auto &row : pRhs->rows) {
-        std::string s{""};
+        std::string s;
         for (auto &elem : row) s += elem;
         b.insert(s);
     }
 
     return a == b;
+}
+
+bool TableResult::empty() const {
+    return rows.empty();
 }
