@@ -3,6 +3,7 @@
 #include "pkb/PKBWriter.h"
 #include "commons/types.h"
 #include "catch.hpp"
+#include "../TestHelper.h"
 
 /* Named Entity adding Tests */
 
@@ -15,13 +16,15 @@ TEST_CASE("Test PKB adding a statement", "[pkb][statement]") {
     SECTION("Test PKB adding a constant statement number") {
         ENT_SET entSetConstant;
         entSetConstant.emplace("1");
-        REQUIRE(pkbWriterPtr->addEntities(Entity::Constant, entSetConstant));
+        pkbWriterPtr->addEntities(Entity::Constant, entSetConstant);
+        requireEqual(entSetConstant, p.getEntityTable(Entity::Constant).getTable());
     }
 
     SECTION("Test PKB adding a constant statement number") {
         ENT_SET entSetVariable;
         entSetVariable.emplace("x");
-        REQUIRE(pkbWriterPtr->addEntities(Entity::Variable, entSetVariable));
+        pkbWriterPtr->addEntities(Entity::Variable, entSetVariable);
+        requireEqual(entSetVariable, p.getEntityTable(Entity::Variable).getTable());
     }
 }
 
@@ -35,12 +38,14 @@ TEST_CASE("Test PKB adding multiple statements", "[pkb][statement][multiple]") {
         entSetConstant.emplace("1");
         entSetConstant.emplace("2");
         entSetConstant.emplace("3");
-        REQUIRE(pkbWriterPtr->addEntities(Entity::Constant, entSetConstant));
+        pkbWriterPtr->addEntities(Entity::Constant, entSetConstant);
+        requireEqual(entSetConstant, p.getEntityTable(Entity::Constant).getTable());
         ENT_SET entSetVariable;
         entSetVariable.emplace("x");
         entSetVariable.emplace("y");
         entSetVariable.emplace("z");
-        REQUIRE(pkbWriterPtr->addEntities(Entity::Variable, entSetVariable));
+        pkbWriterPtr->addEntities(Entity::Variable, entSetVariable);
+        requireEqual(entSetVariable, p.getEntityTable(Entity::Variable).getTable());
     }
 }
 
@@ -49,18 +54,20 @@ TEST_CASE("Test PKB adding a statement, error with repeated stmtNo", "[pkb][stat
     PKBWriter pkbWriter(p);
     PKBWriter *pkbWriterPtr = &pkbWriter;
 
-    SECTION("Test PKB adding repeated constant statement, with error") {
+    SECTION("Test PKB adding repeated constant statement, with no repeat") {
         ENT_SET entSetConstant;
         entSetConstant.emplace("1");
-        REQUIRE(pkbWriterPtr->addEntities(Entity::Constant, entSetConstant));
-        REQUIRE(!pkbWriterPtr->addEntities(Entity::Constant, entSetConstant));
+        pkbWriterPtr->addEntities(Entity::Constant, entSetConstant);
+        pkbWriterPtr->addEntities(Entity::Constant, entSetConstant);
+        requireEqual(entSetConstant, p.getEntityTable(Entity::Constant).getTable());
     }
 
-    SECTION("Test PKB adding repeated variable statement, with error") {
+    SECTION("Test PKB adding repeated variable statement, with no repeat") {
         ENT_SET entSetVariable;
         entSetVariable.emplace("x");
-        REQUIRE(pkbWriterPtr->addEntities(Entity::Constant, entSetVariable));
-        REQUIRE(!pkbWriterPtr->addEntities(Entity::Constant, entSetVariable));
+        pkbWriterPtr->addEntities(Entity::Variable, entSetVariable);
+        pkbWriterPtr->addEntities(Entity::Variable, entSetVariable);
+        requireEqual(entSetVariable, p.getEntityTable(Entity::Variable).getTable());
     }
 }
 
@@ -72,13 +79,15 @@ TEST_CASE("Test PKB adding Statement-Name relationship", "[pkb][relationship]") 
     SECTION("Test PKB adding Statement-Name Uses relationship") {
         STMT_ENT_SET stmtEntSet;
         stmtEntSet.insert(std::make_pair(1, "x"));
-        REQUIRE(pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Uses, stmtEntSet));
+        pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Uses, stmtEntSet);
+        requireEqual(stmtEntSet, p.getStmtNameRelationshipTable(StmtNameRelationship::Uses).getKeyValuePairs());
     }
 
     SECTION("Test PKB adding Statement-Name Modifies relationship") {
         STMT_ENT_SET stmtEntSet;
         stmtEntSet.insert(std::make_pair(2, "y"));
-        REQUIRE(pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Modifies, stmtEntSet));
+        pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Modifies, stmtEntSet);
+        requireEqual(stmtEntSet, p.getStmtNameRelationshipTable(StmtNameRelationship::Modifies).getKeyValuePairs());
     }
 }
 
@@ -90,37 +99,43 @@ TEST_CASE("Test PKB adding Entity-Entity relationship", "[pkb][relationship]") {
     SECTION("Test PKB adding Entity-Entity Uses relationship") {
         ENT_ENT_SET entEntSet;
         entEntSet.insert(std::make_pair("add", "x"));
-        REQUIRE(pkbWriterPtr->addEntityEntityRelationships(NameNameRelationship::Uses, entEntSet));
+        pkbWriterPtr->addEntityEntityRelationships(NameNameRelationship::Uses, entEntSet);
+        requireEqual(entEntSet, p.getNameNameRelationshipTable(NameNameRelationship::Uses).getKeyValuePairs());
     }
 
     SECTION("Test PKB adding Entity-Entity Modifies relationship") {
         ENT_ENT_SET entEntSet;
         entEntSet.insert(std::make_pair("divide", "y"));
-        REQUIRE(pkbWriterPtr->addEntityEntityRelationships(NameNameRelationship::Modifies, entEntSet));
+        pkbWriterPtr->addEntityEntityRelationships(NameNameRelationship::Modifies, entEntSet);
+        requireEqual(entEntSet, p.getNameNameRelationshipTable(NameNameRelationship::Modifies).getKeyValuePairs());
     }
 
     SECTION("Test PKB adding Statement-Statement Follows relationship") {
         STMT_STMT_SET stmtStmtSet;
         stmtStmtSet.insert(std::make_pair(1, 2));
-        REQUIRE(pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationship::Follows, stmtStmtSet));
+        pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationship::Follows, stmtStmtSet);
+        requireEqual(stmtStmtSet, p.getStmtStmtRelationshipTable(StmtStmtRelationship::Follows).getKeyValuePairs());
     }
 
     SECTION("Test PKB adding Statement-Statement FollowsStar relationship") {
         STMT_STMT_SET stmtStmtSet;
         stmtStmtSet.insert(std::make_pair(1, 2));
-        REQUIRE(pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationship::FollowsStar, stmtStmtSet));
+        pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationship::FollowsStar, stmtStmtSet);
+        requireEqual(stmtStmtSet, p.getStmtStmtRelationshipTable(StmtStmtRelationship::FollowsStar).getKeyValuePairs());
     }
 
     SECTION("Test PKB adding Statement-Statement Parent relationship") {
         STMT_STMT_SET stmtStmtSet;
         stmtStmtSet.insert(std::make_pair(1, 2));
-        REQUIRE(pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationship::Parent, stmtStmtSet));
+        pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationship::Parent, stmtStmtSet);
+        requireEqual(stmtStmtSet, p.getStmtStmtRelationshipTable(StmtStmtRelationship::Parent).getKeyValuePairs());
     }
 
     SECTION("Test PKB adding Statement-Statement ParentStar relationship") {
         STMT_STMT_SET stmtStmtSet;
         stmtStmtSet.insert(std::make_pair(1, 2));
-        REQUIRE(pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationship::ParentStar, stmtStmtSet));
+        pkbWriterPtr->addStmtStmtRelationships(StmtStmtRelationship::ParentStar, stmtStmtSet);
+        requireEqual(stmtStmtSet, p.getStmtStmtRelationshipTable(StmtStmtRelationship::ParentStar).getKeyValuePairs());
     }
 }
 
@@ -134,7 +149,8 @@ TEST_CASE("Test PKB adding multiple Statement-Entity relationships", "[pkb][rela
         stmtEntSet.insert(std::make_pair(1, "x"));
         stmtEntSet.insert(std::make_pair(2, "y"));
         stmtEntSet.insert(std::make_pair(3, "z"));
-        REQUIRE(pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Uses, stmtEntSet));
+        pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Uses, stmtEntSet);
+        requireEqual(stmtEntSet, p.getStmtNameRelationshipTable(StmtNameRelationship::Uses).getKeyValuePairs());
     }
 
         // can use same parameters because adding to different table
@@ -143,7 +159,8 @@ TEST_CASE("Test PKB adding multiple Statement-Entity relationships", "[pkb][rela
         stmtEntSet.insert(std::make_pair(1, "x"));
         stmtEntSet.insert(std::make_pair(2, "y"));
         stmtEntSet.insert(std::make_pair(3, "z"));
-        REQUIRE(pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Modifies, stmtEntSet));
+        pkbWriterPtr->addStmtEntityRelationships(StmtNameRelationship::Modifies, stmtEntSet);
+        requireEqual(stmtEntSet, p.getStmtNameRelationshipTable(StmtNameRelationship::Modifies).getKeyValuePairs());
     }
 }
 

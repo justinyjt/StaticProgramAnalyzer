@@ -21,7 +21,7 @@ class RelationshipTable {
  public:
     const std::unordered_set<TKey> getKeys() const {
         std::unordered_set<TKey> res;
-        for (auto const& keys : keyValueMap) {
+        for (auto const &keys : keyValueMap) {
             res.emplace(keys.first);
         }
         return res;
@@ -29,7 +29,7 @@ class RelationshipTable {
 
     const std::unordered_set<TValue> getValues() const {
         std::unordered_set<TValue> res;
-        for (auto const& values : valueKeyMap) {
+        for (auto const &values : valueKeyMap) {
             res.emplace(values.first);
         }
         return res;
@@ -60,16 +60,14 @@ class RelationshipTable {
         return keyValuePairSet.count(pair);
     }
 
-    bool insertPair(TKey key, TValue val) {
+    void insertPair(TKey key, TValue val) {
         if (containsPair(key, val)) {
-            return false;
+            return;
         }
-
         keyValueMap[key].emplace(val);
         valueKeyMap[val].emplace(key);
         keyValuePairSet.emplace(std::make_pair(key, val));
-
-        return true;
     }
 };
+
 #endif  // TEAM35_CODE35_SRC_SPA_SRC_PKB_DB_RELATIONSHIPTABLE_H_
