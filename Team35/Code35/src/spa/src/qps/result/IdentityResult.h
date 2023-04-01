@@ -14,5 +14,5 @@ class IdentityResult : public Result {
 
     void output(std::list<std::string> &list) override;
 
-    bool empty() const override;
+    bool isNull() const override;
 };

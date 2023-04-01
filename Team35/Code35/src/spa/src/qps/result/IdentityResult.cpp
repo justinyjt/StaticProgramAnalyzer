@@ -11,6 +11,6 @@ std::unique_ptr<Result> IdentityResult::join(Result &rhs) {
 
 void IdentityResult::output(std::list<std::string> &list) {}
 
-bool IdentityResult::empty() const {
+bool IdentityResult::isNull() const {
     return false;
 }

@@ -26,10 +26,10 @@ class SelectResult : public Result {
 
     bool operator==(const Result &rhs) const;
 
-    bool empty() const override;
+    bool isNull() const override;
 
  private:
-    std::vector<int> getOutputOrder(TableResult &intermediateRes);
+    std::vector<int> getOutputOrder(const TableResult &intermediateRes) const;
 
     std::unique_ptr<Result> getColsCrossProduct();
 };

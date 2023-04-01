@@ -34,6 +34,6 @@ bool BoolResult::operator==(const Result &rhs) const {
     return pRhs != nullptr && b == pRhs->b;
 }
 
-bool BoolResult::empty() const {
+bool BoolResult::isNull() const {
     return !b;
 }

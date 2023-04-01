@@ -23,6 +23,7 @@ std::unique_ptr<Result> QueryEvaluator::evaluate(std::unique_ptr<SelectClause> s
     ClauseOptimiser clauseOptimiser(clauses);
 
     // clause evaluation
+    // individual clause evaluation based on order determined by ClauseOptimiser
     ClauseIndexList clauseEvaluationOrder = clauseOptimiser.getClauseEvaluationOrder();
     bool isAnyClauseEmpty = false;
     bool hasHeaders = false;
@@ -30,7 +31,7 @@ std::unique_ptr<Result> QueryEvaluator::evaluate(std::unique_ptr<SelectClause> s
     for (ClauseIndex clauseIndex : clauseEvaluationOrder) {
         results[clauseIndex] = clauses[clauseIndex]->evaluate(db);
         hasHeaders = hasHeaders || !clauses[clauseIndex]->getHeaders().empty();
-        if (results[clauseIndex]->empty()) {  //  false boolean or empty table
+        if (results[clauseIndex]->isNull()) {
             isAnyClauseEmpty = true;
             break;
         }
@@ -46,7 +47,8 @@ std::unique_ptr<Result> QueryEvaluator::evaluate(std::unique_ptr<SelectClause> s
         return selectRes->join(trueResult);
     }
 
-    // clause grouping - join within groups
+    // Clause group joining - join evaluated results within each group
+    // based on order determined by ClauseOptimiser
     ClauseGroupList clauseGroups = clauseOptimiser.getClauseGroups();
     if (clauseGroups.empty()) {
         BoolResult falseResult(false);
@@ -63,13 +65,13 @@ std::unique_ptr<Result> QueryEvaluator::evaluate(std::unique_ptr<SelectClause> s
             std::unique_ptr<Result> next = std::move(results[joinOrder[j]]);
             std::unique_ptr<Result> merged = curr->join(*next);
             curr = std::move(merged);
-            if (curr->empty()) {
+            if (curr->isNull()) {
+                isAnyClauseGroupEmpty = true;
                 break;
             }
         }
 
-        if (curr->empty()) {
-            isAnyClauseGroupEmpty = true;
+        if (isAnyClauseGroupEmpty) {
             break;
         }
         groupedIntermediateResults[i] = std::move(curr);
@@ -86,7 +88,6 @@ std::unique_ptr<Result> QueryEvaluator::evaluate(std::unique_ptr<SelectClause> s
         return selectRes->join(trueResult);
     }
 
-    // clause grouping - join between groups
     // clean up the grouped results, so that only required columns are kept
     std::vector<std::unique_ptr<Result>> cleanedIntermediateResults;
     for (int i = 0; i < clauseGroups.size(); ++i) {
@@ -105,13 +106,13 @@ std::unique_ptr<Result> QueryEvaluator::evaluate(std::unique_ptr<SelectClause> s
         return selectRes->join(identResult);
     }
 
-    // join the groups
+    // clause grouping - join between groups
     std::unique_ptr<Result> finalClauseResult = std::move(cleanedIntermediateResults.front());
     for (int i = 1; i < cleanedIntermediateResults.size(); ++i) {
         std::unique_ptr<Result> next = std::move(cleanedIntermediateResults[i]);
         std::unique_ptr<Result> merged = finalClauseResult->join(*next);
         finalClauseResult = std::move(merged);
-        if (finalClauseResult->empty()) {
+        if (finalClauseResult->isNull()) {
             break;
         }
     }

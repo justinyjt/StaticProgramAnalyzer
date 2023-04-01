@@ -12,11 +12,11 @@ SelectResult::SelectResult(std::vector<std::string> &_idents, const std::vector<
     cols.insert(cols.end(), _cols.begin(), _cols.end());
 }
 
-std::vector<int> SelectResult::getOutputOrder(TableResult &intermediateRes) {
+std::vector<int> SelectResult::getOutputOrder(const TableResult &intermediateRes) const {
     std::vector<int> order;
-    for (int i = 0; i < idents.size(); i++) {
+    for (const auto &ident : idents) {
         for (int j = 0; j < intermediateRes.idents.size(); j++) {
-            if (idents[i] == intermediateRes.idents[j]) {
+            if (ident == intermediateRes.idents[j]) {
                 order.push_back(j);
             }
         }
@@ -25,14 +25,14 @@ std::vector<int> SelectResult::getOutputOrder(TableResult &intermediateRes) {
 }
 
 std::unique_ptr<Result> SelectResult::getColsCrossProduct() {
-    std::unique_ptr<Result> finalRes = std::make_unique<TableResult>(TableResult(cols[0]));
+    std::unique_ptr<Result> finalRes = std::make_unique<TableResult>(cols[0]);
     for (int i = 1; i < cols.size(); i++) {
         finalRes = finalRes->join(cols[i]);
     }
 
-    TableResult &finalTableRes = dynamic_cast<TableResult&>(*finalRes);
+    auto &finalTableRes = dynamic_cast<TableResult &>(*finalRes);
     std::vector<int> order = getOutputOrder(finalTableRes);
-    return std::make_unique<TableResult>(TableResult(finalTableRes.idents, finalTableRes.rows, order));
+    return std::make_unique<TableResult>(finalTableRes.idents, finalTableRes.rows, order);
 }
 
 std::unique_ptr<Result> SelectResult::join(Result &rhs) {
@@ -44,7 +44,7 @@ std::unique_ptr<Result> SelectResult::join(Result &rhs) {
         if (boolRes.b) {
             return getColsCrossProduct();
         }
-        return std::make_unique<TableResult>(TableResult());
+        return std::make_unique<TableResult>();
     }
 
     auto &t2 = dynamic_cast<TableResult &>(rhs);
@@ -66,14 +66,13 @@ std::unique_ptr<Result> SelectResult::join(Result &rhs) {
     return std::make_unique<TableResult>(finalTableRes->idents, finalTableRes->rows, order);
 }
 
-void SelectResult::output(std::list<std::string> &list) {
-}
+void SelectResult::output(std::list<std::string> &list) {}
 
 bool SelectResult::operator==(const Result &rhs) const {
     const auto *pRhs = dynamic_cast<const SelectResult *>(&rhs);
     return pRhs != nullptr && idents == pRhs->idents && cols == pRhs->cols;
 }
 
-bool SelectResult::empty() const {
+bool SelectResult::isNull() const {
     return false;
 }

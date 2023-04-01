@@ -103,15 +103,4 @@ class PKBReader {
     STMT_STMT_SET getAllRelationships(StmtStmtRelationship tableType);
 
     void computeAffectsGraph();
-
-    template<typename T>
-    unordered_set<T> getInnerJoin(unordered_set<T> first, unordered_set<T> second) const {
-        unordered_set<T> result;
-        for (auto &stmt : first) {
-            if (second.find(stmt) != second.end()) {
-                result.insert(stmt);
-            }
-        }
-        return result;
-    }
 };

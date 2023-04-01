@@ -283,6 +283,6 @@ bool TableResult::operator==(const Result &rhs) const {
     return a == b;
 }
 
-bool TableResult::empty() const {
+bool TableResult::isNull() const {
     return rows.empty();
 }
