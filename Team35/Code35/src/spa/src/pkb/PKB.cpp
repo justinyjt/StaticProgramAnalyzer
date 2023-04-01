@@ -2,6 +2,8 @@
 
 #include <utility>
 
+#include "db/exception/TableException.h"
+
 const EntityTable<ENT_NAME> &PKB::getEntityTable(Entity entityType) const {
     switch (entityType) {
         case Entity::Variable:
@@ -10,6 +12,8 @@ const EntityTable<ENT_NAME> &PKB::getEntityTable(Entity entityType) const {
             return constantTable_;
         case Entity::Procedure:
             return procedureTable_;
+        default:
+            throw TableException();
     }
 }
 
@@ -29,6 +33,8 @@ const EntityTable<STMT_NUM> &PKB::getStatementTable(StmtType stmtType) const {
             return callStatementTable_;
         case StmtType::None:
             return statementTable_;
+        default:
+            throw TableException();
     }
 }
 
@@ -60,6 +66,8 @@ const RelationshipTable<STMT_NUM, ENT_NAME> &PKB::getStmtNameRelationshipTable(S
             return readStmtVarTable_;
         case StmtNameRelationship::PrintStmtVar:
             return printStmtVarTable_;
+        default:
+            throw TableException();
     }
 }
 
@@ -78,6 +86,8 @@ const RelationshipTable<ENT_NAME, ENT_NAME> &PKB::getNameNameRelationshipTable(N
             return callsNameNameTable_;
         case NameNameRelationship::CallsStar:
             return callsStarNameNameTable_;
+        default:
+            throw TableException();
     }
 }
 
@@ -96,6 +106,8 @@ const RelationshipTable<STMT_NUM, STMT_NUM> &PKB::getStmtStmtRelationshipTable(S
             return followsTable_;
         case StmtStmtRelationship::FollowsStar:
             return followsStarTable_;
+        default:
+            throw TableException();
     }
 }
 
