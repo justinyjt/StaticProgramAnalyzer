@@ -16,10 +16,10 @@ ASSIGN_PAT_RIGHT ExprParser::parseExpr() {
         std::string opLabel;
         if (scanner_.peek(Token::Tag::Plus)) {
             opType = ASTNode::SyntaxType::Plus;
-            opLabel = ExprNode::plusLabel;
+            opLabel = ExprNode::plusAscii;
         } else {
             opType = ASTNode::SyntaxType::Minus;
-            opLabel = ExprNode::minusLabel
+            opLabel = ExprNode::minusAscii;
         }
         scanner_.next();
         ASSIGN_PAT_RIGHT op = std::make_shared<ExprNode>(opType, opLabel);
@@ -41,13 +41,13 @@ ASSIGN_PAT_RIGHT ExprParser::parseTerm() {
         std::string opLabel;
         if (scanner_.peek(Token::Tag::Multiply)) {
             opType = ASTNode::SyntaxType::Multiply;
-            opLabel = ExprNode::multiplyLabel;
+            opLabel = ExprNode::multiplyAscii;
         } else if (scanner_.peek(Token::Tag::Divide)) {
             opType = ASTNode::SyntaxType::Divide;
-            opLabel = ExprNode::divideLabel;
+            opLabel = ExprNode::divideAscii;
         } else {
             opType = ASTNode::SyntaxType::Modulo;
-            opLabel = ExprNode::moduloLabel;
+            opLabel = ExprNode::moduloAscii;
         }
         scanner_.next();
         ASSIGN_PAT_RIGHT op = std::make_shared<ExprNode>(opType, opLabel);

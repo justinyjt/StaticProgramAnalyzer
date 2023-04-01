@@ -7,11 +7,11 @@
 
 class ExprNode : public ASTNode {
  public:
-    static std::string plusLabel;
-    static std::string minusLabel;
-    static std::string multiplyLabel;
-    static std::string divideLabel;
-    static std::string moduloLabel;
+    static char plusAscii;
+    static char minusAscii;
+    static char multiplyAscii;
+    static char divideAscii;
+    static char moduloAscii;
 
     ExprNode(SyntaxType syntaxType, std::optional<std::string> label)
             : ASTNode(syntaxType, std::move(label)) {}

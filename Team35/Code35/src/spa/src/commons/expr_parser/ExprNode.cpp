@@ -1,12 +1,12 @@
-#include <string>
-
 #include "ExprNode.h"
 
-std::string ExprNode::plusLabel = "+";
-std::string ExprNode::minusLabel = "-";
-std::string ExprNode::multiplyLabel = "*";
-std::string ExprNode::divideLabel = "/";
-std::string ExprNode::moduloLabel = "%";
+#include <string>
+
+char ExprNode::plusAscii = '+';
+char ExprNode::minusAscii = '-';
+char ExprNode::multiplyAscii = '*';
+char ExprNode::divideAscii = '/';
+char ExprNode::moduloAscii = '%';
 
 std::string ExprNode::toString() const {
     if (this->getChildren().size() > 0) {
