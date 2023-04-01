@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include "commons/util/SetUtil.h"
+
 PKBReader::PKBReader(PKB &pkb) : pkb(pkb) {}
 
 ENT_SET PKBReader::getEntities(Entity entityType) const {
@@ -25,7 +27,7 @@ STMT_SET
 PKBReader::getRelationshipWithFilter(StmtNameRelationship tableType, const ENT_NAME &name, StmtType stmtType) const {
     STMT_SET s = this->getRelationship(tableType, name);
     STMT_SET filterSet = this->getStatements(stmtType);
-    return this->getInnerJoin(s, filterSet);
+    return SetUtil::intersection(s, filterSet);
 }
 
 STMT_ENT_SET PKBReader::getAllRelationships(StmtNameRelationship tableType) const {
@@ -52,7 +54,7 @@ STMT_SET PKBReader::getStmtByRelationship(StmtNameRelationship tableType) const 
 STMT_SET PKBReader::getStmtByRelationshipWithFilter(StmtNameRelationship tableType, StmtType stmtType) const {
     STMT_SET parentStmtSet = this->getStmtByRelationship(tableType);
     STMT_SET filterSet = this->getStatements(stmtType);
-    return this->getInnerJoin(parentStmtSet, filterSet);
+    return SetUtil::intersection(parentStmtSet, filterSet);
 }
 
 bool PKBReader::isRelationshipExists(StmtNameRelationship tableType, STMT_NUM stmt, const ENT_NAME &name) const {
@@ -106,7 +108,7 @@ STMT_SET PKBReader::getRelationshipByStmtWithFilter(StmtStmtRelationship tableTy
                              ? this->getRelationshipByKey(tableType, stmt)
                              : this->getRelationshipByVal(tableType, stmt);
     STMT_SET filterSet = this->getStatements(stmtType);
-    return this->getInnerJoin(parentStmtSet, filterSet);
+    return SetUtil::intersection(parentStmtSet, filterSet);
 }
 
 STMT_STMT_SET PKBReader::getAllRelationships(StmtStmtRelationship tableType) {
@@ -134,8 +136,9 @@ STMT_STMT_SET PKBReader::getAllRelationshipsWithFilter(StmtStmtRelationship tabl
     return result;
 }
 
-STMT_STMT_SET
-PKBReader::getAllRelationshipsWithFilter(StmtStmtRelationship tableType, StmtType first, StmtType second) {
+STMT_STMT_SET PKBReader::getAllRelationshipsWithFilter(StmtStmtRelationship tableType,
+                                                       StmtType first,
+                                                       StmtType second) {
     STMT_STMT_SET s = this->getAllRelationships(tableType);
     STMT_SET filterFirst = this->getStatements(first);
     STMT_SET filterSecond = this->getStatements(second);
@@ -206,7 +209,7 @@ STMT_SET PKBReader::getStmtByRelationshipWithFilter(StmtStmtRelationship tableTy
                              ? this->getKeyStmtByRelationship(tableType)
                              : this->getValueStmtByRelationship(tableType);
     STMT_SET filterSet = this->getStatements(stmtType);
-    return this->getInnerJoin(parentStmtSet, filterSet);
+    return SetUtil::intersection(parentStmtSet, filterSet);
 }
 
 STMT_SET PKBReader::getStmtWithExactPatternMatch(ASSIGN_PAT_RIGHT &pattern) const {
