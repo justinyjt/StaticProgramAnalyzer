@@ -24,7 +24,7 @@ class Result {
 
     virtual std::unique_ptr<Result> join(Result &) = 0;
 
-    virtual bool empty() const = 0;
+    virtual bool isNull() const = 0;
 
     Tag tag;
 };

@@ -23,5 +23,5 @@ class BoolResult : public Result {
 
     bool operator==(const Result &rhs) const;
 
-    bool empty() const override;
+    bool isNull() const override;
 };
