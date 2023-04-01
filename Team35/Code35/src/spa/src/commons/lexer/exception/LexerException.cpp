@@ -3,10 +3,9 @@
 #include <sstream>
 #include <utility>
 
-LexerException::LexerException(std::string message, LineNumber line_number) : message_(std::move(message)),
-                                                                              line_number_(line_number) {
+LexerException::LexerException(std::string message) : message_(std::move(message)) {
     std::stringstream s;
-    s << "line " << line_number_ << ": " << "lexical error: " << message_;
+    s << "lexical error: " << message_;
     message_ = s.str();
 }
 
