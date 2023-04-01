@@ -1,8 +1,6 @@
 #include "ExprParser.h"
 
-#include <cassert>
 #include <memory>
-#include <string>
 #include <utility>
 
 using std::unique_ptr;
@@ -75,7 +73,6 @@ ASSIGN_PAT_RIGHT ExprParser::parseFactor() {
 }
 
 ASSIGN_PAT_RIGHT ExprParser::parseName() {
-    assert(scanner_.isName());
     ASSIGN_PAT_RIGHT cur =
         std::make_shared<ExprNode>(ASTNode::SyntaxType::Variable, scanner_.peekLexeme());
     scanner_.next();
@@ -83,7 +80,6 @@ ASSIGN_PAT_RIGHT ExprParser::parseName() {
 }
 
 ASSIGN_PAT_RIGHT ExprParser::parseInteger() {
-    assert(scanner_.peek(Token::Tag::Integer));
     ASSIGN_PAT_RIGHT cur =
         std::make_shared<ExprNode>(ASTNode::SyntaxType::Constant, scanner_.peekLexeme());
     scanner_.match(Token::Tag::Integer);

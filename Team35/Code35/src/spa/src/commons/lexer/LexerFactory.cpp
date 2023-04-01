@@ -1,6 +1,5 @@
 #include "LexerFactory.h"
 
-#include <cassert>
 #include <utility>
 
 #include "Lexer.h"
@@ -11,10 +10,8 @@ std::unique_ptr<ILexer> LexerFactory::createLexer(const Source &source, LexerFac
             return std::move(createSimpleLexer(source));
         case LexerFactory::LexerType::Pql:
             return std::move(createPqlLexer(source));
-        case LexerFactory::LexerType::Expression:
-            return std::move(createExpressionLexer(source));
         default:
-            assert(false);
+            return std::move(createExpressionLexer(source));
     }
 }
 

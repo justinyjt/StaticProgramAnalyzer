@@ -23,7 +23,6 @@ int SimpleTokenScanner::isName() const {
  * @return 0 if the token is not the start of a conditional expression separated by a logical operator, 1 otherwise.
  */
 int SimpleTokenScanner::isCondExprSeparatedByLogicalOperator() const {
-    assert(peek(Token::Tag::LParen));
     uint32_t offset = 1;
     int unmatched_paren = 1;
     while (isOffsetValid(offset) && unmatched_paren > 0) {

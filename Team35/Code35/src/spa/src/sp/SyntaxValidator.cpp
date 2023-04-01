@@ -1,6 +1,5 @@
 #include "SyntaxValidator.h"
 
-#include <cassert>
 #include <utility>
 
 #include "commons/expr_validator/ExprValidator.h"
@@ -22,7 +21,6 @@ bool SyntaxValidator::validateProgram() {
 }
 
 bool SyntaxValidator::validateProc() {
-    assert(scanner_.peek(Token::Tag::Procedure));
     scanner_.next();
     if (!scanner_.isName()) {
         return false;
@@ -69,7 +67,6 @@ bool SyntaxValidator::validateStmt() {
 }
 
 bool SyntaxValidator::validateAssign() {
-    assert(scanner_.isName());
     scanner_.next();
 
     if (!scanner_.match(Token::Tag::Assignment) || !expr_validator_.validateExpr()) {
@@ -80,7 +77,6 @@ bool SyntaxValidator::validateAssign() {
 }
 
 bool SyntaxValidator::validateRead() {
-    assert(scanner_.peek(Token::Tag::Read));
     scanner_.next();
 
     if (!validateName()) {
@@ -91,7 +87,6 @@ bool SyntaxValidator::validateRead() {
 }
 
 bool SyntaxValidator::validatePrint() {
-    assert(scanner_.peek(Token::Tag::Print));
     scanner_.next();
 
     if (!validateName()) {
@@ -102,7 +97,6 @@ bool SyntaxValidator::validatePrint() {
 }
 
 bool SyntaxValidator::validateIf() {
-    assert(scanner_.peek(Token::Tag::If));
     scanner_.next();
 
     if (!scanner_.match(Token::Tag::LParen)) {
@@ -133,7 +127,6 @@ bool SyntaxValidator::validateIf() {
 }
 
 bool SyntaxValidator::validateWhile() {
-    assert(scanner_.peek(Token::Tag::While));
     scanner_.next();
 
     if (!scanner_.match(Token::Tag::LParen)) {
@@ -152,7 +145,6 @@ bool SyntaxValidator::validateWhile() {
 }
 
 bool SyntaxValidator::validateCall() {
-    assert(scanner_.peek(Token::Tag::Call));
     scanner_.next();
 
     if (!validateName()) {

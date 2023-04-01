@@ -208,38 +208,30 @@ class Graph {
     }
 
     Index getNodeIndex(const T &node) const {
-        assert(hasNode(node));
         return node_to_index_.at(node);
     }
 
     const T &getNode(Index index) const {
-        assert(index < nodes.size());
         return nodes.at(index);
     }
 
     bool isNeighbor(Index index1, Index index2) const {
-        assert(index1 < nodes.size());
-        assert(index2 < nodes.size());
         return outgoing_adj_list_.at(index1).find(index2) != outgoing_adj_list_.at(index1).end();
     }
 
     const IndexSet &getOutgoingNodes(Index index) const {
-        assert(index < nodes.size());
         return outgoing_adj_list_.at(index);
     }
 
     const IndexSet &getIncomingNodes(Index index) const {
-        assert(index < nodes.size());
         return incoming_adj_list_.at(index);
     }
 
     const IndexSet &getOutgoingNodes(const T &node) const {
-        assert(hasNode(node));
         return outgoing_adj_list_.at(getNodeIndex(node));
     }
 
     const IndexSet &getIncomingNodes(const T &node) const {
-        assert(hasNode(node));
         return incoming_adj_list_.at(getNodeIndex(node));
     }
 

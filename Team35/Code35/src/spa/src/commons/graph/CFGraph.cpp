@@ -19,12 +19,12 @@ CFGraph::CFGraph() : Graph<CFGraphNodeData>(),
 }
 
 CFGraph::CFGraph(const CFGraph &graph, STMT_NUM min_stmt_num, STMT_NUM max_stmt_num, ENT_NAME proc_name) :
-        Graph<CFGraphNodeData>(graph),
-        max_stmt_num_(max_stmt_num),
-        min_stmt_num_(min_stmt_num),
-        proc_name_(std::move(proc_name)),
-        pairwise_control_flow_transitive_(graph.pairwise_control_flow_transitive_),
-        pairwise_control_flow_non_transitive_(graph.pairwise_control_flow_non_transitive_) {
+    Graph<CFGraphNodeData>(graph),
+    max_stmt_num_(max_stmt_num),
+    min_stmt_num_(min_stmt_num),
+    proc_name_(std::move(proc_name)),
+    pairwise_control_flow_transitive_(graph.pairwise_control_flow_transitive_),
+    pairwise_control_flow_non_transitive_(graph.pairwise_control_flow_non_transitive_) {
     this->addNode(CFGraph::start_node_data);
     this->addNode(CFGraph::end_node_data);
 }
@@ -52,8 +52,6 @@ STMT_SET CFGraph::getSuccessors(STMT_NUM stmt_num, bool isTransitive) const {
 }
 
 STMT_SET CFGraph::getAllSuccessors() const {
-    assert(this->hasNode(CFGraph::start_node_data));
-    assert(this->hasNode(CFGraph::end_node_data));
     STMT_SET result;
     Index node_index = this->getNodeIndex(CFGraph::start_node_data);
     IndexSet successors = getDummyNodeSuccessors(node_index);
@@ -65,8 +63,6 @@ STMT_SET CFGraph::getAllSuccessors() const {
 }
 
 STMT_SET CFGraph::getAllPredecessors() const {
-    assert(this->hasNode(CFGraph::start_node_data));
-    assert(this->hasNode(CFGraph::end_node_data));
     STMT_SET result;
     Index node_index = this->getNodeIndex(CFGraph::end_node_data);
     IndexSet predecessors = getDummyNodePredecessors(node_index);
@@ -78,7 +74,6 @@ STMT_SET CFGraph::getAllPredecessors() const {
 }
 
 STMT_SET CFGraph::getSuccessorsByIndex(Index node_index, bool isTransitive) const {
-    assert(this->isIndexValid(node_index));
     STMT_SET successors;
 
     if (!isTransitive) {
@@ -114,7 +109,6 @@ STMT_SET CFGraph::getSuccessorsByIndex(Index node_index, bool isTransitive) cons
 }
 
 STMT_SET CFGraph::getPredecessorsByIndex(Index node_index, bool isTransitive) const {
-    assert(this->isIndexValid(node_index));
     STMT_SET predecessors;
 
     if (!isTransitive) {
@@ -160,7 +154,7 @@ const STMT_STMT_SET &CFGraph::getPairwiseControlFlow(bool isTransitive) {
     }
 
     std::optional<STMT_STMT_SET> *pairwise_control_flow =
-            isTransitive ? &(this->pairwise_control_flow_transitive_) : &(this->pairwise_control_flow_non_transitive_);
+        isTransitive ? &(this->pairwise_control_flow_transitive_) : &(this->pairwise_control_flow_non_transitive_);
 
     *pairwise_control_flow = STMT_STMT_SET();
     for (Index node_index = 0; node_index < this->getNoOfNodes(); ++node_index) {
@@ -217,18 +211,14 @@ ENT_NAME CFGraph::getProcName() const {
 }
 
 bool CFGraph::isIndexDummyNode(Index index) const {
-    assert(this->isIndexValid(index));
     return this->getNode(index).isDummy();
 }
 
 STMT_NUM CFGraph::getStmtNumFromIndex(Index index) const {
-    assert(this->isIndexValid(index));
     return this->getNode(index).getStmtNum();
 }
 
 IndexSet CFGraph::getDummyNodePredecessors(Index index) const {
-    assert(this->isIndexValid(index));
-    assert(this->isIndexDummyNode(index));
     IndexSet predecessors;
     for (Index predecessor_index : this->getIncomingNodes(index)) {
         if (!this->isIndexDummyNode(predecessor_index)) {
@@ -242,8 +232,6 @@ IndexSet CFGraph::getDummyNodePredecessors(Index index) const {
 }
 
 IndexSet CFGraph::getDummyNodeSuccessors(Index index) const {
-    assert(this->isIndexValid(index));
-    assert(this->isIndexDummyNode(index));
     IndexSet successors;
     for (Index successor_index : this->getOutgoingNodes(index)) {
         if (!this->isIndexDummyNode(successor_index)) {
@@ -258,7 +246,7 @@ IndexSet CFGraph::getDummyNodeSuccessors(Index index) const {
 
 bool CFGraph::operator==(const CFGraph &graph) const {
     return Graph<CFGraphNodeData>::operator==(graph) && this->proc_name_ == graph.proc_name_ &&
-           this->min_stmt_num_ == graph.min_stmt_num_ && this->max_stmt_num_ == graph.max_stmt_num_;
+        this->min_stmt_num_ == graph.min_stmt_num_ && this->max_stmt_num_ == graph.max_stmt_num_;
 }
 
 bool CFGraph::operator!=(const CFGraph &graph) const {

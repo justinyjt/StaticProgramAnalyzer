@@ -1,12 +1,10 @@
 #include "Lexer.h"
 
-#include <cassert>
 #include <cctype>
 #include <utility>
 
 #include "commons/lexer/exception/LexerException.h"
 #include "commons/token/Integer.h"
-#include "commons/util/ConversionUtil.h"
 
 Lexer::Lexer::Builder &Lexer::Lexer::Builder::setIncludeOperator(bool include_operator) {
     include_operator_ = include_operator;
@@ -180,7 +178,6 @@ bool Lexer::isEof() const {
 }
 
 std::unique_ptr<Token> Lexer::scanNextName() {
-    assert(isNameStart(peekChar()));
     std::string lexeme;
     lexeme += readChar();
     while (!isEof() && isNamePart(peekChar())) {
@@ -193,7 +190,6 @@ std::unique_ptr<Token> Lexer::scanNextName() {
 }
 
 std::unique_ptr<Token> Lexer::scanNextInteger() {
-    assert(isDigit(peekChar()));
     Lexeme integer_lexeme;
     while (!isEof() && isDigit(peekChar())) {
         integer_lexeme += readChar();
@@ -210,7 +206,6 @@ std::unique_ptr<Token> Lexer::scanNextCharacter() {
 }
 
 std::unique_ptr<Token> Lexer::scanNextString() {
-    assert(isStringStartEnd(peekChar()));
     skipChar();
     std::string lexeme;
     while (!isEof() && !isStringStartEnd(peekChar())) {
