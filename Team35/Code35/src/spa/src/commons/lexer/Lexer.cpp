@@ -40,11 +40,11 @@ Lexer::Lexer(Source source,
              const CharacterList &character_list,
              bool include_operator,
              bool include_string)
-    : source_(std::move(source)),
-      keyword_map_(),
-      character_map_(),
-      include_operator_(include_operator),
-      include_string_(include_string) {
+        : source_(std::move(source)),
+          keyword_map_(),
+          character_map_(),
+          include_operator_(include_operator),
+          include_string_(include_string) {
     for (const auto &keyword : keyword_list) {
         reserve(keyword);
     }
@@ -229,11 +229,11 @@ bool Lexer::isControlOrSpace(char c) const {
 
 bool Lexer::operator==(const Lexer &rhs) const {
     return this->source_ == rhs.source_ &&
-        this->current_position_ == rhs.current_position_ &&
-        this->keyword_map_ == rhs.keyword_map_ &&
-        this->character_map_ == rhs.character_map_ &&
-        this->include_operator_ == rhs.include_operator_ &&
-        this->include_string_ == rhs.include_string_;
+            this->current_position_ == rhs.current_position_ &&
+            this->keyword_map_ == rhs.keyword_map_ &&
+            this->character_map_ == rhs.character_map_ &&
+            this->include_operator_ == rhs.include_operator_ &&
+            this->include_string_ == rhs.include_string_;
 }
 
 bool Lexer::operator!=(const Lexer &rhs) const {

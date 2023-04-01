@@ -218,9 +218,9 @@ bool SyntaxValidator::validateRelExpr() {
     }
 
     if (!scanner_.match(Token::Tag::Equivalence) && !scanner_.match(Token::Tag::NotEqual)
-        && !scanner_.match(Token::Tag::LessThan)
-        && !scanner_.match(Token::Tag::LessThanEqualTo) && !scanner_.match(Token::Tag::GreaterThan)
-        && !scanner_.match(Token::Tag::GreaterThanEqualTo)) {
+            && !scanner_.match(Token::Tag::LessThan)
+            && !scanner_.match(Token::Tag::LessThanEqualTo) && !scanner_.match(Token::Tag::GreaterThan)
+            && !scanner_.match(Token::Tag::GreaterThanEqualTo)) {
         return false;
     }
 

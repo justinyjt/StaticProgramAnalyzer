@@ -33,8 +33,8 @@ ASSIGN_PAT_RIGHT ExprParser::parseExpr() {
 ASSIGN_PAT_RIGHT ExprParser::parseTerm() {
     ASSIGN_PAT_RIGHT firstOp = parseFactor();
     while (scanner_.peek(Token::Tag::Multiply)
-        || scanner_.peek(Token::Tag::Divide)
-        || scanner_.peek(Token::Tag::Modulo)) {
+            || scanner_.peek(Token::Tag::Divide)
+            || scanner_.peek(Token::Tag::Modulo)) {
         ASTNode::SyntaxType opType;
         std::string opLabel;
         if (scanner_.peek(Token::Tag::Multiply)) {
@@ -74,14 +74,14 @@ ASSIGN_PAT_RIGHT ExprParser::parseFactor() {
 
 ASSIGN_PAT_RIGHT ExprParser::parseName() {
     ASSIGN_PAT_RIGHT cur =
-        std::make_shared<ExprNode>(ASTNode::SyntaxType::Variable, scanner_.peekLexeme());
+            std::make_shared<ExprNode>(ASTNode::SyntaxType::Variable, scanner_.peekLexeme());
     scanner_.next();
     return std::move(cur);
 }
 
 ASSIGN_PAT_RIGHT ExprParser::parseInteger() {
     ASSIGN_PAT_RIGHT cur =
-        std::make_shared<ExprNode>(ASTNode::SyntaxType::Constant, scanner_.peekLexeme());
+            std::make_shared<ExprNode>(ASTNode::SyntaxType::Constant, scanner_.peekLexeme());
     scanner_.match(Token::Tag::Integer);
     return std::move(cur);
 }

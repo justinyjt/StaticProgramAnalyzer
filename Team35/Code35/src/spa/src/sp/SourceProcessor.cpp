@@ -12,7 +12,7 @@ SourceProcessor::SourceProcessor(std::unique_ptr<PKBWriter> pkb) : pkb_(std::mov
 bool SourceProcessor::process(std::string source) {
     try {
         std::unique_ptr<ILexer> lex =
-            std::move(LexerFactory::createLexer(std::move(source), LexerFactory::LexerType::Simple));
+                std::move(LexerFactory::createLexer(std::move(source), LexerFactory::LexerType::Simple));
         std::unique_ptr<SyntaxValidator> sv = std::make_unique<SyntaxValidator>(std::move(lex));
         if (!sv->validateProgram()) {
             return false;

@@ -36,7 +36,7 @@ class Graph {
 
     bool operator==(const Graph &other) const {
         return nodes == other.nodes && node_to_index_ == other.node_to_index_ &&
-            outgoing_adj_list_ == other.outgoing_adj_list_ && incoming_adj_list_ == other.incoming_adj_list_;
+                outgoing_adj_list_ == other.outgoing_adj_list_ && incoming_adj_list_ == other.incoming_adj_list_;
     }
 
     bool operator!=(const Graph &other) const {

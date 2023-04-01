@@ -10,11 +10,11 @@
 ProcNode::ProcNode(ENT_NAME name, const std::vector<ENT_NAME> &newPath) : procName(std::move(name)), path(newPath) {}
 
 DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
-    pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(), procSet_(),
-    stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
-    stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(), ifCondUsePairSet_(), whileCondUsePairSet_(),
-    containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_(), CFGBuilder_(), isIfCond(),
-    procDirectUseVarMap_(), procDirectModVarMap_(), containerCallPairSet_(), callProcNameToStmtMap_() {}
+        pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(), procSet_(),
+        stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
+        stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(), ifCondUsePairSet_(), whileCondUsePairSet_(),
+        containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_(), CFGBuilder_(), isIfCond(),
+        procDirectUseVarMap_(), procDirectModVarMap_(), containerCallPairSet_(), callProcNameToStmtMap_() {}
 
 std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode> root) {
     root_ = std::move(root);
