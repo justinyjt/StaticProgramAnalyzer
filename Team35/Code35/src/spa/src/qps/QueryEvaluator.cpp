@@ -35,7 +35,7 @@ std::unique_ptr<Result> QueryEvaluator::evaluate(std::unique_ptr<SelectClause> s
             break;
         }
     }
-
+    db->clearCache();
     if (isAnyClauseEmpty) {
         BoolResult falseResult(false);
         return selectRes->join(falseResult);

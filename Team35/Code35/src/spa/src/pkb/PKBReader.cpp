@@ -170,9 +170,6 @@ STMT_SET PKBReader::getValueStmtByRelationship(StmtStmtRelationship tableType) {
     }
 }
 
-STMT_SET PKBReader::getStmtByProc(const ENT_NAME &procName) const {
-    return pkb.getStmtByProc(procName);
-}
 
 ENT_SET PKBReader::getKeyNameByRelationship(NameNameRelationship tableType) const {
     return pkb.getKeyNameByRs(tableType);
@@ -283,16 +280,18 @@ bool PKBReader::isAffectsT(STMT_NUM first, STMT_NUM second) {
     if (!pkb.isStmtStmtPairExists(StmtStmtRelationship::NextStar, first, second)) {
         return false;
     }
-    if (affects_graph_.isAffectsRelationshipTrue(first, second)) {
-        return affects_graph_.isAffectsRelationshipTrue(first, second);
+    if (affects_graph_.hasAffectsRelationship(first, second, false)) {
+        return true;
     }
     STMT_SET intersect = getIntersect(first, second);
     for (auto &stmt1 : intersect) {
         for (auto &stmt2 : intersect) {
-            if (affects_graph_.isAffectsRelationshipTrue(stmt1, stmt2)) {
+            if (affects_graph_.hasAffectsRelationship(stmt1, stmt2, false)) {
                 continue;
             }
-            affects_graph_.addAffectsEdge(stmt1, stmt2, isAffects(stmt1, stmt2));
+            if (isAffects(stmt1, stmt2)) {
+                affects_graph_.addAffectsEdge(stmt1, stmt2);
+            }
         }
     }
     return affects_graph_.isReachable(first, second, false);
@@ -360,24 +359,18 @@ STMT_SET PKBReader::getAffectsByPredecessor(STMT_NUM stmt, bool isTransitive) {
     }
     STMT_SET successors = this->getRelationshipByStmtWithFilter(StmtStmtRelationship::NextStar, stmt, StmtType::Assign,
                                                                 true);
-//    STMT_SET successors = pkb.getStmtByStmtKey(StmtStmtRelationship::NextStar, stmt);
-    STMT_SET affectsSuccessors;
     if (!isTransitive) {
+        STMT_SET affectsSuccessors;
         for (auto &successor : successors) {
             if (isAffects(stmt, successor)) {
                 affectsSuccessors.insert(successor);
             }
         }
+        return affectsSuccessors;
     } else {
-        for (auto &successor : successors) {
-            bool isAffectsTransitive = isAffectsT(stmt, successor);
-            affects_graph_.addAffectsEdge(stmt, successor, isAffectsTransitive);
-            if (isAffectsTransitive) {
-                affectsSuccessors.insert(successor);
-            }
-        }
+        this->computeAffectsGraph();
+        return affects_graph_.getSuccessors(stmt, true);
     }
-    return affectsSuccessors;
 }
 
 STMT_SET PKBReader::getAffectsBySuccessor(STMT_NUM stmt, bool isTransitive) {
@@ -386,41 +379,27 @@ STMT_SET PKBReader::getAffectsBySuccessor(STMT_NUM stmt, bool isTransitive) {
     }
     STMT_SET predecessors = this->getRelationshipByStmtWithFilter(StmtStmtRelationship::NextStar, stmt,
                                                                   StmtType::Assign, false);
-    STMT_SET affectsPredecessors;
+
     if (!isTransitive) {
+        STMT_SET affectsPredecessors;
         for (auto &predecessor : predecessors) {
             if (isAffects(predecessor, stmt)) {
                 affectsPredecessors.insert(predecessor);
             }
         }
+        return affectsPredecessors;
     } else {
-        for (auto &predecessor : predecessors) {
-            if (isAffectsT(predecessor, stmt)) {
-                affectsPredecessors.insert(predecessor);
-            }
-        }
+        this->computeAffectsGraph();
+        return affects_graph_.getPredecessors(stmt, true);
     }
-    return affectsPredecessors;
 }
 
 STMT_STMT_SET PKBReader::getAllAffects(bool isTransitive) {
-    STMT_STMT_SET result;
-    AffectsGraph graph;
-
-    for (auto &predecessor : this->getStatements(StmtType::Assign)) {
-        STMT_SET successors = this->getRelationshipByStmtWithFilter(StmtStmtRelationship::NextStar, predecessor,
-                                                                    StmtType::Assign, true);
-        for (auto &successor : successors) {
-            if (isAffects(predecessor, successor)) {
-                graph.addAffectsEdge(predecessor, successor);
-                result.emplace(predecessor, successor);
-            }
-        }
-    }
+    this->computeAffectsGraph();
     if (isTransitive) {
-        return graph.getAllAffectsRelationships();
+        return affects_graph_.getAllAffectsRelationships(true);
     }
-    return result;
+    return affects_graph_.getAllAffectsRelationships(false);
 }
 
 STMT_SET PKBReader::getAllAffectsPredecessors() {
@@ -448,4 +427,25 @@ bool PKBReader::hasAffects() {
     return std::any_of(nextStar.begin(), nextStar.end(), [this](auto &predecessor) {
         return this->isValidAffectsPredecessor(predecessor);
     });
+}
+
+void PKBReader::computeAffectsGraph() {
+    if (isAffectsComputed) {
+        return;
+    }
+    for (auto &predecessor : this->getStatements(StmtType::Assign)) {
+        STMT_SET successors = this->getRelationshipByStmtWithFilter(StmtStmtRelationship::NextStar, predecessor,
+                                                                    StmtType::Assign, true);
+        for (auto &successor : successors) {
+            if (isAffects(predecessor, successor)) {
+                affects_graph_.addAffectsEdge(predecessor, successor);
+            }
+        }
+    }
+    isAffectsComputed = true;
+}
+
+void PKBReader::clearCache() {
+    affects_graph_.reset();
+    isAffectsComputed = false;
 }

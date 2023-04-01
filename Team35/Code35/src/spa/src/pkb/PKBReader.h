@@ -61,8 +61,6 @@ class PKBReader {
 
     STMT_SET getStmtByRelationshipWithFilter(StmtStmtRelationship tableType, StmtType stmtType, bool isKey);
 
-    STMT_SET getStmtByProc(const ENT_NAME &procName) const;
-
     bool isRelationshipExists(StmtStmtRelationship tableType, STMT_NUM keyName, STMT_NUM valName);
 
     bool hasRelationship(StmtStmtRelationship tableType);
@@ -71,9 +69,12 @@ class PKBReader {
 
     STMT_SET getStmtWithPartialPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;
 
+    void clearCache();
+
  private:
     PKB &pkb;
     AffectsGraph affects_graph_;
+    bool isAffectsComputed;
 
     bool isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const;
 
@@ -100,6 +101,8 @@ class PKBReader {
     bool isModifies(STMT_NUM key, const ENT_NAME &val) const;
 
     STMT_STMT_SET getAllRelationships(StmtStmtRelationship tableType);
+
+    void computeAffectsGraph();
 
     template<typename T>
     unordered_set<T> getInnerJoin(unordered_set<T> first, unordered_set<T> second) const {
