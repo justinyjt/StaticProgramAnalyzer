@@ -1,5 +1,4 @@
-#ifndef TEAM35_CODE35_SRC_SPA_SRC_COMMONS_ASTNODE_H_
-#define TEAM35_CODE35_SRC_SPA_SRC_COMMONS_ASTNODE_H_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -62,5 +61,3 @@ class ASTNode {
     SyntaxType type_;
     std::vector<std::shared_ptr<ASTNode> > children_;
 };
-
-#endif  // TEAM35_CODE35_SRC_SPA_SRC_COMMONS_ASTNODE_H_
