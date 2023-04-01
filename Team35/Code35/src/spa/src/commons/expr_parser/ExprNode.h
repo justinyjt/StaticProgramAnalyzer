@@ -8,11 +8,11 @@
 
 class ExprNode : public ASTNode {
  public:
-    static char plusAscii = '+';
-    static char minusAscii = '-';
-    static char multiplyAscii = '*';
-    static char divideAscii = '/';
-    static char moduloAscii = '%';
+    static const char plusAscii = '+';
+    static const char minusAscii = '-';
+    static const char multiplyAscii = '*';
+    static const char divideAscii = '/';
+    static const char moduloAscii = '%';
 
     ExprNode(SyntaxType syntaxType, std::optional<std::string> label)
             : ASTNode(syntaxType, std::move(label)) {}
