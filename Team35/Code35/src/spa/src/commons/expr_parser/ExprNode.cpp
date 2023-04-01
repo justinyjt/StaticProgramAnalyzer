@@ -2,6 +2,12 @@
 
 #include "ExprNode.h"
 
+std::string ExprNode::plusLabel = "+";
+std::string ExprNode::minusLabel = "-";
+std::string ExprNode::multiplyLabel = "*";
+std::string ExprNode::divideLabel = "/";
+std::string ExprNode::moduloLabel = "%";
+
 std::string ExprNode::toString() const {
     if (this->getChildren().size() > 0) {
         std::string label;

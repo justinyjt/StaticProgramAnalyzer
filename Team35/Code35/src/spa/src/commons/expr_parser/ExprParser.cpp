@@ -1,8 +1,9 @@
 #include "ExprParser.h"
 
 #include <memory>
-#include <string>
 #include <utility>
+
+#include "ExprNode.h"
 
 using std::unique_ptr;
 
@@ -15,10 +16,10 @@ ASSIGN_PAT_RIGHT ExprParser::parseExpr() {
         std::string opLabel;
         if (scanner_.peek(Token::Tag::Plus)) {
             opType = ASTNode::SyntaxType::Plus;
-            opLabel = "+";
+            opLabel = ExprNode::plusLabel;
         } else {
             opType = ASTNode::SyntaxType::Minus;
-            opLabel = "-";
+            opLabel = ExprNode::minusLabel
         }
         scanner_.next();
         ASSIGN_PAT_RIGHT op = std::make_shared<ExprNode>(opType, opLabel);
@@ -40,13 +41,13 @@ ASSIGN_PAT_RIGHT ExprParser::parseTerm() {
         std::string opLabel;
         if (scanner_.peek(Token::Tag::Multiply)) {
             opType = ASTNode::SyntaxType::Multiply;
-            opLabel = "*";
+            opLabel = ExprNode::multiplyLabel;
         } else if (scanner_.peek(Token::Tag::Divide)) {
             opType = ASTNode::SyntaxType::Divide;
-            opLabel = "/";
+            opLabel = ExprNode::divideLabel;
         } else {
             opType = ASTNode::SyntaxType::Modulo;
-            opLabel = "%";
+            opLabel = ExprNode::moduloLabel;
         }
         scanner_.next();
         ASSIGN_PAT_RIGHT op = std::make_shared<ExprNode>(opType, opLabel);
