@@ -14,7 +14,7 @@ class AffectsGraph : public Graph<STMT_NUM> {
 
     void addAffectsEdge(STMT_NUM first, STMT_NUM second);
 
-    bool hasAffectsRelationship(STMT_NUM first, STMT_NUM second, bool is_transitive = false);
+    bool hasAffectsRelationship(STMT_NUM first, STMT_NUM second);
 
     const STMT_STMT_SET &getAllAffectsRelationships(bool is_transitive);
 

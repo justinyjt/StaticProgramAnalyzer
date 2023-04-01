@@ -10,13 +10,7 @@ void AffectsGraph::addAffectsEdge(STMT_NUM first, STMT_NUM second) {
     this->addEdge(first, second);
 }
 
-bool AffectsGraph::hasAffectsRelationship(STMT_NUM first, STMT_NUM second, bool is_transitive) {
-    if (is_transitive) {
-        if (!transitive_affects_set_.has_value()) {
-            getAllAffectsRelationships(true);
-        }
-        return transitive_affects_set_->find(STMT_STMT(first, second)) != transitive_affects_set_->end();
-    }
+bool AffectsGraph::hasAffectsRelationship(STMT_NUM first, STMT_NUM second) {
     return direct_affects_set_.find(STMT_STMT(first, second)) != direct_affects_set_.end();
 }
 
