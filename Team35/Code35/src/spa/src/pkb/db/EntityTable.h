@@ -15,6 +15,6 @@ class EntityTable {
     }
 
     void addEntity(TEntity entity) {
-        auto res = entitySet.emplace(entity);
+        entitySet.emplace(entity);
     }
 };
