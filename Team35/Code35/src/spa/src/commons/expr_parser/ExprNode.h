@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <string>
 #include <utility>
 
@@ -7,11 +8,11 @@
 
 class ExprNode : public ASTNode {
  public:
-    static char plusAscii;
-    static char minusAscii;
-    static char multiplyAscii;
-    static char divideAscii;
-    static char moduloAscii;
+    static char plusAscii = '+';
+    static char minusAscii = '-';
+    static char multiplyAscii = '*';
+    static char divideAscii = '/';
+    static char moduloAscii = '%';
 
     ExprNode(SyntaxType syntaxType, std::optional<std::string> label)
             : ASTNode(syntaxType, std::move(label)) {}

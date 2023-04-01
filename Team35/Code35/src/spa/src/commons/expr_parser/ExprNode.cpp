@@ -2,12 +2,6 @@
 
 #include <string>
 
-char ExprNode::plusAscii = '+';
-char ExprNode::minusAscii = '-';
-char ExprNode::multiplyAscii = '*';
-char ExprNode::divideAscii = '/';
-char ExprNode::moduloAscii = '%';
-
 std::string ExprNode::toString() const {
     if (this->getChildren().size() > 0) {
         std::string label;
