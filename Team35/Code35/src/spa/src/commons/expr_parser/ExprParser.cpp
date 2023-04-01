@@ -1,6 +1,7 @@
 #include "ExprParser.h"
 
 #include <memory>
+#include <string>
 #include <utility>
 
 #include "ExprNode.h"
