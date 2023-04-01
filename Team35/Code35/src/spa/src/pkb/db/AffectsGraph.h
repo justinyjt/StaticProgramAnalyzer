@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <unordered_map>
 
 #include "commons/graph/Graph.h"
@@ -11,14 +12,15 @@ class AffectsGraph : public Graph<STMT_NUM> {
 
     ~AffectsGraph() override = default;
 
-    void addAffectsEdge(STMT_NUM first, STMT_NUM second, bool isAffects = true);
+    void addAffectsEdge(STMT_NUM first, STMT_NUM second);
 
-    bool hasAffectsRelationship(STMT_NUM first, STMT_NUM second);
+    bool hasAffectsRelationship(STMT_NUM first, STMT_NUM second, bool is_transitive = false);
 
-    bool isAffectsRelationshipTrue(STMT_NUM first, STMT_NUM second);
+    const STMT_STMT_SET &getAllAffectsRelationships(bool is_transitive);
 
-    STMT_STMT_SET getAllAffectsRelationships();
+    void reset() override;
 
  private:
-    std::unordered_map<STMT_STMT, bool, hash_pair> is_affects_map;
+    STMT_STMT_SET direct_affects_set_;
+    std::optional<STMT_STMT_SET> transitive_affects_set_;
 };

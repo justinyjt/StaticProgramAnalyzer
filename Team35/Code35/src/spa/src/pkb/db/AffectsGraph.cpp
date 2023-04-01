@@ -2,28 +2,31 @@
 
 #include "commons/types.h"
 
-void AffectsGraph::addAffectsEdge(STMT_NUM first, STMT_NUM second, bool isAffects) {
-    if (is_affects_map.find(STMT_STMT(first, second)) != is_affects_map.end()) {
+void AffectsGraph::addAffectsEdge(STMT_NUM first, STMT_NUM second) {
+    if (direct_affects_set_.find(STMT_STMT(first, second)) != direct_affects_set_.end()) {
         return;
     }
-    is_affects_map.emplace(STMT_STMT{first, second}, isAffects);
-    if (isAffects) {
-        this->addEdge(first, second);
+    direct_affects_set_.emplace(first, second);
+    this->addEdge(first, second);
+}
+
+bool AffectsGraph::hasAffectsRelationship(STMT_NUM first, STMT_NUM second, bool is_transitive) {
+    if (is_transitive) {
+        if (!transitive_affects_set_.has_value()) {
+            getAllAffectsRelationships(true);
+        }
+        return transitive_affects_set_->find(STMT_STMT(first, second)) != transitive_affects_set_->end();
     }
+    return direct_affects_set_.find(STMT_STMT(first, second)) != direct_affects_set_.end();
 }
 
-bool AffectsGraph::hasAffectsRelationship(STMT_NUM first, STMT_NUM second) {
-    return is_affects_map.find(STMT_STMT{first, second}) != is_affects_map.end();
-}
-
-bool AffectsGraph::isAffectsRelationshipTrue(STMT_NUM first, STMT_NUM second) {
-    if (!hasAffectsRelationship(first, second)) {
-        return false;
+const STMT_STMT_SET &AffectsGraph::getAllAffectsRelationships(bool is_transitive) {
+    if (!is_transitive) {
+        return direct_affects_set_;
     }
-    return is_affects_map.find(STMT_STMT{first, second})->second;
-}
-
-STMT_STMT_SET AffectsGraph::getAllAffectsRelationships() {
+    if (transitive_affects_set_.has_value()) {
+        return transitive_affects_set_.value();
+    }
     STMT_STMT_SET result;
     for (int i = 0; i < this->getNoOfNodes(); ++i) {
         STMT_NUM stmt1 = this->getNode(i);
@@ -44,5 +47,12 @@ STMT_STMT_SET AffectsGraph::getAllAffectsRelationships() {
             }
         }
     }
-    return result;
+    transitive_affects_set_ = result;
+    return transitive_affects_set_.value();
+}
+
+void AffectsGraph::reset() {
+    Graph<STMT_NUM>::reset();
+    direct_affects_set_.clear();
+    transitive_affects_set_.reset();
 }
