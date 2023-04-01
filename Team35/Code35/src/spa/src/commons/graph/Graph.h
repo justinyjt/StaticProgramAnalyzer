@@ -195,6 +195,13 @@ class Graph {
         return false;
     }
 
+    virtual void reset() {
+        nodes.clear();
+        node_to_index_.clear();
+        outgoing_adj_list_.clear();
+        incoming_adj_list_.clear();
+    }
+
  protected:
     bool isIndexValid(Index index) const {
         return index < nodes.size();
