@@ -1,6 +1,5 @@
 #include "SimpleTokenScanner.h"
 
-#include <cassert>
 #include <memory>
 #include <utility>
 
