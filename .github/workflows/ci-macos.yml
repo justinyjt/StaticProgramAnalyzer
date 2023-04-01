@@ -18,7 +18,7 @@ jobs:
   lint:
     name: MacOS Lint
     runs-on: macos-latest
-    timeout-minutes: 5
+    timeout-minutes: 3
     strategy:
       fail-fast: true
 
@@ -36,7 +36,7 @@ jobs:
   build:
     name: MacOS Build
     runs-on: macos-latest
-    timeout-minutes: 8
+    timeout-minutes: 4
     strategy:
       fail-fast: true
 
