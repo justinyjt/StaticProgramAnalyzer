@@ -1,7 +1,8 @@
 #include "PKB.h"
 
-#include <cassert>
 #include <utility>
+
+#include "db/exception/TableException.h"
 
 const EntityTable<ENT_NAME> &PKB::getEntityTable(Entity entityType) const {
     switch (entityType) {
@@ -12,7 +13,7 @@ const EntityTable<ENT_NAME> &PKB::getEntityTable(Entity entityType) const {
         case Entity::Procedure:
             return procedureTable_;
         default:
-            assert(false);
+            throw TableException();
     }
 }
 
@@ -33,7 +34,7 @@ const EntityTable<STMT_NUM> &PKB::getStatementTable(StmtType stmtType) const {
         case StmtType::None:
             return statementTable_;
         default:
-            assert(false);
+            throw TableException();
     }
 }
 
@@ -66,7 +67,7 @@ const RelationshipTable<STMT_NUM, ENT_NAME> &PKB::getStmtNameRelationshipTable(S
         case StmtNameRelationship::PrintStmtVar:
             return printStmtVarTable_;
         default:
-            assert(false);
+            throw TableException();
     }
 }
 
@@ -86,7 +87,7 @@ const RelationshipTable<ENT_NAME, ENT_NAME> &PKB::getNameNameRelationshipTable(N
         case NameNameRelationship::CallsStar:
             return callsStarNameNameTable_;
         default:
-            assert(false);
+            throw TableException();
     }
 }
 
@@ -106,7 +107,7 @@ const RelationshipTable<STMT_NUM, STMT_NUM> &PKB::getStmtStmtRelationshipTable(S
         case StmtStmtRelationship::FollowsStar:
             return followsStarTable_;
         default:
-            assert(false);
+            throw TableException();
     }
 }
 
@@ -124,29 +125,29 @@ PatternTable &PKB::getPatternTable() {
     return const_cast<PatternTable &>(pkbPtr->getPatternTable());
 }
 
-bool PKB::addEntityToTable(Entity entityType, ENT_NAME entity) {
+void PKB::addEntityToTable(Entity entityType, ENT_NAME entity) {
     EntityTable<ENT_NAME> &table = this->getEntityTable(entityType);
-    return table.addEntity(entity);
+    table.addEntity(entity);
 }
 
-bool PKB::addStatementToTable(StmtType stmtType, STMT_NUM stmtNum) {
+void PKB::addStatementToTable(StmtType stmtType, STMT_NUM stmtNum) {
     EntityTable<STMT_NUM> &table = this->getStatementTable(stmtType);
-    return table.addEntity(stmtNum);
+    table.addEntity(stmtNum);
 }
 
-bool PKB::addRelationshipToTable(StmtNameRelationship tableType, const STMT_ENT &stmtEnt) {
+void PKB::addRelationshipToTable(StmtNameRelationship tableType, const STMT_ENT &stmtEnt) {
     RelationshipTable<STMT_NUM, ENT_NAME> &table = this->getStmtNameRelationshipTable(tableType);
-    return table.insertPair(stmtEnt.first, stmtEnt.second);
+    table.insertPair(stmtEnt.first, stmtEnt.second);
 }
 
-bool PKB::addRelationshipToTable(NameNameRelationship tableType, const ENT_ENT &entEnt) {
+void PKB::addRelationshipToTable(NameNameRelationship tableType, const ENT_ENT &entEnt) {
     RelationshipTable<ENT_NAME, ENT_NAME> &table = this->getNameNameRelationshipTable(tableType);
-    return table.insertPair(entEnt.first, entEnt.second);
+    table.insertPair(entEnt.first, entEnt.second);
 }
 
-bool PKB::addRelationshipToTable(StmtStmtRelationship tableType, STMT_STMT stmtStmt) {
+void PKB::addRelationshipToTable(StmtStmtRelationship tableType, STMT_STMT stmtStmt) {
     RelationshipTable<STMT_NUM, STMT_NUM> &table = this->getStmtStmtRelationshipTable(tableType);
-    return table.insertPair(stmtStmt.first, stmtStmt.second);
+    table.insertPair(stmtStmt.first, stmtStmt.second);
 }
 
 void PKB::addPattern(STMT_NUM stmtNum, ASSIGN_PAT pattern) {
@@ -225,10 +226,6 @@ STMT_SET PKB::getStmtByStmtVal(StmtStmtRelationship tableType, STMT_NUM stmt) co
         default:
             return getStmtStmtRelationshipTable(tableType).getKeysByValue(stmt);
     }
-}
-
-STMT_SET PKB::getStmtByProc(const ENT_NAME &procName) const {
-    return this->callGraph_.getStmts(procName);
 }
 
 STMT_STMT_SET PKB::getStmtStmtSet(StmtStmtRelationship tableType) {

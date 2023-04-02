@@ -10,37 +10,39 @@ class PKBReader {
  public:
     explicit PKBReader(PKB &);
 
-    ENT_SET getEntities(Entity entityType) const;
+    [[nodiscard]] ENT_SET getEntities(Entity entityType) const;
 
-    STMT_SET getStatements(StmtType stmtType) const;
+    [[nodiscard]] STMT_SET getStatements(StmtType stmtType) const;
 
-    ENT_SET getRelationship(StmtNameRelationship tableType, STMT_NUM stmt) const;
+    [[nodiscard]] ENT_SET getRelationship(StmtNameRelationship tableType, STMT_NUM stmt) const;
 
-    STMT_SET getRelationship(StmtNameRelationship tableType, const ENT_NAME &name) const;
+    [[nodiscard]] STMT_SET getRelationship(StmtNameRelationship tableType, const ENT_NAME &name) const;
 
-    STMT_SET getRelationshipWithFilter(StmtNameRelationship tableType, const ENT_NAME &name, StmtType stmtType) const;
+    [[nodiscard]] STMT_SET
+    getRelationshipWithFilter(StmtNameRelationship tableType, const ENT_NAME &name, StmtType stmtType) const;
 
-    STMT_ENT_SET getAllRelationships(StmtNameRelationship tableType) const;
+    [[nodiscard]] STMT_ENT_SET getAllRelationships(StmtNameRelationship tableType) const;
 
-    STMT_ENT_SET getAllRelationshipsWithFilter(StmtNameRelationship tableType, StmtType stmtType) const;
+    [[nodiscard]] STMT_ENT_SET getAllRelationshipsWithFilter(StmtNameRelationship tableType, StmtType stmtType) const;
 
-    STMT_SET getStmtByRelationship(StmtNameRelationship tableType) const;
+    [[nodiscard]] STMT_SET getStmtByRelationship(StmtNameRelationship tableType) const;
 
-    STMT_SET getStmtByRelationshipWithFilter(StmtNameRelationship tableType, StmtType stmtType) const;
+    [[nodiscard]] STMT_SET getStmtByRelationshipWithFilter(StmtNameRelationship tableType, StmtType stmtType) const;
 
-    bool isRelationshipExists(StmtNameRelationship tableType, STMT_NUM stmt, const ENT_NAME &name) const;
+    [[nodiscard]] bool isRelationshipExists(StmtNameRelationship tableType, STMT_NUM stmt, const ENT_NAME &name) const;
 
-    ENT_SET getRelationshipByKey(NameNameRelationship tableType, const ENT_NAME &keyName) const;
+    [[nodiscard]] ENT_SET getRelationshipByKey(NameNameRelationship tableType, const ENT_NAME &keyName) const;
 
-    ENT_SET getRelationshipByVal(NameNameRelationship tableType, const ENT_NAME &valName) const;
+    [[nodiscard]] ENT_SET getRelationshipByVal(NameNameRelationship tableType, const ENT_NAME &valName) const;
 
-    ENT_ENT_SET getAllRelationships(NameNameRelationship tableType) const;
+    [[nodiscard]] ENT_ENT_SET getAllRelationships(NameNameRelationship tableType) const;
 
-    ENT_SET getKeyNameByRelationship(NameNameRelationship tableType) const;
+    [[nodiscard]] ENT_SET getKeyNameByRelationship(NameNameRelationship tableType) const;
 
-    ENT_SET getValueNameByRelationship(NameNameRelationship tableType) const;
+    [[nodiscard]] ENT_SET getValueNameByRelationship(NameNameRelationship tableType) const;
 
-    bool isRelationshipExists(NameNameRelationship tableType, const ENT_NAME &keyName, const ENT_NAME &valName) const;
+    [[nodiscard]] bool
+    isRelationshipExists(NameNameRelationship tableType, const ENT_NAME &keyName, const ENT_NAME &valName) const;
 
     STMT_SET getRelationshipByKey(StmtStmtRelationship tableType, STMT_NUM keyName);
 
@@ -76,7 +78,7 @@ class PKBReader {
     AffectsGraph affects_graph_;
     bool isAffectsComputed;
 
-    bool isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const;
+    [[nodiscard]] bool isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const;
 
     bool isAffectsT(STMT_NUM first, STMT_NUM second);
 
@@ -98,7 +100,7 @@ class PKBReader {
 
     bool hasAffects();
 
-    bool isModifies(STMT_NUM key, const ENT_NAME &val) const;
+    [[nodiscard]] bool isModifies(STMT_NUM key, const ENT_NAME &val) const;
 
     STMT_STMT_SET getAllRelationships(StmtStmtRelationship tableType);
 

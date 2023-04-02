@@ -1,8 +1,8 @@
-#ifndef TEAM35_CODE35_SRC_SPA_SRC_PKB_DB_ENTITYTABLE_H_
-#define TEAM35_CODE35_SRC_SPA_SRC_PKB_DB_ENTITYTABLE_H_
+#pragma once
+
 #include <unordered_set>
 
-template <typename TEntity>
+template<typename TEntity>
 class EntityTable {
     std::unordered_set<TEntity> entitySet;
  public:
@@ -14,11 +14,7 @@ class EntityTable {
         return entitySet.count(entity);
     }
 
-    bool addEntity(TEntity entity) {
-        auto res = entitySet.emplace(entity);
-        return res.second;
+    void addEntity(TEntity entity) {
+        entitySet.emplace(entity);
     }
 };
-
-
-#endif  // TEAM35_CODE35_SRC_SPA_SRC_PKB_DB_ENTITYTABLE_H_

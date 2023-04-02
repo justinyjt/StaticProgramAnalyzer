@@ -4,7 +4,7 @@
 
 #include "commons/util/SetUtil.h"
 
-PKBReader::PKBReader(PKB &pkb) : pkb(pkb) {}
+PKBReader::PKBReader(PKB &pkb) : pkb(pkb), isAffectsComputed(false) {}
 
 ENT_SET PKBReader::getEntities(Entity entityType) const {
     return pkb.getEntityTable(entityType).getTable();
@@ -343,7 +343,7 @@ bool PKBReader::isValidAffectsSuccessor(STMT_NUM stmt) {
     STMT_SET predecessors = pkb.getStmtByStmtVal(StmtStmtRelationship::NextStar, stmt);
     return std::any_of(predecessors.begin(), predecessors.end(),
                        [stmt, this](auto &predecessor) {
-                         return isAffects(predecessor, stmt);
+                           return isAffects(predecessor, stmt);
                        });
 }
 
@@ -354,7 +354,7 @@ bool PKBReader::isValidAffectsPredecessor(STMT_NUM stmt) {
     STMT_SET successors = pkb.getStmtByStmtKey(StmtStmtRelationship::NextStar, stmt);
     return std::any_of(successors.begin(), successors.end(),
                        [stmt, this](auto &successor) {
-                         return isAffects(stmt, successor);
+                           return isAffects(stmt, successor);
                        });
 }
 
@@ -430,7 +430,7 @@ STMT_SET PKBReader::getAllAffectsSuccessors() {
 bool PKBReader::hasAffects() {
     const auto &nextStar = pkb.getKeyStmtByRs(StmtStmtRelationship::NextStar);
     return std::any_of(nextStar.begin(), nextStar.end(), [this](auto &predecessor) {
-      return this->isValidAffectsPredecessor(predecessor);
+        return this->isValidAffectsPredecessor(predecessor);
     });
 }
 
