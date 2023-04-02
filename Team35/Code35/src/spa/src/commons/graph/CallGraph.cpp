@@ -1,7 +1,5 @@
 #include "commons/graph/CallGraph.h"
 
-#include <cassert>
-
 CallGraph::CallGraph() : Graph<ENT_NAME>() {}
 
 /**
@@ -22,7 +20,6 @@ void CallGraph::addCallRelationship(const ENT_NAME &caller, const ENT_NAME &call
  * returns (Grandparent, Parent), (Grandparent, Child), (Parent, Child)
  */
 ENT_ENT_SET CallGraph::getTransitiveCalls() {
-    assert(!isCyclic());
     ENT_ENT_SET result;
     for (int i = 0; i < this->getNoOfNodes(); i++) {
         ENT_NAME caller = this->getNode(i);
@@ -47,7 +44,6 @@ ENT_ENT_SET CallGraph::getTransitiveCalls() {
  * @return ENT_ENT_SET containing immediate calls
  */
 ENT_ENT_SET CallGraph::getImmediateCalls() {
-    assert(!isCyclic());
     ENT_ENT_SET result;
     for (int i = 0; i < this->getNoOfNodes(); i++) {
         ENT_NAME caller = this->getNode(i);

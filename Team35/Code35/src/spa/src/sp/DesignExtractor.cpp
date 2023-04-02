@@ -1,4 +1,3 @@
-#include <cassert>
 #include <memory>
 #include <queue>
 #include <utility>
@@ -11,15 +10,14 @@
 ProcNode::ProcNode(ENT_NAME name, const std::vector<ENT_NAME> &newPath) : procName(std::move(name)), path(newPath) {}
 
 DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
-    pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(), procSet_(),
-    stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
-    stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(), ifCondUsePairSet_(), whileCondUsePairSet_(),
-    containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_(), CFGBuilder_(), isIfCond(),
-    procDirectUseVarMap_(), procDirectModVarMap_(), containerCallPairSet_(), callProcNameToStmtMap_() {}
+        pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(), procSet_(),
+        stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
+        stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(), ifCondUsePairSet_(), whileCondUsePairSet_(),
+        containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_(), CFGBuilder_(), isIfCond(),
+        procDirectUseVarMap_(), procDirectModVarMap_(), containerCallPairSet_(), callProcNameToStmtMap_() {}
 
 std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode> root) {
     root_ = std::move(root);
-    assert(root_->getSyntaxType() == ASTNode::SyntaxType::Program);
     for (const auto &child : root_->getChildren()) {
         extractProc(child);
     }
@@ -56,7 +54,6 @@ std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode
 }
 
 void DesignExtractor::extractProc(const std::shared_ptr<ASTNode> &node) {
-    assert(node->getSyntaxType() == ASTNode::SyntaxType::Procedure);
     const std::shared_ptr<ASTNode> &nodeC = node->getChildren().front();
 
     curProc_ = node->getLabel();
@@ -77,7 +74,6 @@ void DesignExtractor::extractProc(const std::shared_ptr<ASTNode> &node) {
 }
 
 void DesignExtractor::extractStmtLst(const std::shared_ptr<ASTNode> &node) {
-    assert(node->getSyntaxType() == ASTNode::SyntaxType::StmtLst);
     std::unique_ptr<std::vector<STMT_NUM>> childStmtLstPtr = std::make_unique<std::vector<STMT_NUM>>();
 
     for (const auto &child : node->getChildren()) {
@@ -139,7 +135,6 @@ void DesignExtractor::updateParentsPairSet(const std::unique_ptr<std::vector<STM
 }
 
 void DesignExtractor::extractAssign(const std::shared_ptr<ASTNode> &node) {
-    assert(node->getSyntaxType() == ASTNode::SyntaxType::Assign);
     const auto &lAssign = node->getChildren().front();
     auto &rAssign = node->getChildren().back();
 
@@ -151,7 +146,6 @@ void DesignExtractor::extractAssign(const std::shared_ptr<ASTNode> &node) {
 }
 
 ENT_NAME DesignExtractor::extractLeftAssign(const std::shared_ptr<ASTNode> &node) {
-    assert(node->getSyntaxType() == ASTNode::SyntaxType::Variable);
     const std::string &varName = node->getLabel();
     varNameSet_.emplace(varName);
     updateStmtModsPairSet(stmtCnt_, varName);
@@ -170,7 +164,6 @@ void DesignExtractor::extractRightAssign(const std::shared_ptr<ASTNode> &node) {
             constSet_.emplace(label);
             break;
         default:
-            assert(node->getChildren().size() == 2);
             const auto &lChild = node->getChildren().front();
             const auto &rChild = node->getChildren().back();
             extractRightAssign(lChild);
@@ -180,9 +173,7 @@ void DesignExtractor::extractRightAssign(const std::shared_ptr<ASTNode> &node) {
 }
 
 void DesignExtractor::extractRead(const std::shared_ptr<ASTNode> &node) {
-    assert(node->getSyntaxType() == ASTNode::SyntaxType::Read);
     const auto &child = node->getChildren().front();
-    assert(child->getSyntaxType() == ASTNode::SyntaxType::Variable);
     const std::string &varName = child->getLabel();
     varNameSet_.emplace(varName);
     updateStmtModsPairSet(stmtCnt_, varName);
@@ -191,9 +182,7 @@ void DesignExtractor::extractRead(const std::shared_ptr<ASTNode> &node) {
 }
 
 void DesignExtractor::extractPrint(const std::shared_ptr<ASTNode> &node) {
-    assert(node->getSyntaxType() == ASTNode::SyntaxType::Print);
     const auto &child = node->getChildren().front();
-    assert(child->getSyntaxType() == ASTNode::SyntaxType::Variable);
     const std::string &varName = child->getLabel();
     varNameSet_.emplace(varName);
     updateStmtUsesPairSet(stmtCnt_, varName);
@@ -217,11 +206,9 @@ void DesignExtractor::extractCondExpr(const std::shared_ptr<ASTNode> &node) {
             constSet_.emplace(label);
             break;
         case ASTNode::SyntaxType::LogicalNot:
-            assert(node->getChildren().size() == 1);
             extractCondExpr(node->getChildren().front());
             break;
         default:
-            assert(node->getChildren().size() == 2);
             const auto &lChild = node->getChildren().front();
             const auto &rChild = node->getChildren().back();
             extractCondExpr(lChild);
@@ -231,8 +218,6 @@ void DesignExtractor::extractCondExpr(const std::shared_ptr<ASTNode> &node) {
 }
 
 void DesignExtractor::extractIf(const std::shared_ptr<ASTNode> &node) {
-    assert(node->getSyntaxType() == ASTNode::SyntaxType::If);
-
     STMT_NUM ifStmtNum = stmtCnt_;
     containerStmtLst_.emplace_back(stmtCnt_);
     ifSet_.insert(stmtCnt_);
@@ -256,8 +241,6 @@ void DesignExtractor::extractIf(const std::shared_ptr<ASTNode> &node) {
 }
 
 void DesignExtractor::extractWhile(const std::shared_ptr<ASTNode> &node) {
-    assert(node->getSyntaxType() == ASTNode::SyntaxType::While);
-
     STMT_NUM whileStmtNum = stmtCnt_;
     containerStmtLst_.push_back(stmtCnt_);
     whileSet_.insert(stmtCnt_);
@@ -274,10 +257,8 @@ void DesignExtractor::extractWhile(const std::shared_ptr<ASTNode> &node) {
 }
 
 void DesignExtractor::extractCall(const std::shared_ptr<ASTNode> &node) {
-    assert(node->getSyntaxType() == ASTNode::SyntaxType::Call);
     callSet_.insert(stmtCnt_);
     const auto &child = node->getChildren().front();
-    assert(child->getSyntaxType() == ASTNode::SyntaxType::Variable);
 
     ENT_NAME calleeName = child->getLabel();
     callGraph_.addCallRelationship(curProc_, calleeName);

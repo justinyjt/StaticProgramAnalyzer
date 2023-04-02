@@ -3,14 +3,11 @@
 #include <exception>
 #include <string>
 
-#include "commons/types.h"
-
 class LexerException : public std::exception {
  public:
-    LexerException(std::string message, LineNumber line_number);
+    explicit LexerException(std::string message);
     [[nodiscard]] const char *what() const noexcept override;
 
  private:
     std::string message_;
-    LineNumber line_number_;
 };

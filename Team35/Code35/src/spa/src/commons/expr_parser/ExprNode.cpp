@@ -1,6 +1,6 @@
-#include <string>
-
 #include "ExprNode.h"
+
+#include <string>
 
 std::string ExprNode::toString() const {
     if (this->getChildren().size() > 0) {
