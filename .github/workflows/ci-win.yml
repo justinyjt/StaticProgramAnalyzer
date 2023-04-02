@@ -48,9 +48,9 @@ jobs:
           mkdir build
           cd build
           cmake -A x64 ../Team35/Code35/
-          cmake --build . --target unit_testing --config $BUILD_TYPE
-          cmake --build . --target integration_testing --config $BUILD_TYPE
-          cmake --build . --target autotester --config $BUILD_TYPE
+          cmake --build . --target unit_testing --config $BUILD_TYPE --parallel 8
+          cmake --build . --target integration_testing --config $BUILD_TYPE --parallel 8
+          cmake --build . --target autotester --config $BUILD_TYPE --parallel 8
           cd ../..
 
       - name: Run Unit Test

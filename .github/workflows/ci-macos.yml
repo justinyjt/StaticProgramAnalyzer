@@ -18,7 +18,7 @@ jobs:
   lint:
     name: MacOS Lint
     runs-on: macos-latest
-    timeout-minutes: 5
+    timeout-minutes: 3
     strategy:
       fail-fast: true
 
@@ -36,7 +36,7 @@ jobs:
   build:
     name: MacOS Build
     runs-on: macos-latest
-    timeout-minutes: 8
+    timeout-minutes: 4
     strategy:
       fail-fast: true
 
@@ -54,7 +54,7 @@ jobs:
       - name: Build Project
         working-directory: ${{runner.workspace}}/22s2-cp-spa-team-35/build
         shell: bash
-        run: cmake --build . --config $BUILD_TYPE
+        run: cmake --build . --config $BUILD_TYPE --parallel 8
 
       - name: Run Unit Test
         working-directory: ${{runner.workspace}}/22s2-cp-spa-team-35/build
@@ -65,7 +65,7 @@ jobs:
         working-directory: ${{runner.workspace}}/22s2-cp-spa-team-35/build
         shell: bash
         run: ./src/integration_testing/integration_testing
-# root
+
       - name: Run System Test
         working-directory: ${{runner.workspace}}/22s2-cp-spa-team-35/build
         shell: bash
