@@ -1,4 +1,5 @@
 #include "QueryParser.h"
+
 #include "qps/clause/select_clause/SelectClause.h"
 #include "qps/query_parser/declaration_parser/DeclarationParser.h"
 #include "qps/query_parser/selection_parser/SelectionParser.h"
@@ -10,7 +11,8 @@
 #include "commons/token_scanner/PQLTokenScanner.h"
 #include "QuerySyntaxValidator.h"
 
-std::pair<std::unique_ptr<SelectClause>, std::vector<std::unique_ptr<Clause>>> QueryParser::parse(std::string &query) {
+std::pair<std::unique_ptr<SelectClause>,
+          std::vector<std::unique_ptr<OptimisableClause>>> QueryParser::parse(std::string &query) {
     try {
         std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
         std::unique_ptr<QuerySyntaxValidator> sv = std::make_unique<QuerySyntaxValidator>(std::move(lexer));
@@ -29,7 +31,7 @@ std::pair<std::unique_ptr<SelectClause>, std::vector<std::unique_ptr<Clause>>> Q
 
         // parse clauses
         ClauseParser clauseParser(pqlTokenScanner, synonyms);
-        std::vector<std::unique_ptr<Clause>> clauses = clauseParser.parse();
+        std::vector<std::unique_ptr<OptimisableClause>> clauses = clauseParser.parse();
 
         return {std::move(selectClause), std::move(clauses)};
     } catch (const LexerException &e) {

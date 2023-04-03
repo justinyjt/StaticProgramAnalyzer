@@ -3,7 +3,12 @@
 #include <cassert>
 
 TwoArgClause::TwoArgClause(std::unique_ptr<PQLToken> first,
-                           std::unique_ptr<PQLToken> second) : first(std::move(first)), second(std::move(second)) {}
+                           std::unique_ptr<PQLToken> second) : first_(std::move(first)), second_(std::move(second)) {
+    if (first_->tag == PQLToken::Tag::SYNONYM)
+        this->addHeader(dynamic_cast<Synonym &>(*first_).ident);
+    if (second_->tag == PQLToken::Tag::SYNONYM)
+        this->addHeader(dynamic_cast<Synonym &>(*second_).ident);
+}
 
 StmtType TwoArgClause::getStmtType(Synonym::DesignEntity type) {
     switch (type) {
@@ -27,9 +32,9 @@ StmtType TwoArgClause::getStmtType(Synonym::DesignEntity type) {
 }
 
 bool TwoArgClause::equal(const TwoArgClause &rhs) const {
-    return *first == *(rhs.first) && *second == *(rhs.second);
+    return *first_ == *(rhs.first_) && *second_ == *(rhs.second_);
 }
 
 int TwoArgClause::getPairEnum() const {
-    return 10 * static_cast<int>(first->tag) + static_cast<int>(second->tag);
+    return 10 * static_cast<int>(first_->tag) + static_cast<int>(second_->tag);
 }

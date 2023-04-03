@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <utility>
 
-#include "qps/clause/Clause.h"
+#include "qps/clause/OptimisableClause.h"
 #include "qps/clause/two_arg_clause/AssignPattern.h"
 #include "qps/pql/Synonym.h"
 #include "qps/pql/Wildcard.h"
@@ -20,15 +20,15 @@ class PatternClauseParser {
     PatternClauseParser(PQLTokenScanner &pqlTokenScanner,
                         std::unordered_map<std::string, Synonym::DesignEntity> &synonyms);
 
-    std::vector<std::unique_ptr<Clause>> parse();
+    std::vector<std::unique_ptr<OptimisableClause>> parse();
 
-    std::unique_ptr<Clause> parsePattern();
+    std::unique_ptr<OptimisableClause> parsePattern();
 
-    std::unique_ptr<Clause> parseAssign(std::string patternSynonym);
+    std::unique_ptr<OptimisableClause> parseAssign(const std::string &patternSynonym);
 
-    std::unique_ptr<Clause> parseWhile(std::string patternSynonym);
+    std::unique_ptr<OptimisableClause> parseWhile(const std::string &patternSynonym);
 
-    std::unique_ptr<Clause> parseIf(std::string patternSynonym);
+    std::unique_ptr<OptimisableClause> parseIf(const std::string &patternSynonym);
 
     std::unique_ptr<PQLToken> parseVar();
 

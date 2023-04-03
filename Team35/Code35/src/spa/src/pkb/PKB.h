@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdio.h>
+#include <cstdio>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -14,17 +14,20 @@
 
 class PKB {
  public:
-    const EntityTable<ENT_NAME> &getEntityTable(Entity entityType) const;
+    [[nodiscard]] const EntityTable<ENT_NAME> &getEntityTable(Entity entityType) const;
 
-    const EntityTable<STMT_NUM> &getStatementTable(StmtType stmtType) const;
+    [[nodiscard]] const EntityTable<STMT_NUM> &getStatementTable(StmtType stmtType) const;
 
-    const RelationshipTable<STMT_NUM, ENT_NAME> &getStmtNameRelationshipTable(StmtNameRelationship tableType) const;
+    [[nodiscard]] const RelationshipTable<STMT_NUM, ENT_NAME> &
+    getStmtNameRelationshipTable(StmtNameRelationship tableType) const;
 
-    const RelationshipTable<ENT_NAME, ENT_NAME> &getNameNameRelationshipTable(NameNameRelationship tableType) const;
+    [[nodiscard]] const RelationshipTable<ENT_NAME, ENT_NAME> &
+    getNameNameRelationshipTable(NameNameRelationship tableType) const;
 
-    const RelationshipTable<STMT_NUM, STMT_NUM> &getStmtStmtRelationshipTable(StmtStmtRelationship tableType) const;
+    [[nodiscard]] const RelationshipTable<STMT_NUM, STMT_NUM> &
+    getStmtStmtRelationshipTable(StmtStmtRelationship tableType) const;
 
-    const PatternTable &getPatternTable() const;
+    [[nodiscard]] const PatternTable &getPatternTable() const;
 
     RelationshipTable<STMT_NUM, ENT_NAME> &getStmtNameRelationshipTable(StmtNameRelationship tableType);
 
@@ -38,15 +41,15 @@ class PKB {
 
     PatternTable &getPatternTable();
 
-    bool addEntityToTable(Entity entityType, ENT_NAME entity);
+    void addEntityToTable(Entity entityType, ENT_NAME entity);
 
-    bool addStatementToTable(StmtType stmtType, STMT_NUM stmt);
+    void addStatementToTable(StmtType stmtType, STMT_NUM stmt);
 
-    bool addRelationshipToTable(StmtNameRelationship tableType, const STMT_ENT &stmtEnt);
+    void addRelationshipToTable(StmtNameRelationship tableType, const STMT_ENT &stmtEnt);
 
-    bool addRelationshipToTable(NameNameRelationship tableType, const ENT_ENT &entEnt);
+    void addRelationshipToTable(NameNameRelationship tableType, const ENT_ENT &entEnt);
 
-    bool addRelationshipToTable(StmtStmtRelationship tableType, STMT_STMT stmtStmt);
+    void addRelationshipToTable(StmtStmtRelationship tableType, STMT_STMT stmtStmt);
 
     void addPattern(STMT_NUM stmt, ASSIGN_PAT pattern);
 
@@ -54,43 +57,44 @@ class PKB {
 
     void addCFGraphs(std::vector<CFG::CFGraph> &&CFGraphs);
 
-    ENT_SET getEntByStmtKey(StmtNameRelationship tableType, STMT_NUM stmt) const;
+    [[nodiscard]] ENT_SET getEntByStmtKey(StmtNameRelationship tableType, STMT_NUM stmt) const;
 
-    STMT_SET getStmtByEntVal(StmtNameRelationship tableType, const ENT_NAME &name) const;
+    [[nodiscard]] STMT_SET getStmtByEntVal(StmtNameRelationship tableType, const ENT_NAME &name) const;
 
-    STMT_ENT_SET getStmtEntSet(StmtNameRelationship tableType) const;
+    [[nodiscard]] STMT_ENT_SET getStmtEntSet(StmtNameRelationship tableType) const;
 
-    STMT_SET getStmtByRs(StmtNameRelationship tableType) const;
+    [[nodiscard]] STMT_SET getStmtByRs(StmtNameRelationship tableType) const;
 
-    bool isStmtEntPairExists(StmtNameRelationship tableType, STMT_NUM stmt, const ENT_NAME &name) const;
+    [[nodiscard]] bool isStmtEntPairExists(StmtNameRelationship tableType, STMT_NUM stmt, const ENT_NAME &name) const;
 
-    ENT_SET getEntByEntKey(NameNameRelationship tableType, const ENT_NAME &name) const;
+    [[nodiscard]] ENT_SET getEntByEntKey(NameNameRelationship tableType, const ENT_NAME &name) const;
 
-    ENT_SET getEntByEntVal(NameNameRelationship tableType, const ENT_NAME &name) const;
+    [[nodiscard]] ENT_SET getEntByEntVal(NameNameRelationship tableType, const ENT_NAME &name) const;
 
-    ENT_ENT_SET getEntEntSet(NameNameRelationship tableType) const;
+    [[nodiscard]] ENT_ENT_SET getEntEntSet(NameNameRelationship tableType) const;
 
-    ENT_SET getKeyNameByRs(NameNameRelationship tableType) const;
+    [[nodiscard]] ENT_SET getKeyNameByRs(NameNameRelationship tableType) const;
 
-    ENT_SET getValNameByRs(NameNameRelationship tableType) const;
+    [[nodiscard]] ENT_SET getValNameByRs(NameNameRelationship tableType) const;
 
-    bool isEntEntPairExists(NameNameRelationship tableType, const ENT_NAME &key, const ENT_NAME &val) const;
+    [[nodiscard]] bool
+    isEntEntPairExists(NameNameRelationship tableType, const ENT_NAME &key, const ENT_NAME &val) const;
 
-    STMT_SET getStmtByStmtKey(StmtStmtRelationship tableType, STMT_NUM stmt) const;
+    [[nodiscard]] STMT_SET getStmtByStmtKey(StmtStmtRelationship tableType, STMT_NUM stmt) const;
 
-    STMT_SET getStmtByStmtVal(StmtStmtRelationship tableType, STMT_NUM stmt) const;
-
-    STMT_SET getStmtByProc(const ENT_NAME &procName) const;
+    [[nodiscard]] STMT_SET getStmtByStmtVal(StmtStmtRelationship tableType, STMT_NUM stmt) const;
 
     STMT_STMT_SET getStmtStmtSet(StmtStmtRelationship tableType);
 
-    STMT_SET getKeyStmtByRs(StmtStmtRelationship tableType) const;
+    [[nodiscard]] STMT_SET getKeyStmtByRs(StmtStmtRelationship tableType) const;
 
-    STMT_SET getValStmtByRs(StmtStmtRelationship tableType) const;
+    [[nodiscard]] STMT_SET getValStmtByRs(StmtStmtRelationship tableType) const;
 
-    bool isStmtStmtPairExists(StmtStmtRelationship tableType, STMT_NUM key, STMT_NUM val) const;
+    [[nodiscard]] bool isStmtStmtPairExists(StmtStmtRelationship tableType, STMT_NUM key, STMT_NUM val) const;
 
-    bool isEntityTypeExists(StmtType tableType, STMT_NUM key) const;
+    [[nodiscard]] bool isEntityTypeExists(StmtType tableType, STMT_NUM key) const;
+
+    bool isRelationshipExists(StmtStmtRelationship tableType);
 
  private:
     // Entity related tables

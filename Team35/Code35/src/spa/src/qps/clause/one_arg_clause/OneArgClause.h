@@ -4,7 +4,7 @@
 #include <utility>
 #include <string>
 
-#include "qps/clause/Clause.h"
+#include "qps/clause/OptimisableClause.h"
 #include "qps/pql/Expression.h"
 #include "qps/pql/Ident.h"
 #include "qps/pql/PQLToken.h"
@@ -15,27 +15,27 @@
 #include "commons/types.h"
 
 /*
-Base class for any Clause with 1 arguments:
+Base class for any Clause with 1 argument:
 IfPattern | WhilePattern
 */
-class OneArgClause : public Clause {
+class OneArgClause : public OptimisableClause {
  public:
-    const std::unique_ptr<PQLToken> first;
+    const std::unique_ptr<PQLToken> first_;
 
-    const std::string ident;
+    const std::string ident_;
 
     OneArgClause(std::unique_ptr<PQLToken> first, StmtNameRelationship rs, std::string ident);
 
     std::unique_ptr<Result> evaluate(PKBReader *) override;
 
-    bool operator==(const Clause& rhs) const override;
+    bool operator==(const Clause &rhs) const override;
 
  protected:
     void validateArgs();
 
     StmtType getStmtType() const;
 
-    StmtNameRelationship rs;
+    StmtNameRelationship rs_;
 };
 
 class IfPattern : public OneArgClause {

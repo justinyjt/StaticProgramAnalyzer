@@ -52,8 +52,6 @@ STMT_SET CFGraph::getSuccessors(STMT_NUM stmt_num, bool isTransitive) const {
 }
 
 STMT_SET CFGraph::getAllSuccessors() const {
-    assert(this->hasNode(CFGraph::start_node_data));
-    assert(this->hasNode(CFGraph::end_node_data));
     STMT_SET result;
     Index node_index = this->getNodeIndex(CFGraph::start_node_data);
     IndexSet successors = getDummyNodeSuccessors(node_index);
@@ -65,8 +63,6 @@ STMT_SET CFGraph::getAllSuccessors() const {
 }
 
 STMT_SET CFGraph::getAllPredecessors() const {
-    assert(this->hasNode(CFGraph::start_node_data));
-    assert(this->hasNode(CFGraph::end_node_data));
     STMT_SET result;
     Index node_index = this->getNodeIndex(CFGraph::end_node_data);
     IndexSet predecessors = getDummyNodePredecessors(node_index);
@@ -78,7 +74,6 @@ STMT_SET CFGraph::getAllPredecessors() const {
 }
 
 STMT_SET CFGraph::getSuccessorsByIndex(Index node_index, bool isTransitive) const {
-    assert(this->isIndexValid(node_index));
     STMT_SET successors;
 
     if (!isTransitive) {
@@ -114,7 +109,6 @@ STMT_SET CFGraph::getSuccessorsByIndex(Index node_index, bool isTransitive) cons
 }
 
 STMT_SET CFGraph::getPredecessorsByIndex(Index node_index, bool isTransitive) const {
-    assert(this->isIndexValid(node_index));
     STMT_SET predecessors;
 
     if (!isTransitive) {
@@ -196,7 +190,7 @@ bool CFGraph::isReachable(STMT_NUM stmt1, STMT_NUM stmt2, bool check_neighbor_on
         if (isIndexDummyNode(successor_index)) {
             IndexSet successors_of_dummy_node = this->getDummyNodeSuccessors(successor_index);
             if (std::find(successors_of_dummy_node.begin(), successors_of_dummy_node.end(), node_index2) !=
-                successors_of_dummy_node.end()) {
+                    successors_of_dummy_node.end()) {
                 return true;
             }
         }
@@ -217,18 +211,14 @@ ENT_NAME CFGraph::getProcName() const {
 }
 
 bool CFGraph::isIndexDummyNode(Index index) const {
-    assert(this->isIndexValid(index));
     return this->getNode(index).isDummy();
 }
 
 STMT_NUM CFGraph::getStmtNumFromIndex(Index index) const {
-    assert(this->isIndexValid(index));
     return this->getNode(index).getStmtNum();
 }
 
 IndexSet CFGraph::getDummyNodePredecessors(Index index) const {
-    assert(this->isIndexValid(index));
-    assert(this->isIndexDummyNode(index));
     IndexSet predecessors;
     for (Index predecessor_index : this->getIncomingNodes(index)) {
         if (!this->isIndexDummyNode(predecessor_index)) {
@@ -242,8 +232,6 @@ IndexSet CFGraph::getDummyNodePredecessors(Index index) const {
 }
 
 IndexSet CFGraph::getDummyNodeSuccessors(Index index) const {
-    assert(this->isIndexValid(index));
-    assert(this->isIndexDummyNode(index));
     IndexSet successors;
     for (Index successor_index : this->getOutgoingNodes(index)) {
         if (!this->isIndexDummyNode(successor_index)) {
@@ -258,7 +246,7 @@ IndexSet CFGraph::getDummyNodeSuccessors(Index index) const {
 
 bool CFGraph::operator==(const CFGraph &graph) const {
     return Graph<CFGraphNodeData>::operator==(graph) && this->proc_name_ == graph.proc_name_ &&
-           this->min_stmt_num_ == graph.min_stmt_num_ && this->max_stmt_num_ == graph.max_stmt_num_;
+            this->min_stmt_num_ == graph.min_stmt_num_ && this->max_stmt_num_ == graph.max_stmt_num_;
 }
 
 bool CFGraph::operator!=(const CFGraph &graph) const {

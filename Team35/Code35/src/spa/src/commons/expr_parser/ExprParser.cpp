@@ -1,9 +1,10 @@
 #include "ExprParser.h"
 
-#include <cassert>
 #include <memory>
 #include <string>
 #include <utility>
+
+#include "ExprNode.h"
 
 using std::unique_ptr;
 
@@ -16,10 +17,10 @@ ASSIGN_PAT_RIGHT ExprParser::parseExpr() {
         std::string opLabel;
         if (scanner_.peek(Token::Tag::Plus)) {
             opType = ASTNode::SyntaxType::Plus;
-            opLabel = "+";
+            opLabel = ExprNode::plusAscii;
         } else {
             opType = ASTNode::SyntaxType::Minus;
-            opLabel = "-";
+            opLabel = ExprNode::minusAscii;
         }
         scanner_.next();
         ASSIGN_PAT_RIGHT op = std::make_shared<ExprNode>(opType, opLabel);
@@ -35,19 +36,19 @@ ASSIGN_PAT_RIGHT ExprParser::parseExpr() {
 ASSIGN_PAT_RIGHT ExprParser::parseTerm() {
     ASSIGN_PAT_RIGHT firstOp = parseFactor();
     while (scanner_.peek(Token::Tag::Multiply)
-        || scanner_.peek(Token::Tag::Divide)
-        || scanner_.peek(Token::Tag::Modulo)) {
+            || scanner_.peek(Token::Tag::Divide)
+            || scanner_.peek(Token::Tag::Modulo)) {
         ASTNode::SyntaxType opType;
         std::string opLabel;
         if (scanner_.peek(Token::Tag::Multiply)) {
             opType = ASTNode::SyntaxType::Multiply;
-            opLabel = "*";
+            opLabel = ExprNode::multiplyAscii;
         } else if (scanner_.peek(Token::Tag::Divide)) {
             opType = ASTNode::SyntaxType::Divide;
-            opLabel = "/";
+            opLabel = ExprNode::divideAscii;
         } else {
             opType = ASTNode::SyntaxType::Modulo;
-            opLabel = "%";
+            opLabel = ExprNode::moduloAscii;
         }
         scanner_.next();
         ASSIGN_PAT_RIGHT op = std::make_shared<ExprNode>(opType, opLabel);
@@ -75,17 +76,15 @@ ASSIGN_PAT_RIGHT ExprParser::parseFactor() {
 }
 
 ASSIGN_PAT_RIGHT ExprParser::parseName() {
-    assert(scanner_.isName());
     ASSIGN_PAT_RIGHT cur =
-        std::make_shared<ExprNode>(ASTNode::SyntaxType::Variable, scanner_.peekLexeme());
+            std::make_shared<ExprNode>(ASTNode::SyntaxType::Variable, scanner_.peekLexeme());
     scanner_.next();
     return std::move(cur);
 }
 
 ASSIGN_PAT_RIGHT ExprParser::parseInteger() {
-    assert(scanner_.peek(Token::Tag::Integer));
     ASSIGN_PAT_RIGHT cur =
-        std::make_shared<ExprNode>(ASTNode::SyntaxType::Constant, scanner_.peekLexeme());
+            std::make_shared<ExprNode>(ASTNode::SyntaxType::Constant, scanner_.peekLexeme());
     scanner_.match(Token::Tag::Integer);
     return std::move(cur);
 }

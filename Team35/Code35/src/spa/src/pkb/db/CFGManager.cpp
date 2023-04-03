@@ -1,7 +1,6 @@
 #include "CFGManager.h"
 
 #include <algorithm>
-#include <cassert>
 #include <utility>
 
 namespace CFG {
@@ -30,13 +29,11 @@ int CFGManager::getIndex(STMT_NUM num) const {
 
 const CFGraph &CFGManager::getCFG(STMT_NUM num) const {
     int index = this->getIndex(num);
-    assert(index != -1);
     return graphs_[index];
 }
 
 ENT_NAME CFGManager::getProcName(STMT_NUM num) {
     int index = this->getIndex(num);
-    assert(index != -1);
     return graphs_[index].getProcName();
 }
 
@@ -59,7 +56,7 @@ bool CFGManager::isNext(STMT_NUM first, STMT_NUM second, bool isTransitive) cons
     return curr.isReachable(first, second, !isTransitive);
 }
 
-bool CFGManager::isNextExists() {
+bool CFGManager::isNextExists() const {
     return any_of(this->graphs_.begin(), this->graphs_.end(), [](const CFGraph &curr) {
         return curr.getMaxStmtNum() - curr.getMinStmtNum() > 1;
     });

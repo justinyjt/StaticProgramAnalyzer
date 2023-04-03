@@ -1,7 +1,7 @@
 #include "catch.hpp"
 #include "../../TestHelper.h"
 #include "qps/pql/Synonym.h"
-#include "qps/clause/Clause.h"
+#include "qps/clause/OptimisableClause.h"
 #include "qps/query_parser/clause_parser/pattern_clause_parser/PatternClauseParser.h"
 #include "commons/lexer/LexerFactory.h"
 #include "qps/pql/Ident.h"
@@ -33,13 +33,13 @@ class setUpPcp {
         ident = std::make_unique<Ident>("x");
         std::string exprStr = "x";
         std::unique_ptr<ILexer> lxr =
-                LexerFactory::createLexer(exprStr, LexerFactory::LexerType::Expression);
+            LexerFactory::createLexer(exprStr, LexerFactory::LexerType::Expression);
         TokenScanner scanner(std::move(lxr));
         ExprParser parser(scanner);
         ASSIGN_PAT_RIGHT pattern = parser.parseExpr();
         exprStr = "1";
         lxr =
-                LexerFactory::createLexer(exprStr, LexerFactory::LexerType::Expression);
+            LexerFactory::createLexer(exprStr, LexerFactory::LexerType::Expression);
         TokenScanner scanner2(std::move(lxr));
         ExprParser parser2(scanner2);
         ASSIGN_PAT_RIGHT pattern2 = parser2.parseExpr();
@@ -72,7 +72,7 @@ class setUpPcp {
     std::unique_ptr<Wildcard> wildcard1;
     std::unique_ptr<Wildcard> wildcard2;
 
-    std::vector<std::unique_ptr<Clause>> clause;
+    std::vector<std::unique_ptr<OptimisableClause>> clause;
     std::unique_ptr<AssignPattern> patternAssign;
     std::unique_ptr<WhilePattern> patternWhile;
     std::unique_ptr<IfPattern> patternIf;
@@ -205,6 +205,6 @@ TEST_CASE_METHOD(setUpPcp, "while pattern, assign pattern syntax, semantic error
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     PatternClauseParser pcp(pqlTokenScanner, declarationList);
     requireThrowAs<SemanticException>([&pcp]() {
-        pcp.parse();
+      pcp.parse();
     });
 }

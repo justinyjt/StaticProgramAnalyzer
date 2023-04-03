@@ -7,49 +7,34 @@ using std::any_of;
 
 PKBWriter::PKBWriter(PKB &pkb) : pkb(pkb) {}
 
-bool PKBWriter::addEntities(Entity entity, const ENT_SET &entitySet) {
+void PKBWriter::addEntities(Entity entity, const ENT_SET &entitySet) {
     for (const auto &ent : entitySet) {
-        if (!pkb.addEntityToTable(entity, ent)) {
-            return false;
-        }
+        pkb.addEntityToTable(entity, ent);
     }
-    return true;
 }
 
-bool PKBWriter::addStatements(StmtType tableType, const STMT_SET &stmtSet) {
+void PKBWriter::addStatements(StmtType tableType, const STMT_SET &stmtSet) {
     for (const auto &stmt : stmtSet) {
-        if (!pkb.addStatementToTable(tableType, stmt)) {
-            return false;
-        }
+        pkb.addStatementToTable(tableType, stmt);
     }
-    return true;
 }
 
-bool PKBWriter::addStmtEntityRelationships(StmtNameRelationship tableType, const STMT_ENT_SET &set) {
+void PKBWriter::addStmtEntityRelationships(StmtNameRelationship tableType, const STMT_ENT_SET &set) {
     for (const auto &stmtEnt : set) {
-        if (!pkb.addRelationshipToTable(tableType, stmtEnt)) {
-            return false;
-        }
+        pkb.addRelationshipToTable(tableType, stmtEnt);
     }
-    return true;
 }
 
-bool PKBWriter::addEntityEntityRelationships(NameNameRelationship tableType, const ENT_ENT_SET &set) {
+void PKBWriter::addEntityEntityRelationships(NameNameRelationship tableType, const ENT_ENT_SET &set) {
     for (const auto &entEnt : set) {
-        if (!pkb.addRelationshipToTable(tableType, entEnt)) {
-            return false;
-        }
+        pkb.addRelationshipToTable(tableType, entEnt);
     }
-    return true;
 }
 
-bool PKBWriter::addStmtStmtRelationships(StmtStmtRelationship tableType, const STMT_STMT_SET &stmtSet) {
+void PKBWriter::addStmtStmtRelationships(StmtStmtRelationship tableType, const STMT_STMT_SET &stmtSet) {
     for (auto stmtStmt : stmtSet) {
-        if (!pkb.addRelationshipToTable(tableType, stmtStmt)) {
-            return false;
-        }
+        pkb.addRelationshipToTable(tableType, stmtStmt);
     }
-    return true;
 }
 
 void PKBWriter::addPatterns(std::unordered_map<STMT_NUM, ASSIGN_PAT> &patMap) {

@@ -6,6 +6,7 @@
 #include "qps/pql/Ident.h"
 #include "qps/query_exceptions/SyntaxException.h"
 #include "commons/expr_parser/ExprParser.h"
+#include "qps/clause/OptimisableClause.h"
 #include "qps/clause/two_arg_clause/WithEntClause.h"
 #include "qps/clause/two_arg_clause/WithNumClause.h"
 
@@ -34,13 +35,13 @@ class setUpWcp {
         statementNumber2 = std::make_unique<PQLNumber>("1");
         std::string exprStr1 = "x";
         std::unique_ptr<ILexer> lxr1 =
-                LexerFactory::createLexer(exprStr1, LexerFactory::LexerType::Expression);
+            LexerFactory::createLexer(exprStr1, LexerFactory::LexerType::Expression);
         TokenScanner scanner1(std::move(lxr1));
         ExprParser parser1(scanner1);
         ASSIGN_PAT_RIGHT pattern1 = parser1.parseExpr();
         std::string exprStr2 = "1";
         std::unique_ptr<ILexer> lxr2 =
-                LexerFactory::createLexer(exprStr2, LexerFactory::LexerType::Expression);
+            LexerFactory::createLexer(exprStr2, LexerFactory::LexerType::Expression);
         TokenScanner scanner2(std::move(lxr2));
         ExprParser parser2(scanner2);
         ASSIGN_PAT_RIGHT pattern2 = parser2.parseExpr();
@@ -77,7 +78,7 @@ class setUpWcp {
     std::unique_ptr<Wildcard> wildcard1;
     std::unique_ptr<Wildcard> wildcard2;
 
-    std::vector<std::unique_ptr<Clause>> clause;
+    std::vector<std::unique_ptr<OptimisableClause>> clause;
     std::unique_ptr<WithEntClause> withEntClause;
     std::unique_ptr<WithNumClause> withNumClause;
     std::unique_ptr<ILexer> lexer;
@@ -99,7 +100,7 @@ TEST_CASE_METHOD(setUpWcp, "ident, int, semantic error") {
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     WithClauseParser wcp(pqlTokenScanner, declarationList);
     requireThrowAs<SemanticException>([&wcp]() {
-        wcp.parse();
+      wcp.parse();
     });
 }
 
@@ -119,7 +120,7 @@ TEST_CASE_METHOD(setUpWcp, "ident, procedure.value, semantic error") {
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     WithClauseParser wcp(pqlTokenScanner, declarationList);
     requireThrowAs<SemanticException>([&wcp]() {
-        wcp.parse();
+      wcp.parse();
     });
 }
 
@@ -139,7 +140,7 @@ TEST_CASE_METHOD(setUpWcp, "procedure.procName, print.procName, semantic error")
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     WithClauseParser wcp(pqlTokenScanner, declarationList);
     requireThrowAs<SemanticException>([&wcp]() {
-        wcp.parse();
+      wcp.parse();
     });
 }
 

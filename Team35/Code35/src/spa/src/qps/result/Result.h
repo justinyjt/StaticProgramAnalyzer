@@ -24,9 +24,7 @@ class Result {
 
     virtual std::unique_ptr<Result> join(Result &) = 0;
 
-    static std::unique_ptr<Result> selectJoin(Result &, Result &);
-
-    static std::unique_ptr<Result> tableJoin(Result &, Result &);
+    virtual bool isNull() const = 0;
 
     Tag tag;
 };

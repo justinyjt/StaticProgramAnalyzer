@@ -6,7 +6,7 @@
 #define DUMMY_NAME "common-name"
 
 WithEntClause::WithEntClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second) :
-        TwoArgClause(std::move(first), std::move(second)) {}
+    TwoArgClause(std::move(first), std::move(second)) {}
 
 STMT_ENT_SET WithEntClause::getStmtEntSet(PKBReader *db, Synonym syn) {
     switch (syn.de) {
@@ -137,26 +137,26 @@ std::unique_ptr<Result> WithEntClause::evaluate(PKBReader *db) {
     switch (getPairEnum()) {
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM) :  // with cl.procname = p.procname -> syn_type[]
         {
-            Synonym syn1 = dynamic_cast<Synonym &>(*first);
-            Synonym syn2 = dynamic_cast<Synonym &>(*second);
+            Synonym syn1 = dynamic_cast<Synonym &>(*first_);
+            Synonym syn2 = dynamic_cast<Synonym &>(*second_);
             return handleSynSyn(db, syn1, syn2);
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::IDENT) :  // with syn.x = "x" -> syn_type[]
         {
-            Synonym syn = dynamic_cast<Synonym &>(*first);
-            ENT_NAME ent = (dynamic_cast<Ident &>(*second)).s;
+            Synonym syn = dynamic_cast<Synonym &>(*first_);
+            ENT_NAME ent = (dynamic_cast<Ident &>(*second_)).s;
             return handleSynEnt(db, syn, ent);
         }
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::SYNONYM) :  // with syn.x = "x" -> syn_type[]
         {
-            Synonym syn = dynamic_cast<Synonym &>(*second);
-            ENT_NAME ent = (dynamic_cast<Ident &>(*first)).s;
+            Synonym syn = dynamic_cast<Synonym &>(*second_);
+            ENT_NAME ent = (dynamic_cast<Ident &>(*first_)).s;
             return handleSynEnt(db, syn, ent);
         }
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::IDENT) :  // Uses/Modifies(1, "x") -> bool
         {
-            ENT_NAME ent1 = (dynamic_cast<Ident &>(*first)).s;
-            ENT_NAME ent2 = (dynamic_cast<Ident &>(*second)).s;
+            ENT_NAME ent1 = (dynamic_cast<Ident &>(*first_)).s;
+            ENT_NAME ent2 = (dynamic_cast<Ident &>(*second_)).s;
             std::unique_ptr<Result> result = std::make_unique<BoolResult>(ent1 == ent2);
             return std::move(result);
         }

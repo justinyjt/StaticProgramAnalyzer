@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_set>
 
 #include "PKB.h"
 #include "pkb/db/AffectsGraph.h"
@@ -9,77 +10,99 @@ class PKBReader {
  public:
     explicit PKBReader(PKB &);
 
-    ENT_SET getEntities(Entity entityType) const;
+    [[nodiscard]] ENT_SET getEntities(Entity entityType) const;
 
-    STMT_SET getStatements(StmtType stmtType) const;
+    [[nodiscard]] STMT_SET getStatements(StmtType stmtType) const;
 
-    ENT_SET getRelationship(StmtNameRelationship tableType, STMT_NUM stmt) const;
+    [[nodiscard]] ENT_SET getRelationship(StmtNameRelationship tableType, STMT_NUM stmt) const;
 
-    STMT_SET getRelationship(StmtNameRelationship tableType, const ENT_NAME &name) const;
+    [[nodiscard]] STMT_SET getRelationship(StmtNameRelationship tableType, const ENT_NAME &name) const;
 
-    STMT_ENT_SET getAllRelationships(StmtNameRelationship tableType) const;
+    [[nodiscard]] STMT_SET
+    getRelationshipWithFilter(StmtNameRelationship tableType, const ENT_NAME &name, StmtType stmtType) const;
 
-    STMT_SET getStmtByRelationship(StmtNameRelationship tableType) const;
+    [[nodiscard]] STMT_ENT_SET getAllRelationships(StmtNameRelationship tableType) const;
 
-    bool isRelationshipExists(StmtNameRelationship tableType, STMT_NUM stmt, const ENT_NAME &name) const;
+    [[nodiscard]] STMT_ENT_SET getAllRelationshipsWithFilter(StmtNameRelationship tableType, StmtType stmtType) const;
 
-    ENT_SET getRelationshipByKey(NameNameRelationship tableType, const ENT_NAME &keyName) const;
+    [[nodiscard]] STMT_SET getStmtByRelationship(StmtNameRelationship tableType) const;
 
-    ENT_SET getRelationshipByVal(NameNameRelationship tableType, const ENT_NAME &valName) const;
+    [[nodiscard]] STMT_SET getStmtByRelationshipWithFilter(StmtNameRelationship tableType, StmtType stmtType) const;
 
-    ENT_ENT_SET getAllRelationships(NameNameRelationship tableType) const;
+    [[nodiscard]] bool isRelationshipExists(StmtNameRelationship tableType, STMT_NUM stmt, const ENT_NAME &name) const;
 
-    ENT_SET getKeyNameByRelationship(NameNameRelationship tableType) const;
+    [[nodiscard]] ENT_SET getRelationshipByKey(NameNameRelationship tableType, const ENT_NAME &keyName) const;
 
-    ENT_SET getValueNameByRelationship(NameNameRelationship tableType) const;
+    [[nodiscard]] ENT_SET getRelationshipByVal(NameNameRelationship tableType, const ENT_NAME &valName) const;
 
-    bool isRelationshipExists(NameNameRelationship tableType, const ENT_NAME &keyName, const ENT_NAME &valName) const;
+    [[nodiscard]] ENT_ENT_SET getAllRelationships(NameNameRelationship tableType) const;
 
-    STMT_SET getRelationshipByKey(StmtStmtRelationship tableType, STMT_NUM keyName) const;
+    [[nodiscard]] ENT_SET getKeyNameByRelationship(NameNameRelationship tableType) const;
 
-    STMT_SET getRelationshipByVal(StmtStmtRelationship tableType, STMT_NUM valName) const;
+    [[nodiscard]] ENT_SET getValueNameByRelationship(NameNameRelationship tableType) const;
 
-    STMT_STMT_SET getAllRelationships(StmtStmtRelationship tableType);
+    [[nodiscard]] bool
+    isRelationshipExists(NameNameRelationship tableType, const ENT_NAME &keyName, const ENT_NAME &valName) const;
 
-    STMT_SET getKeyStmtByRelationship(StmtStmtRelationship tableType) const;
+    STMT_SET getRelationshipByKey(StmtStmtRelationship tableType, STMT_NUM keyName);
 
-    STMT_SET getValueStmtByRelationship(StmtStmtRelationship tableType) const;
+    STMT_SET getRelationshipByVal(StmtStmtRelationship tableType, STMT_NUM valName);
 
-    STMT_SET getStmtByRs(StmtStmtRelationship tableType) const;
+    STMT_SET getRelationshipByStmtWithFilter(StmtStmtRelationship tableType,
+                                             STMT_NUM stmt,
+                                             StmtType stmtType,
+                                             bool isKey);
 
-    STMT_SET getStmtByProc(const ENT_NAME &procName) const;
+    STMT_STMT_SET getAllRelationshipsWithFilter(StmtStmtRelationship tableType, StmtType first, StmtType second);
 
-    bool isRelationshipExists(StmtStmtRelationship tableType, STMT_NUM keyName, STMT_NUM valName) const;
+    STMT_STMT_SET getAllRelationshipsWithFilter(StmtStmtRelationship tableType, StmtType stmtType);
+
+    STMT_SET getKeyStmtByRelationship(StmtStmtRelationship tableType);
+
+    STMT_SET getValueStmtByRelationship(StmtStmtRelationship tableType);
+
+    STMT_SET getStmtByRelationshipWithFilter(StmtStmtRelationship tableType, StmtType stmtType, bool isKey);
+
+    bool isRelationshipExists(StmtStmtRelationship tableType, STMT_NUM keyName, STMT_NUM valName);
+
+    bool hasRelationship(StmtStmtRelationship tableType);
 
     STMT_SET getStmtWithExactPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;
 
     STMT_SET getStmtWithPartialPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;
 
+    void clearCache();
+
  private:
     PKB &pkb;
     AffectsGraph affects_graph_;
+    bool isAffectsComputed;
 
-    bool isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const;
+    [[nodiscard]] bool isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const;
 
-    bool isAffectsT(STMT_NUM first, STMT_NUM second) const;
+    bool isAffectsT(STMT_NUM first, STMT_NUM second);
 
-    bool isValidAffectsSuccessor(STMT_NUM stmt) const;
+    bool isValidAffectsSuccessor(STMT_NUM stmt);
 
-    bool isValidAffectsPredecessor(STMT_NUM stmt) const;
+    bool isValidAffectsPredecessor(STMT_NUM stmt);
 
-    STMT_SET getAffectsBySuccessor(STMT_NUM stmt2, bool isTransitive) const;
+    STMT_SET getAffectsBySuccessor(STMT_NUM stmt2, bool isTransitive);
 
-    STMT_SET getAffectsByPredecessor(STMT_NUM stmt1, bool isTransitive) const;
+    STMT_SET getAffectsByPredecessor(STMT_NUM stmt1, bool isTransitive);
 
-    STMT_STMT_SET getAllAffects(bool isTransitive) const;
+    STMT_STMT_SET getAllAffects(bool isTransitive);
 
-    STMT_SET getAllAffectsPredecessors() const;
+    STMT_SET getAllAffectsPredecessors();
 
-    STMT_SET getAllAffectsSuccessors() const;
+    STMT_SET getAllAffectsSuccessors();
 
-    STMT_SET getIntersect(STMT_NUM first, STMT_NUM second) const;
+    STMT_SET getIntersect(STMT_NUM first, STMT_NUM second);
 
-    bool hasAffects() const;
+    bool hasAffects();
 
-    bool isModifies(STMT_NUM key, const ENT_NAME &val) const;
+    [[nodiscard]] bool isModifies(STMT_NUM key, const ENT_NAME &val) const;
+
+    STMT_STMT_SET getAllRelationships(StmtStmtRelationship tableType);
+
+    void computeAffectsGraph();
 };

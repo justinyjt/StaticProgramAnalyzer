@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstdint>
 #include <iostream>
 #include <string>
 
@@ -10,7 +9,6 @@ typedef std::string Lexeme;
 
 class Token {
  public:
-    static const LineNumber null_line_number_ = 0;
     enum class Tag {
         // keywords
         Keyword,
@@ -71,7 +69,6 @@ class Token {
         RBrace,
         SemiColon,
         Underscore,
-        DoubleQuotes,
         Comma,
         Star,
         Dot,
@@ -83,19 +80,14 @@ class Token {
         String,
 
         // misc
-        NewLine,
         EndOfFile
     };
 
     explicit Token(Tag tag);
     Token(Lexeme lexeme, Tag tag);
-    Token(Tag tag, LineNumber line_number);
-    Token(Lexeme lexeme, Tag tag, LineNumber line_number);
-    Token(const Token &token, LineNumber line_number);
 
-    Lexeme getLexeme() const;
+    const Lexeme &getLexeme() const;
     Tag getTag() const;
-    LineNumber getLineNumber() const;
 
     bool operator==(Token const &rhs) const;
     friend std::ostream &operator<<(std::ostream &output, const Token &token);
@@ -103,5 +95,4 @@ class Token {
  private:
     Lexeme lexeme_;
     Tag tag_;
-    LineNumber line_number_ = null_line_number_;
 };

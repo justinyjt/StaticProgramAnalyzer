@@ -46,7 +46,6 @@ class Lexer : public ILexer {
     void reset() override;
 
  protected:
-    LineNumber getCurrentLineNumber() const;
     char readChar();
     bool readChar(char c);
     char peekChar();
@@ -59,7 +58,6 @@ class Lexer : public ILexer {
  private:
     Source source_;
     uint32_t current_position_ = 0;
-    uint32_t current_line_ = 1;
     KeywordMap keyword_map_;
     CharacterMap character_map_;
     bool include_operator_;
@@ -74,6 +72,5 @@ class Lexer : public ILexer {
     bool isNamePart(char c) const;
     bool isDigit(char c) const;
     bool isStringStartEnd(char c) const;
-    bool isNewLine(char c) const;
     bool isControlOrSpace(char c) const;
 };

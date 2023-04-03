@@ -2,7 +2,6 @@
 
 #include <memory>
 #include <utility>
-#include <cassert>
 
 #include "commons/ASTNode.h"
 #include "commons/expr_parser/ExprParser.h"
@@ -23,7 +22,6 @@ shared_ptr<ASTNode> Parser::Parse() {
 }
 
 shared_ptr<ASTNode> Parser::parseProc() {
-    assert(scanner_.isName());
     shared_ptr<ASTNode> cur = std::make_shared<ASTNode>(ASTNode::SyntaxType::Procedure, scanner_.peekLexeme());
     scanner_.next();
     cur->addChild(parseStmtLst());
@@ -53,7 +51,6 @@ shared_ptr<ASTNode> Parser::parseStmt() {
     } else if (scanner_.peek(Token::Tag::While)) {
         return std::move(parseWhile());
     } else {
-        assert(scanner_.peek(Token::Tag::Call));
         return std::move(parseCall());
     }
 }
@@ -147,7 +144,6 @@ shared_ptr<ASTNode> Parser::parseCondExpr() {
             op->addChild(std::move(expr2));
             return std::move(op);
         } else {  // LogicalOr, checked by SyntaxValidator
-            assert(scanner_.peek(Token::Tag::LogicalOr));
             scanner_.next();
             shared_ptr<ASTNode> op = std::make_shared<ASTNode>(ASTNode::SyntaxType::LogicalOr, "||");
 
@@ -225,7 +221,6 @@ shared_ptr<ASTNode> Parser::parseRelExpr() {
 
         return std::move(op);
     } else {
-        assert(scanner_.peek(Token::Tag::NotEqual));
         scanner_.next();
         shared_ptr<ASTNode> op = std::make_shared<ASTNode>(ASTNode::SyntaxType::NotEqual, "!=");
         shared_ptr<ASTNode> factor2 = parseRelFactor();
@@ -247,7 +242,6 @@ shared_ptr<ASTNode> Parser::parseExpr() {
 }
 
 shared_ptr<ASTNode> Parser::parseName() {
-    assert(scanner_.isName());
     shared_ptr<ASTNode> cur = std::make_shared<ASTNode>(ASTNode::SyntaxType::Variable, scanner_.peekLexeme());
     scanner_.next();
     return std::move(cur);

@@ -9,43 +9,43 @@ std::unique_ptr<Result> EntEntClause::evaluate(PKBReader *db) {
     switch (getPairEnum()) {
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Uses/Modifies(f, v) -> <str, str>[]
         {
-            if (first->str() == second->str()) {  // Calls(p, p) cannot self call
+            if (first_->str() == second_->str()) {  // Calls(p, p) cannot self call
                 return std::move(std::make_unique<BoolResult>(false));
             }
             ENT_ENT_SET s = db->getAllRelationships(rs);
-            return std::move(std::make_unique<TableResult>(first->str(), second->str(), s));
+            return std::move(std::make_unique<TableResult>(first_->str(), second_->str(), s));
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::IDENT):  // Uses/Modifies(f, "x") -> str[]
         {
-            ENT_NAME entName = (dynamic_cast<Ident &>(*second)).s;
+            ENT_NAME entName = (dynamic_cast<Ident &>(*second_)).s;
             ENT_SET set = db->getRelationshipByVal(rs, entName);
-            std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), set);
+            std::unique_ptr<Result> result = std::make_unique<TableResult>(first_->str(), set);
             return std::move(result);
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // Uses/Modifies(f, _) -> str[]
         {
             ENT_SET keySet = db->getKeyNameByRelationship(rs);
-            std::unique_ptr<Result> result = std::make_unique<TableResult>(first->str(), keySet);
+            std::unique_ptr<Result> result = std::make_unique<TableResult>(first_->str(), keySet);
             return std::move(result);
         }
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::SYNONYM):  // Uses/Mod("f", v) -> str[]
         {
-            ENT_NAME entName = (dynamic_cast<Ident &>(*first)).s;
+            ENT_NAME entName = (dynamic_cast<Ident &>(*first_)).s;
             ENT_SET set = db->getRelationshipByKey(rs, entName);
-            std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), set);
+            std::unique_ptr<Result> result = std::make_unique<TableResult>(second_->str(), set);
             return std::move(result);
         }
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::IDENT):  // Uses/Modifies("f", "x") -> bool
         {
-            ENT_NAME firstEnt = (dynamic_cast<Ident &>(*first)).s;
-            ENT_NAME secondEnt = (dynamic_cast<Ident &>(*second)).s;
+            ENT_NAME firstEnt = (dynamic_cast<Ident &>(*first_)).s;
+            ENT_NAME secondEnt = (dynamic_cast<Ident &>(*second_)).s;
             bool b = db->isRelationshipExists(rs, firstEnt, secondEnt);
             std::unique_ptr<Result> result = std::make_unique<BoolResult>(b);
             return std::move(result);
         }
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::WILDCARD):  // Uses/Modifies("f", _) -> bool
         {
-            ENT_NAME entName = (dynamic_cast<Ident &>(*first)).s;
+            ENT_NAME entName = (dynamic_cast<Ident &>(*first_)).s;
             ENT_SET s = db->getRelationshipByKey(rs, entName);
             std::unique_ptr<Result> result = std::make_unique<BoolResult>(!s.empty());
             return std::move(result);
@@ -53,12 +53,12 @@ std::unique_ptr<Result> EntEntClause::evaluate(PKBReader *db) {
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::SYNONYM):  // Calls(_, f) -> str[]
         {
             ENT_SET callsProcSet = db->getValueNameByRelationship(rs);
-            std::unique_ptr<Result> result = std::make_unique<TableResult>(second->str(), callsProcSet);
+            std::unique_ptr<Result> result = std::make_unique<TableResult>(second_->str(), callsProcSet);
             return std::move(result);
         }
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::IDENT):  // Calls(_, "f") -> bool
         {
-            ENT_NAME proc = (dynamic_cast<Ident &>(*second)).s;
+            ENT_NAME proc = (dynamic_cast<Ident &>(*second_)).s;
             ENT_SET s = db->getRelationshipByVal(rs, proc);
             std::unique_ptr<Result> result = std::make_unique<BoolResult>(!s.empty());
             return std::move(result);
@@ -80,14 +80,14 @@ bool EntEntClause::operator==(const Clause &rhs) const {
 }
 
 UsesP::UsesP(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second) :
-        EntEntClause(std::move(first), std::move(second), NameNameRelationship::Uses) {
+    EntEntClause(std::move(first), std::move(second), NameNameRelationship::Uses) {
     validateArgs();
 }
 
 void UsesP::validateArgs() {
-    if (dynamic_cast<Wildcard *>(first.get()) != nullptr) throw SemanticException();
-    Synonym *synonym1 = dynamic_cast<Synonym *>(first.get());
-    Synonym *synonym2 = dynamic_cast<Synonym *>(second.get());
+    if (dynamic_cast<Wildcard *>(first_.get()) != nullptr) throw SemanticException();
+    auto *synonym1 = dynamic_cast<Synonym *>(first_.get());
+    auto *synonym2 = dynamic_cast<Synonym *>(second_.get());
     if (synonym1 != nullptr && synonym1->de != Synonym::DesignEntity::PROCEDURE) {
         throw SemanticException();
     }
@@ -97,14 +97,14 @@ void UsesP::validateArgs() {
 }
 
 ModifiesP::ModifiesP(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second) :
-        EntEntClause(std::move(first), std::move(second), NameNameRelationship::Modifies) {
+    EntEntClause(std::move(first), std::move(second), NameNameRelationship::Modifies) {
     validateArgs();
 }
 
 void ModifiesP::validateArgs() {
-    if (dynamic_cast<Wildcard *>(first.get()) != nullptr) throw SemanticException();
-    Synonym *synonym1 = dynamic_cast<Synonym *>(first.get());
-    Synonym *synonym2 = dynamic_cast<Synonym *>(second.get());
+    if (dynamic_cast<Wildcard *>(first_.get()) != nullptr) throw SemanticException();
+    Synonym *synonym1 = dynamic_cast<Synonym *>(first_.get());
+    Synonym *synonym2 = dynamic_cast<Synonym *>(second_.get());
     if (synonym1 != nullptr && synonym1->de != Synonym::DesignEntity::PROCEDURE) {
         throw SemanticException();
     }
@@ -114,14 +114,14 @@ void ModifiesP::validateArgs() {
 }
 
 Calls::Calls(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :
-        EntEntClause(std::move(first), std::move(second),
-                     isTransitive ? NameNameRelationship::CallsStar : NameNameRelationship::Calls) {
+    EntEntClause(std::move(first), std::move(second),
+                 isTransitive ? NameNameRelationship::CallsStar : NameNameRelationship::Calls) {
     validateArgs();
 }
 
 void Calls::validateArgs() {
-    Synonym *synonym1 = dynamic_cast<Synonym *>(first.get());
-    Synonym *synonym2 = dynamic_cast<Synonym *>(second.get());
+    auto *synonym1 = dynamic_cast<Synonym *>(first_.get());
+    auto *synonym2 = dynamic_cast<Synonym *>(second_.get());
     if ((synonym1 != nullptr && synonym1->de != Synonym::DesignEntity::PROCEDURE) ||
         (synonym2 != nullptr && synonym2->de != Synonym::DesignEntity::PROCEDURE)) {
         throw SemanticException();

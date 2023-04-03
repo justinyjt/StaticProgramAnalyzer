@@ -7,37 +7,47 @@
 
 // general constructor for n-cols
 SelectResult::SelectResult(std::vector<std::string> &_idents, const std::vector<TableResult> &_cols) :
-        Result(Tag::SELECT) {
+    Result(Tag::SELECT) {
     idents.insert(idents.end(), _idents.begin(), _idents.end());
     cols.insert(cols.end(), _cols.begin(), _cols.end());
 }
 
-std::unique_ptr<Result> SelectResult::getColsCrossProduct() {
-    std::unique_ptr<Result> finalRes = std::make_unique<TableResult>(TableResult(cols[0]));
-    std::vector<int> order(1, 0);
-    for (int i = 1; i < cols.size(); i++) {
-        finalRes = finalRes->join(cols[i]);
-        order.push_back(i);
+std::vector<int> SelectResult::getOutputOrder(const TableResult &intermediateRes) const {
+    std::vector<int> order;
+    for (const auto &ident : idents) {
+        for (int j = 0; j < intermediateRes.idents.size(); j++) {
+            if (ident == intermediateRes.idents[j]) {
+                order.push_back(j);
+            }
+        }
     }
-    TableResult& finalTableRes = dynamic_cast<TableResult&>(*finalRes);
-
-    return std::make_unique<TableResult>(TableResult(finalTableRes.idents, finalTableRes.rows, order));
+    return order;
 }
 
+std::unique_ptr<Result> SelectResult::getColsCrossProduct() {
+    std::unique_ptr<Result> finalRes = std::make_unique<TableResult>(cols[0]);
+    for (int i = 1; i < cols.size(); i++) {
+        finalRes = finalRes->join(cols[i]);
+    }
+
+    auto &finalTableRes = dynamic_cast<TableResult &>(*finalRes);
+    std::vector<int> order = getOutputOrder(finalTableRes);
+    return std::make_unique<TableResult>(finalTableRes.idents, finalTableRes.rows, order);
+}
 
 std::unique_ptr<Result> SelectResult::join(Result &rhs) {
     if (rhs.tag == Result::Tag::IDENTITY) {
         return getColsCrossProduct();
     }
     if (rhs.tag == Tag::BOOL) {
-        BoolResult &boolRes = dynamic_cast<BoolResult &>(rhs);
+        auto &boolRes = dynamic_cast<BoolResult &>(rhs);
         if (boolRes.b) {
             return getColsCrossProduct();
         }
-        return std::make_unique<TableResult>(TableResult());
+        return std::make_unique<TableResult>();
     }
 
-    TableResult &t2 = dynamic_cast<TableResult &>(rhs);
+    auto &t2 = dynamic_cast<TableResult &>(rhs);
     std::unordered_set<std::string> intermediateIdentsSet(t2.idents.begin(), t2.idents.end());
     std::unique_ptr<Result> finalRes = std::make_unique<TableResult>(TableResult(t2));
     for (int i = 0; i < idents.size(); i++) {
@@ -46,27 +56,23 @@ std::unique_ptr<Result> SelectResult::join(Result &rhs) {
         }
     }
 
-    std::unique_ptr<TableResult> finalTableRes = std::make_unique<TableResult>(dynamic_cast<TableResult&>(*finalRes));
+    std::unique_ptr<TableResult> finalTableRes = std::make_unique<TableResult>(dynamic_cast<TableResult &>(*finalRes));
     std::unordered_set<std::string> selectIdents(idents.begin(), idents.end());
     finalTableRes = finalTableRes->projectColumns(selectIdents);
 
     // get vector of indexes in order to be printed
-    std::vector<int> order;
-    for (int i = 0; i < idents.size(); i++) {
-        for (int j = 0; j < finalTableRes->idents.size(); j++) {
-            if (idents[i] == finalTableRes->idents[j]) {
-                order.push_back(j);
-            }
-        }
-    }
+    std::vector<int> order = getOutputOrder(*finalTableRes);
 
     return std::make_unique<TableResult>(finalTableRes->idents, finalTableRes->rows, order);
 }
 
-void SelectResult::output(std::list<std::string> &list) {
-}
+void SelectResult::output(std::list<std::string> &list) {}
 
 bool SelectResult::operator==(const Result &rhs) const {
-    const SelectResult *pRhs = dynamic_cast<const SelectResult *>(&rhs);
+    const auto *pRhs = dynamic_cast<const SelectResult *>(&rhs);
     return pRhs != nullptr && idents == pRhs->idents && cols == pRhs->cols;
+}
+
+bool SelectResult::isNull() const {
+    return false;
 }
