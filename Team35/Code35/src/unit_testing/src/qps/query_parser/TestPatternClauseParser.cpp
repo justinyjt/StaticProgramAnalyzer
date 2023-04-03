@@ -95,7 +95,8 @@ TEST_CASE_METHOD(setUp, "variable, variable name and wildcard") {
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     PatternClauseParser pcp(pqlTokenScanner, declarationList);
     clause = pcp.parse();
-    patternAssign = std::make_unique<AssignPatternClause>(std::move(synonymVariable), std::move(exprWildcardVarName), "a");
+    patternAssign = std::make_unique<AssignPatternClause>(
+        std::move(synonymVariable), std::move(exprWildcardVarName), "a");
     requireTrue(*clause.front() == *patternAssign);
 }
 
@@ -105,7 +106,8 @@ TEST_CASE_METHOD(setUp, "variable, constant value and wildcard") {
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     PatternClauseParser pcp(pqlTokenScanner, declarationList);
     clause = pcp.parse();
-    patternAssign = std::make_unique<AssignPatternClause>(std::move(synonymVariable), std::move(exprWildcardConstValue), "a");
+    patternAssign = std::make_unique<AssignPatternClause>(
+        std::move(synonymVariable), std::move(exprWildcardConstValue), "a");
     requireTrue(*clause.front() == *patternAssign);
 }
 

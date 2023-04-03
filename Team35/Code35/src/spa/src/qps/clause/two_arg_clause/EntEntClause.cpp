@@ -3,72 +3,83 @@
 EntEntClause::EntEntClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second,
                            NameNameRelationship rs) : TwoArgClause(std::move(first), std::move(second)), rs(rs) {}
 
+std::unique_ptr<Result> EntEntClause::handleSynSyn(
+    PKBReader *db, std::pair<ENT_NAME, ENT_NAME> argPair, NameNameRelationship rs) {
+    if (argPair.first == argPair.second) {  // Calls(p, p) cannot self call
+        return std::move(std::make_unique<BoolResult>(false));
+    }
+    ENT_ENT_SET s = db->getAllRelationships(rs);
+    return std::move(std::make_unique<TableResult>(argPair.first, argPair.second, s));
+}
+
+std::unique_ptr<Result> EntEntClause::handleSynIdent(
+    PKBReader *db, std::pair<ENT_NAME, ENT_NAME> argPair, NameNameRelationship rs) {
+    ENT_NAME entName = argPair.second;
+    ENT_SET set = db->getRelationshipByVal(rs, entName);
+    return std::make_unique<TableResult>(argPair.first, set);
+}
+
+std::unique_ptr<Result> EntEntClause::handleSynWc(PKBReader *db, ENT_NAME synName, NameNameRelationship rs) {
+    ENT_SET keySet = db->getKeyNameByRelationship(rs);
+    return std::make_unique<TableResult>(synName, keySet);
+}
+
+std::unique_ptr<Result> EntEntClause::handleIdentSyn(
+    PKBReader *db, std::pair<ENT_NAME, ENT_NAME> argPair, NameNameRelationship rs) {
+    ENT_NAME entName = argPair.first;
+    ENT_SET set = db->getRelationshipByKey(rs, entName);
+    return std::make_unique<TableResult>(argPair.second, set);
+}
+
+std::unique_ptr<Result> EntEntClause::handleIdentIdent(
+    PKBReader *db, std::pair<ENT_NAME, ENT_NAME> argPair, NameNameRelationship rs) {
+    ENT_NAME firstEnt = argPair.first;
+    ENT_NAME secondEnt = argPair.second;
+    bool b = db->isRelationshipExists(rs, firstEnt, secondEnt);
+    return std::make_unique<BoolResult>(b);
+}
+
+std::unique_ptr<Result> EntEntClause::handleIdentWc(PKBReader *db, ENT_NAME entName, NameNameRelationship rs) {
+    ENT_SET s = db->getRelationshipByKey(rs, entName);
+    return std::make_unique<BoolResult>(!s.empty());
+}
+
+std::unique_ptr<Result> EntEntClause::handleWcSyn(PKBReader *db, ENT_NAME synName, NameNameRelationship rs) {
+    ENT_SET callsProcSet = db->getValueNameByRelationship(rs);
+    return std::make_unique<TableResult>(synName, callsProcSet);
+}
+
+std::unique_ptr<Result> EntEntClause::handleWcIdent(PKBReader *db, ENT_NAME entName, NameNameRelationship rs) {
+    ENT_SET s = db->getRelationshipByVal(rs, entName);
+    return std::make_unique<BoolResult>(!s.empty());
+}
+
+std::unique_ptr<Result> EntEntClause::handleWcWc(PKBReader *db, NameNameRelationship rs) {
+    ENT_ENT_SET s = db->getAllRelationships(rs);
+    return std::make_unique<BoolResult>(!s.empty());
+}
+
 std::unique_ptr<Result> EntEntClause::evaluate(PKBReader *db) {
     /* <SYNONYM | IDENT | _ >, <SYNONYM | IDENT | _ > */
-
     switch (getPairEnum()) {
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Uses/Modifies(f, v) -> <str, str>[]
-        {
-            if (first_->str() == second_->str()) {  // Calls(p, p) cannot self call
-                return std::move(std::make_unique<BoolResult>(false));
-            }
-            ENT_ENT_SET s = db->getAllRelationships(rs);
-            return std::move(std::make_unique<TableResult>(first_->str(), second_->str(), s));
-        }
+            return handleSynSyn(db, std::make_pair(first_->str(), second_->str()), rs);
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::IDENT):  // Uses/Modifies(f, "x") -> str[]
-        {
-            ENT_NAME entName = (dynamic_cast<Ident &>(*second_)).s;
-            ENT_SET set = db->getRelationshipByVal(rs, entName);
-            std::unique_ptr<Result> result = std::make_unique<TableResult>(first_->str(), set);
-            return std::move(result);
-        }
+            return handleSynIdent(db, std::make_pair(first_->str(), second_->str()), rs);
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // Uses/Modifies(f, _) -> str[]
-        {
-            ENT_SET keySet = db->getKeyNameByRelationship(rs);
-            std::unique_ptr<Result> result = std::make_unique<TableResult>(first_->str(), keySet);
-            return std::move(result);
-        }
+            return handleSynWc(db, first_->str(), rs);
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::SYNONYM):  // Uses/Mod("f", v) -> str[]
-        {
-            ENT_NAME entName = (dynamic_cast<Ident &>(*first_)).s;
-            ENT_SET set = db->getRelationshipByKey(rs, entName);
-            std::unique_ptr<Result> result = std::make_unique<TableResult>(second_->str(), set);
-            return std::move(result);
-        }
+            return handleIdentSyn(db, std::make_pair(first_->str(), second_->str()), rs);
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::IDENT):  // Uses/Modifies("f", "x") -> bool
-        {
-            ENT_NAME firstEnt = (dynamic_cast<Ident &>(*first_)).s;
-            ENT_NAME secondEnt = (dynamic_cast<Ident &>(*second_)).s;
-            bool b = db->isRelationshipExists(rs, firstEnt, secondEnt);
-            std::unique_ptr<Result> result = std::make_unique<BoolResult>(b);
-            return std::move(result);
-        }
+            return handleIdentIdent(db, std::make_pair(first_->str(), second_->str()), rs);
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::WILDCARD):  // Uses/Modifies("f", _) -> bool
-        {
-            ENT_NAME entName = (dynamic_cast<Ident &>(*first_)).s;
-            ENT_SET s = db->getRelationshipByKey(rs, entName);
-            std::unique_ptr<Result> result = std::make_unique<BoolResult>(!s.empty());
-            return std::move(result);
-        }
+            return handleIdentWc(db, first_->str(), rs);
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::SYNONYM):  // Calls(_, f) -> str[]
-        {
-            ENT_SET callsProcSet = db->getValueNameByRelationship(rs);
-            std::unique_ptr<Result> result = std::make_unique<TableResult>(second_->str(), callsProcSet);
-            return std::move(result);
-        }
+            return handleWcSyn(db, second_->str(), rs);
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::IDENT):  // Calls(_, "f") -> bool
-        {
-            ENT_NAME proc = (dynamic_cast<Ident &>(*second_)).s;
-            ENT_SET s = db->getRelationshipByVal(rs, proc);
-            std::unique_ptr<Result> result = std::make_unique<BoolResult>(!s.empty());
-            return std::move(result);
-        }
+            return handleWcIdent(db, second_->str(), rs);
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::WILDCARD):  // Calls(_, _) -> bool
-        {
-            ENT_ENT_SET s = db->getAllRelationships(rs);
-            std::unique_ptr<Result> result = std::make_unique<BoolResult>(!s.empty());
-            return std::move(result);
-        }
+            return handleWcWc(db, rs);
         default:
             throw std::runtime_error("");
     }

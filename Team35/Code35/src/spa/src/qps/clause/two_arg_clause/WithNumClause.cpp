@@ -29,8 +29,30 @@ STMT_SET WithNumClause::getStmtNumsFromSyn(Synonym syn, PKBReader *db) {
             return db->getStatements(StmtType::Assign);
         }
         default:
-            assert(false);
+            throw std::runtime_error("");
     }
+}
+
+std::unique_ptr<Result> WithNumClause::handleSynNumCase(PKBReader *db, Synonym syn, std::string num) {
+    if (syn.de == Synonym::DesignEntity::CONSTANT) {
+        return handleOneConstCaseNum(db, syn.str(), num);
+    }
+    return handleNoConstCaseNum(db, syn, std::stoi(num));
+}
+
+std::unique_ptr<Result> WithNumClause::handleSynSynCase(PKBReader *db, Synonym syn1, Synonym syn2) {
+    if (syn1.str() == syn2.str()) {
+        return handleSameSynCase(db, syn1);
+    }
+
+    if (syn1.de == Synonym::DesignEntity::CONSTANT && syn2.de == Synonym::DesignEntity::CONSTANT) {
+        return handleTwoConstCase(db, syn1.str(), syn2.str());
+    } else if (syn1.de == Synonym::DesignEntity::CONSTANT) {
+        return handleOneConstCaseSyn(db, syn1.str(), syn2);
+    } else if (syn2.de == Synonym::DesignEntity::CONSTANT) {
+        return handleOneConstCaseSyn(db, syn2.str(), syn1);
+    }
+    return handleNoConstCaseSyn(db, syn1, syn2);
 }
 
 std::unique_ptr<Result> WithNumClause::handleTwoConstCase(PKBReader *db, std::string syn1, std::string syn2) {
@@ -115,37 +137,19 @@ std::unique_ptr<Result> WithNumClause::evaluate(PKBReader *db) {
         {
             Synonym syn1 = dynamic_cast<Synonym &>(*first_);
             Synonym syn2 = dynamic_cast<Synonym &>(*second_);
-
-            if (first_->str() == second_->str()) {
-                return handleSameSynCase(db, syn1);
-            }
-
-            if (syn1.de == Synonym::DesignEntity::CONSTANT && syn2.de == Synonym::DesignEntity::CONSTANT) {
-                return handleTwoConstCase(db, syn1.str(), syn2.str());
-            } else if (syn1.de == Synonym::DesignEntity::CONSTANT) {
-                return handleOneConstCaseSyn(db, syn1.str(), syn2);
-            } else if (syn2.de == Synonym::DesignEntity::CONSTANT) {
-                return handleOneConstCaseSyn(db, syn2.str(), syn1);
-            }
-            return handleNoConstCaseSyn(db, syn1, syn2);
+            return handleSynSynCase(db, syn1, syn2);
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::STMT_NUM):  // with syn.x = "x" -> syn_type[]
         {
             Synonym syn1 = dynamic_cast<Synonym &>(*first_);
             std::string num = (dynamic_cast<PQLNumber &>(*second_)).n;
-            if (syn1.de == Synonym::DesignEntity::CONSTANT) {
-                return handleOneConstCaseNum(db, syn1.str(), num);
-            }
-            return handleNoConstCaseNum(db, syn1, std::stoi(num));
+            return handleSynNumCase(db, syn1, num);
         }
         case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::SYNONYM):  // with syn.x = "x" -> syn_type[]
         {
             Synonym syn2 = dynamic_cast<Synonym &>(*second_);
             std::string num = (dynamic_cast<PQLNumber &>(*first_)).n;
-            if (syn2.de == Synonym::DesignEntity::CONSTANT) {
-                return handleOneConstCaseNum(db, syn2.str(), num);
-            }
-            return handleNoConstCaseNum(db, syn2, std::stoi(num));
+            return handleSynNumCase(db, syn2, num);
         }
         case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::STMT_NUM):  // Uses/Modifies(1, "x") -> bool
         {
