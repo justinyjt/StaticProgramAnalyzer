@@ -62,6 +62,39 @@ std::unique_ptr<Result> WithEntClause::handleSameSynCase(PKBReader *db, Synonym 
     return std::move(res);
 }
 
+std::unique_ptr<Result> WithEntClause::handleStmtStmt(PKBReader *db, Synonym syn1, Synonym syn2) {
+    STMT_ENT_SET syn1StmtEntSet = getStmtEntSet(db, syn1);
+    STMT_ENT_SET syn2StmtEntSet = getStmtEntSet(db, syn2);
+    std::unique_ptr<Result> syn1Res = std::make_unique<TableResult>(syn1.str(), DUMMY_NAME, syn1StmtEntSet);
+    std::unique_ptr<Result> syn2Res = std::make_unique<TableResult>(syn2.str(), DUMMY_NAME, syn2StmtEntSet);
+    return std::move(syn1Res->join(*syn2Res));
+}
+
+std::unique_ptr<Result> WithEntClause::handleStmtEnt(PKBReader *db, Synonym stmtSyn, Synonym entSyn) {
+    STMT_ENT_SET syn1StmtEntSet = getStmtEntSet(db, stmtSyn);
+    ENT_SET syn2EntSet = getEntSet(db, entSyn);
+    std::unique_ptr<Result> syn1Res = std::make_unique<TableResult>(stmtSyn.str(), entSyn.str(), syn1StmtEntSet);
+    std::unique_ptr<Result> syn2Res = std::make_unique<TableResult>(entSyn.str(), syn2EntSet);
+    return std::move(syn1Res->join(*syn2Res));
+}
+
+std::unique_ptr<Result> WithEntClause::handleEntEnt(PKBReader *db, Synonym syn1, Synonym syn2) {
+    ENT_SET syn1EntSet = getEntSet(db, syn1);
+    ENT_SET syn2EntSet = getEntSet(db, syn2);
+    std::vector<ENT_NAME> resultVec;
+
+    for (auto const &ent : syn1EntSet) {
+        for (auto const &ent2 : syn2EntSet) {
+            if (ent == ent2) {
+                resultVec.emplace_back(ent);
+            }
+        }
+    }
+
+    std::unique_ptr<Result> res = std::make_unique<TableResult>(syn1.str(), syn2.str(), resultVec);
+    return std::move(res);
+}
+
 std::unique_ptr<Result> WithEntClause::handleSynSyn(PKBReader *db, Synonym syn1, Synonym syn2) {
     if (syn1.str() == syn2.str()) {
         return handleSameSynCase(db, syn1);
@@ -70,37 +103,13 @@ std::unique_ptr<Result> WithEntClause::handleSynSyn(PKBReader *db, Synonym syn1,
     bool isSyn2Stmt = isStmtSyn(syn2);
 
     if (isSyn1Stmt && isSyn2Stmt) {
-        STMT_ENT_SET syn1StmtEntSet = getStmtEntSet(db, syn1);
-        STMT_ENT_SET syn2StmtEntSet = getStmtEntSet(db, syn2);
-        std::unique_ptr<Result> syn1Res = std::make_unique<TableResult>(syn1.str(), DUMMY_NAME, syn1StmtEntSet);
-        std::unique_ptr<Result> syn2Res = std::make_unique<TableResult>(syn2.str(), DUMMY_NAME, syn2StmtEntSet);
-        return std::move(syn1Res->join(*syn2Res));
+        return handleStmtStmt(db, syn1, syn2);
     } else if (isSyn1Stmt) {
-        STMT_ENT_SET syn1StmtEntSet = getStmtEntSet(db, syn1);
-        ENT_SET syn2EntSet = getEntSet(db, syn2);
-        std::unique_ptr<Result> syn1Res = std::make_unique<TableResult>(syn1.str(), syn2.str(), syn1StmtEntSet);
-        std::unique_ptr<Result> syn2Res = std::make_unique<TableResult>(syn2.str(), syn2EntSet);
-        return std::move(syn1Res->join(*syn2Res));
+        return handleStmtEnt(db, syn1, syn2);
     } else if (isSyn2Stmt) {
-        STMT_ENT_SET syn2StmtEntSet = getStmtEntSet(db, syn2);
-        ENT_SET syn1EntSet = getEntSet(db, syn1);
-        std::unique_ptr<Result> syn1Res = std::make_unique<TableResult>(syn2.str(), syn1.str(), syn2StmtEntSet);
-        std::unique_ptr<Result> syn2Res = std::make_unique<TableResult>(syn1.str(), syn1EntSet);
-        return std::move(syn1Res->join(*syn2Res));
+        return handleStmtEnt(db, syn2, syn1);
     } else {
-        ENT_SET syn1EntSet = getEntSet(db, syn1);
-        ENT_SET syn2EntSet = getEntSet(db, syn2);
-        std::vector<ENT_NAME> resultVec;
-        for (auto const &ent : syn1EntSet) {
-            for (auto const &ent2 : syn2EntSet) {
-                if (ent == ent2) {
-                    resultVec.emplace_back(ent);
-                }
-            }
-        }
-
-        std::unique_ptr<Result> res = std::make_unique<TableResult>(syn1.str(), syn2.str(), resultVec);
-        return std::move(res);
+        return handleEntEnt(db, syn1, syn2);
     }
 }
 
