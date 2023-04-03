@@ -11,9 +11,9 @@
 #include "qps/query_parser/QuerySyntaxValidator.h"
 #include "commons/expr_parser/ExprParser.h"
 
-class setUp {
+class setUpPcp {
  public:
-    setUp() {
+    setUpPcp() {
         // Set up code
         query = "";
         declarationList.insert({"p", Synonym::DesignEntity::PROCEDURE});
@@ -50,7 +50,7 @@ class setUp {
         wildcard2 = std::make_unique<Wildcard>();
     }
 
-    ~setUp() {
+    ~setUpPcp() {
         // Tear down code
     }
 
@@ -79,7 +79,17 @@ class setUp {
     std::unique_ptr<ILexer> lexer;
 };
 
-TEST_CASE_METHOD(setUp, "variable, wildcard") {
+TEST_CASE_METHOD(setUpPcp, "invalid, not a pattern synonym") {
+    query = "pattern p(v, _)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    PatternClauseParser pcp(pqlTokenScanner, declarationList);
+    requireThrowAs<SemanticException>([&pcp]() {
+        pcp.parse();
+    });
+}
+
+TEST_CASE_METHOD(setUpPcp, "variable, wildcard") {
     query = "pattern a(v, _)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
@@ -89,7 +99,7 @@ TEST_CASE_METHOD(setUp, "variable, wildcard") {
     requireTrue(*clause.front() == *patternAssign);
 }
 
-TEST_CASE_METHOD(setUp, "variable, variable name and wildcard") {
+TEST_CASE_METHOD(setUpPcp, "variable, variable name and wildcard") {
     query = "pattern a(v,_\"x\"_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
@@ -99,7 +109,7 @@ TEST_CASE_METHOD(setUp, "variable, variable name and wildcard") {
     requireTrue(*clause.front() == *patternAssign);
 }
 
-TEST_CASE_METHOD(setUp, "variable, constant value and wildcard") {
+TEST_CASE_METHOD(setUpPcp, "variable, constant value and wildcard") {
     query = "pattern a(v,_\"1\"_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
@@ -109,7 +119,7 @@ TEST_CASE_METHOD(setUp, "variable, constant value and wildcard") {
     requireTrue(*clause.front() == *patternAssign);
 }
 
-TEST_CASE_METHOD(setUp, "wildcard and wildcard") {
+TEST_CASE_METHOD(setUpPcp, "wildcard and wildcard") {
     query = "pattern a(_,_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
@@ -119,7 +129,7 @@ TEST_CASE_METHOD(setUp, "wildcard and wildcard") {
     requireTrue(*clause.front() == *patternAssign);
 }
 
-TEST_CASE_METHOD(setUp, "wildcard and variable name with wildcard") {
+TEST_CASE_METHOD(setUpPcp, "wildcard and variable name with wildcard") {
     query = "pattern a(_,_\"x\"_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
@@ -129,21 +139,17 @@ TEST_CASE_METHOD(setUp, "wildcard and variable name with wildcard") {
     requireTrue(*clause.front() == *patternAssign);
 }
 
-TEST_CASE_METHOD(setUp, "pattern invalid entRef 1") {
-    query = "Select a pattern a(\"1\",_\"x\"_)";
+TEST_CASE_METHOD(setUpPcp, "pattern valid entRef ident") {
+    query = "pattern a(\"x\",_\"x\"_)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    std::unique_ptr<QuerySyntaxValidator> sv = std::make_unique<QuerySyntaxValidator>(std::move(lexer));
-    requireTrue(!sv->validateQuery());
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    PatternClauseParser pcp(pqlTokenScanner, declarationList);
+    clause = pcp.parse();
+    patternAssign = std::make_unique<AssignPattern>(std::move(ident), std::move(exprWildcardVarName), "a");
+    requireTrue(*clause.front() == *patternAssign);
 }
 
-TEST_CASE_METHOD(setUp, "pattern invalid entRef 2") {
-    query = "pattern a(\"+x\",_\"x\"_)";
-    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    std::unique_ptr<QuerySyntaxValidator> sv = std::make_unique<QuerySyntaxValidator>(std::move(lexer));
-    requireTrue(!sv->validateQuery());
-}
-
-TEST_CASE_METHOD(setUp, "while pattern, variable") {
+TEST_CASE_METHOD(setUpPcp, "while pattern, variable") {
     query = "pattern w(v, _)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
@@ -153,7 +159,27 @@ TEST_CASE_METHOD(setUp, "while pattern, variable") {
     requireTrue(*clause.front() == *patternWhile);
 }
 
-TEST_CASE_METHOD(setUp, "if pattern, variable") {
+TEST_CASE_METHOD(setUpPcp, "while pattern, wildcard") {
+    query = "pattern w(_, _)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    PatternClauseParser pcp(pqlTokenScanner, declarationList);
+    clause = pcp.parse();
+    patternWhile = std::make_unique<WhilePattern>(std::move(wildcard1), "w");
+    requireTrue(*clause.front() == *patternWhile);
+}
+
+TEST_CASE_METHOD(setUpPcp, "while pattern, ident") {
+    query = "pattern w(\"x\", _)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    PatternClauseParser pcp(pqlTokenScanner, declarationList);
+    clause = pcp.parse();
+    patternWhile = std::make_unique<WhilePattern>(std::move(ident), "w");
+    requireTrue(*clause.front() == *patternWhile);
+}
+
+TEST_CASE_METHOD(setUpPcp, "if pattern, variable") {
     query = "pattern ifs(v, _, _)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
@@ -163,7 +189,17 @@ TEST_CASE_METHOD(setUp, "if pattern, variable") {
     requireTrue(*clause.front() == *patternIf);
 }
 
-TEST_CASE_METHOD(setUp, "while pattern, assign pattern syntax, semantic error") {
+TEST_CASE_METHOD(setUpPcp, "if pattern, invalid 2 args only") {
+    query = "pattern ifs(v, _)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    PatternClauseParser pcp(pqlTokenScanner, declarationList);
+    requireThrowAs<SemanticException>([&pcp]() {
+        pcp.parse();
+    });
+}
+
+TEST_CASE_METHOD(setUpPcp, "while pattern, assign pattern syntax, semantic error") {
     query = "pattern w(_, \"a\")";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     PQLTokenScanner pqlTokenScanner(std::move(lexer));

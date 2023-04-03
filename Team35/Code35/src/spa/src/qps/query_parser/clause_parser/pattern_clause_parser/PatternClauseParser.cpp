@@ -32,7 +32,6 @@ std::vector<std::unique_ptr<Clause>> PatternClauseParser::parse() {
 
 std::unique_ptr<Clause> PatternClauseParser::parsePattern() {
     // validate and return type
-    assert(pqlTokenScanner.isName());
     Synonym::DesignEntity de;
     std::string pattern = pqlTokenScanner.peekLexeme();
     de = parsePatternSynonym();
