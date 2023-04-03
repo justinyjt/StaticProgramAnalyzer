@@ -56,7 +56,7 @@ std::unique_ptr<OptimisableClause> PatternClauseParser::parsePattern() {
             pqlTokenScanner.restoreState();
             return parseIf(pattern);
         }
-    } else if (pqlTokenScanner.peek(Token::Tag::String)) {  // "expr" -> assign
+    } else {  // "expr" -> assign
         pqlTokenScanner.match(Token::Tag::String);
         pqlTokenScanner.restoreState();
         return parseAssign(pattern);
@@ -72,8 +72,8 @@ std::unique_ptr<OptimisableClause> PatternClauseParser::parseAssignOrWhile(const
             return parseWhile(patternSynonym);
         case Synonym::DesignEntity::IF:
             throw SemanticException();
-        default: {
-        }
+        default:
+            throw std::runtime_error("Assign/While/If synonym expected");
     }
 }
 
@@ -144,7 +144,7 @@ std::unique_ptr<PQLToken> PatternClauseParser::parseEntRef() {
         std::unique_ptr<Wildcard> w = std::make_unique<Wildcard>();
         pqlTokenScanner.next();
         return std::move(w);
-    } else if (pqlTokenScanner.peek(Token::Tag::String)) {
+    } else {
         std::unique_ptr<Ident> i = std::make_unique<Ident>(pqlTokenScanner.peekLexeme());
         pqlTokenScanner.next();
         return std::move(i);
@@ -157,7 +157,7 @@ std::unique_ptr<PQLToken> PatternClauseParser::parseExpressionSpec() {
         if (!pqlTokenScanner.peek(Token::Tag::String)) {  // _
             std::unique_ptr<Wildcard> w = std::make_unique<Wildcard>();
             return std::move(w);
-        } else {  // _"x"_
+        } else {  // Expr with wildcard _"x"_
             std::string expr = pqlTokenScanner.peekLexeme();
             std::unique_ptr<ILexer> lxr = LexerFactory::createLexer(expr, LexerFactory::LexerType::Expression);
             TokenScanner scanner(std::move(lxr));
@@ -169,7 +169,7 @@ std::unique_ptr<PQLToken> PatternClauseParser::parseExpressionSpec() {
             pqlTokenScanner.match(Token::Tag::Underscore);
             return std::move(e);
         }
-    } else if (pqlTokenScanner.peek(Token::Tag::String)) {  // "x"
+    } else {  // Expr "x"
         std::string expr = pqlTokenScanner.peekLexeme();
         std::unique_ptr<ILexer> lxr =
                 LexerFactory::createLexer(expr, LexerFactory::LexerType::Expression);

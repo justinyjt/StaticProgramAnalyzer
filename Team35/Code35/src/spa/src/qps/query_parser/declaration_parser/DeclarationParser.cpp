@@ -25,45 +25,43 @@ std::unordered_map<std::string, Synonym::DesignEntity> DeclarationParser::parse(
 
 // convert Token tag to Synonym design entity
 Synonym::DesignEntity DeclarationParser::parseDesignEntity() {
-    if (pqlTokenScanner.peekDesignEntity()) {
-        Synonym::DesignEntity de;
-        switch (pqlTokenScanner.peekTag()) {
-            case Token::Tag::Statement:
-                de = Synonym::DesignEntity::STMT;
-                break;
-            case Token::Tag::Read:
-                de = Synonym::DesignEntity::READ;
-                break;
-            case Token::Tag::Print:
-                de = Synonym::DesignEntity::PRINT;
-                break;
-            case Token::Tag::Call:
-                de = Synonym::DesignEntity::CALL;
-                break;
-            case Token::Tag::While:
-                de = Synonym::DesignEntity::WHILE;
-                break;
-            case Token::Tag::If:
-                de = Synonym::DesignEntity::IF;
-                break;
-            case Token::Tag::Assign:
-                de = Synonym::DesignEntity::ASSIGN;
-                break;
-            case Token::Tag::Variable:
-                de = Synonym::DesignEntity::VARIABLE;
-                break;
-            case Token::Tag::Constant:
-                de = Synonym::DesignEntity::CONSTANT;
-                break;
-            case Token::Tag::Procedure:
-                de = Synonym::DesignEntity::PROCEDURE;
-                break;
-            default:
-                break;
-        }
-        pqlTokenScanner.next();
-        return de;
+    Synonym::DesignEntity de;
+    switch (pqlTokenScanner.peekTag()) {
+        case Token::Tag::Statement:
+            de = Synonym::DesignEntity::STMT;
+            break;
+        case Token::Tag::Read:
+            de = Synonym::DesignEntity::READ;
+            break;
+        case Token::Tag::Print:
+            de = Synonym::DesignEntity::PRINT;
+            break;
+        case Token::Tag::Call:
+            de = Synonym::DesignEntity::CALL;
+            break;
+        case Token::Tag::While:
+            de = Synonym::DesignEntity::WHILE;
+            break;
+        case Token::Tag::If:
+            de = Synonym::DesignEntity::IF;
+            break;
+        case Token::Tag::Assign:
+            de = Synonym::DesignEntity::ASSIGN;
+            break;
+        case Token::Tag::Variable:
+            de = Synonym::DesignEntity::VARIABLE;
+            break;
+        case Token::Tag::Constant:
+            de = Synonym::DesignEntity::CONSTANT;
+            break;
+        case Token::Tag::Procedure:
+            de = Synonym::DesignEntity::PROCEDURE;
+            break;
+        default:
+            throw std::runtime_error("Design Entity not found");
     }
+    pqlTokenScanner.next();
+    return de;
 }
 
 void DeclarationParser::parseDeclarations(Synonym::DesignEntity de) {
@@ -78,7 +76,9 @@ void DeclarationParser::parseDeclarations(Synonym::DesignEntity de) {
 
         if (pqlTokenScanner.match(Token::Tag::SemiColon)) {
             break;
-        } else if (pqlTokenScanner.match(Token::Tag::Comma)) {
+        }
+
+        if (pqlTokenScanner.match(Token::Tag::Comma)) {
             continue;
         }
     }

@@ -32,7 +32,7 @@ std::unique_ptr<SelectClause> SelectionParser::parse() {
         std::unique_ptr<SelectClause> selectClause = std::make_unique<MultipleSynonymSelectClause>(
             std::move(parseMultiSelect()));
         return selectClause;
-    } else if (pqlTokenScanner.isName()) {  // single synonym
+    } else {  // single synonym
         std::vector<std::unique_ptr<Synonym>> selectedSynonyms;
         selectedSynonyms.emplace_back(std::move(parseSelect()));
         std::unique_ptr<SelectClause> selectClause = std::make_unique<MultipleSynonymSelectClause>(
@@ -49,7 +49,7 @@ std::vector<std::unique_ptr<Synonym>> SelectionParser::parseMultiSelect() {
         if (pqlTokenScanner.peek(Token::Tag::Comma)) {
             pqlTokenScanner.match(Token::Tag::Comma);
             continue;
-        } else if (pqlTokenScanner.peek(Token::Tag::GreaterThan)) {
+        } else {  // ">", end of tuple
             pqlTokenScanner.match(Token::Tag::GreaterThan);
             break;
         }
@@ -96,7 +96,7 @@ std::unique_ptr<Synonym> SelectionParser::parseAttrRef(Synonym::DesignEntity de,
             return std::move(selectedSynonym);
         }
         throw SemanticException();
-    } else if (attrName == STMT_KEYWORD) {
+    } else {  // STMT_KEYWORD
         pqlTokenScanner.next();
         if (de == Synonym::DesignEntity::STMT || de == Synonym::DesignEntity::READ ||
             de == Synonym::DesignEntity::PRINT || de == Synonym::DesignEntity::CALL ||

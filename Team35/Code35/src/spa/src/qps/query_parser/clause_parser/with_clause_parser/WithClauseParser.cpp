@@ -38,9 +38,7 @@ std::unique_ptr<OptimisableClause> WithClauseParser::parseWith() {
 
     arg2 = parseRef();
 
-    if (entArgCount == 1 && numArgCount == 1) {
-        throw SemanticException();
-    } else if (entArgCount == 2) {
+    if (entArgCount == 2) {
         entArgCount = 0;
         numArgCount = 0;
         // create WithEnt
@@ -50,6 +48,8 @@ std::unique_ptr<OptimisableClause> WithClauseParser::parseWith() {
         numArgCount = 0;
         // create WithNum
         return std::move(ClauseFactory::createClause(std::move(arg1), std::move(arg2), WITHNUM_KEYWORD));
+    } else {
+        throw SemanticException();
     }
 }
 
@@ -103,7 +103,7 @@ std::unique_ptr<PQLToken> WithClauseParser::parseAttrRef() {
             return std::move(s);
         }
         throw SemanticException();
-    } else if (attrName == STMT_KEYWORD) {
+    } else {  // STMT_KEYWORD
         pqlTokenScanner.next();
         if (de == Synonym::DesignEntity::STMT || de == Synonym::DesignEntity::READ ||
             de == Synonym::DesignEntity::PRINT || de == Synonym::DesignEntity::CALL ||

@@ -468,8 +468,9 @@ bool QuerySyntaxValidator::validateTuple() {
         return true;
     } else if (scanner_.peek(Token::Tag::LessThan)) {
         return validateMultipleElem();
+    } else {
+        return false;
     }
-    return false;
 }
 
 bool QuerySyntaxValidator::validateMultipleElem() {
