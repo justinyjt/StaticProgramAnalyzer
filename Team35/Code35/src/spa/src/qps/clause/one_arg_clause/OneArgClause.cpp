@@ -26,7 +26,7 @@ std::unique_ptr<Result> OneArgClause::evaluate(PKBReader *db) {
             return std::make_unique<TableResult>(ident_, syn.ident, stmt_ent_set);
         }
         default:
-            throw std::runtime_error("IfPattern");
+            throw std::runtime_error("If/While Pattern error");
     }
 }
 
