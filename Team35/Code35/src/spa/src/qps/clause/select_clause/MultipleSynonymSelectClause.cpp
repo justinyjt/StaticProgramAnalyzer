@@ -17,56 +17,37 @@ MultipleSynonymSelectClause::MultipleSynonymSelectClause(std::vector<std::unique
 }
 
 STMT_SET MultipleSynonymSelectClause::getStmtSet(PKBReader *db, Synonym synonym) {
-    STMT_SET ss;
-
     switch (synonym.de) {
         case Synonym::DesignEntity::STMT:
-            ss = db->getStatements(StmtType::None);
-            break;
+            return db->getStatements(StmtType::None);
         case Synonym::DesignEntity::READ:
-            ss = db->getStatements(StmtType::Read);
-            break;
+            return db->getStatements(StmtType::Read);
         case Synonym::DesignEntity::PRINT:
-            ss = db->getStatements(StmtType::Print);
-            break;
+            return db->getStatements(StmtType::Print);
         case Synonym::DesignEntity::CALL:
-            ss = db->getStatements(StmtType::Call);
-            break;
+            return db->getStatements(StmtType::Call);
         case Synonym::DesignEntity::WHILE:
-            ss = db->getStatements(StmtType::While);
-            break;
+            return db->getStatements(StmtType::While);
         case Synonym::DesignEntity::IF:
-            ss = db->getStatements(StmtType::If);
-            break;
+            return db->getStatements(StmtType::If);
         case Synonym::DesignEntity::ASSIGN:
-            ss = db->getStatements(StmtType::Assign);
-            break;
+            return db->getStatements(StmtType::Assign);
         default:
             throw std::runtime_error("Invalid synonym type");
     }
-
-    return ss;
 }
 
 ENT_SET MultipleSynonymSelectClause::getEntSet(PKBReader *db, Synonym synonym) {
-    ENT_SET es;
-
     switch (synonym.de) {
         case Synonym::DesignEntity::PROCEDURE:
-            es = db->getEntities(Entity::Procedure);
-            break;
+            return db->getEntities(Entity::Procedure);
         case Synonym::DesignEntity::VARIABLE:
-            es = db->getEntities(Entity::Variable);
-            break;
+            return db->getEntities(Entity::Variable);
         case Synonym::DesignEntity::CONSTANT:
-            es = db->getEntities(Entity::Constant);
-            break;
-
+            return db->getEntities(Entity::Constant);
         default:
             throw std::runtime_error("Invalid synonym type");
     }
-
-    return es;
 }
 
 STMT_ENT_SET MultipleSynonymSelectClause::getStmtEntSet(PKBReader *db, Synonym synonym) {
@@ -74,19 +55,14 @@ STMT_ENT_SET MultipleSynonymSelectClause::getStmtEntSet(PKBReader *db, Synonym s
 
     switch (synonym.de) {
         case Synonym::DesignEntity::READ:
-            ses = db->getAllRelationships(StmtNameRelationship::ReadStmtVar);
-            break;
+            return db->getAllRelationships(StmtNameRelationship::ReadStmtVar);
         case Synonym::DesignEntity::PRINT:
-            ses = db->getAllRelationships(StmtNameRelationship::PrintStmtVar);
-            break;
+            return db->getAllRelationships(StmtNameRelationship::PrintStmtVar);
         case Synonym::DesignEntity::CALL:
-            ses = db->getAllRelationships(StmtNameRelationship::CallsProcedure);
-            break;
+            return db->getAllRelationships(StmtNameRelationship::CallsProcedure);
         default:
             throw std::runtime_error("Invalid synonym type");
     }
-
-    return ses;
 }
 
 bool MultipleSynonymSelectClause::isEntAttrRef(Synonym syn) {
