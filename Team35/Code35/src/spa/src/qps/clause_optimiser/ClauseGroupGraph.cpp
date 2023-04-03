@@ -3,10 +3,10 @@
 #include <utility>
 
 ClauseGroupGraphNode::ClauseGroupGraphNode(const ClauseIndex &clause_index)
-    : type(Type::CLAUSE), clause_index(clause_index) {}
+        : type(Type::CLAUSE), clause_index(clause_index) {}
 
 ClauseGroupGraphNode::ClauseGroupGraphNode(HEADER header)
-    : type(Type::HEADER), header(std::move(header)), clause_index(0) {}
+        : type(Type::HEADER), header(std::move(header)), clause_index(0) {}
 
 bool ClauseGroupGraphNode::operator==(const ClauseGroupGraphNode &rhs) const {
     if (type == Type::CLAUSE) {
@@ -37,24 +37,29 @@ std::vector<ClauseIndexList> ClauseGroupGraph::getClauseGroupsIndices() const {
         if (visited_clause_indices.find(clause_index) != visited_clause_indices.end()) {
             continue;
         }
-        ClauseIndexList clause_group_indices;
-        ClauseIndexQueue frontier;
-        frontier.push(clause_index);
-        while (!frontier.empty()) {
-            auto current_clause_index = frontier.front();
-            frontier.pop();
-            if (visited_clause_indices.find(current_clause_index) != visited_clause_indices.end()) {
-                continue;
-            }
-            clause_group_indices.push_back(current_clause_index);
-            visited_clause_indices.insert(current_clause_index);
-            for (const auto &neighboring_clause_index : getNeighboringClauseIndices(current_clause_index)) {
-                frontier.push(neighboring_clause_index);
-            }
-        }
-        clause_groups_indices.emplace_back(clause_group_indices);
+        clause_groups_indices.emplace_back(getSingleClauseGroupIndices(clause_index, visited_clause_indices));
     }
     return clause_groups_indices;
+}
+
+ClauseIndexList ClauseGroupGraph::getSingleClauseGroupIndices(const ClauseIndex &clause_index,
+                                                              ClauseIndexSet &visited_clause_indices) const {
+    ClauseIndexList clause_group_indices;
+    ClauseIndexQueue frontier;
+    frontier.push(clause_index);
+    while (!frontier.empty()) {
+        auto current_clause_index = frontier.front();
+        frontier.pop();
+        if (visited_clause_indices.find(current_clause_index) != visited_clause_indices.end()) {
+            continue;
+        }
+        clause_group_indices.push_back(current_clause_index);
+        visited_clause_indices.insert(current_clause_index);
+        for (const auto &neighboring_clause_index : this->getNeighboringClauseIndices(current_clause_index)) {
+            frontier.push(neighboring_clause_index);
+        }
+    }
+    return std::move(clause_group_indices);
 }
 
 ClauseIndexSet ClauseGroupGraph::getNeighboringClauseIndices(const ClauseIndex &clause_index) const {
