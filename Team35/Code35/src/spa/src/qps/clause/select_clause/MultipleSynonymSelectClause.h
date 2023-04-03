@@ -13,8 +13,11 @@ class MultipleSynonymSelectClause : public SelectClause {
     bool operator==(const Clause &rhs) const override;
 
  private:
-    std::pair<STMT_SET, std::pair<ENT_SET, STMT_ENT_SET>> getSynonymSet(
-        PKBReader *db, Synonym synonym);
+    STMT_SET getStmtSet(PKBReader *db, Synonym synonym);
+
+    ENT_SET getEntSet(PKBReader *db, Synonym synonym);
+
+    STMT_ENT_SET getStmtEntSet(PKBReader *db, Synonym synonym);
 
     bool isEntAttrRef(Synonym syn);
 
