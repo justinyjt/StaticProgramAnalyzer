@@ -13,12 +13,8 @@ AssignPatternClause::AssignPatternClause(std::unique_ptr<PQLToken> first, std::u
     validateArgs();
 }
 
-std::unique_ptr<Result> AssignPatternClause::evaluate(PKBReader *db) {
-    /* <var SYNONYM | IDENT | _> , <EXPR | _EXPR_ | _> */
-    STMT_SET stmtSet;
-    STMT_ENT_SET stmtVarSet;
-    bool hasWildcard = false;
-
+void AssignPatternClause::updatePatternInfo(
+    PKBReader* db, STMT_SET &stmtSet, STMT_ENT_SET &stmtVarSet, bool &hasWildcard) {
     if (second_->tag == PQLToken::Tag::EXPR) {
         ASSIGN_PAT_RIGHT pattern = dynamic_cast<Expression &>(*second_).exprNode;
         hasWildcard = dynamic_cast<Expression &>(*second_).hasWildcard;
@@ -30,6 +26,28 @@ std::unique_ptr<Result> AssignPatternClause::evaluate(PKBReader *db) {
             stmtVarSet = db->getStmtVarPartialPatternMatch(pattern);
         }
     }
+}
+
+std::unique_ptr<Result> AssignPatternClause::handleIdentExpr(PKBReader *db, bool hasWildcard) {
+    ASSIGN_PAT_RIGHT pattern = dynamic_cast<Expression &>(*second_).exprNode;
+    STMT_SET result;
+    if (hasWildcard) {
+        result = db->getStmtWithPartialPatternIntersect(first_->str(), pattern);
+
+    } else {
+        result = db->getStmtWithExactPatternIntersect(first_->str(), pattern);
+    }
+    return std::make_unique<TableResult>(this->ident_, result);
+}
+
+std::unique_ptr<Result> AssignPatternClause::evaluate(PKBReader *db) {
+    /* <var SYNONYM | IDENT | _> , <EXPR | _EXPR_ | _> */
+    STMT_SET stmtSet;
+    STMT_ENT_SET stmtVarSet;
+    bool hasWildcard = false;
+
+    updatePatternInfo(db, stmtSet, stmtVarSet, hasWildcard);
+
     switch (getPairEnum()) {
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::EXPR):  // a(_, _"x"_) -> int[]
             return std::make_unique<TableResult>(this->ident_, stmtSet);
@@ -48,17 +66,7 @@ std::unique_ptr<Result> AssignPatternClause::evaluate(PKBReader *db) {
             return std::make_unique<TableResult>(this->ident_, dynamic_cast<Synonym &>(*first_).ident, modifiesSet);
         }
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::EXPR):  // a("x", "_1_") -> int[]
-        {
-            ASSIGN_PAT_RIGHT pattern = dynamic_cast<Expression &>(*second_).exprNode;
-            STMT_SET result;
-            if (hasWildcard) {
-                result = db->getStmtWithPartialPatternIntersect(first_->str(), pattern);
-
-            } else {
-                result = db->getStmtWithExactPatternIntersect(first_->str(), pattern);
-            }
-            return std::make_unique<TableResult>(this->ident_, result);
-        }
+            return handleIdentExpr(db, hasWildcard);
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::WILDCARD):  // a("x", _) -> int[]
         {
             STMT_SET stmtSet1 = db->getRelationshipWithFilter(StmtNameRelationship::Modifies,

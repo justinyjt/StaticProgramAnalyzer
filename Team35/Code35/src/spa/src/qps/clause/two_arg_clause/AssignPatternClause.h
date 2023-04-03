@@ -13,4 +13,9 @@ class AssignPatternClause : public TwoArgClause {
     std::unique_ptr<Result> evaluate(PKBReader *) override;
     void validateArgs() override;
     bool operator==(const Clause &rhs) const override;
+
+ protected:
+    void updatePatternInfo(PKBReader* db, STMT_SET &stmtSet, STMT_ENT_SET &stmtVarSet, bool &hasWildcard);
+
+    std::unique_ptr<Result> handleIdentExpr(PKBReader *db, bool hasWildcard);
 };
