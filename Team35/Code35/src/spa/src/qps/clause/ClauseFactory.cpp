@@ -51,7 +51,6 @@ std::unique_ptr<TwoArgClause> ClauseFactory::createClause(std::unique_ptr<PQLTok
     } else {
         throw std::runtime_error("Invalid relationship given to clause factory!");
     }
-
 }
 
 std::unique_ptr<OneArgClause> ClauseFactory::createIfPatternClause(std::unique_ptr<PQLToken> token1,
