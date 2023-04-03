@@ -14,7 +14,8 @@ class DeclarationParser {
                                std::unordered_map<std::string, Synonym::DesignEntity>& synonyms);
     std::unordered_map<std::string, Synonym::DesignEntity> parse();
     Synonym::DesignEntity parseDesignEntity();
-    std::string parseSynonym(Synonym::DesignEntity);
+    std::string parseSynonym();
+    void parseDeclarations(Synonym::DesignEntity de);
  private:
     PQLTokenScanner& pqlTokenScanner;
     std::unordered_map<std::string, Synonym::DesignEntity>& synonyms;

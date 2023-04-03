@@ -18,21 +18,7 @@ std::unordered_map<std::string, Synonym::DesignEntity> DeclarationParser::parse(
         Synonym::DesignEntity de = parseDesignEntity();
 
         // check if there are multiple declarations of the same type
-        while (true) {
-            std::string synonym = parseSynonym(de);
-
-            if (!SemanticValidator::isDeclared(synonyms, synonym)) {
-                synonyms.insert({synonym, de});
-            } else {
-                throw SemanticException();
-            }
-
-            if (pqlTokenScanner.match(Token::Tag::SemiColon)) {
-                break;
-            } else if (pqlTokenScanner.match(Token::Tag::Comma)) {
-                continue;
-            }
-        }
+        parseDeclarations(de);
     }
     return synonyms;
 }
@@ -80,8 +66,25 @@ Synonym::DesignEntity DeclarationParser::parseDesignEntity() {
     }
 }
 
-std::string DeclarationParser::parseSynonym(Synonym::DesignEntity de) {
-    assert(pqlTokenScanner.isName());
+void DeclarationParser::parseDeclarations(Synonym::DesignEntity de) {
+    while (true) {
+        std::string synonym = parseSynonym();
+
+        if (!SemanticValidator::isDeclared(synonyms, synonym)) {
+            synonyms.insert({synonym, de});
+        } else {
+            throw SemanticException();
+        }
+
+        if (pqlTokenScanner.match(Token::Tag::SemiColon)) {
+            break;
+        } else if (pqlTokenScanner.match(Token::Tag::Comma)) {
+            continue;
+        }
+    }
+}
+
+std::string DeclarationParser::parseSynonym() {
     std::string synonym;
     synonym = pqlTokenScanner.peekLexeme();
     pqlTokenScanner.next();

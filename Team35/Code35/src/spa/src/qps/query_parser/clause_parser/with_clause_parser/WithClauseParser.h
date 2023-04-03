@@ -18,6 +18,7 @@ class WithClauseParser {
     std::vector<std::unique_ptr<OptimisableClause>> parse();
     std::unique_ptr<OptimisableClause> parseWith();
     std::unique_ptr<PQLToken> parseRef();
+    std::unique_ptr<PQLToken> parseAttrRef();
  private:
     PQLTokenScanner &pqlTokenScanner;
     std::unordered_map<std::string, Synonym::DesignEntity> &synonyms;

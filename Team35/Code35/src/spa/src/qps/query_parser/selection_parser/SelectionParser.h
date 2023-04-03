@@ -20,6 +20,7 @@ class SelectionParser {
     std::unique_ptr<SelectClause> parse();
     std::vector<std::unique_ptr<Synonym>> parseMultiSelect();
     std::unique_ptr<Synonym> parseSelect();
+    std::unique_ptr<Synonym> parseAttrRef(Synonym::DesignEntity de, std::string &selected);
  private:
     PQLTokenScanner &pqlTokenScanner;
     std::unordered_map<std::string, Synonym::DesignEntity>& synonyms;

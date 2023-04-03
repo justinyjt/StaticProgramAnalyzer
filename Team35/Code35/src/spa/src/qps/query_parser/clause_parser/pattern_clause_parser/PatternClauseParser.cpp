@@ -51,16 +51,7 @@ std::unique_ptr<OptimisableClause> PatternClauseParser::parsePattern() {
         } else if (pqlTokenScanner.peek(Token::Tag::RParen)) {  // _) -> assign/while
             // depends on de
             pqlTokenScanner.restoreState();
-            switch (de) {
-                case Synonym::DesignEntity::ASSIGN:
-                    return parseAssign(pattern);
-                case Synonym::DesignEntity::WHILE:
-                    return parseWhile(pattern);
-                case Synonym::DesignEntity::IF:
-                    throw SemanticException();
-                default: {
-                }
-            }
+            return parseAssignOrWhile(pattern, de);
         } else {  // _, -> if
             pqlTokenScanner.restoreState();
             return parseIf(pattern);
@@ -69,6 +60,20 @@ std::unique_ptr<OptimisableClause> PatternClauseParser::parsePattern() {
         pqlTokenScanner.match(Token::Tag::String);
         pqlTokenScanner.restoreState();
         return parseAssign(pattern);
+    }
+}
+
+std::unique_ptr<OptimisableClause> PatternClauseParser::parseAssignOrWhile(const std::string &patternSynonym,
+                                                                           Synonym::DesignEntity de) {
+    switch (de) {
+        case Synonym::DesignEntity::ASSIGN:
+            return parseAssign(patternSynonym);
+        case Synonym::DesignEntity::WHILE:
+            return parseWhile(patternSynonym);
+        case Synonym::DesignEntity::IF:
+            throw SemanticException();
+        default: {
+        }
     }
 }
 
