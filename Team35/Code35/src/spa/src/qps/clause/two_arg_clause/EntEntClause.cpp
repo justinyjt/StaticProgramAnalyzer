@@ -4,7 +4,7 @@ EntEntClause::EntEntClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLT
                            NameNameRelationship rs) : TwoArgClause(std::move(first), std::move(second)), rs(rs) {}
 
 std::unique_ptr<Result> EntEntClause::handleSynSyn(
-    PKBReader *db, std::pair<ENT_NAME, ENT_NAME> argPair, NameNameRelationship rs) {
+    PKBReader *db, const std::pair<ENT_NAME, ENT_NAME> &argPair, NameNameRelationship rs) {
     if (argPair.first == argPair.second) {  // Calls(p, p) cannot self call
         return std::move(std::make_unique<BoolResult>(false));
     }
@@ -13,43 +13,43 @@ std::unique_ptr<Result> EntEntClause::handleSynSyn(
 }
 
 std::unique_ptr<Result> EntEntClause::handleSynIdent(
-    PKBReader *db, std::pair<ENT_NAME, ENT_NAME> argPair, NameNameRelationship rs) {
+    PKBReader *db, const std::pair<ENT_NAME, ENT_NAME> &argPair, NameNameRelationship rs) {
     ENT_NAME entName = argPair.second;
     ENT_SET set = db->getRelationshipByVal(rs, entName);
     return std::make_unique<TableResult>(argPair.first, set);
 }
 
-std::unique_ptr<Result> EntEntClause::handleSynWc(PKBReader *db, ENT_NAME synName, NameNameRelationship rs) {
+std::unique_ptr<Result> EntEntClause::handleSynWc(PKBReader *db, const ENT_NAME &synName, NameNameRelationship rs) {
     ENT_SET keySet = db->getKeyNameByRelationship(rs);
     return std::make_unique<TableResult>(synName, keySet);
 }
 
 std::unique_ptr<Result> EntEntClause::handleIdentSyn(
-    PKBReader *db, std::pair<ENT_NAME, ENT_NAME> argPair, NameNameRelationship rs) {
+    PKBReader *db, const std::pair<ENT_NAME, ENT_NAME> &argPair, NameNameRelationship rs) {
     ENT_NAME entName = argPair.first;
     ENT_SET set = db->getRelationshipByKey(rs, entName);
     return std::make_unique<TableResult>(argPair.second, set);
 }
 
 std::unique_ptr<Result> EntEntClause::handleIdentIdent(
-    PKBReader *db, std::pair<ENT_NAME, ENT_NAME> argPair, NameNameRelationship rs) {
+    PKBReader *db, const std::pair<ENT_NAME, ENT_NAME> &argPair, NameNameRelationship rs) {
     ENT_NAME firstEnt = argPair.first;
     ENT_NAME secondEnt = argPair.second;
     bool b = db->isRelationshipExists(rs, firstEnt, secondEnt);
     return std::make_unique<BoolResult>(b);
 }
 
-std::unique_ptr<Result> EntEntClause::handleIdentWc(PKBReader *db, ENT_NAME entName, NameNameRelationship rs) {
+std::unique_ptr<Result> EntEntClause::handleIdentWc(PKBReader *db, const ENT_NAME &entName, NameNameRelationship rs) {
     ENT_SET s = db->getRelationshipByKey(rs, entName);
     return std::make_unique<BoolResult>(!s.empty());
 }
 
-std::unique_ptr<Result> EntEntClause::handleWcSyn(PKBReader *db, ENT_NAME synName, NameNameRelationship rs) {
+std::unique_ptr<Result> EntEntClause::handleWcSyn(PKBReader *db, const ENT_NAME &synName, NameNameRelationship rs) {
     ENT_SET callsProcSet = db->getValueNameByRelationship(rs);
     return std::make_unique<TableResult>(synName, callsProcSet);
 }
 
-std::unique_ptr<Result> EntEntClause::handleWcIdent(PKBReader *db, ENT_NAME entName, NameNameRelationship rs) {
+std::unique_ptr<Result> EntEntClause::handleWcIdent(PKBReader *db, const ENT_NAME &entName, NameNameRelationship rs) {
     ENT_SET s = db->getRelationshipByVal(rs, entName);
     return std::make_unique<BoolResult>(!s.empty());
 }

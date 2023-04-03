@@ -5,7 +5,7 @@
 WithNumClause::WithNumClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second) :
     TwoArgClause(std::move(first), std::move(second)) {}
 
-STMT_SET WithNumClause::getStmtNumsFromSyn(Synonym syn, PKBReader *db) {
+STMT_SET WithNumClause::getStmtNumsFromSyn(Synonym &syn, PKBReader *db) {
     switch (syn.de) {
         case Synonym::DesignEntity::STMT: {
             return db->getStatements(StmtType::None);
@@ -33,14 +33,14 @@ STMT_SET WithNumClause::getStmtNumsFromSyn(Synonym syn, PKBReader *db) {
     }
 }
 
-std::unique_ptr<Result> WithNumClause::handleSynNumCase(PKBReader *db, Synonym syn, std::string num) {
+std::unique_ptr<Result> WithNumClause::handleSynNumCase(PKBReader *db, Synonym &syn, const std::string &num) {
     if (syn.de == Synonym::DesignEntity::CONSTANT) {
         return handleOneConstCaseNum(db, syn.str(), num);
     }
     return handleNoConstCaseNum(db, syn, std::stoi(num));
 }
 
-std::unique_ptr<Result> WithNumClause::handleSynSynCase(PKBReader *db, Synonym syn1, Synonym syn2) {
+std::unique_ptr<Result> WithNumClause::handleSynSynCase(PKBReader *db, Synonym &syn1, Synonym &syn2) {
     if (syn1.str() == syn2.str()) {
         return handleSameSynCase(db, syn1);
     }
@@ -55,7 +55,7 @@ std::unique_ptr<Result> WithNumClause::handleSynSynCase(PKBReader *db, Synonym s
     return handleNoConstCaseSyn(db, syn1, syn2);
 }
 
-std::unique_ptr<Result> WithNumClause::handleTwoConstCase(PKBReader *db, std::string syn1, std::string syn2) {
+std::unique_ptr<Result> WithNumClause::handleTwoConstCase(PKBReader *db, const std::string &syn1, const std::string &syn2) {
     ENT_SET constValues = db->getEntities(Entity::Constant);
     ENT_ENT_SET resultSet;
     for (auto const &constant : constValues) {
@@ -65,7 +65,7 @@ std::unique_ptr<Result> WithNumClause::handleTwoConstCase(PKBReader *db, std::st
     return std::move(res);
 }
 
-std::unique_ptr<Result> WithNumClause::handleOneConstCaseSyn(PKBReader *db, std::string constSyn, Synonym nonConstSyn) {
+std::unique_ptr<Result> WithNumClause::handleOneConstCaseSyn(PKBReader *db, const std::string &constSyn, Synonym &nonConstSyn) {
     ENT_SET constValues = db->getEntities(Entity::Constant);
     STMT_SET stmtValues = getStmtNumsFromSyn(nonConstSyn, db);
     ENT_ENT_SET resultSet;
@@ -79,7 +79,7 @@ std::unique_ptr<Result> WithNumClause::handleOneConstCaseSyn(PKBReader *db, std:
     return std::move(res);
 }
 
-std::unique_ptr<Result> WithNumClause::handleNoConstCaseSyn(PKBReader *db, Synonym syn1, Synonym syn2) {
+std::unique_ptr<Result> WithNumClause::handleNoConstCaseSyn(PKBReader *db, Synonym &syn1, Synonym &syn2) {
     STMT_SET syn1Vals = getStmtNumsFromSyn(syn1, db);
     STMT_SET syn2Vals = getStmtNumsFromSyn(syn2, db);
     STMT_STMT_SET resultSet;
@@ -92,7 +92,7 @@ std::unique_ptr<Result> WithNumClause::handleNoConstCaseSyn(PKBReader *db, Synon
     return std::move(res);
 }
 
-std::unique_ptr<Result> WithNumClause::handleOneConstCaseNum(PKBReader *db, std::string constSyn, std::string num) {
+std::unique_ptr<Result> WithNumClause::handleOneConstCaseNum(PKBReader *db, const std::string &constSyn, const std::string &num) {
     ENT_SET constValues = db->getEntities(Entity::Constant);
     ENT_SET resultSet;
     std::string stmtStr = num;
@@ -105,7 +105,7 @@ std::unique_ptr<Result> WithNumClause::handleOneConstCaseNum(PKBReader *db, std:
     return std::move(res);
 }
 
-std::unique_ptr<Result> WithNumClause::handleNoConstCaseNum(PKBReader *db, Synonym syn, STMT_NUM num) {
+std::unique_ptr<Result> WithNumClause::handleNoConstCaseNum(PKBReader *db, Synonym &syn, const STMT_NUM &num) {
     STMT_SET synVals = getStmtNumsFromSyn(syn, db);
     STMT_SET resultSet;
     for (auto const &synVal : synVals) {
@@ -117,7 +117,7 @@ std::unique_ptr<Result> WithNumClause::handleNoConstCaseNum(PKBReader *db, Synon
     return std::move(res);
 }
 
-std::unique_ptr<Result> WithNumClause::handleSameSynCase(PKBReader *db, Synonym syn) {
+std::unique_ptr<Result> WithNumClause::handleSameSynCase(PKBReader *db, Synonym &syn) {
     std::unique_ptr<Result> res;
     if (syn.de == Synonym::DesignEntity::CONSTANT) {
         ENT_SET constSet = db->getEntities(Entity::Constant);
