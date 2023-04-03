@@ -13,67 +13,89 @@ AssignPatternClause::AssignPatternClause(std::unique_ptr<PQLToken> first, std::u
     validateArgs();
 }
 
-void AssignPatternClause::updatePatternInfo(
-    PKBReader* db, STMT_SET &stmtSet, STMT_ENT_SET &stmtVarSet, bool &hasWildcard) {
+void AssignPatternClause::updatePatternInfo() {
     if (second_->tag == PQLToken::Tag::EXPR) {
-        ASSIGN_PAT_RIGHT pattern = dynamic_cast<Expression &>(*second_).exprNode;
-        hasWildcard = dynamic_cast<Expression &>(*second_).hasWildcard;
-        if (!hasWildcard) {  // exact
-            stmtSet = db->getStmtWithExactPatternMatch(pattern);
-            stmtVarSet = db->getStmtVarExactPatternMatch(pattern);
-        } else {  // partial
-            stmtSet = db->getStmtWithPartialPatternMatch(pattern);
-            stmtVarSet = db->getStmtVarPartialPatternMatch(pattern);
-        }
+        pattern_ = dynamic_cast<Expression &>(*second_).exprNode;
+        hasWildcard_ = dynamic_cast<Expression &>(*second_).hasWildcard;
     }
 }
 
-std::unique_ptr<Result> AssignPatternClause::handleIdentExpr(PKBReader *db, bool hasWildcard) {
-    ASSIGN_PAT_RIGHT pattern = dynamic_cast<Expression &>(*second_).exprNode;
-    STMT_SET result;
-    if (hasWildcard) {
-        result = db->getStmtWithPartialPatternIntersect(first_->str(), pattern);
-
-    } else {
-        result = db->getStmtWithExactPatternIntersect(first_->str(), pattern);
+STMT_SET AssignPatternClause::getStmtSet(PKBReader *db) {
+    if (second_->tag == PQLToken::Tag::EXPR) {
+        if (hasWildcard_) {
+            return db->getStmtWithPartialPatternMatch(pattern_);
+        } else {
+            return db->getStmtWithExactPatternMatch(pattern_);
+        }
     }
+    return {};
+}
+
+STMT_ENT_SET AssignPatternClause::getStmtVarSet(PKBReader *db) {
+    if (second_->tag == PQLToken::Tag::EXPR) {
+        if (hasWildcard_) {
+            return db->getStmtVarPartialPatternMatch(pattern_);;
+        } else {
+            return db->getStmtVarExactPatternMatch(pattern_);;
+        }
+    }
+    return {};
+}
+
+std::unique_ptr<Result> AssignPatternClause::handleIdentExpr(PKBReader *db) {
+    STMT_SET result;
+    if (hasWildcard_) {
+        result = db->getStmtWithPartialPatternIntersect(first_->str(), pattern_);
+    } else {
+        result = db->getStmtWithExactPatternIntersect(first_->str(), pattern_);
+    }
+    return std::make_unique<TableResult>(this->ident_, result);
+}
+
+std::unique_ptr<Result> AssignPatternClause::handleWildCardWildCard(PKBReader *db) {
+    STMT_SET assign = db->getStatements(StmtType::Assign);
+    return std::make_unique<TableResult>(this->ident_, assign);
+}
+
+std::unique_ptr<Result> AssignPatternClause::handleWildCardExpr(PKBReader *db) {
+    STMT_SET result = this->getStmtSet(db);
+    return std::make_unique<TableResult>(this->ident_, result);
+}
+
+std::unique_ptr<Result> AssignPatternClause::handleSynExpr(PKBReader *db) {
+    STMT_ENT_SET result = this->getStmtVarSet(db);
+    return std::make_unique<TableResult>(this->ident_, dynamic_cast<Synonym &>(*first_).ident, result);
+}
+
+std::unique_ptr<Result> AssignPatternClause::handleSynWildCard(PKBReader *db) {
+    STMT_ENT_SET modifiesSet = db->getAllRelationshipsWithFilter(StmtNameRelationship::Modifies,
+                                                                 StmtType::Assign);
+    return std::make_unique<TableResult>(this->ident_, dynamic_cast<Synonym &>(*first_).ident, modifiesSet);
+}
+
+std::unique_ptr<Result> AssignPatternClause::handleIdentWildCard(PKBReader *db) {
+    STMT_SET result = db->getRelationshipWithFilter(StmtNameRelationship::Modifies,
+                                                    first_->str(),
+                                                    StmtType::Assign);
     return std::make_unique<TableResult>(this->ident_, result);
 }
 
 std::unique_ptr<Result> AssignPatternClause::evaluate(PKBReader *db) {
     /* <var SYNONYM | IDENT | _> , <EXPR | _EXPR_ | _> */
-    STMT_SET stmtSet;
-    STMT_ENT_SET stmtVarSet;
-    bool hasWildcard = false;
-
-    updatePatternInfo(db, stmtSet, stmtVarSet, hasWildcard);
-
+    updatePatternInfo();
     switch (getPairEnum()) {
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::EXPR):  // a(_, _"x"_) -> int[]
-            return std::make_unique<TableResult>(this->ident_, stmtSet);
-
+            return handleWildCardExpr(db);
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::WILDCARD):  // a(_, _) -> int[]
-        {
-            STMT_SET assign = db->getStatements(StmtType::Assign);
-            return std::make_unique<TableResult>(this->ident_, assign);
-        }
+            return handleWildCardWildCard(db);
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::EXPR):  // a(v, _"x"_) -> pair<int, str>[]
-            return std::make_unique<TableResult>(this->ident_, dynamic_cast<Synonym &>(*first_).ident, stmtVarSet);
+            return handleSynExpr(db);
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // a(v, _) -> pair<int, str>[]
-        {
-            STMT_ENT_SET modifiesSet = db->getAllRelationshipsWithFilter(StmtNameRelationship::Modifies,
-                                                                         StmtType::Assign);
-            return std::make_unique<TableResult>(this->ident_, dynamic_cast<Synonym &>(*first_).ident, modifiesSet);
-        }
+            return handleSynWildCard(db);
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::EXPR):  // a("x", "_1_") -> int[]
-            return handleIdentExpr(db, hasWildcard);
+            return handleIdentExpr(db);
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::WILDCARD):  // a("x", _) -> int[]
-        {
-            STMT_SET stmtSet1 = db->getRelationshipWithFilter(StmtNameRelationship::Modifies,
-                                                              first_->str(),
-                                                              StmtType::Assign);
-            return std::make_unique<TableResult>(this->ident_, stmtSet1);
-        }
+            return handleIdentWildCard(db);
         default:
             throw std::runtime_error("AssignPatternClause.cpp");
     }
