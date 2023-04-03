@@ -3,31 +3,24 @@
 #include "WithNumClause.h"
 
 WithNumClause::WithNumClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second) :
-    TwoArgClause(std::move(first), std::move(second)) {}
+        TwoArgClause(std::move(first), std::move(second)) {}
 
 STMT_SET WithNumClause::getStmtNumsFromSyn(Synonym &syn, PKBReader *db) {
     switch (syn.de) {
-        case Synonym::DesignEntity::STMT: {
+        case Synonym::DesignEntity::STMT:
             return db->getStatements(StmtType::None);
-        }
-        case Synonym::DesignEntity::READ: {
+        case Synonym::DesignEntity::READ:
             return db->getStatements(StmtType::Read);
-        }
-        case Synonym::DesignEntity::PRINT: {
+        case Synonym::DesignEntity::PRINT:
             return db->getStatements(StmtType::Print);
-        }
-        case Synonym::DesignEntity::CALL: {
+        case Synonym::DesignEntity::CALL:
             return db->getStatements(StmtType::Call);
-        }
-        case Synonym::DesignEntity::WHILE: {
+        case Synonym::DesignEntity::WHILE:
             return db->getStatements(StmtType::While);
-        }
-        case Synonym::DesignEntity::IF: {
+        case Synonym::DesignEntity::IF:
             return db->getStatements(StmtType::If);
-        }
-        case Synonym::DesignEntity::ASSIGN: {
+        case Synonym::DesignEntity::ASSIGN:
             return db->getStatements(StmtType::Assign);
-        }
         default:
             throw std::runtime_error("");
     }
@@ -56,7 +49,7 @@ std::unique_ptr<Result> WithNumClause::handleSynSynCase(PKBReader *db, Synonym &
 }
 
 std::unique_ptr<Result> WithNumClause::handleTwoConstCase(
-    PKBReader *db, const std::string &syn1, const std::string &syn2) {
+        PKBReader *db, const std::string &syn1, const std::string &syn2) {
     ENT_SET constValues = db->getEntities(Entity::Constant);
     ENT_ENT_SET resultSet;
     for (auto const &constant : constValues) {
@@ -67,7 +60,7 @@ std::unique_ptr<Result> WithNumClause::handleTwoConstCase(
 }
 
 std::unique_ptr<Result> WithNumClause::handleOneConstCaseSyn(
-    PKBReader *db, const std::string &constSyn, Synonym &nonConstSyn) {
+        PKBReader *db, const std::string &constSyn, Synonym &nonConstSyn) {
     ENT_SET constValues = db->getEntities(Entity::Constant);
     STMT_SET stmtValues = getStmtNumsFromSyn(nonConstSyn, db);
     ENT_ENT_SET resultSet;
@@ -95,7 +88,7 @@ std::unique_ptr<Result> WithNumClause::handleNoConstCaseSyn(PKBReader *db, Synon
 }
 
 std::unique_ptr<Result> WithNumClause::handleOneConstCaseNum(
-    PKBReader *db, const std::string &constSyn, const std::string &num) {
+        PKBReader *db, const std::string &constSyn, const std::string &num) {
     ENT_SET constValues = db->getEntities(Entity::Constant);
     ENT_SET resultSet;
     std::string stmtStr = num;
