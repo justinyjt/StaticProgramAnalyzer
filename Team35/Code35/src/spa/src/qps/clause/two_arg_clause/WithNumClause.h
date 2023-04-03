@@ -24,11 +24,13 @@ class WithNumClause : public TwoArgClause {
 
     static std::unique_ptr<Result> handleTwoConstCase(PKBReader *db, const std::string &syn1, const std::string &syn2);
 
-    static std::unique_ptr<Result> handleOneConstCaseSyn(PKBReader *db, const std::string &constSyn, Synonym &nonConstSyn);
+    static std::unique_ptr<Result> handleOneConstCaseSyn(
+        PKBReader *db, const std::string &constSyn, Synonym &nonConstSyn);
 
     static std::unique_ptr<Result> handleNoConstCaseSyn(PKBReader *db, Synonym &syn1, Synonym &syn2);
 
-    static std::unique_ptr<Result> handleOneConstCaseNum(PKBReader *db, const std::string &constSyn, const std::string &num);
+    static std::unique_ptr<Result> handleOneConstCaseNum(
+        PKBReader *db, const std::string &constSyn, const std::string &num);
 
     static std::unique_ptr<Result> handleNoConstCaseNum(PKBReader *db, Synonym &syn, const STMT_NUM &num);
 

@@ -10,7 +10,7 @@ class StmtEntClause : public TwoArgClause {
     const StmtNameRelationship rs;
     StmtEntClause(std::unique_ptr<PQLToken>, std::unique_ptr<PQLToken>, StmtNameRelationship);
     std::unique_ptr<Result> evaluate(PKBReader *) override;
-    
+
  protected:
     std::unique_ptr<Result> handleNumSyn(PKBReader *db, PQLNumber &first, Synonym &second);
 
