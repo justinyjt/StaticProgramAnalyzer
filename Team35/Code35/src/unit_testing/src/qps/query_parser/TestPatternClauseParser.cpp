@@ -73,7 +73,7 @@ class setUp {
     std::unique_ptr<Wildcard> wildcard2;
 
     std::vector<std::unique_ptr<OptimisableClause>> clause;
-    std::unique_ptr<AssignPattern> patternAssign;
+    std::unique_ptr<AssignPatternClause> patternAssign;
     std::unique_ptr<WhilePattern> patternWhile;
     std::unique_ptr<IfPattern> patternIf;
     std::unique_ptr<ILexer> lexer;
@@ -85,7 +85,7 @@ TEST_CASE_METHOD(setUp, "variable, wildcard") {
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     PatternClauseParser pcp(pqlTokenScanner, declarationList);
     clause = pcp.parse();
-    patternAssign = std::make_unique<AssignPattern>(std::move(synonymVariable), std::move(wildcard1), "a");
+    patternAssign = std::make_unique<AssignPatternClause>(std::move(synonymVariable), std::move(wildcard1), "a");
     requireTrue(*clause.front() == *patternAssign);
 }
 
@@ -95,7 +95,7 @@ TEST_CASE_METHOD(setUp, "variable, variable name and wildcard") {
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     PatternClauseParser pcp(pqlTokenScanner, declarationList);
     clause = pcp.parse();
-    patternAssign = std::make_unique<AssignPattern>(std::move(synonymVariable), std::move(exprWildcardVarName), "a");
+    patternAssign = std::make_unique<AssignPatternClause>(std::move(synonymVariable), std::move(exprWildcardVarName), "a");
     requireTrue(*clause.front() == *patternAssign);
 }
 
@@ -105,7 +105,7 @@ TEST_CASE_METHOD(setUp, "variable, constant value and wildcard") {
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     PatternClauseParser pcp(pqlTokenScanner, declarationList);
     clause = pcp.parse();
-    patternAssign = std::make_unique<AssignPattern>(std::move(synonymVariable), std::move(exprWildcardConstValue), "a");
+    patternAssign = std::make_unique<AssignPatternClause>(std::move(synonymVariable), std::move(exprWildcardConstValue), "a");
     requireTrue(*clause.front() == *patternAssign);
 }
 
@@ -115,7 +115,7 @@ TEST_CASE_METHOD(setUp, "wildcard and wildcard") {
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     PatternClauseParser pcp(pqlTokenScanner, declarationList);
     clause = pcp.parse();
-    patternAssign = std::make_unique<AssignPattern>(std::move(wildcard1), std::move(wildcard2), "a");
+    patternAssign = std::make_unique<AssignPatternClause>(std::move(wildcard1), std::move(wildcard2), "a");
     requireTrue(*clause.front() == *patternAssign);
 }
 
@@ -125,7 +125,7 @@ TEST_CASE_METHOD(setUp, "wildcard and variable name with wildcard") {
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     PatternClauseParser pcp(pqlTokenScanner, declarationList);
     clause = pcp.parse();
-    patternAssign = std::make_unique<AssignPattern>(std::move(wildcard1), std::move(exprWildcardVarName), "a");
+    patternAssign = std::make_unique<AssignPatternClause>(std::move(wildcard1), std::move(exprWildcardVarName), "a");
     requireTrue(*clause.front() == *patternAssign);
 }
 

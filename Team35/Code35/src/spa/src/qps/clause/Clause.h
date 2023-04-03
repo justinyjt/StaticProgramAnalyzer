@@ -20,7 +20,7 @@ Base class for clause in PQL (suchthat-cl, pattern-cl)
               /                 |                                         \
        select_clause       OneArgClause                               TwoArgClause
        /    |    \          /        \                   /           |              |           \
-Boolean Single Tuple  IfPattern   WhilePattern   AssignPattern StmtNameClause StmtStmtClause EntEntClause
+Boolean Single Tuple  IfPattern   WhilePattern   AssignPatternClause StmtNameClause StmtStmtClause EntEntClause
                                                                      |              |            |
                                                                 Modifies/Uses Parent/Follows   Calls
 */

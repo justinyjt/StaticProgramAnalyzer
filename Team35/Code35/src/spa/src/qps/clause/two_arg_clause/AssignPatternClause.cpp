@@ -1,4 +1,4 @@
-#include "AssignPattern.h"
+#include "AssignPatternClause.h"
 
 #include <list>
 #include <utility>
@@ -6,14 +6,14 @@
 
 #include "commons/token_scanner/TokenScanner.h"
 
-AssignPattern::AssignPattern(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second,
-                             std::string ident) : TwoArgClause(std::move(first), std::move(second)),
+AssignPatternClause::AssignPatternClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second,
+                                         std::string ident) : TwoArgClause(std::move(first), std::move(second)),
                                                   ident_(std::move(ident)) {
     this->addHeader(ident_);
     validateArgs();
 }
 
-std::unique_ptr<Result> AssignPattern::evaluate(PKBReader *db) {
+std::unique_ptr<Result> AssignPatternClause::evaluate(PKBReader *db) {
     /* <var SYNONYM | IDENT | _> , <EXPR | _EXPR_ | _> */
     STMT_SET stmtSet2;
 
@@ -80,18 +80,18 @@ std::unique_ptr<Result> AssignPattern::evaluate(PKBReader *db) {
             return std::move(result->join(*filterSet));
         }
         default:
-            throw std::runtime_error("AssignPattern.cpp");
+            throw std::runtime_error("AssignPatternClause.cpp");
     }
 }
 
-void AssignPattern::validateArgs() {
+void AssignPatternClause::validateArgs() {
     const Synonym *synonym1 = dynamic_cast<const Synonym *>(first_.get());
     if (synonym1 != nullptr && synonym1->de != Synonym::DesignEntity::VARIABLE) {
         throw SemanticException();
     }
 }
 
-bool AssignPattern::operator==(const Clause &rhs) const {
-    const auto *pRhs = dynamic_cast<const AssignPattern *>(&rhs);
+bool AssignPatternClause::operator==(const Clause &rhs) const {
+    const auto *pRhs = dynamic_cast<const AssignPatternClause *>(&rhs);
     return pRhs != nullptr && equal(*pRhs) && ident_ == pRhs->ident_;
 }

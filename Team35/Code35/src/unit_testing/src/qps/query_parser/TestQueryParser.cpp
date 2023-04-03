@@ -33,7 +33,7 @@ TEST_CASE("1. Query parser") {
     ASSIGN_PAT_RIGHT pattern = parser.parseExpr();
     std::unique_ptr<Expression> expr = std::make_unique<Expression>(pattern, true);
 
-    std::unique_ptr<AssignPattern> assignPattern = std::make_unique<AssignPattern>(std::move(w), std::move(expr), "a");
+    std::unique_ptr<AssignPatternClause> assignPattern = std::make_unique<AssignPatternClause>(std::move(w), std::move(expr), "a");
 
     std::unique_ptr<Clause> c2 = std::move(clauses.second[1]);
     requireTrue(*c2 == *assignPattern);

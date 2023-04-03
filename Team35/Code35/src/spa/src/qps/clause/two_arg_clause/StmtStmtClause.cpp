@@ -10,27 +10,33 @@ StmtStmtClause::StmtStmtClause(std::unique_ptr<PQLToken> first, std::unique_ptr<
     validateArgs();
 }
 
+std::unique_ptr<Result> StmtStmtClause::handleSynSynCase(PKBReader *db, Synonym first, Synonym second) {
+    // Follows(s, s) or Parents(s, s) does not exist
+    if (first_->str() == second_->str()) {
+        if (rs != StmtStmtRelationship::NextStar
+            && rs != StmtStmtRelationship::Affects
+            && rs != StmtStmtRelationship::AffectsStar) {
+            return std::make_unique<BoolResult>(false);
+        }
+        // Next*(s, s), Affects(s, s), Affects*(s,s)
+        STMT_STMT_SET res = db->getAllRelationshipsWithFilter(rs,
+                                                              getStmtType(dynamic_cast<Synonym &>(*first_).de));
+        return std::make_unique<TableResult>(first_->str(), second_->str(), res);
+    }
+    STMT_STMT_SET res = db->getAllRelationshipsWithFilter(rs,
+                                                          getStmtType(dynamic_cast<Synonym &>(*first_).de),
+                                                          getStmtType(dynamic_cast<Synonym &>(*second_).de));
+    return std::make_unique<TableResult>(first_->str(), second_->str(), res);
+}
+
 std::unique_ptr<Result> StmtStmtClause::evaluate(PKBReader *db) {
     /* <stmt SYNONYM | _ | STMT_NUM> */
     switch (getPairEnum()) {
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Parent/Follows(s1, s2) -> <int, int>[]
         {
-            // Follows(s, s) or Parents(s, s) does not exist
-            if (first_->str() == second_->str()) {
-                if (rs != StmtStmtRelationship::NextStar
-                    && rs != StmtStmtRelationship::Affects
-                    && rs != StmtStmtRelationship::AffectsStar) {
-                    return std::make_unique<BoolResult>(false);
-                }
-                // Next*(s, s), Affects(s, s), Affects*(s,s)
-                STMT_STMT_SET res = db->getAllRelationshipsWithFilter(rs,
-                                                                      getStmtType(dynamic_cast<Synonym &>(*first_).de));
-                return std::make_unique<TableResult>(first_->str(), second_->str(), res);
-            }
-            STMT_STMT_SET res = db->getAllRelationshipsWithFilter(rs,
-                                                                  getStmtType(dynamic_cast<Synonym &>(*first_).de),
-                                                                  getStmtType(dynamic_cast<Synonym &>(*second_).de));
-            return std::make_unique<TableResult>(first_->str(), second_->str(), res);
+            Synonym syn1 = dynamic_cast<Synonym &>(*first_);
+            Synonym syn2 = dynamic_cast<Synonym &>(*second_);
+            return handleSynSynCase(db, syn1, syn2);
         }
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::STMT_NUM):  // Parent/Follows(stmt, 5) -> int[]
         {

@@ -5,11 +5,11 @@
 
 #include "qps/clause/two_arg_clause/TwoArgClause.h"
 
-class AssignPattern : public TwoArgClause {
+class AssignPatternClause : public TwoArgClause {
     const std::string ident_;
  public:
     /* <var SYNONYM | IDENT | _> , <EXPR | _EXPR_ | _> */
-    AssignPattern(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, std::string ident);
+    AssignPatternClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, std::string ident);
     std::unique_ptr<Result> evaluate(PKBReader *) override;
     void validateArgs() override;
     bool operator==(const Clause &rhs) const override;

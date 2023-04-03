@@ -12,6 +12,8 @@ class StmtStmtClause : public TwoArgClause {
     std::unique_ptr<Result> evaluate(PKBReader *) override;
     void validateArgs() override;
  protected:
+    std::unique_ptr<Result> handleSynSynCase(PKBReader *db, Synonym first, Synonym second);
+
     bool operator==(const Clause& rhs) const override;
 };
 

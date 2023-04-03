@@ -4,13 +4,13 @@
 #include "qps/clause/two_arg_clause/StmtStmtClause.h"
 #include "qps/clause/two_arg_clause/WithEntClause.h"
 #include "qps/clause/two_arg_clause/WithNumClause.h"
-#include "qps/clause/two_arg_clause/AssignPattern.h"
+#include "qps/clause/two_arg_clause/AssignPatternClause.h"
 #include "qps/query_parser/helper.h"
 
 std::unique_ptr<TwoArgClause> ClauseFactory::createAssignPatternClause(std::unique_ptr<PQLToken> token1,
                                                                        std::unique_ptr<PQLToken> token2,
                                                                        const std::string &patternStr) {
-    return std::make_unique<AssignPattern>(std::move(token1), std::move(token2), patternStr);
+    return std::make_unique<AssignPatternClause>(std::move(token1), std::move(token2), patternStr);
 }
 
 std::unique_ptr<TwoArgClause> ClauseFactory::createClause(std::unique_ptr<PQLToken> token1,
