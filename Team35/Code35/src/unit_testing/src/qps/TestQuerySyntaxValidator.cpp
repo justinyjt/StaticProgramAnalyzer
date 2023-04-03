@@ -77,7 +77,6 @@ TEST_CASE("Test declarations") {
         std::unique_ptr<QuerySyntaxValidator> sv = std::make_unique<QuerySyntaxValidator>(std::move(lexer));
         requireTrue(sv->validateQuery());
     }
-
 }
 
 TEST_CASE("Test select") {

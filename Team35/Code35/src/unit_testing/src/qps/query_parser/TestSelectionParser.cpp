@@ -10,7 +10,7 @@
 #include "qps/query_exceptions/SemanticException.h"
 
 class setUpSp {
-public:
+ public:
     setUpSp() {
         // Set up code
         query = "";
@@ -163,11 +163,16 @@ TEST_CASE_METHOD(setUpSp, "Select tuple, NAME types") {
     SelectionParser sp(pqlTokenScanner, declarationList);
     clause = sp.parse();
     std::vector<std::unique_ptr<Synonym>> synonyms;
-    std::unique_ptr<AttrRef> attrRefProc = std::make_unique<AttrRef>(Synonym::DesignEntity::PROCEDURE, "p", PROCNAME_KEYWORD);
-    std::unique_ptr<AttrRef> attrRefCall = std::make_unique<AttrRef>(Synonym::DesignEntity::CALL, "cl", PROCNAME_KEYWORD);
-    std::unique_ptr<AttrRef> attrRefVar = std::make_unique<AttrRef>(Synonym::DesignEntity::VARIABLE, "v", VARNAME_KEYWORD);
-    std::unique_ptr<AttrRef> attrRefRead = std::make_unique<AttrRef>(Synonym::DesignEntity::READ, "r", VARNAME_KEYWORD);
-    std::unique_ptr<AttrRef> attrRefPrint = std::make_unique<AttrRef>(Synonym::DesignEntity::PRINT, "pn", VARNAME_KEYWORD);
+    std::unique_ptr<AttrRef> attrRefProc = std::make_unique<AttrRef>(Synonym::DesignEntity::PROCEDURE,
+                                                                     "p", PROCNAME_KEYWORD);
+    std::unique_ptr<AttrRef> attrRefCall = std::make_unique<AttrRef>(Synonym::DesignEntity::CALL, "cl",
+                                                                     PROCNAME_KEYWORD);
+    std::unique_ptr<AttrRef> attrRefVar = std::make_unique<AttrRef>(Synonym::DesignEntity::VARIABLE, "v",
+                                                                    VARNAME_KEYWORD);
+    std::unique_ptr<AttrRef> attrRefRead = std::make_unique<AttrRef>(Synonym::DesignEntity::READ, "r",
+                                                                     VARNAME_KEYWORD);
+    std::unique_ptr<AttrRef> attrRefPrint = std::make_unique<AttrRef>(Synonym::DesignEntity::PRINT, "pn",
+                                                                      VARNAME_KEYWORD);
     synonyms.push_back(std::move(attrRefProc));
     synonyms.push_back(std::move(attrRefCall));
     synonyms.push_back(std::move(attrRefVar));
@@ -183,14 +188,22 @@ TEST_CASE_METHOD(setUpSp, "Select tuple, INTEGER types") {
     SelectionParser sp(pqlTokenScanner, declarationList);
     clause = sp.parse();
     std::vector<std::unique_ptr<Synonym>> synonyms;
-    std::unique_ptr<AttrRef> attrRefStmt = std::make_unique<AttrRef>(Synonym::DesignEntity::STMT, "s", STMT_KEYWORD);
-    std::unique_ptr<AttrRef> attrRefRead = std::make_unique<AttrRef>(Synonym::DesignEntity::READ, "r", STMT_KEYWORD);
-    std::unique_ptr<AttrRef> attrRefPrint = std::make_unique<AttrRef>(Synonym::DesignEntity::PRINT, "pn", STMT_KEYWORD);
-    std::unique_ptr<AttrRef> attrRefCall = std::make_unique<AttrRef>(Synonym::DesignEntity::CALL, "cl", STMT_KEYWORD);
-    std::unique_ptr<AttrRef> attrRefWhile = std::make_unique<AttrRef>(Synonym::DesignEntity::WHILE, "w", STMT_KEYWORD);
-    std::unique_ptr<AttrRef> attrRefIf = std::make_unique<AttrRef>(Synonym::DesignEntity::IF, "ifs", STMT_KEYWORD);
-    std::unique_ptr<AttrRef> attrRefAssign = std::make_unique<AttrRef>(Synonym::DesignEntity::ASSIGN, "a", STMT_KEYWORD);
-    std::unique_ptr<AttrRef> attrRefConst = std::make_unique<AttrRef>(Synonym::DesignEntity::CONSTANT, "c", VALUE_KEYWORD);
+    std::unique_ptr<AttrRef> attrRefStmt = std::make_unique<AttrRef>(Synonym::DesignEntity::STMT, "s",
+                                                                     STMT_KEYWORD);
+    std::unique_ptr<AttrRef> attrRefRead = std::make_unique<AttrRef>(Synonym::DesignEntity::READ, "r",
+                                                                     STMT_KEYWORD);
+    std::unique_ptr<AttrRef> attrRefPrint = std::make_unique<AttrRef>(Synonym::DesignEntity::PRINT, "pn",
+                                                                      STMT_KEYWORD);
+    std::unique_ptr<AttrRef> attrRefCall = std::make_unique<AttrRef>(Synonym::DesignEntity::CALL, "cl",
+                                                                     STMT_KEYWORD);
+    std::unique_ptr<AttrRef> attrRefWhile = std::make_unique<AttrRef>(Synonym::DesignEntity::WHILE, "w",
+                                                                      STMT_KEYWORD);
+    std::unique_ptr<AttrRef> attrRefIf = std::make_unique<AttrRef>(Synonym::DesignEntity::IF, "ifs",
+                                                                   STMT_KEYWORD);
+    std::unique_ptr<AttrRef> attrRefAssign = std::make_unique<AttrRef>(Synonym::DesignEntity::ASSIGN, "a",
+                                                                       STMT_KEYWORD);
+    std::unique_ptr<AttrRef> attrRefConst = std::make_unique<AttrRef>(Synonym::DesignEntity::CONSTANT, "c",
+                                                                      VALUE_KEYWORD);
     synonyms.push_back(std::move(attrRefStmt));
     synonyms.push_back(std::move(attrRefRead));
     synonyms.push_back(std::move(attrRefPrint));
