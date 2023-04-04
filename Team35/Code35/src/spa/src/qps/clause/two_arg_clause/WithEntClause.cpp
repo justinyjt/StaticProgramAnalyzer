@@ -17,7 +17,7 @@ STMT_ENT_SET WithEntClause::getStmtEntSet(PKBReader *db, Synonym &syn) {
         case Synonym::DesignEntity::READ :
             return db->getAllRelationships(StmtNameRelationship::ReadStmtVar);
         default:
-            assert(false);
+            throw std::runtime_error("Statement type does not exist!");
     }
 }
 
@@ -30,7 +30,7 @@ STMT_SET WithEntClause::getStmtSet(PKBReader *db, Synonym &syn) {
         case Synonym::DesignEntity::READ :
             return db->getStatements(StmtType::Read);
         default:
-            assert(false);
+            throw std::runtime_error("Statement type does not exist!");
     }
 }
 
@@ -41,7 +41,7 @@ ENT_SET WithEntClause::getEntSet(PKBReader *db, Synonym &syn) {
         case Synonym::DesignEntity::VARIABLE :
             return db->getEntities(Entity::Variable);
         default:
-            assert(false);
+            throw std::runtime_error("Entity type does not exist!");
     }
 }
 
