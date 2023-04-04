@@ -9,7 +9,30 @@ class EntEntClause : public TwoArgClause {
     const NameNameRelationship rs;
     EntEntClause(std::unique_ptr<PQLToken>, std::unique_ptr<PQLToken>, NameNameRelationship);
     std::unique_ptr<Result> evaluate(PKBReader *) override;
+
  protected:
+    std::unique_ptr<Result> handleSynSyn(
+        PKBReader *db, const std::pair<ENT_NAME, ENT_NAME> &argPair);
+
+    std::unique_ptr<Result> handleSynIdent(
+        PKBReader *db, const std::pair<ENT_NAME, ENT_NAME> &argPair);
+
+    std::unique_ptr<Result> handleSynWc(PKBReader *db, const ENT_NAME &synName);
+
+    std::unique_ptr<Result> handleIdentSyn(
+        PKBReader *db, const std::pair<ENT_NAME, ENT_NAME> &argPair);
+
+    std::unique_ptr<Result> handleIdentIdent(
+        PKBReader *db, const std::pair<ENT_NAME, ENT_NAME> &argPair);
+
+    std::unique_ptr<Result> handleIdentWc(PKBReader *db, const ENT_NAME &entName);
+
+    std::unique_ptr<Result> handleWcSyn(PKBReader *db, const ENT_NAME &synName);
+
+    std::unique_ptr<Result> handleWcIdent(PKBReader *db, const ENT_NAME &entName);
+
+    std::unique_ptr<Result> handleWcWc(PKBReader *db);
+
     bool operator==(const Clause &rhs) const override;
 };
 

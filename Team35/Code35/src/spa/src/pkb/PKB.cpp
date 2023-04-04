@@ -283,3 +283,27 @@ bool PKB::isRelationshipExists(StmtStmtRelationship tableType) {
             return !this->getStmtStmtSet(tableType).empty();
     }
 }
+
+STMT_SET PKB::getStmtWithExactPatternMatch(ASSIGN_PAT_RIGHT &pattern) const {
+    return this->patternTable_.getExactPatternMatch(pattern);
+}
+
+STMT_SET PKB::getStmtWithPartialPatternMatch(ASSIGN_PAT_RIGHT &pattern) const {
+    return this->patternTable_.getPartialPatternMatch(pattern);
+}
+
+STMT_ENT_SET PKB::getStmtVarWithExactPatternMatch(ASSIGN_PAT_RIGHT &pattern) const {
+    return this->patternTable_.getExactPatternMatchWithLeft(pattern);
+}
+
+STMT_ENT_SET PKB::getStmtVarWithPartialPatternMatch(ASSIGN_PAT_RIGHT &pattern) const {
+    return this->patternTable_.getPartialPatternMatchWithLeft(pattern);
+}
+
+STMT_SET PKB::getStmtIntersectWithExactPatternMatch(ASSIGN_PAT_LEFT left, ASSIGN_PAT_RIGHT &right) const {
+    return this->patternTable_.getExactPatternIntersect(left, right);
+}
+
+STMT_SET PKB::getStmtIntersectWithPartialPatternMatch(ASSIGN_PAT_LEFT left, ASSIGN_PAT_RIGHT &right) const {
+    return this->patternTable_.getPartialPatternIntersect(left, right);
+}

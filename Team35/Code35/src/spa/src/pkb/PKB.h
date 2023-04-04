@@ -96,6 +96,18 @@ class PKB {
 
     bool isRelationshipExists(StmtStmtRelationship tableType);
 
+    STMT_SET getStmtWithExactPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;
+
+    STMT_SET getStmtWithPartialPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;
+
+    STMT_ENT_SET getStmtVarWithExactPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;
+
+    STMT_ENT_SET getStmtVarWithPartialPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;
+
+    STMT_SET getStmtIntersectWithExactPatternMatch(ASSIGN_PAT_LEFT left, ASSIGN_PAT_RIGHT &right) const;
+
+    STMT_SET getStmtIntersectWithPartialPatternMatch(ASSIGN_PAT_LEFT left, ASSIGN_PAT_RIGHT &right) const;
+
  private:
     // Entity related tables
     EntityTable<ENT_NAME> variableTable_;

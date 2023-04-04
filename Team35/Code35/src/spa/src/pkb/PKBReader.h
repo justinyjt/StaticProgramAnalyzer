@@ -71,6 +71,14 @@ class PKBReader {
 
     STMT_SET getStmtWithPartialPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;
 
+    STMT_ENT_SET getStmtVarExactPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;
+
+    STMT_ENT_SET getStmtVarPartialPatternMatch(ASSIGN_PAT_RIGHT &pattern) const;
+
+    STMT_SET getStmtWithExactPatternIntersect(ASSIGN_PAT_LEFT left, ASSIGN_PAT_RIGHT &right) const;
+
+    STMT_SET getStmtWithPartialPatternIntersect(ASSIGN_PAT_LEFT left, ASSIGN_PAT_RIGHT &right) const;
+
     void clearCache();
 
  private:
