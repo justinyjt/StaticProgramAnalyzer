@@ -18,9 +18,9 @@ class WithNumClause : public TwoArgClause {
  protected:
     static STMT_SET getStmtNumsFromSyn(Synonym &syn, PKBReader *db);
 
-    static std::unique_ptr<Result> handleSynNumCase(PKBReader *db, Synonym &syn, const std::string &num);
+    static std::unique_ptr<Result> handleSynNumCase(PKBReader *db, Synonym &first, PQLNumber &second);
 
-    static std::unique_ptr<Result> handleSynSynCase(PKBReader *db, Synonym &syn1, Synonym &syn2);
+    static std::unique_ptr<Result> handleSynSynCase(PKBReader *db, Synonym &first, Synonym &second);
 
     static std::unique_ptr<Result> handleTwoConstCase(PKBReader *db, const std::string &syn1, const std::string &syn2);
 

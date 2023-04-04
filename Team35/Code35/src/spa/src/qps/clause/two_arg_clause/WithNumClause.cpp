@@ -26,26 +26,26 @@ STMT_SET WithNumClause::getStmtNumsFromSyn(Synonym &syn, PKBReader *db) {
     }
 }
 
-std::unique_ptr<Result> WithNumClause::handleSynNumCase(PKBReader *db, Synonym &syn, const std::string &num) {
-    if (syn.de == Synonym::DesignEntity::CONSTANT) {
-        return handleOneConstCaseNum(db, syn.str(), num);
+std::unique_ptr<Result> WithNumClause::handleSynNumCase(PKBReader *db, Synonym &first, PQLNumber &second) {
+    if (first.de == Synonym::DesignEntity::CONSTANT) {
+        return handleOneConstCaseNum(db, first.str(), second.str());
     }
-    return handleNoConstCaseNum(db, syn, std::stoi(num));
+    return handleNoConstCaseNum(db, first, std::stoi(second.str()));
 }
 
-std::unique_ptr<Result> WithNumClause::handleSynSynCase(PKBReader *db, Synonym &syn1, Synonym &syn2) {
-    if (syn1.str() == syn2.str()) {
-        return handleSameSynCase(db, syn1);
+std::unique_ptr<Result> WithNumClause::handleSynSynCase(PKBReader *db, Synonym &first, Synonym &second) {
+    if (first.str() == second.str()) {
+        return handleSameSynCase(db, first);
     }
 
-    if (syn1.de == Synonym::DesignEntity::CONSTANT && syn2.de == Synonym::DesignEntity::CONSTANT) {
-        return handleTwoConstCase(db, syn1.str(), syn2.str());
-    } else if (syn1.de == Synonym::DesignEntity::CONSTANT) {
-        return handleOneConstCaseSyn(db, syn1.str(), syn2);
-    } else if (syn2.de == Synonym::DesignEntity::CONSTANT) {
-        return handleOneConstCaseSyn(db, syn2.str(), syn1);
+    if (first.de == Synonym::DesignEntity::CONSTANT && second.de == Synonym::DesignEntity::CONSTANT) {
+        return handleTwoConstCase(db, first.str(), second.str());
+    } else if (first.de == Synonym::DesignEntity::CONSTANT) {
+        return handleOneConstCaseSyn(db, first.str(), second);
+    } else if (second.de == Synonym::DesignEntity::CONSTANT) {
+        return handleOneConstCaseSyn(db, second.str(), first);
     }
-    return handleNoConstCaseSyn(db, syn1, syn2);
+    return handleNoConstCaseSyn(db, first, second);
 }
 
 std::unique_ptr<Result> WithNumClause::handleTwoConstCase(
@@ -130,30 +130,14 @@ std::unique_ptr<Result> WithNumClause::evaluate(PKBReader *db) {
 
     switch (getPairEnum()) {
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // with syn.x = syn.y -> syn_type[]
-        {
-            Synonym syn1 = dynamic_cast<Synonym &>(*first_);
-            Synonym syn2 = dynamic_cast<Synonym &>(*second_);
-            return handleSynSynCase(db, syn1, syn2);
-        }
+            return handleSynSynCase(db, dynamic_cast<Synonym &>(*first_), dynamic_cast<Synonym &>(*second_));
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::STMT_NUM):  // with syn.x = "x" -> syn_type[]
-        {
-            Synonym syn1 = dynamic_cast<Synonym &>(*first_);
-            std::string num = (dynamic_cast<PQLNumber &>(*second_)).n;
-            return handleSynNumCase(db, syn1, num);
-        }
+            return handleSynNumCase(db, dynamic_cast<Synonym &>(*first_), dynamic_cast<PQLNumber &>(*second_));
         case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::SYNONYM):  // with syn.x = "x" -> syn_type[]
-        {
-            Synonym syn2 = dynamic_cast<Synonym &>(*second_);
-            std::string num = (dynamic_cast<PQLNumber &>(*first_)).n;
-            return handleSynNumCase(db, syn2, num);
-        }
+            return handleSynNumCase(db, dynamic_cast<Synonym &>(*second_), dynamic_cast<PQLNumber &>(*first_));
         case pairEnum(PQLToken::Tag::STMT_NUM, PQLToken::Tag::STMT_NUM):  // Uses/Modifies(1, "x") -> bool
-        {
-            std::string num1 = (dynamic_cast<PQLNumber &>(*first_)).n;
-            std::string num2 = (dynamic_cast<PQLNumber &>(*second_)).n;
-            std::unique_ptr<Result> result = std::make_unique<BoolResult>(num1 == num2);
-            return std::move(result);
-        }
+            return std::make_unique<BoolResult>(
+                dynamic_cast<PQLNumber &>(*first_).n == dynamic_cast<PQLNumber &>(*second_).n);
         default:
             throw std::runtime_error("");
     }

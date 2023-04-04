@@ -63,23 +63,23 @@ std::unique_ptr<Result> EntEntClause::evaluate(PKBReader *db) {
     /* <SYNONYM | IDENT | _ >, <SYNONYM | IDENT | _ > */
     switch (getPairEnum()) {
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM):  // Uses/Modifies(f, v) -> <str, str>[]
-            return handleSynSyn(db, std::make_pair(first_->str(), second_->str()), rs);
+            return handleSynSyn(db, std::make_pair(first_->str(), second_->str()));
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::IDENT):  // Uses/Modifies(f, "x") -> str[]
-            return handleSynIdent(db, std::make_pair(first_->str(), second_->str()), rs);
+            return handleSynIdent(db, std::make_pair(first_->str(), second_->str()));
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::WILDCARD):  // Uses/Modifies(f, _) -> str[]
-            return handleSynWc(db, first_->str(), rs);
+            return handleSynWc(db, first_->str());
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::SYNONYM):  // Uses/Mod("f", v) -> str[]
-            return handleIdentSyn(db, std::make_pair(first_->str(), second_->str()), rs);
+            return handleIdentSyn(db, std::make_pair(first_->str(), second_->str()));
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::IDENT):  // Uses/Modifies("f", "x") -> bool
-            return handleIdentIdent(db, std::make_pair(first_->str(), second_->str()), rs);
+            return handleIdentIdent(db, std::make_pair(first_->str(), second_->str()));
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::WILDCARD):  // Uses/Modifies("f", _) -> bool
-            return handleIdentWc(db, first_->str(), rs);
+            return handleIdentWc(db, first_->str());
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::SYNONYM):  // Calls(_, f) -> str[]
-            return handleWcSyn(db, second_->str(), rs);
+            return handleWcSyn(db, second_->str());
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::IDENT):  // Calls(_, "f") -> bool
-            return handleWcIdent(db, second_->str(), rs);
+            return handleWcIdent(db, second_->str());
         case pairEnum(PQLToken::Tag::WILDCARD, PQLToken::Tag::WILDCARD):  // Calls(_, _) -> bool
-            return handleWcWc(db, rs);
+            return handleWcWc(db);
         default:
             throw std::runtime_error("");
     }

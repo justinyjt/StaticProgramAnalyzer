@@ -24,15 +24,19 @@ class WithEntClause : public TwoArgClause {
 
     static bool isStmtSyn(Synonym &syn);
 
-    static std::unique_ptr<Result> handleStmtStmt(PKBReader *db, Synonym &syn1, Synonym &syn2);
+    static std::unique_ptr<Result> handleStmtStmt(PKBReader *db, Synonym &first, Synonym &second);
 
-    static std::unique_ptr<Result> handleStmtEnt(PKBReader *db, Synonym &stmtSyn, Synonym &entSyn);
+    static std::unique_ptr<Result> handleStmtEnt(PKBReader *db, Synonym &first, Synonym &second);
 
-    static std::unique_ptr<Result> handleEntEnt(PKBReader *db, Synonym &syn1, Synonym &syn2);
+    static std::unique_ptr<Result> handleEntEnt(PKBReader *db, Synonym &first, Synonym &second);
 
-    static std::unique_ptr<Result> handleSynSyn(PKBReader *db, Synonym &syn1, Synonym &syn2);
+    static std::unique_ptr<Result> handleSynSyn(PKBReader *db, Synonym &first, Synonym &second);
 
-    static std::unique_ptr<Result> handleSynEnt(PKBReader *db, Synonym &syn, ENT_NAME &ent);
+    static std::unique_ptr<Result> handleStmtIdent(PKBReader *db, Synonym &stmt, Ident &ident);
+
+    static std::unique_ptr<Result> handleEntIdent(PKBReader *db, Synonym &ent, Ident &ident);
+
+    static std::unique_ptr<Result> handleSynIdent(PKBReader *db, Synonym &first, Ident &second);
 
     static std::unique_ptr<Result> handleSameSynCase(PKBReader *db, Synonym &syn);
 

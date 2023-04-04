@@ -11,27 +11,27 @@ class EntEntClause : public TwoArgClause {
     std::unique_ptr<Result> evaluate(PKBReader *) override;
 
  protected:
-    static std::unique_ptr<Result> handleSynSyn(
+    std::unique_ptr<Result> handleSynSyn(
         PKBReader *db, const std::pair<ENT_NAME, ENT_NAME> &argPair);
 
-    static std::unique_ptr<Result> handleSynIdent(
+    std::unique_ptr<Result> handleSynIdent(
         PKBReader *db, const std::pair<ENT_NAME, ENT_NAME> &argPair);
 
-    static std::unique_ptr<Result> handleSynWc(PKBReader *db, const ENT_NAME &synName);
+    std::unique_ptr<Result> handleSynWc(PKBReader *db, const ENT_NAME &synName);
 
-    static std::unique_ptr<Result> handleIdentSyn(
+    std::unique_ptr<Result> handleIdentSyn(
         PKBReader *db, const std::pair<ENT_NAME, ENT_NAME> &argPair);
 
-    static std::unique_ptr<Result> handleIdentIdent(
+    std::unique_ptr<Result> handleIdentIdent(
         PKBReader *db, const std::pair<ENT_NAME, ENT_NAME> &argPair);
 
-    static std::unique_ptr<Result> handleIdentWc(PKBReader *db, const ENT_NAME &entName);
+    std::unique_ptr<Result> handleIdentWc(PKBReader *db, const ENT_NAME &entName);
 
-    static std::unique_ptr<Result> handleWcSyn(PKBReader *db, const ENT_NAME &synName);
+    std::unique_ptr<Result> handleWcSyn(PKBReader *db, const ENT_NAME &synName);
 
-    static std::unique_ptr<Result> handleWcIdent(PKBReader *db, const ENT_NAME &entName);
+    std::unique_ptr<Result> handleWcIdent(PKBReader *db, const ENT_NAME &entName);
 
-    static std::unique_ptr<Result> handleWcWc(PKBReader *db);
+    std::unique_ptr<Result> handleWcWc(PKBReader *db);
 
     bool operator==(const Clause &rhs) const override;
 };
