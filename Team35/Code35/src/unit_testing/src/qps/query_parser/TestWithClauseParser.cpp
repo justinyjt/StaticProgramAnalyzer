@@ -163,3 +163,103 @@ TEST_CASE_METHOD(setUpWcp, "print.stmt, constant.value") {
     withNumClause = std::make_unique<WithNumClause>(std::move(synonymPrint), std::move(synonymConstant));
     requireTrue(*clause.front() == *withNumClause);
 }
+
+TEST_CASE_METHOD(setUpWcp, "invalid varName synonym procedure") {
+    query = "with p.varName = c.value";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    WithClauseParser wcp(pqlTokenScanner, declarationList);
+    requireThrowAs<SemanticException>([&wcp]() {
+        wcp.parse();
+    });
+}
+
+TEST_CASE_METHOD(setUpWcp, "invalid varName synonym call") {
+    query = "with cl.varName = c.value";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    WithClauseParser wcp(pqlTokenScanner, declarationList);
+    requireThrowAs<SemanticException>([&wcp]() {
+        wcp.parse();
+    });
+}
+
+TEST_CASE_METHOD(setUpWcp, "invalid varName synonym constant") {
+    query = "with c.varName = c.value";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    WithClauseParser wcp(pqlTokenScanner, declarationList);
+    requireThrowAs<SemanticException>([&wcp]() {
+        wcp.parse();
+    });
+}
+
+TEST_CASE_METHOD(setUpWcp, "invalid varName synonym stmt") {
+    query = "with s.varName = c.value";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    WithClauseParser wcp(pqlTokenScanner, declarationList);
+    requireThrowAs<SemanticException>([&wcp]() {
+        wcp.parse();
+    });
+}
+
+TEST_CASE_METHOD(setUpWcp, "invalid varName synonym while") {
+    query = "with w.varName = c.value";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    WithClauseParser wcp(pqlTokenScanner, declarationList);
+    requireThrowAs<SemanticException>([&wcp]() {
+        wcp.parse();
+    });
+}
+
+TEST_CASE_METHOD(setUpWcp, "invalid varName synonym ifs") {
+    query = "with ifs.varName = c.value";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    WithClauseParser wcp(pqlTokenScanner, declarationList);
+    requireThrowAs<SemanticException>([&wcp]() {
+        wcp.parse();
+    });
+}
+
+TEST_CASE_METHOD(setUpWcp, "invalid varName synonym assign") {
+    query = "with a.varName = c.value";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    WithClauseParser wcp(pqlTokenScanner, declarationList);
+    requireThrowAs<SemanticException>([&wcp]() {
+        wcp.parse();
+    });
+}
+
+TEST_CASE_METHOD(setUpWcp, "invalid stmt# synonym procedure") {
+    query = "with p.stmt# = c.value";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    WithClauseParser wcp(pqlTokenScanner, declarationList);
+    requireThrowAs<SemanticException>([&wcp]() {
+        wcp.parse();
+    });
+}
+
+TEST_CASE_METHOD(setUpWcp, "invalid stmt# synonym variable") {
+    query = "with v.stmt# = c.value";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    WithClauseParser wcp(pqlTokenScanner, declarationList);
+    requireThrowAs<SemanticException>([&wcp]() {
+        wcp.parse();
+    });
+}
+
+TEST_CASE_METHOD(setUpWcp, "invalid stmt# synonym constant") {
+    query = "with c.stmt# = c.value";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    WithClauseParser wcp(pqlTokenScanner, declarationList);
+    requireThrowAs<SemanticException>([&wcp]() {
+        wcp.parse();
+    });
+}

@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "qps/clause/two_arg_clause/AssignPattern.h"
+#include "qps/clause/two_arg_clause/AssignPatternClause.h"
 #include "qps/pql/Synonym.h"
 #include "qps/pql/Wildcard.h"
 #include "qps/pql/Expression.h"

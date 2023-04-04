@@ -11,7 +11,24 @@ class StmtStmtClause : public TwoArgClause {
     StmtStmtClause(std::unique_ptr<PQLToken>, std::unique_ptr<PQLToken>, StmtStmtRelationship);
     std::unique_ptr<Result> evaluate(PKBReader *) override;
     void validateArgs() override;
+
  protected:
+    std::unique_ptr<Result> handleSynSynCase(PKBReader *db, Synonym &first, Synonym &second);
+
+    std::unique_ptr<Result> handleSynNumCase(PKBReader *db, Synonym &first, PQLNumber &second);
+
+    std::unique_ptr<Result> handleSynWcCase(PKBReader *db, Synonym &first);
+
+    std::unique_ptr<Result> handleNumSynCase(PKBReader *db, PQLNumber &first, Synonym &second);
+
+    std::unique_ptr<Result> handleNumNumCase(PKBReader *db, PQLNumber &first, PQLNumber &second);
+
+    std::unique_ptr<Result> handleNumWcCase(PKBReader *db, PQLNumber &first);
+
+    std::unique_ptr<Result> handleWcSynCase(PKBReader *db, Synonym &second);
+
+    std::unique_ptr<Result> handleWcNumCase(PKBReader *db, PQLNumber &second);
+
     bool operator==(const Clause& rhs) const override;
 };
 

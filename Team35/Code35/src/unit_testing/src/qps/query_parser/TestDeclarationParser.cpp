@@ -66,9 +66,19 @@ TEST_CASE("Declaration parser; same synonym names and terminals") {
     requireEqual(declarationList, expected);
 }
 
-
 TEST_CASE("Declaration parser; multiple design entity of each type with repeats") {
     std::string query = "stmt s1, s1; read r1, r2;";
+    std::unordered_map<std::string, Synonym::DesignEntity> declarationList;
+    std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    DeclarationParser dp(pqlTokenScanner, declarationList);
+    requireThrow([&dp]() {
+        dp.parse();
+    });
+}
+
+TEST_CASE("Declaration parser; multiple design entity of across types with repeats") {
+    std::string query = "stmt s1, s2; read s1, s2;";
     std::unordered_map<std::string, Synonym::DesignEntity> declarationList;
     std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
     PQLTokenScanner pqlTokenScanner(std::move(lexer));

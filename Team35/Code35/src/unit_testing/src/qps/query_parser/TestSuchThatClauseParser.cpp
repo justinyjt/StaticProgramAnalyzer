@@ -91,6 +91,26 @@ class setUpStcp {
     std::unique_ptr<ILexer> lexer;
 };
 
+TEST_CASE_METHOD(setUpStcp, "Modifies, procedure syn and variable") {
+    query = "such that Modifies(p,v)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    modifiesP = std::make_unique<ModifiesP>(std::move(synonymProcedure), std::move(synonymVariable));
+    requireTrue(*clause.front() == *modifiesP);
+}
+
+TEST_CASE_METHOD(setUpStcp, "Modifies, ident and variable") {
+    query = "such that Modifies(\"x\",v)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    modifiesP = std::make_unique<ModifiesP>(std::move(identStr), std::move(synonymVariable));
+    requireTrue(*clause.front() == *modifiesP);
+}
+
 TEST_CASE_METHOD(setUpStcp, "Modifies, statement and variable") {
     query = "such that Modifies(s,v)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
@@ -199,6 +219,16 @@ TEST_CASE_METHOD(setUpStcp, "Modifies, int and wildcard") {
     clause = stcp.parse();
     modifiesS = std::make_unique<ModifiesS>(std::move(statementNumber1), std::move(wildcard1));
     requireTrue(*clause.front() == *modifiesS);
+}
+
+TEST_CASE_METHOD(setUpStcp, "Uses, procedure and variable") {
+    query = "such that Uses(p,v)";
+    lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    SuchThatClauseParser stcp(pqlTokenScanner, declarationList);
+    clause = stcp.parse();
+    usesP = std::make_unique<UsesP>(std::move(synonymProcedure), std::move(synonymVariable));
+    requireTrue(*clause.front() == *usesP);
 }
 
 TEST_CASE_METHOD(setUpStcp, "Uses, statement and variable") {

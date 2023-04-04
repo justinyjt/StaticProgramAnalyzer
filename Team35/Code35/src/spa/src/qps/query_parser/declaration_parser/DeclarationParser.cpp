@@ -1,5 +1,3 @@
-#include <cassert>
-
 #include "DeclarationParser.h"
 #include "qps/query_exceptions/SemanticException.h"
 #include "qps/query_parser/SemanticValidator.h"

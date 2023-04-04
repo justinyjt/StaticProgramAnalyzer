@@ -102,7 +102,7 @@ class setUpMcp {
     std::unique_ptr<Follows> follows;
     std::unique_ptr<Parent> parent;
     std::unique_ptr<Calls> calls;
-    std::unique_ptr<AssignPattern> patternAssign;
+    std::unique_ptr<AssignPatternClause> patternAssign;
     std::unique_ptr<WhilePattern> patternWhile;
     std::unique_ptr<IfPattern> patternIf;
     std::unique_ptr<WithEntClause> withEntClause;
@@ -160,8 +160,8 @@ TEST_CASE_METHOD(setUpMcp, "pattern clauses, assign, assign") {
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     ClauseParser cp(pqlTokenScanner, declarationList);
     clause = cp.parse();
-    expected.push_back(std::make_unique<AssignPattern>(std::move(synonymVariable1), std::move(wildcard1), "a"));
-    expected.push_back(std::make_unique<AssignPattern>(std::move(synonymVariable2), std::move(wildcard2), "a"));
+    expected.push_back(std::make_unique<AssignPatternClause>(std::move(synonymVariable1), std::move(wildcard1), "a"));
+    expected.push_back(std::make_unique<AssignPatternClause>(std::move(synonymVariable2), std::move(wildcard2), "a"));
     requireTrue(*clause[0] == *expected[0]);
     requireTrue(*clause[1] == *expected[1]);
 }
@@ -173,7 +173,7 @@ TEST_CASE_METHOD(setUpMcp, "pattern clauses, if, assign") {
     ClauseParser cp(pqlTokenScanner, declarationList);
     clause = cp.parse();
     expected.push_back(std::make_unique<IfPattern>(std::move(synonymVariable1), "ifs"));
-    expected.push_back(std::make_unique<AssignPattern>(std::move(synonymVariable2), std::move(wildcard2), "a"));
+    expected.push_back(std::make_unique<AssignPatternClause>(std::move(synonymVariable2), std::move(wildcard2), "a"));
     requireTrue(*clause[0] == *expected[0]);
     requireTrue(*clause[1] == *expected[1]);
 }
@@ -256,7 +256,7 @@ TEST_CASE_METHOD(setUpMcp, "with clauses, such that clauses, pattern clauses") {
     expected.push_back(std::make_unique<WithEntClause>(std::move(synonymProcedure), std::move(synonymCall)));
     expected.push_back(std::make_unique<ModifiesS>(std::move(synonymStatement1), std::move(synonymVariable1)));
     expected.push_back(std::make_unique<UsesS>(std::move(synonymStatement2), std::move(synonymVariable2)));
-    expected.push_back(std::make_unique<AssignPattern>(std::move(wildcard1), std::move(expr), "a"));
+    expected.push_back(std::make_unique<AssignPatternClause>(std::move(wildcard1), std::move(expr), "a"));
     expected.push_back(std::make_unique<WhilePattern>(std::move(wildcard2), "w"));
 
     requireTrue(*clause[0] == *expected[0]);

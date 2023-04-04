@@ -213,11 +213,27 @@ STMT_SET PKBReader::getStmtByRelationshipWithFilter(StmtStmtRelationship tableTy
 }
 
 STMT_SET PKBReader::getStmtWithExactPatternMatch(ASSIGN_PAT_RIGHT &pattern) const {
-    return pkb.getPatternTable().getExactPatternMatch(pattern);
+    return pkb.getStmtWithExactPatternMatch(pattern);
 }
 
 STMT_SET PKBReader::getStmtWithPartialPatternMatch(ASSIGN_PAT_RIGHT &pattern) const {
-    return pkb.getPatternTable().getPartialPatternMatch(pattern);
+    return pkb.getStmtWithPartialPatternMatch(pattern);
+}
+
+STMT_ENT_SET PKBReader::getStmtVarExactPatternMatch(ASSIGN_PAT_RIGHT &pattern) const {
+    return pkb.getStmtVarWithExactPatternMatch(pattern);
+}
+
+STMT_ENT_SET PKBReader::getStmtVarPartialPatternMatch(ASSIGN_PAT_RIGHT &pattern) const {
+    return pkb.getStmtVarWithPartialPatternMatch(pattern);
+}
+
+STMT_SET PKBReader::getStmtWithExactPatternIntersect(ASSIGN_PAT_LEFT left, ASSIGN_PAT_RIGHT &right) const {
+    return pkb.getStmtIntersectWithExactPatternMatch(left, right);
+}
+
+STMT_SET PKBReader::getStmtWithPartialPatternIntersect(ASSIGN_PAT_LEFT left, ASSIGN_PAT_RIGHT &right) const {
+    return pkb.getStmtIntersectWithPartialPatternMatch(left, right);
 }
 
 bool PKBReader::isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const {

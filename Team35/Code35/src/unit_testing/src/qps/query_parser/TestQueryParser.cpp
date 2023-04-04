@@ -33,8 +33,27 @@ TEST_CASE("1. Query parser") {
     ASSIGN_PAT_RIGHT pattern = parser.parseExpr();
     std::unique_ptr<Expression> expr = std::make_unique<Expression>(pattern, true);
 
-    std::unique_ptr<AssignPattern> assignPattern = std::make_unique<AssignPattern>(std::move(w), std::move(expr), "a");
+    std::unique_ptr<AssignPatternClause> assignPattern = std::make_unique<AssignPatternClause>(
+        std::move(w), std::move(expr), "a");
 
     std::unique_ptr<Clause> c2 = std::move(clauses.second[1]);
     requireTrue(*c2 == *assignPattern);
+}
+
+TEST_CASE("1. Query parser with invalid token") {
+    std::string query = "variable +v, x; assign a, b, c; read y; Select c such that Parent*(a,b) pattern "
+                        "a ( _ , _\"x\"_)";
+    QueryParser qp;
+    requireThrowAs<SyntaxException>([&qp, &query]() {
+        qp.parse(query);
+    });
+}
+
+TEST_CASE("1. Query parser with invalid syntax") {
+    std::string query = "variable ,v, x; assign a, b, c; read y; Select c such that Parent*(a,b) pattern "
+                        "a ( _ , _\"x\"_)";
+    QueryParser qp;
+    requireThrowAs<SyntaxException>([&qp, &query]() {
+        qp.parse(query);
+    });
 }

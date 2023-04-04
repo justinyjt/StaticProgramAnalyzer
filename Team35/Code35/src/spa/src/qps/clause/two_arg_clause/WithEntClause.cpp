@@ -8,7 +8,7 @@
 WithEntClause::WithEntClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second) :
     TwoArgClause(std::move(first), std::move(second)) {}
 
-STMT_ENT_SET WithEntClause::getStmtEntSet(PKBReader *db, Synonym syn) {
+STMT_ENT_SET WithEntClause::getStmtEntSet(PKBReader *db, Synonym &syn) {
     switch (syn.de) {
         case Synonym::DesignEntity::CALL :
             return db->getAllRelationships(StmtNameRelationship::CallsProcedure);
@@ -17,11 +17,11 @@ STMT_ENT_SET WithEntClause::getStmtEntSet(PKBReader *db, Synonym syn) {
         case Synonym::DesignEntity::READ :
             return db->getAllRelationships(StmtNameRelationship::ReadStmtVar);
         default:
-            assert(false);
+            throw std::runtime_error("Statement type does not exist!");
     }
 }
 
-STMT_SET WithEntClause::getStmtSet(PKBReader *db, Synonym syn) {
+STMT_SET WithEntClause::getStmtSet(PKBReader *db, Synonym &syn) {
     switch (syn.de) {
         case Synonym::DesignEntity::CALL :
             return db->getStatements(StmtType::Call);
@@ -30,27 +30,27 @@ STMT_SET WithEntClause::getStmtSet(PKBReader *db, Synonym syn) {
         case Synonym::DesignEntity::READ :
             return db->getStatements(StmtType::Read);
         default:
-            assert(false);
+            throw std::runtime_error("Statement type does not exist!");
     }
 }
 
-ENT_SET WithEntClause::getEntSet(PKBReader *db, Synonym syn) {
+ENT_SET WithEntClause::getEntSet(PKBReader *db, Synonym &syn) {
     switch (syn.de) {
         case Synonym::DesignEntity::PROCEDURE :
             return db->getEntities(Entity::Procedure);
         case Synonym::DesignEntity::VARIABLE :
             return db->getEntities(Entity::Variable);
         default:
-            assert(false);
+            throw std::runtime_error("Entity type does not exist!");
     }
 }
 
-bool WithEntClause::isStmtSyn(Synonym syn) {
+bool WithEntClause::isStmtSyn(Synonym &syn) {
     return syn.de == Synonym::DesignEntity::CALL || syn.de == Synonym::DesignEntity::READ
         || syn.de == Synonym::DesignEntity::PRINT;
 }
 
-std::unique_ptr<Result> WithEntClause::handleSameSynCase(PKBReader *db, Synonym syn) {
+std::unique_ptr<Result> WithEntClause::handleSameSynCase(PKBReader *db, Synonym &syn) {
     std::unique_ptr<Result> res;
     if (isStmtSyn(syn)) {
         STMT_SET stmtSet = getStmtSet(db, syn);
@@ -62,72 +62,88 @@ std::unique_ptr<Result> WithEntClause::handleSameSynCase(PKBReader *db, Synonym 
     return std::move(res);
 }
 
-std::unique_ptr<Result> WithEntClause::handleSynSyn(PKBReader *db, Synonym syn1, Synonym syn2) {
-    if (syn1.str() == syn2.str()) {
-        return handleSameSynCase(db, syn1);
-    }
-    bool isSyn1Stmt = isStmtSyn(syn1);
-    bool isSyn2Stmt = isStmtSyn(syn2);
+std::unique_ptr<Result> WithEntClause::handleStmtStmt(PKBReader *db, Synonym &first, Synonym &second) {
+    STMT_ENT_SET syn1StmtEntSet = getStmtEntSet(db, first);
+    STMT_ENT_SET syn2StmtEntSet = getStmtEntSet(db, second);
+    std::unique_ptr<Result> syn1Res = std::make_unique<TableResult>(first.str(), DUMMY_NAME, syn1StmtEntSet);
+    std::unique_ptr<Result> syn2Res = std::make_unique<TableResult>(second.str(), DUMMY_NAME, syn2StmtEntSet);
+    return std::move(syn1Res->join(*syn2Res));
+}
 
-    if (isSyn1Stmt && isSyn2Stmt) {
-        STMT_ENT_SET syn1StmtEntSet = getStmtEntSet(db, syn1);
-        STMT_ENT_SET syn2StmtEntSet = getStmtEntSet(db, syn2);
-        std::unique_ptr<Result> syn1Res = std::make_unique<TableResult>(syn1.str(), DUMMY_NAME, syn1StmtEntSet);
-        std::unique_ptr<Result> syn2Res = std::make_unique<TableResult>(syn2.str(), DUMMY_NAME, syn2StmtEntSet);
-        return std::move(syn1Res->join(*syn2Res));
-    } else if (isSyn1Stmt) {
-        STMT_ENT_SET syn1StmtEntSet = getStmtEntSet(db, syn1);
-        ENT_SET syn2EntSet = getEntSet(db, syn2);
-        std::unique_ptr<Result> syn1Res = std::make_unique<TableResult>(syn1.str(), syn2.str(), syn1StmtEntSet);
-        std::unique_ptr<Result> syn2Res = std::make_unique<TableResult>(syn2.str(), syn2EntSet);
-        return std::move(syn1Res->join(*syn2Res));
-    } else if (isSyn2Stmt) {
-        STMT_ENT_SET syn2StmtEntSet = getStmtEntSet(db, syn2);
-        ENT_SET syn1EntSet = getEntSet(db, syn1);
-        std::unique_ptr<Result> syn1Res = std::make_unique<TableResult>(syn2.str(), syn1.str(), syn2StmtEntSet);
-        std::unique_ptr<Result> syn2Res = std::make_unique<TableResult>(syn1.str(), syn1EntSet);
-        return std::move(syn1Res->join(*syn2Res));
-    } else {
-        ENT_SET syn1EntSet = getEntSet(db, syn1);
-        ENT_SET syn2EntSet = getEntSet(db, syn2);
-        std::vector<ENT_NAME> resultVec;
-        for (auto const &ent : syn1EntSet) {
-            for (auto const &ent2 : syn2EntSet) {
-                if (ent == ent2) {
-                    resultVec.emplace_back(ent);
-                }
+std::unique_ptr<Result> WithEntClause::handleStmtEnt(PKBReader *db, Synonym &first, Synonym &second) {
+    STMT_ENT_SET syn1StmtEntSet = getStmtEntSet(db, first);
+    ENT_SET syn2EntSet = getEntSet(db, second);
+    std::unique_ptr<Result> syn1Res = std::make_unique<TableResult>(first.str(), second.str(), syn1StmtEntSet);
+    std::unique_ptr<Result> syn2Res = std::make_unique<TableResult>(second.str(), syn2EntSet);
+    return std::move(syn1Res->join(*syn2Res));
+}
+
+std::unique_ptr<Result> WithEntClause::handleEntEnt(PKBReader *db, Synonym &first, Synonym &second) {
+    ENT_SET syn1EntSet = getEntSet(db, first);
+    ENT_SET syn2EntSet = getEntSet(db, second);
+    std::vector<ENT_NAME> resultVec;
+
+    for (auto const &ent : syn1EntSet) {
+        for (auto const &ent2 : syn2EntSet) {
+            if (ent == ent2) {
+                resultVec.emplace_back(ent);
             }
         }
+    }
 
-        std::unique_ptr<Result> res = std::make_unique<TableResult>(syn1.str(), syn2.str(), resultVec);
-        return std::move(res);
+    std::unique_ptr<Result> res = std::make_unique<TableResult>(first.str(), second.str(), resultVec);
+    return std::move(res);
+}
+
+std::unique_ptr<Result> WithEntClause::handleSynSyn(PKBReader *db, Synonym &first, Synonym &second) {
+    if (first.str() == second.str()) {
+        return handleSameSynCase(db, first);
+    }
+    bool isSyn1Stmt = isStmtSyn(first);
+    bool isSyn2Stmt = isStmtSyn(second);
+
+    if (isSyn1Stmt && isSyn2Stmt) {
+        return handleStmtStmt(db, first, second);
+    } else if (isSyn1Stmt) {
+        return handleStmtEnt(db, first, second);
+    } else if (isSyn2Stmt) {
+        return handleStmtEnt(db, second, first);
+    } else {
+        return handleEntEnt(db, first, second);
     }
 }
 
-std::unique_ptr<Result> WithEntClause::handleSynEnt(PKBReader *db, Synonym syn, ENT_NAME ent) {
-    if (syn.de == Synonym::DesignEntity::CALL || syn.de == Synonym::DesignEntity::READ
-        || syn.de == Synonym::DesignEntity::PRINT) {
-        STMT_ENT_SET syn1StmtEntSet = getStmtEntSet(db, syn);
-        STMT_SET resultSet;
-        for (auto const &stmtEntPair : syn1StmtEntSet) {
-            STMT_NUM synStmt = stmtEntPair.first;
-            ENT_NAME synEnt = stmtEntPair.second;
-            if (ent == synEnt) {
-                resultSet.emplace(synStmt);
-            }
+std::unique_ptr<Result> WithEntClause::handleStmtIdent(PKBReader *db, Synonym &stmt, Ident &ident) {
+    STMT_ENT_SET syn1StmtEntSet = getStmtEntSet(db, stmt);
+    STMT_SET resultSet;
+    for (auto const &stmtEntPair : syn1StmtEntSet) {
+        STMT_NUM synStmt = stmtEntPair.first;
+        ENT_NAME synEnt = stmtEntPair.second;
+        if (ident.str() == synEnt) {
+            resultSet.emplace(synStmt);
         }
-        std::unique_ptr<Result> res = std::make_unique<TableResult>(syn.str(), resultSet);
-        return std::move(res);
+    }
+    return std::make_unique<TableResult>(stmt.str(), resultSet);
+}
+
+std::unique_ptr<Result> WithEntClause::handleEntIdent(PKBReader *db, Synonym &ent, Ident &ident) {
+    ENT_SET synEntSet = getEntSet(db, ent);
+    ENT_SET resultSet;
+    for (auto const &synEnt : synEntSet) {
+        if (synEnt == ident.str()) {
+            resultSet.emplace(ident.str());
+        }
+    }
+    return std::make_unique<TableResult>(ent.str(), resultSet);
+}
+
+
+std::unique_ptr<Result> WithEntClause::handleSynIdent(PKBReader *db, Synonym &first, Ident &second) {
+    if (first.de == Synonym::DesignEntity::CALL || first.de == Synonym::DesignEntity::READ
+        || first.de == Synonym::DesignEntity::PRINT) {
+        return handleStmtIdent(db, first, second);
     } else {
-        ENT_SET synEntSet = getEntSet(db, syn);
-        ENT_SET resultSet;
-        for (auto const &synEnt : synEntSet) {
-            if (synEnt == ent) {
-                resultSet.emplace(ent);
-            }
-        }
-        std::unique_ptr<Result> res = std::make_unique<TableResult>(syn.str(), resultSet);
-        return std::move(res);
+        return handleEntIdent(db, first, second);
     }
 }
 
@@ -136,30 +152,14 @@ std::unique_ptr<Result> WithEntClause::evaluate(PKBReader *db) {
 
     switch (getPairEnum()) {
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::SYNONYM) :  // with cl.procname = p.procname -> syn_type[]
-        {
-            Synonym syn1 = dynamic_cast<Synonym &>(*first_);
-            Synonym syn2 = dynamic_cast<Synonym &>(*second_);
-            return handleSynSyn(db, syn1, syn2);
-        }
+            return handleSynSyn(db, dynamic_cast<Synonym &>(*first_), dynamic_cast<Synonym &>(*second_));
         case pairEnum(PQLToken::Tag::SYNONYM, PQLToken::Tag::IDENT) :  // with syn.x = "x" -> syn_type[]
-        {
-            Synonym syn = dynamic_cast<Synonym &>(*first_);
-            ENT_NAME ent = (dynamic_cast<Ident &>(*second_)).s;
-            return handleSynEnt(db, syn, ent);
-        }
+            return handleSynIdent(db, dynamic_cast<Synonym &>(*first_), dynamic_cast<Ident &>(*second_));
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::SYNONYM) :  // with syn.x = "x" -> syn_type[]
-        {
-            Synonym syn = dynamic_cast<Synonym &>(*second_);
-            ENT_NAME ent = (dynamic_cast<Ident &>(*first_)).s;
-            return handleSynEnt(db, syn, ent);
-        }
+            return handleSynIdent(db, dynamic_cast<Synonym &>(*second_), dynamic_cast<Ident &>(*first_));
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::IDENT) :  // Uses/Modifies(1, "x") -> bool
-        {
-            ENT_NAME ent1 = (dynamic_cast<Ident &>(*first_)).s;
-            ENT_NAME ent2 = (dynamic_cast<Ident &>(*second_)).s;
-            std::unique_ptr<Result> result = std::make_unique<BoolResult>(ent1 == ent2);
-            return std::move(result);
-        }
+            return std::make_unique<BoolResult>(
+                (dynamic_cast<Ident &>(*first_)).s == (dynamic_cast<Ident &>(*second_)).s);
         default:
             throw std::runtime_error("");
     }

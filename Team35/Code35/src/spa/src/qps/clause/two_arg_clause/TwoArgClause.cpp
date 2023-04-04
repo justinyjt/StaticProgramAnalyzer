@@ -27,7 +27,7 @@ StmtType TwoArgClause::getStmtType(Synonym::DesignEntity type) {
         case Synonym::DesignEntity::STMT:
             return StmtType::None;
         default:
-            assert(false);
+            throw std::runtime_error("Invalid Statement Type!");
     }
 }
 

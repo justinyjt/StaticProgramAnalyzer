@@ -7,7 +7,7 @@
 #include <utility>
 
 #include "qps/clause/OptimisableClause.h"
-#include "qps/clause/two_arg_clause/AssignPattern.h"
+#include "qps/clause/two_arg_clause/AssignPatternClause.h"
 #include "qps/pql/Synonym.h"
 #include "qps/pql/Wildcard.h"
 #include "commons/token/Token.h"
