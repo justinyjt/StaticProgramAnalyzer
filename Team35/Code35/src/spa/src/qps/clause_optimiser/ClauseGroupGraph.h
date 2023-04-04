@@ -50,4 +50,6 @@ class ClauseGroupGraph : Graph<ClauseGroupGraphNode> {
     ClauseIndexSet clause_indices_;
     ClauseIndexSet getNeighboringClauseIndices(const ClauseIndex &clause_index) const;
     const ClauseIndex &getClauseIndex(const Index &clause_node_index) const;
+    ClauseIndexList getSingleClauseGroupIndices(const ClauseIndex &clause_index,
+                                                ClauseIndexSet &visited_clause_indices) const;
 };
