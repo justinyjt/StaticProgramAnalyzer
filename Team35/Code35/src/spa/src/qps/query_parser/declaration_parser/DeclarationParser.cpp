@@ -1,5 +1,3 @@
-#include <cassert>
-
 #include "DeclarationParser.h"
 #include "qps/query_exceptions/SemanticException.h"
 #include "qps/query_parser/SemanticValidator.h"
@@ -81,7 +79,6 @@ Synonym::DesignEntity DeclarationParser::parseDesignEntity() {
 }
 
 std::string DeclarationParser::parseSynonym(Synonym::DesignEntity de) {
-    assert(pqlTokenScanner.isName());
     std::string synonym;
     synonym = pqlTokenScanner.peekLexeme();
     pqlTokenScanner.next();

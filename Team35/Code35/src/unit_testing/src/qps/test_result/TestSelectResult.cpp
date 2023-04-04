@@ -1,6 +1,8 @@
 #include "catch.hpp"
 #include "../../TestHelper.h"
 #include "qps/result/SelectResult.h"
+#include "qps/result/IdentityResult.h"
+#include "qps/result/BoolResult.h"
 
 TEST_CASE("Select join") {
     std::vector<std::string> selectHeaders1 = {"x"};
@@ -191,6 +193,60 @@ TEST_CASE("Select join") {
         std::list<std::string> expected;
         expected.push_back("2 3");
         expected.push_back("1 4");
+
+        requireTrue(expected == result);
+    }
+
+    SECTION("identity result") {
+        std::unique_ptr<IdentityResult> intermediateResult = std::make_unique<IdentityResult>();
+        std::unique_ptr<Result> res = selectResult2->join(*intermediateResult);
+        std::list<std::string> result;
+        res->output(result);
+        std::list<std::string> expected;
+        expected.push_back("1 4");
+        expected.push_back("1 3");
+        expected.push_back("1 2");
+        expected.push_back("1 1");
+        expected.push_back("2 4");
+        expected.push_back("2 3");
+        expected.push_back("2 2");
+        expected.push_back("2 1");
+        expected.push_back("3 4");
+        expected.push_back("3 3");
+        expected.push_back("3 2");
+        expected.push_back("3 1");
+
+        requireTrue(expected == result);
+    }
+
+    SECTION("bool result true") {
+        std::unique_ptr<BoolResult> intermediateResult = std::make_unique<BoolResult>(true);
+        std::unique_ptr<Result> res = selectResult2->join(*intermediateResult);
+        std::list<std::string> result;
+        res->output(result);
+        std::list<std::string> expected;
+        expected.push_back("1 4");
+        expected.push_back("1 3");
+        expected.push_back("1 2");
+        expected.push_back("1 1");
+        expected.push_back("2 4");
+        expected.push_back("2 3");
+        expected.push_back("2 2");
+        expected.push_back("2 1");
+        expected.push_back("3 4");
+        expected.push_back("3 3");
+        expected.push_back("3 2");
+        expected.push_back("3 1");
+
+        requireTrue(expected == result);
+    }
+
+    SECTION("bool result false") {
+        std::unique_ptr<BoolResult> intermediateResult = std::make_unique<BoolResult>(false);
+        std::unique_ptr<Result> res = selectResult2->join(*intermediateResult);
+        std::list<std::string> result;
+        res->output(result);
+        std::list<std::string> expected;
 
         requireTrue(expected == result);
     }
