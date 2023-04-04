@@ -16,6 +16,7 @@ std::unordered_map<std::string, Synonym::DesignEntity> DeclarationParser::parse(
         }
 
         Synonym::DesignEntity de = parseDesignEntity();
+        pqlTokenScanner.next();
 
         // check if there are multiple declarations of the same type
         parseDeclarations(de);
@@ -25,43 +26,30 @@ std::unordered_map<std::string, Synonym::DesignEntity> DeclarationParser::parse(
 
 // convert Token tag to Synonym design entity
 Synonym::DesignEntity DeclarationParser::parseDesignEntity() {
-    Synonym::DesignEntity de;
     switch (pqlTokenScanner.peekTag()) {
         case Token::Tag::Statement:
-            de = Synonym::DesignEntity::STMT;
-            break;
+            return Synonym::DesignEntity::STMT;
         case Token::Tag::Read:
-            de = Synonym::DesignEntity::READ;
-            break;
+            return Synonym::DesignEntity::READ;
         case Token::Tag::Print:
-            de = Synonym::DesignEntity::PRINT;
-            break;
+            return Synonym::DesignEntity::PRINT;
         case Token::Tag::Call:
-            de = Synonym::DesignEntity::CALL;
-            break;
+            return Synonym::DesignEntity::CALL;
         case Token::Tag::While:
-            de = Synonym::DesignEntity::WHILE;
-            break;
+            return Synonym::DesignEntity::WHILE;
         case Token::Tag::If:
-            de = Synonym::DesignEntity::IF;
-            break;
+            return Synonym::DesignEntity::IF;
         case Token::Tag::Assign:
-            de = Synonym::DesignEntity::ASSIGN;
-            break;
+            return Synonym::DesignEntity::ASSIGN;
         case Token::Tag::Variable:
-            de = Synonym::DesignEntity::VARIABLE;
-            break;
+            return Synonym::DesignEntity::VARIABLE;
         case Token::Tag::Constant:
-            de = Synonym::DesignEntity::CONSTANT;
-            break;
+            return Synonym::DesignEntity::CONSTANT;
         case Token::Tag::Procedure:
-            de = Synonym::DesignEntity::PROCEDURE;
-            break;
+            return Synonym::DesignEntity::PROCEDURE;
         default:
             throw std::runtime_error("Design Entity not found");
     }
-    pqlTokenScanner.next();
-    return de;
 }
 
 void DeclarationParser::parseDeclarations(Synonym::DesignEntity de) {
