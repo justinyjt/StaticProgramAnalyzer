@@ -147,7 +147,7 @@ TEST_CASE_METHOD(setUpPcp, "pattern valid entRef ident") {
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     PatternClauseParser pcp(pqlTokenScanner, declarationList);
     clause = pcp.parse();
-    patternAssign = std::make_unique<AssignPattern>(std::move(ident), std::move(exprWildcardVarName), "a");
+    patternAssign = std::make_unique<AssignPatternClause>(std::move(ident), std::move(exprWildcardVarName), "a");
     requireTrue(*clause.front() == *patternAssign);
 }
 

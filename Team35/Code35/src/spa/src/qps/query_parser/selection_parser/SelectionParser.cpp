@@ -32,7 +32,7 @@ std::unique_ptr<SelectClause> SelectionParser::parse() {
         std::unique_ptr<SelectClause> selectClause = std::make_unique<MultipleSynonymSelectClause>(
             std::move(parseMultiSelect()));
         return selectClause;
-    } else if (pqlTokenScanner.isName()) {  // single synonym
+    } else {  // single synonym
         std::vector<std::unique_ptr<Synonym>> selectedSynonyms;
         selectedSynonyms.emplace_back(std::move(parseSelect()));
         std::unique_ptr<SelectClause> selectClause = std::make_unique<MultipleSynonymSelectClause>(
@@ -49,7 +49,7 @@ std::vector<std::unique_ptr<Synonym>> SelectionParser::parseMultiSelect() {
         if (pqlTokenScanner.peek(Token::Tag::Comma)) {
             pqlTokenScanner.match(Token::Tag::Comma);
             continue;
-        } else if (pqlTokenScanner.peek(Token::Tag::GreaterThan)) {
+        } else {  // ">", end of tuple
             pqlTokenScanner.match(Token::Tag::GreaterThan);
             break;
         }
@@ -68,40 +68,60 @@ std::unique_ptr<Synonym> SelectionParser::parseSelect() {
     } else {
         pqlTokenScanner.match(Token::Tag::Dot);
         // parse attrName and create AttrRef Object
-        std::string attrName = pqlTokenScanner.peekLexeme();
-        if (attrName == PROCNAME_KEYWORD) {
-            if (de == Synonym::DesignEntity::PROCEDURE || de == Synonym::DesignEntity::CALL) {
-                pqlTokenScanner.next();
-                std::unique_ptr<AttrRef> selectedSynonym = std::make_unique<AttrRef>(de, selected, PROCNAME_KEYWORD);
-                return std::move(selectedSynonym);
-            }
-            throw SemanticException();
-        } else if (attrName == VARNAME_KEYWORD) {
-            if (de == Synonym::DesignEntity::VARIABLE || de == Synonym::DesignEntity::READ ||
-                de == Synonym::DesignEntity::PRINT) {
-                pqlTokenScanner.next();
-                std::unique_ptr<AttrRef> selectedSynonym = std::make_unique<AttrRef>(de, selected, VARNAME_KEYWORD);
-                return std::move(selectedSynonym);
-            }
-            throw SemanticException();
-        } else if (attrName == VALUE_KEYWORD) {
-            if (de == Synonym::DesignEntity::CONSTANT) {
-                pqlTokenScanner.next();
-                std::unique_ptr<AttrRef> selectedSynonym = std::make_unique<AttrRef>(de, selected, VALUE_KEYWORD);
-                return std::move(selectedSynonym);
-            }
-            throw SemanticException();
-        } else if (attrName == STMT_KEYWORD) {
-            pqlTokenScanner.next();
-            if (de == Synonym::DesignEntity::STMT || de == Synonym::DesignEntity::READ ||
-                de == Synonym::DesignEntity::PRINT || de == Synonym::DesignEntity::CALL ||
-                de == Synonym::DesignEntity::WHILE || de == Synonym::DesignEntity::IF ||
-                de == Synonym::DesignEntity::ASSIGN) {
-                pqlTokenScanner.next();
-                std::unique_ptr<AttrRef> selectedSynonym = std::make_unique<AttrRef>(de, selected, STMT_KEYWORD);
-                return std::move(selectedSynonym);
-            }
-            throw SemanticException();
-        }
+        return parseAttrName(de, selected);
     }
+}
+
+std::unique_ptr<Synonym> SelectionParser::parseAttrName(Synonym::DesignEntity de, std::string &selected) {
+    std::string attrName = pqlTokenScanner.peekLexeme();
+    if (attrName == PROCNAME_KEYWORD) {
+        return parseProcNameAttrName(de, selected);
+    } else if (attrName == VARNAME_KEYWORD) {
+        return parseVarNameAttrName(de, selected);
+    } else if (attrName == VALUE_KEYWORD) {
+        return parseValueAttrName(de, selected);
+    } else {  // STMT_KEYWORD
+        return parseStmtNumAttrName(de, selected);
+    }
+}
+
+std::unique_ptr<Synonym> SelectionParser::parseProcNameAttrName(Synonym::DesignEntity de, std::string &selected) {
+    if (de == Synonym::DesignEntity::PROCEDURE || de == Synonym::DesignEntity::CALL) {
+        pqlTokenScanner.next();
+        std::unique_ptr<AttrRef> selectedSynonym = std::make_unique<AttrRef>(de, selected, PROCNAME_KEYWORD);
+        return std::move(selectedSynonym);
+    }
+    throw SemanticException();
+}
+
+std::unique_ptr<Synonym> SelectionParser::parseVarNameAttrName(Synonym::DesignEntity de, std::string &selected) {
+    if (de == Synonym::DesignEntity::VARIABLE || de == Synonym::DesignEntity::READ ||
+        de == Synonym::DesignEntity::PRINT) {
+        pqlTokenScanner.next();
+        std::unique_ptr<AttrRef> selectedSynonym = std::make_unique<AttrRef>(de, selected, VARNAME_KEYWORD);
+        return std::move(selectedSynonym);
+    }
+    throw SemanticException();
+}
+
+std::unique_ptr<Synonym> SelectionParser::parseValueAttrName(Synonym::DesignEntity de, std::string &selected) {
+    if (de == Synonym::DesignEntity::CONSTANT) {
+        pqlTokenScanner.next();
+        std::unique_ptr<AttrRef> selectedSynonym = std::make_unique<AttrRef>(de, selected, VALUE_KEYWORD);
+        return std::move(selectedSynonym);
+    }
+    throw SemanticException();
+}
+
+std::unique_ptr<Synonym> SelectionParser::parseStmtNumAttrName(Synonym::DesignEntity de, std::string &selected) {
+    pqlTokenScanner.next();
+    if (de == Synonym::DesignEntity::STMT || de == Synonym::DesignEntity::READ ||
+        de == Synonym::DesignEntity::PRINT || de == Synonym::DesignEntity::CALL ||
+        de == Synonym::DesignEntity::WHILE || de == Synonym::DesignEntity::IF ||
+        de == Synonym::DesignEntity::ASSIGN) {
+        pqlTokenScanner.next();
+        std::unique_ptr<AttrRef> selectedSynonym = std::make_unique<AttrRef>(de, selected, STMT_KEYWORD);
+        return std::move(selectedSynonym);
+    }
+    throw SemanticException();
 }

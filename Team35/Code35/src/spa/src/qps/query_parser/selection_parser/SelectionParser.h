@@ -18,9 +18,15 @@ class SelectionParser {
     explicit SelectionParser(PQLTokenScanner &pqlTokenScanner,
                              std::unordered_map<std::string, Synonym::DesignEntity>& synonyms);
     std::unique_ptr<SelectClause> parse();
-    std::vector<std::unique_ptr<Synonym>> parseMultiSelect();
-    std::unique_ptr<Synonym> parseSelect();
  private:
     PQLTokenScanner &pqlTokenScanner;
     std::unordered_map<std::string, Synonym::DesignEntity>& synonyms;
+
+    std::vector<std::unique_ptr<Synonym>> parseMultiSelect();
+    std::unique_ptr<Synonym> parseSelect();
+    std::unique_ptr<Synonym> parseAttrName(Synonym::DesignEntity de, std::string &selected);
+    std::unique_ptr<Synonym> parseProcNameAttrName(Synonym::DesignEntity de, std::string &selected);
+    std::unique_ptr<Synonym> parseVarNameAttrName(Synonym::DesignEntity de, std::string &selected);
+    std::unique_ptr<Synonym> parseValueAttrName(Synonym::DesignEntity de, std::string &selected);
+    std::unique_ptr<Synonym> parseStmtNumAttrName(Synonym::DesignEntity de, std::string &selected);
 };

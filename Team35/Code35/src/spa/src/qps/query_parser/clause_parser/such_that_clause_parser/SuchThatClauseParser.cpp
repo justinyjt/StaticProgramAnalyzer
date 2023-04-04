@@ -42,7 +42,7 @@ std::unique_ptr<OptimisableClause> SuchThatClauseParser::parseRelationship() {
             pqlTokenScanner.next();
         }
         return std::move(parseStmtStmt(relationship));
-    } else if (pqlTokenScanner.peek(Token::Tag::Calls)) {
+    } else {  // Calls keyword
         relationship += pqlTokenScanner.peekLexeme();
         pqlTokenScanner.next();
         if (pqlTokenScanner.peek(Token::Tag::Star)) {
@@ -130,7 +130,7 @@ std::unique_ptr<PQLToken> SuchThatClauseParser::parseEntRef() {
         std::unique_ptr<Wildcard> w = std::make_unique<Wildcard>();
         pqlTokenScanner.next();
         return w;
-    } else if (pqlTokenScanner.peek(Token::Tag::String)) {
+    } else {
         std::unique_ptr<Ident> i = std::make_unique<Ident>(pqlTokenScanner.peekLexeme());
         pqlTokenScanner.next();
         return i;
@@ -148,7 +148,7 @@ std::unique_ptr<PQLToken> SuchThatClauseParser::parseStmtRef() {
         std::unique_ptr<Wildcard> w = std::make_unique<Wildcard>();
         pqlTokenScanner.next();
         return w;
-    } else if (pqlTokenScanner.peek(Token::Tag::Integer)) {
+    } else {
         std::unique_ptr<PQLNumber> s = std::make_unique<PQLNumber>(pqlTokenScanner.peekLexeme());
         pqlTokenScanner.next();
         return s;

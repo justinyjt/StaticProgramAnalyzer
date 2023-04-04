@@ -24,6 +24,8 @@ class PatternClauseParser {
 
     std::unique_ptr<OptimisableClause> parsePattern();
 
+    std::unique_ptr<OptimisableClause> parseAssignOrWhile(const std::string &patternSynonym, Synonym::DesignEntity de);
+
     std::unique_ptr<OptimisableClause> parseAssign(const std::string &patternSynonym);
 
     std::unique_ptr<OptimisableClause> parseWhile(const std::string &patternSynonym);

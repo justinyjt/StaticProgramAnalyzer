@@ -14,71 +14,63 @@ std::unordered_map<std::string, Synonym::DesignEntity> DeclarationParser::parse(
         }
 
         Synonym::DesignEntity de = parseDesignEntity();
+        pqlTokenScanner.next();
 
         // check if there are multiple declarations of the same type
-        while (true) {
-            std::string synonym = parseSynonym(de);
-
-            if (!SemanticValidator::isDeclared(synonyms, synonym)) {
-                synonyms.insert({synonym, de});
-            } else {
-                throw SemanticException();
-            }
-
-            if (pqlTokenScanner.match(Token::Tag::SemiColon)) {
-                break;
-            } else if (pqlTokenScanner.match(Token::Tag::Comma)) {
-                continue;
-            }
-        }
+        parseDeclarations(de);
     }
     return synonyms;
 }
 
 // convert Token tag to Synonym design entity
 Synonym::DesignEntity DeclarationParser::parseDesignEntity() {
-    if (pqlTokenScanner.peekDesignEntity()) {
-        Synonym::DesignEntity de;
-        switch (pqlTokenScanner.peekTag()) {
-            case Token::Tag::Statement:
-                de = Synonym::DesignEntity::STMT;
-                break;
-            case Token::Tag::Read:
-                de = Synonym::DesignEntity::READ;
-                break;
-            case Token::Tag::Print:
-                de = Synonym::DesignEntity::PRINT;
-                break;
-            case Token::Tag::Call:
-                de = Synonym::DesignEntity::CALL;
-                break;
-            case Token::Tag::While:
-                de = Synonym::DesignEntity::WHILE;
-                break;
-            case Token::Tag::If:
-                de = Synonym::DesignEntity::IF;
-                break;
-            case Token::Tag::Assign:
-                de = Synonym::DesignEntity::ASSIGN;
-                break;
-            case Token::Tag::Variable:
-                de = Synonym::DesignEntity::VARIABLE;
-                break;
-            case Token::Tag::Constant:
-                de = Synonym::DesignEntity::CONSTANT;
-                break;
-            case Token::Tag::Procedure:
-                de = Synonym::DesignEntity::PROCEDURE;
-                break;
-            default:
-                break;
-        }
-        pqlTokenScanner.next();
-        return de;
+    switch (pqlTokenScanner.peekTag()) {
+        case Token::Tag::Statement:
+            return Synonym::DesignEntity::STMT;
+        case Token::Tag::Read:
+            return Synonym::DesignEntity::READ;
+        case Token::Tag::Print:
+            return Synonym::DesignEntity::PRINT;
+        case Token::Tag::Call:
+            return Synonym::DesignEntity::CALL;
+        case Token::Tag::While:
+            return Synonym::DesignEntity::WHILE;
+        case Token::Tag::If:
+            return Synonym::DesignEntity::IF;
+        case Token::Tag::Assign:
+            return Synonym::DesignEntity::ASSIGN;
+        case Token::Tag::Variable:
+            return Synonym::DesignEntity::VARIABLE;
+        case Token::Tag::Constant:
+            return Synonym::DesignEntity::CONSTANT;
+        case Token::Tag::Procedure:
+            return Synonym::DesignEntity::PROCEDURE;
+        default:
+            throw std::runtime_error("Design Entity not found");
     }
 }
 
-std::string DeclarationParser::parseSynonym(Synonym::DesignEntity de) {
+void DeclarationParser::parseDeclarations(Synonym::DesignEntity de) {
+    while (true) {
+        std::string synonym = parseSynonym();
+
+        if (!SemanticValidator::isDeclared(synonyms, synonym)) {
+            synonyms.insert({synonym, de});
+        } else {
+            throw SemanticException();
+        }
+
+        if (pqlTokenScanner.match(Token::Tag::SemiColon)) {
+            break;
+        }
+
+        if (pqlTokenScanner.match(Token::Tag::Comma)) {
+            continue;
+        }
+    }
+}
+
+std::string DeclarationParser::parseSynonym() {
     std::string synonym;
     synonym = pqlTokenScanner.peekLexeme();
     pqlTokenScanner.next();
