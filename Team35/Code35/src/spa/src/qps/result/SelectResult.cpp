@@ -2,6 +2,7 @@
 
 #include <iterator>
 #include <memory>
+#include <utility>
 
 #include "BoolResult.h"
 
@@ -24,15 +25,19 @@ std::vector<int> SelectResult::getOutputOrder(const TableResult &intermediateRes
     return order;
 }
 
+std::unique_ptr<TableResult> SelectResult::getResultForOutput(std::unique_ptr<Result> finalRes) {
+    std::unordered_set<std::string> selectIdents(idents.begin(), idents.end());
+    std::unique_ptr<TableResult> finalTableRes = (dynamic_cast<TableResult &>(*finalRes)).projectColumns(selectIdents);
+    std::vector<int> order = getOutputOrder(*finalTableRes);
+    return std::make_unique<TableResult>(finalTableRes->idents, finalTableRes->rows, order);
+}
+
 std::unique_ptr<Result> SelectResult::getColsCrossProduct() {
     std::unique_ptr<Result> finalRes = std::make_unique<TableResult>(cols[0]);
     for (int i = 1; i < cols.size(); i++) {
         finalRes = finalRes->join(cols[i]);
     }
-
-    auto &finalTableRes = dynamic_cast<TableResult &>(*finalRes);
-    std::vector<int> order = getOutputOrder(finalTableRes);
-    return std::make_unique<TableResult>(finalTableRes.idents, finalTableRes.rows, order);
+    return getResultForOutput(std::move(finalRes));
 }
 
 std::unique_ptr<Result> SelectResult::join(Result &rhs) {
@@ -56,14 +61,7 @@ std::unique_ptr<Result> SelectResult::join(Result &rhs) {
         }
     }
 
-    std::unique_ptr<TableResult> finalTableRes = std::make_unique<TableResult>(dynamic_cast<TableResult &>(*finalRes));
-    std::unordered_set<std::string> selectIdents(idents.begin(), idents.end());
-    finalTableRes = finalTableRes->projectColumns(selectIdents);
-
-    // get vector of indexes in order to be printed
-    std::vector<int> order = getOutputOrder(*finalTableRes);
-
-    return std::make_unique<TableResult>(finalTableRes->idents, finalTableRes->rows, order);
+    return getResultForOutput(std::move(finalRes));
 }
 
 void SelectResult::output(std::list<std::string> &list) {}

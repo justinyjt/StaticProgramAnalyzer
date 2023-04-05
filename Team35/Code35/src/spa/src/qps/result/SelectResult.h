@@ -31,5 +31,7 @@ class SelectResult : public Result {
  private:
     std::vector<int> getOutputOrder(const TableResult &intermediateRes) const;
 
+    std::unique_ptr<TableResult> getResultForOutput(std::unique_ptr<Result> finalRes);
+
     std::unique_ptr<Result> getColsCrossProduct();
 };
