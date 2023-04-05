@@ -26,9 +26,8 @@ std::vector<int> SelectResult::getOutputOrder(const TableResult &intermediateRes
 }
 
 std::unique_ptr<TableResult> SelectResult::getResultForOutput(std::unique_ptr<Result> finalRes) {
-    std::unique_ptr<TableResult> finalTableRes = std::make_unique<TableResult>(dynamic_cast<TableResult &>(*finalRes));
     std::unordered_set<std::string> selectIdents(idents.begin(), idents.end());
-    finalTableRes = finalTableRes->projectColumns(selectIdents);
+    std::unique_ptr<TableResult> finalTableRes = (dynamic_cast<TableResult &>(*finalRes)).projectColumns(selectIdents);
     std::vector<int> order = getOutputOrder(*finalTableRes);
     return std::make_unique<TableResult>(finalTableRes->idents, finalTableRes->rows, order);
 }
