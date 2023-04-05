@@ -14,15 +14,15 @@
 // n-col result
 class SelectResult : public Result {
  public:
-    std::vector<std::string> idents;  // eg list<"v", "s1">
-    std::vector<TableResult> cols;  // eg vector<TableResult(v), TableResult(s1), ...>
+    std::vector<std::string> idents;
+    std::vector<TableResult> cols;
 
     // general constructor for n-cols
     SelectResult(std::vector<std::string> &_idents, const std::vector<TableResult> &_cols);
 
     std::unique_ptr<Result> join(Result &rhs) override;
 
-    void output(std::list<std::string> &list) override;
+    void output(std::list<std::string> &list) const override;
 
     bool operator==(const Result &rhs) const;
 

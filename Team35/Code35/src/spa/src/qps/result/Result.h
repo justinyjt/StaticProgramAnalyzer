@@ -20,7 +20,7 @@ class Result {
 
     virtual ~Result() = default;
 
-    virtual void output(std::list<std::string> &) = 0;
+    virtual void output(std::list<std::string> &) const = 0;
 
     virtual std::unique_ptr<Result> join(Result &) = 0;
 
