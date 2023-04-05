@@ -23,4 +23,6 @@ class AffectsGraph : public Graph<STMT_NUM> {
  private:
     STMT_STMT_SET direct_affects_set_;
     std::optional<STMT_STMT_SET> transitive_affects_set_;
+
+    void populateAffectsRelationshipOfIndex(Index idx, STMT_STMT_SET &result) const;
 };
