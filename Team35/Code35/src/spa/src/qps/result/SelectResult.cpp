@@ -2,6 +2,7 @@
 
 #include <iterator>
 #include <memory>
+#include <utility>
 
 #include "BoolResult.h"
 
