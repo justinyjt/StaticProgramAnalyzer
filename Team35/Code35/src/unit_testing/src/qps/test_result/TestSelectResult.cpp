@@ -216,7 +216,7 @@ TEST_CASE("Select join") {
         expected.push_back("3 2");
         expected.push_back("3 1");
 
-        requireTrue(expected == result);
+        requireSameListNoOrder(expected, result);
     }
 
     SECTION("bool result true") {
@@ -238,7 +238,7 @@ TEST_CASE("Select join") {
         expected.push_back("3 2");
         expected.push_back("3 1");
 
-        requireTrue(expected == result);
+        requireSameListNoOrder(expected, result);
     }
 
     SECTION("bool result false") {
@@ -248,6 +248,6 @@ TEST_CASE("Select join") {
         res->output(result);
         std::list<std::string> expected;
 
-        requireTrue(expected == result);
+        requireSameListNoOrder(expected, result);
     }
 }
