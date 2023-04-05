@@ -57,8 +57,6 @@ class TableResult : public Result {
 
     const std::vector<std::string> &getIdents() const;
 
-    const std::vector<std::vector<std::string>> &getRows() const;
-
  private:
     std::vector<std::string> idents_;
     std::vector<std::vector<std::string>> rows_;
