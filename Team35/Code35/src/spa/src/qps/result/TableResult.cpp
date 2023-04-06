@@ -142,10 +142,8 @@ std::unique_ptr<Result> TableResult::join(Result &rhs) {
 
 void TableResult::output(std::list<std::string> &list) const {
     if (!order_.has_value()) {
-        for (auto const &row : rows_) {
-            for (auto const &ele : row) {
-                list.push_back(ele);
-            }
+        for (auto &row : rows_) {
+            list.push_back(row[0]);
         }
         return;
     }
