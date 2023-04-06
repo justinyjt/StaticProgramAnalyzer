@@ -24,7 +24,7 @@ std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode
     if (callGraph_.isCyclic()) {
         return std::move(root_);
     }
-    analyzeProc();
+    analyzeProcedure();
     updateStmtUsesPairSetWithCalls();
     updateStmtModsPairSetWithCalls();
     updateStmtUsesPairSetWithContainedCalls();
@@ -349,43 +349,47 @@ void DesignExtractor::updateContainerCallPairSet(const ENT_NAME &procName) {
     }
 }
 
-void DesignExtractor::analyzeProc() {
-    std::queue<ProcNode> procQueue;
-    for (const auto &proc : procSet_) {
-        if (!callGraph_.getNoOfIncomingEdges(proc)) {
-            procQueue.emplace(proc, std::vector<ENT_NAME>());
-            while (!procQueue.empty()) {
-                auto &curProcNode = procQueue.front();
-                auto &curProcName = curProcNode.procName;
-                auto &curPath = curProcNode.path;
-                auto newPath = std::vector<ENT_NAME>(curPath);
-                newPath.push_back(curProcName);
-
-                //  For every previous procedures on the path
-                for (const auto &procName : newPath) {
-                    //  Variables directly used by current proc
-                    auto iter = procDirectUseVarMap_.find(curProcName);
-                    if (iter != procDirectUseVarMap_.end()) {
-                        auto &procUseVarSet = iter->second;
-                        for (const auto &varUsed : procUseVarSet) {
-                            procUsePairSet_.emplace(procName, varUsed);
-                        }
-                    }
-                    //  Variables directly modified by current proc
-                    iter = procDirectModVarMap_.find(curProcName);
-                    if (iter != procDirectModVarMap_.end()) {
-                        auto &procModVarSet = iter->second;
-                        for (const auto &varModified : procModVarSet) {
-                            procModPairSet_.emplace(procName, varModified);
-                        }
-                    }
-                }
-                for (const auto &calleeProc : callGraph_.getCallingProcs(curProcName)) {
-                    procQueue.emplace(calleeProc, newPath);
-                }
-                procQueue.pop();
+/**
+ * Helper function for analyzeProcedure to recursively analyze the procedure call graph with DFS backtracking
+ * @param curProcName
+ * @param path
+ */
+void DesignExtractor::analyzeProcedureHelper(const ENT_NAME &curProcName, std::vector<ENT_NAME> &path) {
+    path.emplace_back(curProcName);
+    //  for every previous procedures on the path
+    for (const auto &procName : path) {
+        //  variables directly used by current proc
+        auto iter = procDirectUseVarMap_.find(curProcName);
+        if (iter != procDirectUseVarMap_.end()) {
+            auto &procUseVarSet = iter->second;
+            for (const auto &varUsed : procUseVarSet) {
+                procUsePairSet_.emplace(procName, varUsed);
             }
         }
+
+        //  variables directly modified by current proc
+        iter = procDirectModVarMap_.find(curProcName);
+        if (iter != procDirectModVarMap_.end()) {
+            auto &procModVarSet = iter->second;
+            for (const auto &varModified : procModVarSet) {
+                procModPairSet_.emplace(procName, varModified);
+            }
+        }
+    }
+    for (const auto &proc : callGraph_.getCallees(curProcName)) {
+        analyzeProcedureHelper(proc, path);
+    }
+    path.pop_back();
+}
+
+void DesignExtractor::analyzeProcedure() {
+    std::queue<ProcNode> procQueue;
+    for (const auto &proc : procSet_) {
+        if (callGraph_.getNoOfIncomingEdges(proc)) {
+            continue;
+        }
+        std::vector<ENT_NAME> path;
+        analyzeProcedureHelper(proc, path);
     }
 }
 

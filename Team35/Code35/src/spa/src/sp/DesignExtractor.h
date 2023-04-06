@@ -112,7 +112,9 @@ class DesignExtractor {
 
     void addContainerCallPairSetToPKB();
 
-    void analyzeProc();
+    void analyzeProcedure();
+
+    void analyzeProcedureHelper(const ENT_NAME &curProcName, std::vector<ENT_NAME> &path);
 
     void updateStmtUsesPairSetWithContainedCalls();
 
