@@ -86,8 +86,8 @@ class TableResult : public Result {
             const std::vector<ColumnIndex> &common_headers1,
             const std::vector<ColumnIndex> &common_headers2) const;
 
-    static bool isRowInIntersection(const TableRow &lhs_row,
-                                    const TableRow &rhs_row,
-                                    const std::vector<ColumnIndex> &common_headers1,
-                                    const std::vector<ColumnIndex> &common_headers2);
+    static bool isRowNotInIntersection(const TableRow &lhs_row,
+                                       const TableRow &rhs_row,
+                                       const std::vector<ColumnIndex> &common_headers1,
+                                       const std::vector<ColumnIndex> &common_headers2);
 };
