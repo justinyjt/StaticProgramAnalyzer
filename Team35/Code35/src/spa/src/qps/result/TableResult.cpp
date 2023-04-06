@@ -104,13 +104,10 @@ std::unique_ptr<TableResult> TableResult::getTableIntersection(const TableResult
 std::unique_ptr<Result> TableResult::join(Result &rhs) {
     if (rhs.tag == Tag::BOOL) {
         auto &boolResult = dynamic_cast<BoolResult &>(rhs);
-        std::unique_ptr<Result> res;
         if (boolResult.b) {
-            res = std::make_unique<TableResult>(*this);
-        } else {
-            res = std::make_unique<TableResult>();
+            return std::make_unique<TableResult>(*this);
         }
-        return res;
+        return std::make_unique<TableResult>();
     }
 
     auto &t2 = dynamic_cast<TableResult &>(rhs);
