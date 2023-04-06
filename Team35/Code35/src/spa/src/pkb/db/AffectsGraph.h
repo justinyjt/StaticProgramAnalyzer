@@ -16,7 +16,7 @@ class AffectsGraph : public Graph<STMT_NUM> {
 
     bool hasAffectsRelationship(STMT_NUM first, STMT_NUM second);
 
-    const STMT_STMT_SET &getAllAffectsRelationships(bool is_transitive);
+    const STMT_STMT_SET &getAllAffectsRelationships(UsageType usageType);
 
     void reset() override;
 

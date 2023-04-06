@@ -41,8 +41,8 @@ TEST_CASE("2. test getAllAffectsRelationships() method") {
         expected.emplace(2, 3);
         expected.emplace(3, 4);
         expected.emplace(4, 5);
-        requireEqualRef(graph.getAllAffectsRelationships(false), expected);
-        requireEqualRef(graph.getAllAffectsRelationships(false), expected);
+        requireEqualRef(graph.getAllAffectsRelationships(UsageType::Direct), expected);
+        requireEqualRef(graph.getAllAffectsRelationships(UsageType::Direct), expected);
     }
 
     SECTION("2.2. basic retrieval of transitive relationships") {
@@ -62,8 +62,8 @@ TEST_CASE("2. test getAllAffectsRelationships() method") {
         expected.emplace(3, 4);
         expected.emplace(3, 5);
         expected.emplace(4, 5);
-        requireEqualRef(graph.getAllAffectsRelationships(true), expected);
-        requireEqualRef(graph.getAllAffectsRelationships(true), expected);
+        requireEqualRef(graph.getAllAffectsRelationships(UsageType::Transitive), expected);
+        requireEqualRef(graph.getAllAffectsRelationships(UsageType::Transitive), expected);
     }
 
     SECTION("2.3. retrieval of transitive relationships in cyclic graph") {
@@ -99,7 +99,7 @@ TEST_CASE("2. test getAllAffectsRelationships() method") {
         expected.emplace(5, 3);
         expected.emplace(5, 4);
         expected.emplace(5, 5);
-        requireEqualRef(graph.getAllAffectsRelationships(true), expected);
-        requireEqualRef(graph.getAllAffectsRelationships(true), expected);
+        requireEqualRef(graph.getAllAffectsRelationships(UsageType::Transitive), expected);
+        requireEqualRef(graph.getAllAffectsRelationships(UsageType::Transitive), expected);
     }
 }

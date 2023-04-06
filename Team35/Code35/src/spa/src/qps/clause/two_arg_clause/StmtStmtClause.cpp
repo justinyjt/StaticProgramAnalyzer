@@ -33,14 +33,14 @@ std::unique_ptr<Result> StmtStmtClause::handleSynNumCase(PKBReader *db, Synonym 
     STMT_SET s = db->getRelationshipByStmtWithFilter(rs,
                                                      std::stoi(second.str()),
                                                      getStmtType(first.de),
-                                                     false);
+                                                     ArgType::Value);
     return std::make_unique<TableResult>(first.str(), s);
 }
 
 std::unique_ptr<Result> StmtStmtClause::handleSynWcCase(PKBReader *db, Synonym &first) {
     STMT_SET s = db->getStmtByRelationshipWithFilter(rs,
                                                      getStmtType(first.de),
-                                                     true);
+                                                     ArgType::Key);
     return std::make_unique<TableResult>(first.str(), s);
 }
 
@@ -48,7 +48,7 @@ std::unique_ptr<Result> StmtStmtClause::handleNumSynCase(PKBReader *db, PQLNumbe
     STMT_SET s = db->getRelationshipByStmtWithFilter(rs,
                                                      std::stoi(first.str()),
                                                      getStmtType(second.de),
-                                                     true);
+                                                     ArgType::Key);
     return std::make_unique<TableResult>(second.str(), s);
 }
 
@@ -65,7 +65,7 @@ std::unique_ptr<Result> StmtStmtClause::handleNumWcCase(PKBReader *db, PQLNumber
 std::unique_ptr<Result> StmtStmtClause::handleWcSynCase(PKBReader *db, Synonym &second) {
     STMT_SET s = db->getStmtByRelationshipWithFilter(rs,
                                                      getStmtType(second.de),
-                                                     false);
+                                                     ArgType::Value);
     return std::make_unique<TableResult>(second.str(), s);
 }
 
@@ -110,31 +110,31 @@ void StmtStmtClause::validateArgs() {
     auto *synonym1 = dynamic_cast<Synonym *>(first_.get());
     auto *synonym2 = dynamic_cast<Synonym *>(second_.get());
     if (synonym1 != nullptr && (synonym1->de == Synonym::DesignEntity::PROCEDURE
-        || synonym1->de == Synonym::DesignEntity::VARIABLE
-        || synonym1->de == Synonym::DesignEntity::CONSTANT) ||
+                                || synonym1->de == Synonym::DesignEntity::VARIABLE
+                                || synonym1->de == Synonym::DesignEntity::CONSTANT) ||
         synonym2 != nullptr && (synonym2->de == Synonym::DesignEntity::PROCEDURE
-            || synonym2->de == Synonym::DesignEntity::VARIABLE
-            || synonym2->de == Synonym::DesignEntity::CONSTANT)) {
+                                || synonym2->de == Synonym::DesignEntity::VARIABLE
+                                || synonym2->de == Synonym::DesignEntity::CONSTANT)) {
         throw SemanticException();
     }
 }
 
 Parent::Parent(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :
-    StmtStmtClause(std::move(first), std::move(second),
-                   isTransitive ? StmtStmtRelationship::ParentStar : StmtStmtRelationship::Parent) {}
+        StmtStmtClause(std::move(first), std::move(second),
+                       isTransitive ? StmtStmtRelationship::ParentStar : StmtStmtRelationship::Parent) {}
 
 Follows::Follows(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :
-    StmtStmtClause(std::move(first), std::move(second),
-                   isTransitive ? StmtStmtRelationship::FollowsStar : StmtStmtRelationship::Follows) {}
+        StmtStmtClause(std::move(first), std::move(second),
+                       isTransitive ? StmtStmtRelationship::FollowsStar : StmtStmtRelationship::Follows) {}
 
 Next::Next(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :
-    StmtStmtClause(std::move(first), std::move(second),
-                   isTransitive ? StmtStmtRelationship::NextStar : StmtStmtRelationship::Next) {
+        StmtStmtClause(std::move(first), std::move(second),
+                       isTransitive ? StmtStmtRelationship::NextStar : StmtStmtRelationship::Next) {
     this->setComplexity(OptimisableClause::Complexity::Medium);
 }
 
 Affects::Affects(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second, bool isTransitive) :
-    StmtStmtClause(std::move(first), std::move(second),
-                   isTransitive ? StmtStmtRelationship::AffectsStar : StmtStmtRelationship::Affects) {
+        StmtStmtClause(std::move(first), std::move(second),
+                       isTransitive ? StmtStmtRelationship::AffectsStar : StmtStmtRelationship::Affects) {
     this->setComplexity(OptimisableClause::Complexity::High);
 }
