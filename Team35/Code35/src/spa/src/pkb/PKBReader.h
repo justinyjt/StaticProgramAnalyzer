@@ -112,5 +112,11 @@ class PKBReader {
 
     STMT_STMT_SET getAllRelationships(StmtStmtRelationship tableType);
 
+    bool isContainerStmt(STMT_NUM num) const;
+
+    bool isSuccessorCandidate(STMT_NUM num, ENT_SET modifies) const;
+
+    bool isAffectsHelper(STMT_NUM start, STMT_NUM end, ENT_SET modifies) const;
+
     void computeAffectsGraph();
 };

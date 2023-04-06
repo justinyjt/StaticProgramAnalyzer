@@ -249,45 +249,7 @@ bool PKBReader::isAffects(STMT_NUM stmt1, STMT_NUM stmt2) const {
             return false;
         }
     }
-    STMT_SET successors = pkb.getStmtByStmtKey(StmtStmtRelationship::Next, stmt1);
-    STMT_QUEUE frontier;
-    for (auto &successor : successors) {
-        frontier.push(successor);
-    }
-    STMT_SET visited;
-    while (!frontier.empty()) {
-        STMT_NUM num = frontier.front();
-        frontier.pop();
-        if (visited.find(num) != visited.end()) {
-            continue;
-        }
-        visited.insert(num);
-        if (num == stmt2) {
-            return true;
-        }
-        if (pkb.isEntityTypeExists(StmtType::While, num)
-            || pkb.isEntityTypeExists(StmtType::If, num)) {
-            STMT_SET curr = pkb.getStmtByStmtKey(StmtStmtRelationship::Next, num);
-            for (auto &currSuccessor : curr) {
-                frontier.push(currSuccessor);
-            }
-            continue;
-        }
-        bool isModified = false;
-        for (auto &modifiedEnt : modifies) {
-            if (isModifies(num, modifiedEnt)) {
-                isModified = true;
-            }
-        }
-        if (isModified) {
-            continue;
-        }
-        STMT_SET curr = pkb.getStmtByStmtKey(StmtStmtRelationship::Next, num);
-        for (auto &currSuccessor : curr) {
-            frontier.push(currSuccessor);
-        }
-    }
-    return false;
+    return isAffectsHelper(stmt1, stmt2, modifies);
 }
 
 bool PKBReader::isAffectsT(STMT_NUM first, STMT_NUM second) {
@@ -333,6 +295,57 @@ STMT_SET PKBReader::getIntersect(STMT_NUM first, STMT_NUM second) {
     intersect.emplace(first);
     intersect.emplace(second);
     return intersect;
+}
+
+bool PKBReader::isContainerStmt(STMT_NUM num) const {
+    if (pkb.isEntityTypeExists(StmtType::While, num)
+        || pkb.isEntityTypeExists(StmtType::If, num)) {
+        return true;
+    }
+    return false;
+}
+
+bool PKBReader::isSuccessorCandidate(STMT_NUM num, ENT_SET modifies) const {
+    bool isModified = false;
+    for (auto &modifiedEnt : modifies) {
+        if (isModifies(num, modifiedEnt)) {
+            isModified = true;
+        }
+    }
+    if (isModified) {
+        return false;
+    }
+    return true;
+}
+
+bool PKBReader::isAffectsHelper(STMT_NUM start, STMT_NUM end, ENT_SET modifies) const {
+    STMT_SET successors = pkb.getStmtByStmtKey(StmtStmtRelationship::Next, start);
+    STMT_QUEUE frontier;
+    for (auto &successor : successors) {
+        frontier.push(successor);
+    }
+    STMT_SET visited;
+    while (!frontier.empty()) {
+        STMT_NUM num = frontier.front();
+        frontier.pop();
+        if (visited.find(num) != visited.end()) {
+            continue;
+        }
+        visited.insert(num);
+        if (num == end) {
+            return true;
+        }
+        STMT_SET curr;
+        if (isContainerStmt(num)) {
+            curr = pkb.getStmtByStmtKey(StmtStmtRelationship::Next, num);
+        } else if (isSuccessorCandidate(num, modifies)) {
+            curr = pkb.getStmtByStmtKey(StmtStmtRelationship::Next, num);
+        }
+        for (auto &currSuccessor : curr) {
+            frontier.push(currSuccessor);
+        }
+    }
+    return false;
 }
 
 bool PKBReader::isModifies(STMT_NUM key, const ENT_NAME &val) const {
