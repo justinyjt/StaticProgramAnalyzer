@@ -328,12 +328,10 @@ bool PKBReader::isAffectsHelper(STMT_NUM start, STMT_NUM end, ENT_SET modifies) 
         if (num == end) {
             return true;
         }
-        STMT_SET curr;
-        if (isContainerStmt(num)) {
-            curr = pkb.getStmtByStmtKey(StmtStmtRelationship::Next, num);
-        } else if (isSuccessorCandidate(num, modifies)) {
-            curr = pkb.getStmtByStmtKey(StmtStmtRelationship::Next, num);
+        if (!isContainerStmt(num) && !isSuccessorCandidate(num, modifies)) {
+            continue;
         }
+        STMT_SET curr = pkb.getStmtByStmtKey(StmtStmtRelationship::Next, num);
         for (auto &currSuccessor : curr) {
             frontier.push(currSuccessor);
         }
