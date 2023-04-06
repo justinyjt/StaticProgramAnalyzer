@@ -21,6 +21,7 @@ typedef std::vector<TableCell<std::string>> TableRow;
 typedef std::vector<TableRow> TableRows;
 typedef std::string TableHeader;
 typedef std::vector<TableHeader> TableHeaders;
+typedef uint32_t ColumnIndex;
 
 // n-col result
 class TableResult : public Result {
@@ -34,6 +35,7 @@ class TableResult : public Result {
     // constructor for SelectResult Output
     TableResult(const TableResult &tableRes, const std::vector<uint32_t> &order);
 
+    // constructor for unordered_set
     template<typename T>
     TableResult(const TableHeader &header, const std::unordered_set<T> &set) : Result(Tag::TABLE) {
         table_headers_.push_back(header);
@@ -42,6 +44,7 @@ class TableResult : public Result {
         }
     }
 
+    // constructor for PairSet
     template<typename S, typename T>
     TableResult(const std::string &header1, const std::string &header2, const PairSet<S, T> &set) : Result(Tag::TABLE) {
         if (header1 == header2) {
@@ -75,4 +78,12 @@ class TableResult : public Result {
     TableHeaders table_headers_;
     std::vector<TableRow> rows_;
     std::optional<std::vector<uint32_t>> order_;  // order in which to output result
+
+    [[nodiscard]] std::unique_ptr<TableResult> getCrossProduct(const TableResult &rhs) const;
+
+    [[nodiscard]] std::unique_ptr<TableResult> getTableIntersection(
+            const TableResult &rhs,
+            const std::vector<ColumnIndex> &common_headers1,
+            const std::vector<ColumnIndex> &common_headers2
+    ) const;
 };

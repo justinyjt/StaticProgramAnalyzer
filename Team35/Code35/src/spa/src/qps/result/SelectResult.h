@@ -31,7 +31,7 @@ class SelectResult : public Result {
     bool isNull() const override;
 
  private:
-    std::vector<uint32_t> getOutputOrder(const TableResult &intermediateRes) const;
+    [[nodiscard]] std::vector<uint32_t> getOutputOrder(const TableResult &intermediateRes) const;
 
     std::unique_ptr<TableResult> getResultForOutput(std::unique_ptr<Result> finalRes);
 
