@@ -147,7 +147,7 @@ TEST_CASE("Table join") {
 
         std::unique_ptr<BoolResult> boolResult = std::make_unique<BoolResult>(false);
 
-        std::unique_ptr<BoolResult> expectedResult = std::make_unique<BoolResult>(false);
+        std::unique_ptr<TableResult> expectedResult = std::make_unique<TableResult>();
 
         requireTrue(*expectedResult == *tableResult1->join(*boolResult));
     }

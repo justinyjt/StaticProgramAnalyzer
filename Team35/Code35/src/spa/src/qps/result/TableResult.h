@@ -84,6 +84,5 @@ class TableResult : public Result {
     [[nodiscard]] std::unique_ptr<TableResult> getTableIntersection(
             const TableResult &rhs,
             const std::vector<ColumnIndex> &common_headers1,
-            const std::vector<ColumnIndex> &common_headers2
-    ) const;
+            const std::vector<ColumnIndex> &common_headers2) const;
 };
