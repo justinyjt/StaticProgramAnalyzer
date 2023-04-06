@@ -116,15 +116,6 @@ RelationshipTable<ENT_NAME, ENT_NAME> &PKB::getNameNameRelationshipTable(NameNam
     return const_cast<RelationshipTable<ENT_NAME, ENT_NAME> &>(pkbPtr->getNameNameRelationshipTable(tableType));
 }
 
-const PatternTable &PKB::getPatternTable() const {
-    return patternTable_;
-}
-
-PatternTable &PKB::getPatternTable() {
-    const PKB *pkbPtr = const_cast<const PKB *>(this);
-    return const_cast<PatternTable &>(pkbPtr->getPatternTable());
-}
-
 void PKB::addEntityToTable(Entity entityType, ENT_NAME entity) {
     EntityTable<ENT_NAME> &table = this->getEntityTable(entityType);
     table.addEntity(entity);

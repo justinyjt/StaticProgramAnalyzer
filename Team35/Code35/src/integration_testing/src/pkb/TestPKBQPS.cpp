@@ -309,6 +309,14 @@ TEST_CASE("Integration test for wiki sample code 4") {
         }
 
         SECTION("Follows mixed") {
+            SECTION("Select BOOLEAN such that Follows(_, _)") {
+                std::list<std::string> answer;
+                std::string query = "Select BOOLEAN such that Follows(_, _)";
+                std::list<std::string> expected({"TRUE"});
+                qps.executeQuery(query, answer);
+                requireSameListNoOrder(expected, answer);
+            }
+
             SECTION("assign a; call cl; Select a such that Follows(a, cl) with cl.stmt# = 2") {
                 std::list<std::string> answer;
                 std::string query = "assign a; call cl; Select a such that Follows(a, cl) with cl.stmt# = 2";
@@ -681,7 +689,7 @@ TEST_CASE("Integration test for wiki sample code 4") {
                 requireSameListNoOrder(expected, answer);
             }
 
-            SECTION("Follows*(calls): Test 4") {
+            SECTION("call c; Select c such that Follows*(c, 2)") {
                 std::list<std::string> answer;
                 std::string query = "call c; Select c such that Follows*(c, 2)";
                 std::list<std::string> expected;
@@ -689,7 +697,7 @@ TEST_CASE("Integration test for wiki sample code 4") {
                 requireSameListNoOrder(expected, answer);
             }
 
-            SECTION("Follows*(calls): Test 5") {
+            SECTION("call c; Select c such that Follows*(c, 3)") {
                 std::list<std::string> answer;
                 std::string query = "call c; Select c such that Follows*(c, 3)";
                 std::list<std::string> expected({"2"});
@@ -1137,7 +1145,7 @@ TEST_CASE("Integration test for wiki sample code 4") {
                 requireSameListNoOrder(expected, answer);
             }
 
-            SECTION("Parent(calls): Test 3") {
+            SECTION("call c; Select c such that Parent(19, c)") {
                 std::list<std::string> answer;
                 std::string query = "call c; Select c such that Parent(19, c)";
                 std::list<std::string> expected;
@@ -1726,13 +1734,24 @@ TEST_CASE("Integration test for wiki sample code 4") {
             requireSameListNoOrder(expected, answer);
         }
 
-//        SECTION("variable v; Select v such that Modifies(_, v)") {
-//            std::list<std::string> answer;
-//            std::string query = " procedure p; variable v; Select <p, v> such that Modifies(p, v)";
-//            std::list<std::string> expected({"x", "y", "flag", "cenX", "cenY", "count", "normSq"});
-//            qps.executeQuery(query, answer);
-//            requireSameListNoOrder(expected, answer);
-//        }
+        SECTION("variable v; procedure p; Select <p, v> such that Modifies(p, v)") {
+            std::list<std::string> answer;
+            std::string query = " variable v; procedure p; Select <p, v> such that Modifies(p, v)";
+            std::list<std::string> expected({"computeCentroid cenX", "computeCentroid cenY", "computeCentroid count",
+                                             "computeCentroid flag", "computeCentroid normSq", "computeCentroid x",
+                                             "computeCentroid y", "main cenX", "main cenY", "main count", "main flag",
+                                             "main normSq", "main x", "main y", "readPoint x", "readPoint y"});
+            qps.executeQuery(query, answer);
+            requireSameListNoOrder(expected, answer);
+        }
+
+        SECTION("Select BOOLEAN such that Modifies(\"computeCentroid\", \"count\")") {
+            std::list<std::string> answer;
+            std::string query = " Select BOOLEAN such that Modifies(\"computeCentroid\", \"count\")";
+            std::list<std::string> expected({"TRUE"});
+            qps.executeQuery(query, answer);
+            requireSameListNoOrder(expected, answer);
+        }
     }
 
     SECTION("Uses") {
@@ -1773,6 +1792,14 @@ TEST_CASE("Integration test for wiki sample code 4") {
             std::list<std::string> answer;
             std::string query = "call c; Select c such that Uses(c, \"x\")";
             std::list<std::string> expected({"2"});
+            qps.executeQuery(query, answer);
+            requireSameListNoOrder(expected, answer);
+        }
+
+        SECTION("Select BOOLEAN such that Uses(16, \"x\")") {
+            std::list<std::string> answer;
+            std::string query = "Select BOOLEAN such that Uses(16, \"x\")";
+            std::list<std::string> expected({"TRUE"});
             qps.executeQuery(query, answer);
             requireSameListNoOrder(expected, answer);
         }
@@ -1958,6 +1985,24 @@ TEST_CASE("Integration test for wiki sample code 4") {
         }
     }
 
+    SECTION("Calls") {
+        SECTION("procedure p, p1; Select p such that Calls(p, p1)") {
+            std::list<std::string> answer;
+            std::string query = "procedure p, p1; Select p such that Calls(p, p1)";
+            std::list<std::string> expected({"computeCentroid", "main"});
+            qps.executeQuery(query, answer);
+            requireSameListNoOrder(expected, answer);
+        }
+
+        SECTION("procedure p; Select p such that Calls(_, p)") {
+            std::list<std::string> answer;
+            std::string query = "procedure p; Select p such that Calls(_, p)";
+            std::list<std::string> expected({"computeCentroid", "printResults", "readPoint"});
+            qps.executeQuery(query, answer);
+            requireSameListNoOrder(expected, answer);
+        }
+    }
+
     SECTION("Pattern") {
         SECTION("assign a; Select a pattern a(_, _)") {
             std::list<std::string> answer;
@@ -2005,6 +2050,14 @@ TEST_CASE("Integration test for wiki sample code 4") {
             std::list<std::string> answer;
             std::string query = "assign a; variable v; Select a pattern a(\"count\", _\"count\"_)";
             std::list<std::string> expected({"15"});
+            qps.executeQuery(query, answer);
+            requireSameListNoOrder(expected, answer);
+        }
+
+        SECTION("assign a, variable v; Select a pattern a(_, _\"count\"_)") {
+            std::list<std::string> answer;
+            std::string query = "assign a; variable v; Select a pattern a(_, _\"count\"_)";
+            std::list<std::string> expected({"15", "21", "22"});
             qps.executeQuery(query, answer);
             requireSameListNoOrder(expected, answer);
         }
@@ -2167,6 +2220,16 @@ TEST_CASE("Integration test for wiki sample code 4") {
                                              "12 22", "12 23", "15 15", "15 21", "15 22", "16 16",
                                              "16 21", "16 23", "17 17", "17 22", "17 23", "22 23",
                                              "21 23", "12 17", "10 23", "15 23"});
+            qps.executeQuery(query, answer);
+            requireSameListNoOrder(expected, answer);
+        }
+    }
+
+    SECTION("next") {
+        SECTION("Select BOOLEAN such that Next(_,_)") {
+            std::list<std::string> answer;
+            std::string query = "Select BOOLEAN such that Next(_,_)";
+            std::list<std::string> expected({"TRUE"});
             qps.executeQuery(query, answer);
             requireSameListNoOrder(expected, answer);
         }
