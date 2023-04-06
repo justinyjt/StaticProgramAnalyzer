@@ -1,5 +1,6 @@
 #include "SelectResult.h"
 
+#include <cstdint>
 #include <memory>
 #include <utility>
 
@@ -12,9 +13,9 @@ SelectResult::SelectResult(std::vector<std::string> &_idents, const std::vector<
     cols.insert(cols.end(), _cols.begin(), _cols.end());
 }
 
-std::vector<int> SelectResult::getOutputOrder(const TableResult &intermediateRes) const {
-    std::vector<int> order;
-    auto &intermediateResIdents = intermediateRes.getIdents();
+std::vector<uint32_t> SelectResult::getOutputOrder(const TableResult &intermediateRes) const {
+    std::vector<uint32_t> order;
+    auto &intermediateResIdents = intermediateRes.getTableHeaders();
     for (const auto &ident : idents) {
         for (int j = 0; j < intermediateResIdents.size(); ++j) {
             if (ident == intermediateResIdents.at(j)) {
@@ -28,7 +29,7 @@ std::vector<int> SelectResult::getOutputOrder(const TableResult &intermediateRes
 std::unique_ptr<TableResult> SelectResult::getResultForOutput(std::unique_ptr<Result> finalRes) {
     std::unordered_set<std::string> selectIdents(idents.begin(), idents.end());
     std::unique_ptr<TableResult> finalTableRes = (dynamic_cast<TableResult &>(*finalRes)).projectColumns(selectIdents);
-    std::vector<int> order = getOutputOrder(*finalTableRes);
+    std::vector<uint32_t> order = getOutputOrder(*finalTableRes);
     return std::make_unique<TableResult>(*finalTableRes, order);
 }
 
@@ -53,7 +54,7 @@ std::unique_ptr<Result> SelectResult::join(Result &rhs) {
     }
 
     auto &t2 = dynamic_cast<TableResult &>(rhs);
-    auto &intermediateResIdents = t2.getIdents();
+    auto &intermediateResIdents = t2.getTableHeaders();
     std::unordered_set<std::string> intermediateIdentsSet(intermediateResIdents.begin(), intermediateResIdents.end());
     std::unique_ptr<Result> finalRes = std::make_unique<TableResult>(t2);
     for (int i = 0; i < idents.size(); i++) {

@@ -16,11 +16,11 @@ class MultipleSynonymSelectClause : public SelectClause {
     bool operator==(const Clause &rhs) const override;
 
  private:
-    STMT_SET getStmtSet(PKBReader *db, Synonym synonym);
+    STMT_SET getStmtSet(PKBReader *db, const Synonym &synonym);
 
-    ENT_SET getEntSet(PKBReader *db, Synonym synonym);
+    ENT_SET getEntSet(PKBReader *db, const Synonym &synonym);
 
-    STMT_ENT_SET getStmtEntSet(PKBReader *db, Synonym synonym);
+    STMT_ENT_SET getStmtEntSet(PKBReader *db, const Synonym &synonym);
 
     bool isEntAttrRef(Synonym &syn);
 

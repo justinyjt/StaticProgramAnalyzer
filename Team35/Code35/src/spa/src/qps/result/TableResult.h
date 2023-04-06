@@ -1,15 +1,26 @@
 #pragma once
 
-#include <string>
-#include <list>
-#include <vector>
+#include <cstdint>
 #include <iostream>
 #include <iterator>
-#include <unordered_set>
-#include <set>
+#include <list>
 #include <memory>
+#include <optional>
+#include <set>
+#include <string>
+#include <unordered_set>
+#include <vector>
 
 #include "Result.h"
+#include "commons/util/StringUtil.h"
+
+template<typename T>
+using TableCell = T;
+
+typedef std::vector<TableCell<std::string>> TableRow;
+typedef std::vector<TableRow> TableRows;
+typedef std::string TableHeader;
+typedef std::vector<TableHeader> TableHeaders;
 
 // n-col result
 class TableResult : public Result {
@@ -18,34 +29,34 @@ class TableResult : public Result {
     TableResult();
 
     // general constructor for n-cols
-    TableResult(const std::vector<std::string> &idents, const std::vector<std::vector<std::string>> &rows);
+    TableResult(const TableHeaders &headers, const TableRows &rows);
 
     // constructor for SelectResult Output
-    TableResult(const TableResult &tableRes, const std::vector<int> &order);
+    TableResult(const TableResult &tableRes, const std::vector<uint32_t> &order);
 
-    // for 2 cols with STMT_ENT_SET
-    TableResult(const std::string &ident1, const std::string &ident2, const STMT_ENT_SET &set);
+    template<typename T>
+    TableResult(const TableHeader &header, const std::unordered_set<T> &set) : Result(Tag::TABLE) {
+        table_headers_.push_back(header);
+        for (auto &p : set) {
+            rows_.emplace_back(TableRow{StringUtil::toString(p)});
+        }
+    }
 
-    // for 2 cols with STMT_STMT_SET
-    TableResult(const std::string &ident1, const std::string &ident2, const STMT_STMT_SET &set);
-
-    // for 2 cols with ENT_ENT_SET
-    TableResult(const std::string &ident1, const std::string &ident2, const ENT_ENT_SET &set);
-
-    // for 2 cols with vector<vector<string>>
-    TableResult(const std::string &ident1, const std::string &ident2,
-                const std::vector<std::vector<std::string>> &vec);
-
-    // for 1 col with ENT_SET
-    TableResult(const std::string &ident, const ENT_SET &set);
-
-    // for 1 col with STMT_SET
-    TableResult(const std::string &ident, const STMT_SET &set);
-
-    // 2 col with ENT_SET
-    TableResult(const std::string &ident, const std::string &ident2, const std::vector<ENT_NAME> &set);
-
-    std::unique_ptr<TableResult> projectColumns(const std::unordered_set<std::string> &projectedColumns) const;
+    template<typename S, typename T>
+    TableResult(const std::string &header1, const std::string &header2, const PairSet<S, T> &set) : Result(Tag::TABLE) {
+        if (header1 == header2) {
+            table_headers_.push_back(header1);
+            for (auto &p : set) {
+                rows_.emplace_back(TableRow{StringUtil::toString(p.first)});
+            }
+        } else {
+            table_headers_.push_back(header1);
+            table_headers_.push_back(header2);
+            for (auto &p : set) {
+                rows_.emplace_back(TableRow{StringUtil::toString(p.first), StringUtil::toString(p.second)});
+            }
+        }
+    }
 
     std::unique_ptr<Result> join(Result &rhs) override;
 
@@ -53,12 +64,15 @@ class TableResult : public Result {
 
     bool operator==(const Result &rhs) const;
 
-    bool isNull() const override;
+    [[nodiscard]] std::unique_ptr<TableResult> projectColumns(
+            const std::unordered_set<TableHeader> &projectedColumns) const;
 
-    const std::vector<std::string> &getIdents() const;
+    [[nodiscard]] bool isNull() const override;
+
+    [[nodiscard]] const TableHeaders &getTableHeaders() const;
 
  private:
-    std::vector<std::string> idents_;
-    std::vector<std::vector<std::string>> rows_;
-    std::optional<std::vector<int>> order_;  // order in which to output result
+    TableHeaders table_headers_;
+    std::vector<TableRow> rows_;
+    std::optional<std::vector<uint32_t>> order_;  // order in which to output result
 };

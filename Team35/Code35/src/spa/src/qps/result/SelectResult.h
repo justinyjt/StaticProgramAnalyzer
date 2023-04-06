@@ -1,4 +1,6 @@
 #pragma once
+
+#include <cstdint>
 #include <iostream>
 #include <iterator>
 #include <list>
@@ -29,7 +31,7 @@ class SelectResult : public Result {
     bool isNull() const override;
 
  private:
-    std::vector<int> getOutputOrder(const TableResult &intermediateRes) const;
+    std::vector<uint32_t> getOutputOrder(const TableResult &intermediateRes) const;
 
     std::unique_ptr<TableResult> getResultForOutput(std::unique_ptr<Result> finalRes);
 

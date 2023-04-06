@@ -1,17 +1,16 @@
-#ifndef TEAM35_CODE35_SRC_SPA_SRC_PKB_DB_RELATIONSHIPTABLE_H_
-#define TEAM35_CODE35_SRC_SPA_SRC_PKB_DB_RELATIONSHIPTABLE_H_
+#pragma once
 
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
 
-#include "commons/PairHash.h"
+#include "commons/types.h"
 
 template<typename TKey, typename TValue>
 class RelationshipTable {
     std::unordered_map<TKey, std::unordered_set<TValue>> keyValueMap;
     std::unordered_map<TValue, std::unordered_set<TKey>> valueKeyMap;
-    std::unordered_set<std::pair<TKey, TValue>, hash_pair> keyValuePairSet;
+    PairSet<TKey, TValue> keyValuePairSet;
 
     inline static const std::unordered_set<TValue> emptyValSet =
             std::unordered_set<TValue>();
@@ -51,7 +50,7 @@ class RelationshipTable {
         return iterator->second;
     }
 
-    const std::unordered_set<std::pair<TKey, TValue>, hash_pair> &getKeyValuePairs() const {
+    const PairSet<TKey, TValue> &getKeyValuePairs() const {
         return keyValuePairSet;
     }
 
@@ -69,5 +68,3 @@ class RelationshipTable {
         keyValuePairSet.emplace(std::make_pair(key, val));
     }
 };
-
-#endif  // TEAM35_CODE35_SRC_SPA_SRC_PKB_DB_RELATIONSHIPTABLE_H_
