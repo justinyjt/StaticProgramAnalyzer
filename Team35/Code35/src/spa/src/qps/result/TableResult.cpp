@@ -57,6 +57,18 @@ std::unique_ptr<TableResult> TableResult::getCrossProduct(const TableResult &rhs
     return std::make_unique<TableResult>(headers, rows);
 }
 
+bool TableResult::isRowInIntersection(const TableRow &lhs_row,
+                                      const TableRow &rhs_row,
+                                      const std::vector<ColumnIndex> &common_headers1,
+                                      const std::vector<ColumnIndex> &common_headers2) {
+    for (int k = 0; k < common_headers1.size(); ++k) {
+        if (lhs_row[common_headers1[k]] != rhs_row[common_headers2[k]]) {
+            return false;
+        }
+    }
+    return true;
+}
+
 std::unique_ptr<TableResult> TableResult::getTableIntersection(const TableResult &rhs,
                                                                const std::vector<ColumnIndex> &common_headers1,
                                                                const std::vector<ColumnIndex> &common_headers2) const {
@@ -78,14 +90,7 @@ std::unique_ptr<TableResult> TableResult::getTableIntersection(const TableResult
     TableRows output_rows;
     for (auto &lhs_row : rows_) {
         for (auto &rhs_row : rhs.rows_) {
-            bool match = true;
-            for (int k = 0; k < common_headers1.size(); ++k) {
-                if (lhs_row[common_headers1[k]] != rhs_row[common_headers2[k]]) {
-                    match = false;
-                    break;
-                }
-            }
-            if (!match) {
+            if (!isRowInIntersection(lhs_row, rhs_row, common_headers1, common_headers2)) {
                 continue;
             }
             TableRow newRow;
@@ -164,14 +169,14 @@ bool TableResult::operator==(const Result &rhs) const {
         return false;
     }
 
-    std::unordered_set<std::string> a;
+    std::unordered_set < std::string > a;
     for (auto &row : rows_) {
         std::string s;
         for (auto &elem : row) s += elem;
         a.insert(s);
     }
 
-    std::unordered_set<std::string> b;
+    std::unordered_set < std::string > b;
     for (auto &row : pRhs->rows_) {
         std::string s;
         for (auto &elem : row) s += elem;
