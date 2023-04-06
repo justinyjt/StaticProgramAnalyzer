@@ -303,14 +303,10 @@ bool PKBReader::isContainerStmt(STMT_NUM num) const {
 }
 
 bool PKBReader::isSuccessorCandidate(STMT_NUM num, ENT_SET modifies) const {
-    bool isModified = false;
     for (auto &modifiedEnt : modifies) {
         if (isModifies(num, modifiedEnt)) {
-            isModified = true;
+            return false;
         }
-    }
-    if (isModified) {
-        return false;
     }
     return true;
 }
