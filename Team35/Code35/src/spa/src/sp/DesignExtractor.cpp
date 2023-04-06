@@ -1,13 +1,12 @@
+#include "DesignExtractor.h"
+
 #include <memory>
 #include <queue>
-#include <utility>
 #include <unordered_map>
+#include <utility>
 
-#include "pkb/PKBWriter.h"
-#include "DesignExtractor.h"
 #include "commons/ASTNode.h"
-
-ProcNode::ProcNode(ENT_NAME name, const std::vector<ENT_NAME> &newPath) : procName(std::move(name)), path(newPath) {}
+#include "pkb/PKBWriter.h"
 
 DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
         pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(), procSet_(),
@@ -146,7 +145,7 @@ void DesignExtractor::extractAssign(const std::shared_ptr<ASTNode> &node) {
 }
 
 ENT_NAME DesignExtractor::extractLeftAssign(const std::shared_ptr<ASTNode> &node) {
-    const std::string &varName = node->getLabel();
+    const ENT_NAME &varName = node->getLabel();
     varNameSet_.emplace(varName);
     updateStmtModsPairSet(stmtCnt_, varName);
     assignSet_.emplace(stmtCnt_);
@@ -154,7 +153,7 @@ ENT_NAME DesignExtractor::extractLeftAssign(const std::shared_ptr<ASTNode> &node
 }
 
 void DesignExtractor::extractRightAssign(const std::shared_ptr<ASTNode> &node) {
-    const std::string &label = node->getLabel();
+    const ENT_NAME &label = node->getLabel();
     switch (node->getSyntaxType()) {
         case ASTNode::SyntaxType::Variable:
             varNameSet_.emplace(label);
@@ -174,7 +173,7 @@ void DesignExtractor::extractRightAssign(const std::shared_ptr<ASTNode> &node) {
 
 void DesignExtractor::extractRead(const std::shared_ptr<ASTNode> &node) {
     const auto &child = node->getChildren().front();
-    const std::string &varName = child->getLabel();
+    const ENT_NAME &varName = child->getLabel();
     varNameSet_.emplace(varName);
     updateStmtModsPairSet(stmtCnt_, varName);
     readSet_.emplace(stmtCnt_);
@@ -183,7 +182,7 @@ void DesignExtractor::extractRead(const std::shared_ptr<ASTNode> &node) {
 
 void DesignExtractor::extractPrint(const std::shared_ptr<ASTNode> &node) {
     const auto &child = node->getChildren().front();
-    const std::string &varName = child->getLabel();
+    const ENT_NAME &varName = child->getLabel();
     varNameSet_.emplace(varName);
     updateStmtUsesPairSet(stmtCnt_, varName);
     printSet_.emplace(stmtCnt_);
@@ -191,7 +190,7 @@ void DesignExtractor::extractPrint(const std::shared_ptr<ASTNode> &node) {
 }
 
 void DesignExtractor::extractCondExpr(const std::shared_ptr<ASTNode> &node) {
-    const std::string &label = node->getLabel();
+    const ENT_NAME &label = node->getLabel();
     switch (node->getSyntaxType()) {
         case ASTNode::SyntaxType::Variable:
             varNameSet_.emplace(label);
@@ -383,7 +382,6 @@ void DesignExtractor::analyzeProcedureHelper(const ENT_NAME &curProcName, std::v
 }
 
 void DesignExtractor::analyzeProcedure() {
-    std::queue<ProcNode> procQueue;
     for (const auto &proc : procSet_) {
         if (callGraph_.getNoOfIncomingEdges(proc)) {
             continue;

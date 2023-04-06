@@ -64,43 +64,6 @@ ENT_SET CallGraph::getCallEntities(Index index) {
     return callees;
 }
 
-STMT_SET CallGraph::getStmts(const ENT_NAME &procName) const {
-    STMT_SET result;
-    if (!this->hasNode(procName)) {
-        return result;
-    }
-    IndexQueue calleeQueue;
-    Index idx = this->getNodeIndex(procName);
-    calleeQueue.push(idx);
-    while (!calleeQueue.empty()) {
-        Index current = calleeQueue.front();
-        calleeQueue.pop();
-        STMT_SET currentStmts = this->getStmtsByIndex(current);
-        result.insert(currentStmts.begin(), currentStmts.end());
-        for (Index calleeIndex : this->getOutgoingNodes(current)) {
-            calleeQueue.push(calleeIndex);
-        }
-    }
-    return result;
-}
-
-STMT_SET CallGraph::getStmtsByIndex(Index index) const {
-    STMT_SET result;
-    ENT_NAME proc = this->getNode(index);
-    STMT_STMT curr = call_map_.at(proc);
-    for (int i = curr.first; i <= curr.second; ++i) {
-        result.emplace(i);
-    }
-    return result;
-}
-
-void CallGraph::addProcScope(ENT_NAME proc, STMT_STMT scope) {
-    if (!this->hasNode(proc)) {
-        return;
-    }
-    this->call_map_.emplace(proc, scope);
-}
-
 ENT_SET CallGraph::getCallees(const ENT_NAME &procName) {
     return this->getCallEntities(getNodeIndex(procName));
 }
