@@ -298,11 +298,8 @@ STMT_SET PKBReader::getIntersect(STMT_NUM first, STMT_NUM second) {
 }
 
 bool PKBReader::isContainerStmt(STMT_NUM num) const {
-    if (pkb.isEntityTypeExists(StmtType::While, num)
-        || pkb.isEntityTypeExists(StmtType::If, num)) {
-        return true;
-    }
-    return false;
+    return pkb.isEntityTypeExists(StmtType::While, num)
+           || pkb.isEntityTypeExists(StmtType::If, num);
 }
 
 bool PKBReader::isSuccessorCandidate(STMT_NUM num, ENT_SET modifies) const {
