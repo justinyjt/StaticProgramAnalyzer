@@ -167,21 +167,17 @@ bool TableResult::operator==(const Result &rhs) const {
         return false;
     }
 
-    std::unordered_set < std::string > a;
+    std::set < TableRow > set1;
     for (auto &row : rows_) {
-        std::string s;
-        for (auto &elem : row) s += elem;
-        a.insert(s);
+        set1.insert(row);
     }
 
-    std::unordered_set < std::string > b;
+    std::set < TableRow > set2;
     for (auto &row : pRhs->rows_) {
-        std::string s;
-        for (auto &elem : row) s += elem;
-        b.insert(s);
+        set2.insert(row);
     }
 
-    return a == b;
+    return set1 == set2;
 }
 
 bool TableResult::isNull() const {
