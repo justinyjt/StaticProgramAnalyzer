@@ -29,7 +29,7 @@ class TableResult : public Result {
     TableResult();
 
     // general constructor for n-cols
-    TableResult(const TableHeaders &headers, const TableRows &rows);
+    TableResult(TableHeaders headers, TableRows rows);
 
     // constructor for SelectResult Output
     TableResult(const TableResult &tableRes, const std::vector<uint32_t> &order);
@@ -60,7 +60,7 @@ class TableResult : public Result {
 
     std::unique_ptr<Result> join(Result &rhs) override;
 
-    void output(std::list<std::string> &list) const override;
+    void output(std::list<std::string> &result) const override;
 
     bool operator==(const Result &rhs) const;
 

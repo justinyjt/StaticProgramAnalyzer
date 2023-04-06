@@ -12,8 +12,8 @@
 TableResult::TableResult() : Result(Tag::TABLE) {}
 
 // general constructor for n-cols
-TableResult::TableResult(const TableHeaders &headers, const TableRows &rows)
-        : Result(Tag::TABLE), table_headers_(headers), rows_(std::move(rows)) {}
+TableResult::TableResult(TableHeaders headers, TableRows rows)
+        : Result(Tag::TABLE), table_headers_(std::move(headers)), rows_(std::move(rows)) {}
 
 // constructor for SelectResult Output
 TableResult::TableResult(const TableResult &tableResult, const std::vector<uint32_t> &order)
