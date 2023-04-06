@@ -167,12 +167,12 @@ bool TableResult::operator==(const Result &rhs) const {
         return false;
     }
 
-    std::set < TableRow > set1;
+    std::set<TableRow> set1;
     for (auto &row : rows_) {
         set1.insert(row);
     }
 
-    std::set < TableRow > set2;
+    std::set<TableRow> set2;
     for (auto &row : pRhs->rows_) {
         set2.insert(row);
     }
