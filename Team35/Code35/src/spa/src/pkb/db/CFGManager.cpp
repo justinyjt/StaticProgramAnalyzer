@@ -7,7 +7,7 @@ namespace CFG {
 
 using std::any_of;
 
-void CFGManager::setGraphs(std::vector<CFGraph> &&cfg) {
+void CFGManager::setGraphs(std::vector<CFGraph> cfg) {
     this->graphs_ = std::move(cfg);
 }
 

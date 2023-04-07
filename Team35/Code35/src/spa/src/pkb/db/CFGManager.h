@@ -9,7 +9,7 @@ class CFGManager {
  public:
     CFGManager() = default;
 
-    void setGraphs(std::vector<CFGraph> &&cfg);
+    void setGraphs(std::vector<CFGraph> cfg);
 
     const CFGraph &getCFG(STMT_NUM num) const;
 
