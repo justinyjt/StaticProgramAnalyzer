@@ -14,7 +14,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
 
@@ -33,7 +33,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
 
@@ -56,7 +56,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
 
@@ -84,7 +84,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
 
@@ -114,7 +114,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
 
@@ -149,7 +149,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
 
@@ -180,7 +180,7 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nx=y%123/456;\ny=456;\n}\n");
@@ -203,7 +203,7 @@ TEST_CASE("Parser can parse read correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nread x;\n}\n");
@@ -226,7 +226,7 @@ TEST_CASE("Parser can parse print correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
 
@@ -261,7 +261,7 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nif (x>0) then {\n} else {\n}\n}\n");
@@ -293,7 +293,7 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nif (x>0+0) then {\n} else {\n}\n}\n");
@@ -325,7 +325,7 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nif (!(x>0)) then {\n} else {\n}\n}\n");
@@ -358,7 +358,7 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nif ((x>0)&&(x>0)) then {\n} else {\n}\n}\n");
@@ -395,7 +395,7 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nif (((x>0)&&(x>0))||(x>0)) then {\n} else {\n}\n}\n");
@@ -431,7 +431,7 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nif (x>0) then {\nread x;\n} else {\n}\n}\n");
@@ -465,7 +465,7 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nif (x>0) then {\n} else {\nread x;\n}\n}\n");
@@ -499,7 +499,7 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nif (x>0) then {\nread x;\n} else {\nread x;\n}\n}\n");
@@ -533,7 +533,7 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) ==
@@ -572,7 +572,7 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nif (x>0) then {\nif (x>0) then {\nread x;\n} "
@@ -606,7 +606,7 @@ TEST_CASE("Parser can parse while... correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nwhile (x>0) {\nread x;\n}\n}\n");
@@ -637,7 +637,7 @@ TEST_CASE("Parser can parse while... correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) == "procedure main {\nwhile (x>0) {\nread x;\nread x;\nread x;\n}\n}\n");
@@ -660,7 +660,7 @@ TEST_CASE("Parser can parse call correctly", "[Parser]") {
         SimpleTokenScanner scanner(std::move(lexPtr));
 
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
-        std::shared_ptr<ASTNode> root = parser->Parse();
+        std::shared_ptr<ASTNode> root = parser->parse();
 
         ASTPrinter printer;
 

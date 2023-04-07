@@ -10,7 +10,7 @@ using std::shared_ptr;
 
 Parser::Parser(SimpleTokenScanner &scanner) : scanner_(scanner) {}
 
-shared_ptr<ASTNode> Parser::Parse() {
+shared_ptr<ASTNode> Parser::parse() {
     shared_ptr<ASTNode> root = std::make_shared<ASTNode>(ASTNode::SyntaxType::Program, std::nullopt);
 
     while (scanner_.match(Token::Tag::Procedure)) {
@@ -31,7 +31,6 @@ shared_ptr<ASTNode> Parser::parseProc() {
 shared_ptr<ASTNode> Parser::parseStmtLst() {
     shared_ptr<ASTNode> cur = std::make_shared<ASTNode>(ASTNode::SyntaxType::StmtLst, std::nullopt);
 
-    // Assuming no recursion procedure
     scanner_.match(Token::Tag::LBrace);
     while (scanner_.match(Token::Tag::RBrace) != 1) {
         cur->addChild(parseStmt());
@@ -131,41 +130,30 @@ shared_ptr<ASTNode> Parser::parseCondExpr() {
         scanner_.match(Token::Tag::LParen);
         shared_ptr<ASTNode> expr1 = parseCondExpr();
         scanner_.match(Token::Tag::RParen);
-
-        if (scanner_.peek(Token::Tag::LogicalAnd)) {
-            scanner_.next();
-            shared_ptr<ASTNode> op = std::make_shared<ASTNode>(ASTNode::SyntaxType::LogicalAnd, "&&");
-
-            scanner_.match(Token::Tag::LParen);
-            shared_ptr<ASTNode> expr2 = parseCondExpr();
-            scanner_.match(Token::Tag::RParen);
-
-            op->addChild(std::move(expr1));
-            op->addChild(std::move(expr2));
-            return std::move(op);
+        shared_ptr<ASTNode> op;
+        if (scanner_.match(Token::Tag::LogicalAnd)) {
+            op = std::make_shared<ASTNode>(ASTNode::SyntaxType::LogicalAnd, "&&");
         } else {  // LogicalOr, checked by SourceValidator
             scanner_.next();
-            shared_ptr<ASTNode> op = std::make_shared<ASTNode>(ASTNode::SyntaxType::LogicalOr, "||");
-
-            scanner_.match(Token::Tag::LParen);
-            shared_ptr<ASTNode> expr2 = parseCondExpr();
-            scanner_.match(Token::Tag::RParen);
-
-            op->addChild(std::move(expr1));
-            op->addChild(std::move(expr2));
-
-            return std::move(op);
+            op = std::make_shared<ASTNode>(ASTNode::SyntaxType::LogicalOr, "||");
         }
+
+        scanner_.match(Token::Tag::LParen);
+        shared_ptr<ASTNode> expr2 = parseCondExpr();
+        scanner_.match(Token::Tag::RParen);
+
+        op->addChild(std::move(expr1));
+        op->addChild(std::move(expr2));
+        return std::move(op);
     } else {
         if (scanner_.match(Token::Tag::LogicalNot)) {
             shared_ptr<ASTNode> op = std::make_shared<ASTNode>(ASTNode::SyntaxType::LogicalNot, "!");
 
             scanner_.match(Token::Tag::LParen);
-            shared_ptr<ASTNode> expr1 = parseCondExpr();
+            shared_ptr<ASTNode> expr = parseCondExpr();
             scanner_.match(Token::Tag::RParen);
 
-            op->addChild(std::move(expr1));
-
+            op->addChild(std::move(expr));
             return std::move(op);
         } else {
             return std::move(parseRelExpr());
@@ -175,61 +163,27 @@ shared_ptr<ASTNode> Parser::parseCondExpr() {
 
 shared_ptr<ASTNode> Parser::parseRelExpr() {
     shared_ptr<ASTNode> factor1 = parseRelFactor();
-    if (scanner_.peek(Token::Tag::GreaterThan)) {
+    shared_ptr<ASTNode> op;
+    if (scanner_.match(Token::Tag::GreaterThan)) {
+        op = std::make_shared<ASTNode>(ASTNode::SyntaxType::GreaterThan, ">");
+    } else if (scanner_.match(Token::Tag::GreaterThanEqualTo)) {
+        op = std::make_shared<ASTNode>(ASTNode::SyntaxType::GreaterThanEqualTo, ">=");
+    } else if (scanner_.match(Token::Tag::LessThan)) {
+        op = std::make_shared<ASTNode>(ASTNode::SyntaxType::LessThan, "<");
+    } else if (scanner_.match(Token::Tag::LessThanEqualTo)) {
+        op = std::make_shared<ASTNode>(ASTNode::SyntaxType::LessThanEqualTo, "<=");
+    } else if (scanner_.match(Token::Tag::Equivalence)) {
+        op = std::make_shared<ASTNode>(ASTNode::SyntaxType::Equivalence, "==");
+    } else {  // NotEqual, checked by SourceValidator
         scanner_.next();
-        shared_ptr<ASTNode> op = std::make_shared<ASTNode>(ASTNode::SyntaxType::GreaterThan, ">");
-        shared_ptr<ASTNode> factor2 = parseRelFactor();
-
-        op->addChild(std::move(factor1));
-        op->addChild(std::move(factor2));
-
-        return std::move(op);
-    } else if (scanner_.peek(Token::Tag::GreaterThanEqualTo)) {
-        scanner_.next();
-        shared_ptr<ASTNode> op = std::make_shared<ASTNode>(ASTNode::SyntaxType::GreaterThanEqualTo, ">=");
-        shared_ptr<ASTNode> factor2 = parseRelFactor();
-
-        op->addChild(std::move(factor1));
-        op->addChild(std::move(factor2));
-
-        return std::move(op);
-    } else if (scanner_.peek(Token::Tag::LessThan)) {
-        scanner_.next();
-        shared_ptr<ASTNode> op = std::make_shared<ASTNode>(ASTNode::SyntaxType::LessThan, "<");
-        shared_ptr<ASTNode> factor2 = parseRelFactor();
-
-        op->addChild(std::move(factor1));
-        op->addChild(std::move(factor2));
-
-        return std::move(op);
-    } else if (scanner_.peek(Token::Tag::LessThanEqualTo)) {
-        scanner_.next();
-        shared_ptr<ASTNode> op = std::make_shared<ASTNode>(ASTNode::SyntaxType::LessThanEqualTo, "<=");
-        shared_ptr<ASTNode> factor2 = parseRelFactor();
-
-        op->addChild(std::move(factor1));
-        op->addChild(std::move(factor2));
-
-        return std::move(op);
-    } else if (scanner_.peek(Token::Tag::Equivalence)) {
-        scanner_.next();
-        shared_ptr<ASTNode> op = std::make_shared<ASTNode>(ASTNode::SyntaxType::Equivalence, "==");
-        shared_ptr<ASTNode> factor2 = parseRelFactor();
-
-        op->addChild(std::move(factor1));
-        op->addChild(std::move(factor2));
-
-        return std::move(op);
-    } else {
-        scanner_.next();
-        shared_ptr<ASTNode> op = std::make_shared<ASTNode>(ASTNode::SyntaxType::NotEqual, "!=");
-        shared_ptr<ASTNode> factor2 = parseRelFactor();
-
-        op->addChild(std::move(factor1));
-        op->addChild(std::move(factor2));
-
-        return std::move(op);
+        op = std::make_shared<ASTNode>(ASTNode::SyntaxType::NotEqual, "!=");
     }
+    shared_ptr<ASTNode> factor2 = parseRelFactor();
+
+    op->addChild(std::move(factor1));
+    op->addChild(std::move(factor2));
+
+    return std::move(op);
 }
 
 shared_ptr<ASTNode> Parser::parseRelFactor() {

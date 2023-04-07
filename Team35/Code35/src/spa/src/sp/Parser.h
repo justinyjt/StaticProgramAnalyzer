@@ -15,7 +15,7 @@ class Parser : public IParser {
  public:
     explicit Parser(SimpleTokenScanner &scanner);
 
-    shared_ptr<ASTNode> Parse() override;
+    shared_ptr<ASTNode> parse() override;
 
  private:
     SimpleTokenScanner &scanner_;
