@@ -1,5 +1,6 @@
 #include "TokenScanner.h"
 
+#include <cctype>
 #include <string>
 #include <utility>
 

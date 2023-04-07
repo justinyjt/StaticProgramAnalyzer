@@ -1,6 +1,3 @@
-#ifndef TEAM35_CODE35_SRC_SPA_SRC_COMMONS_TYPES_H_
-#define TEAM35_CODE35_SRC_SPA_SRC_COMMONS_TYPES_H_
-
 #include <memory>
 #include <queue>
 #include <string>
@@ -58,5 +55,3 @@ enum class StmtStmtRelationship {
 enum class Entity {
     Variable, Constant, Procedure
 };
-
-#endif  // TEAM35_CODE35_SRC_SPA_SRC_COMMONS_TYPES_H_

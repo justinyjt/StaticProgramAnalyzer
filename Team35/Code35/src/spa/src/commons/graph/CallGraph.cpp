@@ -1,4 +1,4 @@
-#include "commons/graph/CallGraph.h"
+#include "CallGraph.h"
 
 CallGraph::CallGraph() : Graph<ENT_NAME>() {}
 

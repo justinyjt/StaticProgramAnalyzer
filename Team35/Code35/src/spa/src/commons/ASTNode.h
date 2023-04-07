@@ -1,9 +1,9 @@
 #pragma once
 
+#include <memory>
+#include <optional>
 #include <string>
 #include <vector>
-#include <optional>
-#include <memory>
 
 class ASTNode {
  public:
