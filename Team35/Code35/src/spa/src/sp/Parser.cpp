@@ -143,7 +143,7 @@ shared_ptr<ASTNode> Parser::parseCondExpr() {
             op->addChild(std::move(expr1));
             op->addChild(std::move(expr2));
             return std::move(op);
-        } else {  // LogicalOr, checked by SyntaxValidator
+        } else {  // LogicalOr, checked by SourceValidator
             scanner_.next();
             shared_ptr<ASTNode> op = std::make_shared<ASTNode>(ASTNode::SyntaxType::LogicalOr, "||");
 

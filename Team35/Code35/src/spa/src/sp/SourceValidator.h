@@ -8,9 +8,9 @@
 #include "commons/token_scanner/SimpleTokenScanner.h"
 #include "commons/expr_validator/ExprValidator.h"
 
-class SyntaxValidator {
+class SourceValidator {
  public:
-    explicit SyntaxValidator(std::unique_ptr<ILexer> lex);
+    explicit SourceValidator(std::unique_ptr<ILexer> lex);
     bool validateProgram();
     std::deque<std::unique_ptr<Token>> getTokenLst();
 

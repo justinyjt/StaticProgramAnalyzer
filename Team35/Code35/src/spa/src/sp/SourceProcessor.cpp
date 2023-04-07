@@ -5,7 +5,7 @@
 
 #include "commons/lexer/exception/LexerException.h"
 #include "Parser.h"
-#include "SyntaxValidator.h"
+#include "SourceValidator.h"
 
 SourceProcessor::SourceProcessor(std::unique_ptr<PKBWriter> pkb) : pkb_(std::move(pkb)) {}
 
@@ -13,7 +13,7 @@ bool SourceProcessor::process(std::string source) {
     try {
         std::unique_ptr<ILexer> lex =
                 std::move(LexerFactory::createLexer(std::move(source), LexerFactory::LexerType::Simple));
-        std::unique_ptr<SyntaxValidator> sv = std::make_unique<SyntaxValidator>(std::move(lex));
+        std::unique_ptr<SourceValidator> sv = std::make_unique<SourceValidator>(std::move(lex));
         if (!sv->validateProgram()) {
             return false;
         }

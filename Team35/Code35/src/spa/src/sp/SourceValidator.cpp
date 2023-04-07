@@ -1,16 +1,16 @@
-#include "SyntaxValidator.h"
+#include "SourceValidator.h"
 
 #include <utility>
 
 #include "commons/expr_validator/ExprValidator.h"
 
-SyntaxValidator::SyntaxValidator(std::unique_ptr<ILexer> lex) : scanner_(std::move(lex)), expr_validator_(scanner_) {}
+SourceValidator::SourceValidator(std::unique_ptr<ILexer> lex) : scanner_(std::move(lex)), expr_validator_(scanner_) {}
 
-void SyntaxValidator::reset() {
+void SourceValidator::reset() {
     scanner_.reset();
 }
 
-bool SyntaxValidator::validateProgram() {
+bool SourceValidator::validateProgram() {
     reset();
     while (scanner_.peek(Token::Tag::Procedure)) {
         if (!validateProc()) {
@@ -20,7 +20,7 @@ bool SyntaxValidator::validateProgram() {
     return scanner_.match(Token::Tag::EndOfFile);
 }
 
-bool SyntaxValidator::validateProc() {
+bool SourceValidator::validateProc() {
     scanner_.next();
     if (!scanner_.isName()) {
         return false;
@@ -29,7 +29,7 @@ bool SyntaxValidator::validateProc() {
     return validateStmtLst();
 }
 
-bool SyntaxValidator::validateStmtLst() {
+bool SourceValidator::validateStmtLst() {
     if (!scanner_.match(Token::Tag::LBrace)) {
         return false;
     }
@@ -48,7 +48,7 @@ bool SyntaxValidator::validateStmtLst() {
     return scanner_.match(Token::Tag::RBrace);
 }
 
-bool SyntaxValidator::validateStmt() {
+bool SourceValidator::validateStmt() {
     if (scanner_.isAssign()) {
         return validateAssign();
     } else if (scanner_.peek(Token::Tag::Read)) {
@@ -66,7 +66,7 @@ bool SyntaxValidator::validateStmt() {
     }
 }
 
-bool SyntaxValidator::validateAssign() {
+bool SourceValidator::validateAssign() {
     scanner_.next();
 
     if (!scanner_.match(Token::Tag::Assignment) || !expr_validator_.validateExpr()) {
@@ -76,7 +76,7 @@ bool SyntaxValidator::validateAssign() {
     return scanner_.match(Token::Tag::SemiColon);
 }
 
-bool SyntaxValidator::validateRead() {
+bool SourceValidator::validateRead() {
     scanner_.next();
 
     if (!validateName()) {
@@ -86,7 +86,7 @@ bool SyntaxValidator::validateRead() {
     return scanner_.match(Token::Tag::SemiColon);
 }
 
-bool SyntaxValidator::validatePrint() {
+bool SourceValidator::validatePrint() {
     scanner_.next();
 
     if (!validateName()) {
@@ -96,7 +96,7 @@ bool SyntaxValidator::validatePrint() {
     return scanner_.match(Token::Tag::SemiColon);
 }
 
-bool SyntaxValidator::validateIf() {
+bool SourceValidator::validateIf() {
     scanner_.next();
 
     if (!scanner_.match(Token::Tag::LParen)) {
@@ -126,7 +126,7 @@ bool SyntaxValidator::validateIf() {
     return validateStmtLst();
 }
 
-bool SyntaxValidator::validateWhile() {
+bool SourceValidator::validateWhile() {
     scanner_.next();
 
     if (!scanner_.match(Token::Tag::LParen)) {
@@ -144,7 +144,7 @@ bool SyntaxValidator::validateWhile() {
     return validateStmtLst();
 }
 
-bool SyntaxValidator::validateCall() {
+bool SourceValidator::validateCall() {
     scanner_.next();
 
     if (!validateName()) {
@@ -154,7 +154,7 @@ bool SyntaxValidator::validateCall() {
     return scanner_.match(Token::Tag::SemiColon);
 }
 
-bool SyntaxValidator::validateName() {
+bool SourceValidator::validateName() {
     if (scanner_.isName()) {
         scanner_.next();
         return true;
@@ -162,11 +162,11 @@ bool SyntaxValidator::validateName() {
     return false;
 }
 
-std::deque<std::unique_ptr<Token>> SyntaxValidator::getTokenLst() {
+std::deque<std::unique_ptr<Token>> SourceValidator::getTokenLst() {
     return scanner_.getTokenLst();
 }
 
-bool SyntaxValidator::validateCondExpr() {
+bool SourceValidator::validateCondExpr() {
     if (scanner_.peek(Token::Tag::LogicalNot)) {
         scanner_.next();
         if (!scanner_.match(Token::Tag::LParen)) {
@@ -212,7 +212,7 @@ bool SyntaxValidator::validateCondExpr() {
     }
 }
 
-bool SyntaxValidator::validateRelExpr() {
+bool SourceValidator::validateRelExpr() {
     if (!expr_validator_.validateExpr()) {
         return false;
     }
