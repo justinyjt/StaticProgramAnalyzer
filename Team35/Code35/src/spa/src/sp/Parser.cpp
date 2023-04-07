@@ -32,7 +32,7 @@ shared_ptr<ASTNode> Parser::parseStmtLst() {
     shared_ptr<ASTNode> cur = std::make_shared<ASTNode>(ASTNode::SyntaxType::StmtLst, std::nullopt);
 
     scanner_.match(Token::Tag::LBrace);
-    while (scanner_.match(Token::Tag::RBrace) != 1) {
+    while (scanner_.match(Token::Tag::RBrace) == 0) {
         cur->addChild(parseStmt());
     }
     return std::move(cur);
