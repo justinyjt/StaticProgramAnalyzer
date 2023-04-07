@@ -1,31 +1,19 @@
+#include <vector>
+
 #include "catch.hpp"
+#include "../commons/lexer/MockLexer.h"
+#include "commons/token_scanner/SimpleTokenScanner.h"
 #include "sp/Parser.h"
 #include "ASTPrinter.h"
-#include "sp/SourceProcessor.h"
-
-std::unique_ptr<Token> transform(const Token &token) {
-    return std::make_unique<Token>(token);
-}
-
-void convertDequeReverse(const std::deque<Token> &va, std::deque<std::unique_ptr<Token>> &vb) {
-    vb.clear();
-    std::transform(va.begin(), va.end(), std::front_inserter(vb), transform);
-}
-
-void convertDeque(const std::deque<Token> &va, std::deque<std::unique_ptr<Token>> &vb) {
-    vb.clear();
-    std::transform(va.begin(), va.end(), std::back_inserter(vb), transform);
-}
 
 TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
     SECTION("Parser can parse blank program") {
         Token eof(Token::Tag::EndOfFile);
-        std::deque<Token> tokens = {eof};
+        std::vector<Token> tokens = {eof};
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
-
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -39,12 +27,12 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         Token ProcName("main", Token::Tag::Name);
         Token LBrace(Token::Tag::LBrace);
         Token RBrace(Token::Tag::RBrace);
-        std::deque<Token> tokens = {EoF, RBrace, LBrace, ProcName, Proc};
+        std::vector<Token> tokens = {EoF, RBrace, LBrace, ProcName, Proc};
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -62,12 +50,12 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         Token ConstVal("1", Token::Tag::Integer);
         Token Semi(Token::Tag::SemiColon);
         Token RBrace(Token::Tag::RBrace);
-        std::deque<Token> tokens = {EoF, RBrace, Semi, ConstVal, Assignment, VarName, LBrace, ProcName, Proc};
+        std::vector<Token> tokens = {EoF, RBrace, Semi, ConstVal, Assignment, VarName, LBrace, ProcName, Proc};
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -89,13 +77,13 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         Token ConstVal2("22", Token::Tag::Integer);
         Token Semi(Token::Tag::SemiColon);
         Token RBrace(Token::Tag::RBrace);
-        std::deque<Token> tokens = {EoF, RBrace, Semi, ConstVal2, Mul, VarName2, Plus, ConstVal1,
-                                    Assignment, VarName1, LBrace, ProcName, Proc};
+        std::vector<Token> tokens = {EoF, RBrace, Semi, ConstVal2, Mul, VarName2, Plus, ConstVal1,
+                                     Assignment, VarName1, LBrace, ProcName, Proc};
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -119,13 +107,13 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         Token RParen(Token::Tag::RParen);
         Token Semi(Token::Tag::SemiColon);
         Token RBrace(Token::Tag::RBrace);
-        std::deque<Token> tokens = {EoF, RBrace, Semi, ConstVal2, Div, RParen, ConstVal1, Mod, VarName2,
-                                    LParen, Assignment, VarName1, LBrace, ProcName, Proc};
+        std::vector<Token> tokens = {EoF, RBrace, Semi, ConstVal2, Div, RParen, ConstVal1, Mod, VarName2,
+                                     LParen, Assignment, VarName1, LBrace, ProcName, Proc};
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -153,14 +141,14 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         Token Mul("*", Token::Tag::Multiply);
         Token Mod("%", Token::Tag::Modulo);
         Token Div("/", Token::Tag::Divide);
-        std::deque<Token> tokens = {EoF, RBrace, Semi, RParen, RParen, VarName3, Plus, VarName2, LParen,
-                                    Div, RParen, RParen, ConstVal3, Mod, ConstVal2, LParen, Mul, ConstVal1, LParen,
-                                    LParen, Assignment, VarName1, LBrace, ProcName, Proc};
+        std::vector<Token> tokens = {EoF, RBrace, Semi, RParen, RParen, VarName3, Plus, VarName2, LParen,
+                                     Div, RParen, RParen, ConstVal3, Mod, ConstVal2, LParen, Mul, ConstVal1, LParen,
+                                     LParen, Assignment, VarName1, LBrace, ProcName, Proc};
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -184,14 +172,14 @@ TEST_CASE("Parser can parse assignment correctly", "[Parser]") {
         Token RParen(Token::Tag::RParen);
         Token Semi(Token::Tag::SemiColon);
         Token RBrace(Token::Tag::RBrace);
-        std::deque<Token> tokens = {EoF, RBrace, Semi, ConstVal2, Assignment, VarName2,
-                                    Semi, ConstVal2, Div, RParen, ConstVal1, Mod, VarName2,
-                                    LParen, Assignment, VarName1, LBrace, ProcName, Proc};
+        std::vector<Token> tokens = {EoF, RBrace, Semi, ConstVal2, Assignment, VarName2,
+                                     Semi, ConstVal2, Div, RParen, ConstVal1, Mod, VarName2,
+                                     LParen, Assignment, VarName1, LBrace, ProcName, Proc};
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -209,13 +197,12 @@ TEST_CASE("Parser can parse read correctly", "[Parser]") {
         Token Semi(Token::Tag::SemiColon);
         Token ReadStmt(Token::Tag::Read);
         Token VarName("x", Token::Tag::Name);
-        std::deque<Token> tokens = {EoF, RBrace, Semi, VarName, ReadStmt, LBrace, ProcName, Proc};
+        std::vector<Token> tokens = {EoF, RBrace, Semi, VarName, ReadStmt, LBrace, ProcName, Proc};
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
-        tokens.clear();
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -233,12 +220,12 @@ TEST_CASE("Parser can parse print correctly", "[Parser]") {
         Token Semi(Token::Tag::SemiColon);
         Token PrintStmt(Token::Tag::Print);
         Token VarName("x", Token::Tag::Name);
-        std::deque<Token> tokens = {EoF, RBrace, Semi, VarName, PrintStmt, LBrace, ProcName, Proc};
+        std::vector<Token> tokens = {EoF, RBrace, Semi, VarName, PrintStmt, LBrace, ProcName, Proc};
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -262,18 +249,18 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
         Token VarName("x", Token::Tag::Name);
         Token GreaterThan(">", Token::Tag::GreaterThan);
         Token ConstVal("0", Token::Tag::Integer);
-        std::deque<Token> tokens = {
-            EoF, RBrace,
-            RBrace, LBrace, Else,
-            RBrace, LBrace, Then,
-            RParen, ConstVal, GreaterThan, VarName, LParen, If,
-            LBrace, ProcName, Proc
+        std::vector<Token> tokens = {
+                EoF, RBrace,
+                RBrace, LBrace, Else,
+                RBrace, LBrace, Then,
+                RParen, ConstVal, GreaterThan, VarName, LParen, If,
+                LBrace, ProcName, Proc
         };
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -295,17 +282,17 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
         Token Plus("+", Token::Tag::Plus);
         Token GreaterThan(">", Token::Tag::GreaterThan);
         Token ConstVal("0", Token::Tag::Integer);
-        std::deque<Token> tokens = {
-            EoF, RBrace,
-            RBrace, LBrace, Else,
-            RBrace, LBrace, Then,
-            RParen, RParen, ConstVal, Plus, ConstVal, LParen, GreaterThan, VarName, LParen, If,
-            LBrace, ProcName, Proc};
+        std::vector<Token> tokens = {
+                EoF, RBrace,
+                RBrace, LBrace, Else,
+                RBrace, LBrace, Then,
+                RParen, RParen, ConstVal, Plus, ConstVal, LParen, GreaterThan, VarName, LParen, If,
+                LBrace, ProcName, Proc};
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -327,17 +314,17 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
         Token LogicalNot("+", Token::Tag::LogicalNot);
         Token GreaterThan(">", Token::Tag::GreaterThan);
         Token ConstVal("0", Token::Tag::Integer);
-        std::deque<Token> tokens = {
-            EoF, RBrace,
-            RBrace, LBrace, Else,
-            RBrace, LBrace, Then,
-            RParen, RParen, ConstVal, GreaterThan, VarName, LParen, LogicalNot, LParen, If,
-            LBrace, ProcName, Proc};
+        std::vector<Token> tokens = {
+                EoF, RBrace,
+                RBrace, LBrace, Else,
+                RBrace, LBrace, Then,
+                RParen, RParen, ConstVal, GreaterThan, VarName, LParen, LogicalNot, LParen, If,
+                LBrace, ProcName, Proc};
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -359,18 +346,18 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
         Token LogicalAnd("&&", Token::Tag::LogicalAnd);
         Token GreaterThan(">", Token::Tag::GreaterThan);
         Token ConstVal("0", Token::Tag::Integer);
-        std::deque<Token> tokens = {
-            EoF, RBrace,
-            RBrace, LBrace, Else,
-            RBrace, LBrace, Then,
-            RParen, RParen, ConstVal, GreaterThan, VarName, LParen, LogicalAnd, RParen, ConstVal, GreaterThan,
-            VarName, LParen, LParen, If,
-            LBrace, ProcName, Proc};
+        std::vector<Token> tokens = {
+                EoF, RBrace,
+                RBrace, LBrace, Else,
+                RBrace, LBrace, Then,
+                RParen, RParen, ConstVal, GreaterThan, VarName, LParen, LogicalAnd, RParen, ConstVal, GreaterThan,
+                VarName, LParen, LParen, If,
+                LBrace, ProcName, Proc};
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -393,21 +380,21 @@ TEST_CASE("Parser can parse conditional expression correctly", "[Parser]") {
         Token LogicalOr("||", Token::Tag::LogicalOr);
         Token GreaterThan(">", Token::Tag::GreaterThan);
         Token ConstVal("0", Token::Tag::Integer);
-        std::deque<Token> tokens = {
-            EoF, RBrace,
-            RBrace, LBrace, Else,
-            RBrace, LBrace, Then,
-            RParen,
-            RParen, ConstVal, GreaterThan, VarName, LParen, LogicalOr,
-            RParen, RParen, ConstVal, GreaterThan, VarName, LParen, LogicalAnd, RParen, ConstVal, GreaterThan,
-            VarName, LParen, LParen,
-            LParen, If,
-            LBrace, ProcName, Proc};
+        std::vector<Token> tokens = {
+                EoF, RBrace,
+                RBrace, LBrace, Else,
+                RBrace, LBrace, Then,
+                RParen,
+                RParen, ConstVal, GreaterThan, VarName, LParen, LogicalOr,
+                RParen, RParen, ConstVal, GreaterThan, VarName, LParen, LogicalAnd, RParen, ConstVal, GreaterThan,
+                VarName, LParen, LParen,
+                LParen, If,
+                LBrace, ProcName, Proc};
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -433,17 +420,17 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
         Token GreaterThan(">", Token::Tag::GreaterThan);
         Token ConstVal("0", Token::Tag::Integer);
 
-        std::deque<Token> tokens = {
-            EoF, RBrace,
-            RBrace, LBrace, Else,
-            RBrace, Semi, VarName, ReadStmt, LBrace, Then,
-            RParen, ConstVal, GreaterThan, VarName, LParen, If,
-            LBrace, ProcName, Proc};
+        std::vector<Token> tokens = {
+                EoF, RBrace,
+                RBrace, LBrace, Else,
+                RBrace, Semi, VarName, ReadStmt, LBrace, Then,
+                RParen, ConstVal, GreaterThan, VarName, LParen, If,
+                LBrace, ProcName, Proc};
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -467,17 +454,17 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
         Token GreaterThan(">", Token::Tag::GreaterThan);
         Token ConstVal("0", Token::Tag::Integer);
 
-        std::deque<Token> tokens = {
-            EoF, RBrace,
-            RBrace, Semi, VarName, ReadStmt, LBrace, Else,
-            RBrace, LBrace, Then,
-            RParen, ConstVal, GreaterThan, VarName, LParen, If,
-            LBrace, ProcName, Proc};
+        std::vector<Token> tokens = {
+                EoF, RBrace,
+                RBrace, Semi, VarName, ReadStmt, LBrace, Else,
+                RBrace, LBrace, Then,
+                RParen, ConstVal, GreaterThan, VarName, LParen, If,
+                LBrace, ProcName, Proc};
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -501,17 +488,17 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
         Token GreaterThan(">", Token::Tag::GreaterThan);
         Token ConstVal("0", Token::Tag::Integer);
 
-        std::deque<Token> tokens = {
-            EoF, RBrace,
-            RBrace, Semi, VarName, ReadStmt, LBrace, Else,
-            RBrace, Semi, VarName, ReadStmt, LBrace, Then,
-            RParen, ConstVal, GreaterThan, VarName, LParen, If,
-            LBrace, ProcName, Proc};
+        std::vector<Token> tokens = {
+                EoF, RBrace,
+                RBrace, Semi, VarName, ReadStmt, LBrace, Else,
+                RBrace, Semi, VarName, ReadStmt, LBrace, Then,
+                RParen, ConstVal, GreaterThan, VarName, LParen, If,
+                LBrace, ProcName, Proc};
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -535,22 +522,22 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
         Token GreaterThan(">", Token::Tag::GreaterThan);
         Token ConstVal("0", Token::Tag::Integer);
 
-        std::deque<Token> tokens = {
-            EoF, RBrace,
-            RBrace, Semi, VarName, ReadStmt, LBrace, Else,
-            RBrace, Semi, VarName, ReadStmt, Semi, VarName, ReadStmt, Semi, VarName, ReadStmt, LBrace, Then,
-            RParen, ConstVal, GreaterThan, VarName, LParen, If,
-            LBrace, ProcName, Proc};
+        std::vector<Token> tokens = {
+                EoF, RBrace,
+                RBrace, Semi, VarName, ReadStmt, LBrace, Else,
+                RBrace, Semi, VarName, ReadStmt, Semi, VarName, ReadStmt, Semi, VarName, ReadStmt, LBrace, Then,
+                RParen, ConstVal, GreaterThan, VarName, LParen, If,
+                LBrace, ProcName, Proc};
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
         REQUIRE(printer.printAST(root) ==
-            "procedure main {\nif (x>0) then {\nread x;\nread x;\nread x;\n} else {\nread x;\n}\n}\n");
+                "procedure main {\nif (x>0) then {\nread x;\nread x;\nread x;\n} else {\nread x;\n}\n}\n");
     }
 
     SECTION("Parser can parse nested if: if(x>0)then{if(x>0)then{read x;}else{read x;}}else{read x;}") {
@@ -570,21 +557,21 @@ TEST_CASE("Parser can parse if..then...else... correctly", "[Parser]") {
         Token GreaterThan(">", Token::Tag::GreaterThan);
         Token ConstVal("0", Token::Tag::Integer);
 
-        std::deque<Token> tokens = {
-            EoF, RBrace,
-            RBrace, Semi, VarName, ReadStmt, LBrace, Else,
-            RBrace,
-            RBrace, Semi, VarName, ReadStmt, LBrace, Else,
-            RBrace, Semi, VarName, ReadStmt, LBrace, Then,
-            RParen, ConstVal, GreaterThan, VarName, LParen, If,
-            Then,
-            RParen, ConstVal, GreaterThan, VarName, LParen, If,
-            LBrace, ProcName, Proc};
+        std::vector<Token> tokens = {
+                EoF, RBrace,
+                RBrace, Semi, VarName, ReadStmt, LBrace, Else,
+                RBrace,
+                RBrace, Semi, VarName, ReadStmt, LBrace, Else,
+                RBrace, Semi, VarName, ReadStmt, LBrace, Then,
+                RParen, ConstVal, GreaterThan, VarName, LParen, If,
+                Then,
+                RParen, ConstVal, GreaterThan, VarName, LParen, If,
+                LBrace, ProcName, Proc};
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -609,16 +596,16 @@ TEST_CASE("Parser can parse while... correctly", "[Parser]") {
         Token GreaterThan(">", Token::Tag::GreaterThan);
         Token ConstVal("0", Token::Tag::Integer);
 
-        std::deque<Token> tokens = {
-            EoF, RBrace,
-            RBrace, Semi, VarName, ReadStmt, LBrace,
-            RParen, ConstVal, GreaterThan, VarName, LParen, While,
-            LBrace, ProcName, Proc};
+        std::vector<Token> tokens = {
+                EoF, RBrace,
+                RBrace, Semi, VarName, ReadStmt, LBrace,
+                RParen, ConstVal, GreaterThan, VarName, LParen, While,
+                LBrace, ProcName, Proc};
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -640,16 +627,16 @@ TEST_CASE("Parser can parse while... correctly", "[Parser]") {
         Token GreaterThan(">", Token::Tag::GreaterThan);
         Token ConstVal("0", Token::Tag::Integer);
 
-        std::deque<Token> tokens = {
-            EoF, RBrace,
-            RBrace, Semi, VarName, ReadStmt, Semi, VarName, ReadStmt, Semi, VarName, ReadStmt, LBrace,
-            RParen, ConstVal, GreaterThan, VarName, LParen, While,
-            LBrace, ProcName, Proc};
+        std::vector<Token> tokens = {
+                EoF, RBrace,
+                RBrace, Semi, VarName, ReadStmt, Semi, VarName, ReadStmt, Semi, VarName, ReadStmt, LBrace,
+                RParen, ConstVal, GreaterThan, VarName, LParen, While,
+                LBrace, ProcName, Proc};
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;
@@ -667,12 +654,12 @@ TEST_CASE("Parser can parse call correctly", "[Parser]") {
         Token Semi(Token::Tag::SemiColon);
         Token CallStmt(Token::Tag::Call);
         Token VarName("main", Token::Tag::Name);
-        std::deque<Token> tokens = {EoF, RBrace, Semi, VarName, CallStmt, LBrace, ProcName, Proc};
+        std::vector<Token> tokens = {EoF, RBrace, Semi, VarName, CallStmt, LBrace, ProcName, Proc};
 
-        std::deque<std::unique_ptr<Token>> tokenLst;
-        convertDequeReverse(tokens, tokenLst);
+        std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(tokens);
+        SimpleTokenScanner scanner(std::move(lexPtr));
 
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(std::move(tokenLst));
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         std::shared_ptr<ASTNode> root = parser->Parse();
 
         ASTPrinter printer;

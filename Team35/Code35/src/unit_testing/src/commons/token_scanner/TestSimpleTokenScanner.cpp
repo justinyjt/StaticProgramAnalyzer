@@ -10,14 +10,14 @@
 TEST_CASE("1. test isName method") {
     Token eof(Token::Tag::EndOfFile);
     Token x("x", Token::Tag::Name);
-    Token call(Token::Tag::Call);
-    Token read(Token::Tag::Read);
-    Token print(Token::Tag::Print);
-    Token procedure(Token::Tag::Procedure);
-    Token else_(Token::Tag::Else);
-    Token then(Token::Tag::Then);
-    Token if_(Token::Tag::If);
-    Token while_(Token::Tag::While);
+    Token call("call", Token::Tag::Call);
+    Token read("read", Token::Tag::Read);
+    Token print("print", Token::Tag::Print);
+    Token procedure("procedure", Token::Tag::Procedure);
+    Token else_("else", Token::Tag::Else);
+    Token then("then", Token::Tag::Then);
+    Token if_("if", Token::Tag::If);
+    Token while_("while", Token::Tag::While);
     Token constant("1", Token::Tag::Integer);
     Token semiColon(";", Token::Tag::SemiColon);
 
@@ -108,7 +108,7 @@ TEST_CASE("3. test isCondExprSeparatedByLogicalOperator method") {
     SECTION("3.3. isCondExprSeparatedByLogicalOperator method returns true for valid conditional expression, "
             "nested parentheses") {
         std::vector<Token>
-            tokens = {eof, rParen, constant, lParen, logicalAnd, rParen, rParen, constant, lParen, lParen};
+                tokens = {eof, rParen, constant, lParen, logicalAnd, rParen, rParen, constant, lParen, lParen};
         std::unique_ptr<ILexer> lexer = std::make_unique<MockLexer>(tokens);
         SimpleTokenScanner scanner(std::move(lexer));
         requireTrue(scanner.isCondExprSeparatedByLogicalOperator());

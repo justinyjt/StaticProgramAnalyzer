@@ -166,10 +166,6 @@ bool SourceValidator::validateName() {
     return false;
 }
 
-std::deque<std::unique_ptr<Token>> SourceValidator::getTokenLst() {
-    return scanner_.getTokenLst();
-}
-
 bool SourceValidator::validateCondExpr() {
     if (scanner_.peek(Token::Tag::LogicalNot)) {
         scanner_.next();

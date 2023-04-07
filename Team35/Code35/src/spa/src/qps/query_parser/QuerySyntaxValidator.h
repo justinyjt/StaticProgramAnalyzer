@@ -9,12 +9,11 @@
 
 class QuerySyntaxValidator {
  public:
-    explicit QuerySyntaxValidator(std::unique_ptr<ILexer> lex);
+    explicit QuerySyntaxValidator(PQLTokenScanner &scanner);
     bool validateQuery();
-    std::deque<std::unique_ptr<Token>> getTokenLst();
 
  private:
-    PQLTokenScanner scanner_;
+    PQLTokenScanner &scanner_;
 
     bool validateDeclarationLst();
     bool validateDeclaration();

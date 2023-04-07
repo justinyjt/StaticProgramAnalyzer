@@ -1,11 +1,12 @@
+#include "QuerySyntaxValidator.h"
+
 #include <string>
 #include <utility>
 
-#include "QuerySyntaxValidator.h"
 #include "commons/lexer/LexerFactory.h"
 #include "commons/expr_validator/ExprValidator.h"
 
-QuerySyntaxValidator::QuerySyntaxValidator(std::unique_ptr<ILexer> lex) : scanner_(std::move(lex)) {}
+QuerySyntaxValidator::QuerySyntaxValidator(PQLTokenScanner &scanner) : scanner_(scanner) {}
 
 bool QuerySyntaxValidator::validateQuery() {
     // validate declarationLst
@@ -34,7 +35,6 @@ bool QuerySyntaxValidator::validateDeclarationLst() {
     }
     return true;
 }
-
 
 bool QuerySyntaxValidator::validateDeclaration() {
     scanner_.next();
@@ -118,7 +118,7 @@ bool QuerySyntaxValidator::validateRelCond() {
 
 bool QuerySyntaxValidator::validateRelRef() {
     if (scanner_.peek(Token::Tag::Follows) || scanner_.peek(Token::Tag::Parent)
-        || scanner_.peek(Token::Tag::Next) || scanner_.peek(Token::Tag::Affects)) {
+            || scanner_.peek(Token::Tag::Next) || scanner_.peek(Token::Tag::Affects)) {
         scanner_.next();
         if (scanner_.peek(Token::Tag::Star)) {
             scanner_.next();
@@ -506,8 +506,4 @@ bool QuerySyntaxValidator::validateElem() {
     } else {
         return false;
     }
-}
-
-std::deque<std::unique_ptr<Token>> QuerySyntaxValidator::getTokenLst() {
-    return scanner_.getTokenLst();
 }

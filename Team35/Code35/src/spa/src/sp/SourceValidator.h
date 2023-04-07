@@ -14,7 +14,6 @@ class SourceValidator {
  public:
     explicit SourceValidator(SimpleTokenScanner &scanner);
     bool validate();
-    std::deque<std::unique_ptr<Token>> getTokenLst();
 
  private:
     SimpleTokenScanner &scanner_;

@@ -8,7 +8,7 @@
 
 using std::shared_ptr;
 
-Parser::Parser(TokenLst token_lst) : scanner_(std::move(token_lst)) {}
+Parser::Parser(SimpleTokenScanner &scanner) : scanner_(scanner) {}
 
 shared_ptr<ASTNode> Parser::Parse() {
     shared_ptr<ASTNode> root = std::make_shared<ASTNode>(ASTNode::SyntaxType::Program, std::nullopt);

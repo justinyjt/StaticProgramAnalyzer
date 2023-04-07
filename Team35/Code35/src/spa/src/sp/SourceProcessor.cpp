@@ -18,7 +18,8 @@ bool SourceProcessor::process(const std::string &source) {
         if (!sv.validate()) {
             return false;
         }
-        std::unique_ptr<IParser> parser = std::make_unique<Parser>(sv.getTokenLst());
+        scanner.reset();
+        std::unique_ptr<IParser> parser = std::make_unique<Parser>(scanner);
         DesignExtractor designExtractor(std::move(pkb_));
         designExtractor.extractProgram(parser->Parse());
         return true;
