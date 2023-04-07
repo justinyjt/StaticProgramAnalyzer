@@ -12,12 +12,12 @@
 
 class SourceValidator {
  public:
-    explicit SourceValidator(std::unique_ptr<ILexer> lex);
+    explicit SourceValidator(SimpleTokenScanner &scanner);
     bool validate();
     std::deque<std::unique_ptr<Token>> getTokenLst();
 
  private:
-    SimpleTokenScanner scanner_;
+    SimpleTokenScanner &scanner_;
     ExprValidator expr_validator_;
     CallGraph call_graph_;
     ENT_NAME current_proc_;

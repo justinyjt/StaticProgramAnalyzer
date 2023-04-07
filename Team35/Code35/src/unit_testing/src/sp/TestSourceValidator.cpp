@@ -4,6 +4,7 @@
  * */
 #include "catch.hpp"
 #include "commons/token/Token.h"
+#include "commons/token_scanner/SimpleTokenScanner.h"
 #include "../commons/lexer/MockLexer.h"
 #include "../TestHelper.h"
 #include "sp/SourceValidator.h"
@@ -14,7 +15,8 @@ TEST_CASE("SourceValidator can validate very simple program correctly") {
         std::vector<Token> tokens = {eof};
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
 
         requireTrue(sv.validate());
     }
@@ -29,7 +31,8 @@ TEST_CASE("SourceValidator can validate very simple program correctly") {
         std::vector<Token> tokens = {eof, rBrace, lBrace, procName, proc};
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
 
         requireFalse(sv.validate());
     }
@@ -47,7 +50,8 @@ TEST_CASE("SourceValidator can validate very simple program correctly") {
         std::vector<Token> tokens = {eof, rBrace, semi, varName, printStmt, lBrace, procName, proc};
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
 
         requireTrue(sv.validate());
     }
@@ -65,7 +69,8 @@ TEST_CASE("SourceValidator can validate very simple program correctly") {
         std::vector<Token> tokens = {eof, rBrace, semi, varName, readStmt, lBrace, procName, proc};
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
 
         requireTrue(sv.validate());
     }
@@ -83,7 +88,8 @@ TEST_CASE("SourceValidator can validate very simple program correctly") {
         std::vector<Token> tokens = {eof, rBrace, semi, varName, callStmt, lBrace, procName, proc};
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
 
         requireTrue(sv.validate());
     }
@@ -104,7 +110,8 @@ TEST_CASE("SV can validate assign statement correctly") {
         std::vector<Token> tokens = {eof, rBrace, semi, constVal, assignment, varName, lBrace, procName, proc};
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
 
         requireTrue(sv.validate());
     }
@@ -123,7 +130,8 @@ TEST_CASE("SV can validate assign statement correctly") {
         std::vector<Token> tokens = {eof, rBrace, semi, varName2, assignment, varName1, lBrace, procName, proc};
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
 
         requireTrue(sv.validate());
     }
@@ -148,7 +156,8 @@ TEST_CASE("SV can validate assign statement correctly") {
 
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
 
         requireTrue(sv.validate());
     }
@@ -173,7 +182,8 @@ TEST_CASE("SV can validate assign statement correctly") {
 
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
 
         requireTrue(sv.validate());
     }
@@ -210,7 +220,8 @@ TEST_CASE("SV can validate assign statement correctly") {
 
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
 
         requireTrue(sv.validate());
     }
@@ -236,7 +247,8 @@ TEST_CASE("SV can validate multiple stmt program") {
         };
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
 
         requireTrue(sv.validate());
     }
@@ -271,7 +283,8 @@ TEST_CASE("SV can validate if clauses") {
         };
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireTrue(sv.validate());
     }
 
@@ -303,7 +316,8 @@ TEST_CASE("SV can validate if clauses") {
         };
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireFalse(sv.validate());
     }
 
@@ -335,7 +349,8 @@ TEST_CASE("SV can validate if clauses") {
         };
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireFalse(sv.validate());
     }
 
@@ -367,7 +382,8 @@ TEST_CASE("SV can validate if clauses") {
         };
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireFalse(sv.validate());
     }SECTION("SV can invalidate invalid if clause (missing left parenthesis)") {
         Token eof(Token::Tag::EndOfFile);
@@ -397,7 +413,8 @@ TEST_CASE("SV can validate if clauses") {
         };
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireFalse(sv.validate());
     }
 
@@ -429,7 +446,8 @@ TEST_CASE("SV can validate if clauses") {
         };
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireFalse(sv.validate());
     }
 
@@ -459,7 +477,8 @@ TEST_CASE("SV can validate if clauses") {
         };
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireFalse(sv.validate());
     }
 
@@ -495,7 +514,8 @@ TEST_CASE("SV can validate if clauses") {
         };
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireTrue(sv.validate());
     }
 
@@ -535,7 +555,8 @@ TEST_CASE("SV can validate if clauses") {
         };
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireTrue(sv.validate());
     }
 
@@ -579,7 +600,8 @@ TEST_CASE("SV can validate if clauses") {
         };
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireTrue(sv.validate());
     }
 }
@@ -607,7 +629,8 @@ TEST_CASE("SV can validate while clauses") {
         };
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireTrue(sv.validate());
     }
 
@@ -633,7 +656,8 @@ TEST_CASE("SV can validate while clauses") {
         };
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireFalse(sv.validate());
     }
 
@@ -659,7 +683,8 @@ TEST_CASE("SV can validate while clauses") {
         };
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireFalse(sv.validate());
     }
 
@@ -685,7 +710,8 @@ TEST_CASE("SV can validate while clauses") {
         };
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireFalse(sv.validate());
     }
 
@@ -711,7 +737,8 @@ TEST_CASE("SV can validate while clauses") {
         };
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireFalse(sv.validate());
     }
 
@@ -737,7 +764,8 @@ TEST_CASE("SV can validate while clauses") {
         };
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireFalse(sv.validate());
     }
 
@@ -765,7 +793,8 @@ TEST_CASE("SV can validate while clauses") {
         };
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireTrue(sv.validate());
     }
 
@@ -793,7 +822,8 @@ TEST_CASE("SV can validate while clauses") {
         };
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireTrue(sv.validate());
     }
 
@@ -824,7 +854,8 @@ TEST_CASE("SV can validate while clauses") {
         };
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireTrue(sv.validate());
     }
 }
@@ -863,7 +894,8 @@ TEST_CASE("SV can handle conditional expressions well", "[sv]") {
                 LBrace, ProcName, Proc};
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireTrue(sv.validate());
     }
 
@@ -897,7 +929,8 @@ TEST_CASE("SV can handle conditional expressions well", "[sv]") {
                 LBrace, ProcName, Proc};
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireTrue(sv.validate());
     }
 
@@ -930,7 +963,8 @@ TEST_CASE("SV can handle conditional expressions well", "[sv]") {
                 LBrace, ProcName, Proc};
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireFalse(sv.validate());
     }
 
@@ -963,7 +997,8 @@ TEST_CASE("SV can handle conditional expressions well", "[sv]") {
                 LBrace, ProcName, Proc};
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireFalse(sv.validate());
     }
 
@@ -996,7 +1031,8 @@ TEST_CASE("SV can handle conditional expressions well", "[sv]") {
                 LBrace, ProcName, Proc};
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireFalse(sv.validate());
     }
 
@@ -1030,7 +1066,8 @@ TEST_CASE("SV can handle conditional expressions well", "[sv]") {
                 LBrace, ProcName, Proc};
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireFalse(sv.validate());
     }
 
@@ -1065,7 +1102,8 @@ TEST_CASE("SV can handle conditional expressions well", "[sv]") {
                 LBrace, ProcName, Proc};
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireFalse(sv.validate());
     }
 
@@ -1100,7 +1138,8 @@ TEST_CASE("SV can handle conditional expressions well", "[sv]") {
                 LBrace, ProcName, Proc};
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireFalse(sv.validate());
     }
 }
@@ -1117,7 +1156,8 @@ TEST_CASE("SV can invalidate empty stmt list") {
                 LBrace, ProcName, Proc};
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireFalse(sv.validate());
     }
 
@@ -1144,7 +1184,8 @@ TEST_CASE("SV can invalidate empty stmt list") {
                 LBrace, ProcName, Proc};
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireFalse(sv.validate());
     }
 
@@ -1168,7 +1209,8 @@ TEST_CASE("SV can invalidate empty stmt list") {
                 LBrace, ProcName, Proc};
         MockLexer lex(tokens);
         std::unique_ptr<ILexer> lexPtr = std::make_unique<MockLexer>(lex);
-        SourceValidator sv(std::move(lexPtr));
+        SimpleTokenScanner scanner(std::move(lexPtr));
+        SourceValidator sv(scanner);
         requireFalse(sv.validate());
     }
 }

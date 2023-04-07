@@ -1,11 +1,9 @@
 #include "SourceValidator.h"
 
-#include <utility>
-
 #include "commons/expr_validator/ExprValidator.h"
 
-SourceValidator::SourceValidator(std::unique_ptr<ILexer> lex)
-        : scanner_(std::move(lex)), expr_validator_(scanner_), call_graph_(), current_proc_() {}
+SourceValidator::SourceValidator(SimpleTokenScanner &scanner)
+        : scanner_(scanner), expr_validator_(scanner_), call_graph_(), current_proc_() {}
 
 void SourceValidator::reset() {
     scanner_.reset();
