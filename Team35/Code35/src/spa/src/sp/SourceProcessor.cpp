@@ -14,7 +14,7 @@ bool SourceProcessor::process(const std::string &source) {
         std::unique_ptr<ILexer> lex =
                 std::move(LexerFactory::createLexer(source, LexerFactory::LexerType::Simple));
         std::unique_ptr<SourceValidator> sv = std::make_unique<SourceValidator>(std::move(lex));
-        if (!sv->validateProgram()) {
+        if (!sv->validate()) {
             return false;
         }
         std::unique_ptr<IParser> parser = std::make_unique<Parser>(sv->getTokenLst());

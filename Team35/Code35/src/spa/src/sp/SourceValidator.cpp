@@ -4,28 +4,34 @@
 
 #include "commons/expr_validator/ExprValidator.h"
 
-SourceValidator::SourceValidator(std::unique_ptr<ILexer> lex) : scanner_(std::move(lex)), expr_validator_(scanner_) {}
+SourceValidator::SourceValidator(std::unique_ptr<ILexer> lex)
+        : scanner_(std::move(lex)), expr_validator_(scanner_), call_graph_(), current_proc_() {}
 
 void SourceValidator::reset() {
     scanner_.reset();
+    call_graph_.reset();
 }
 
-bool SourceValidator::validateProgram() {
+bool SourceValidator::validate() {
     reset();
     while (scanner_.peek(Token::Tag::Procedure)) {
         if (!validateProc()) {
             return false;
         }
     }
+    if (call_graph_.isCyclic()) {
+        return false;
+    }
     return scanner_.match(Token::Tag::EndOfFile);
 }
 
 bool SourceValidator::validateProc() {
     scanner_.next();
-    if (!scanner_.isName()) {
+    ENT_NAME proc_name = scanner_.peekLexeme();
+    if (!validateName()) {
         return false;
     }
-    scanner_.next();
+    current_proc_ = proc_name;
     return validateStmtLst();
 }
 
@@ -146,11 +152,11 @@ bool SourceValidator::validateWhile() {
 
 bool SourceValidator::validateCall() {
     scanner_.next();
-
+    ENT_NAME proc_name = scanner_.peekLexeme();
     if (!validateName()) {
         return false;
     }
-
+    call_graph_.addCallRelationship(current_proc_, proc_name);
     return scanner_.match(Token::Tag::SemiColon);
 }
 

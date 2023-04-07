@@ -7,16 +7,20 @@
 #include "commons/token/Token.h"
 #include "commons/token_scanner/SimpleTokenScanner.h"
 #include "commons/expr_validator/ExprValidator.h"
+#include "commons/graph/CallGraph.h"
+#include "commons/types.h"
 
 class SourceValidator {
  public:
     explicit SourceValidator(std::unique_ptr<ILexer> lex);
-    bool validateProgram();
+    bool validate();
     std::deque<std::unique_ptr<Token>> getTokenLst();
 
  private:
     SimpleTokenScanner scanner_;
     ExprValidator expr_validator_;
+    CallGraph call_graph_;
+    ENT_NAME current_proc_;
 
     void reset();
 
