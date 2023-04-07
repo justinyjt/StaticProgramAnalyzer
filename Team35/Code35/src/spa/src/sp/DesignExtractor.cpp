@@ -12,16 +12,13 @@ DesignExtractor::DesignExtractor(std::unique_ptr<PKBWriter> pkbWriter) :
         pkbWriter_(std::move(pkbWriter)), varNameSet_(), constSet_(), procSet_(),
         stmtSet_(), readSet_(), printSet_(), assignSet_(), ifSet_(), whileSet_(),
         stmtUsePairSet_(), stmtModPairSet_(), assignPatMap_(), ifCondUsePairSet_(), whileCondUsePairSet_(),
-        containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_(), CFGBuilder_(), isIfCond(),
+        containerStmtLst_(), stmtCnt_(0), curProc_(), callGraph_(), CFGBuilder_(), isIfCond_(),
         procDirectUseVarMap_(), procDirectModVarMap_(), containerCallPairSet_(), callProcNameToStmtMap_() {}
 
-std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode> root) {
+void DesignExtractor::extractProgram(std::shared_ptr<ASTNode> root) {
     root_ = std::move(root);
     for (const auto &child : root_->getChildren()) {
         extractProc(child);
-    }
-    if (callGraph_.isCyclic()) {
-        return std::move(root_);
     }
     analyzeProcedure();
     updateStmtUsesPairSetWithCalls();
@@ -48,8 +45,6 @@ std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode
     addContainerCallPairSetToPKB();
     addProcUsesPairSetToPKB();
     addProcModifiesPairSetToPKB();
-
-    return std::move(root_);
 }
 
 void DesignExtractor::extractProc(const std::shared_ptr<ASTNode> &node) {
@@ -195,7 +190,7 @@ void DesignExtractor::extractCondExpr(const std::shared_ptr<ASTNode> &node) {
         case ASTNode::SyntaxType::Variable:
             varNameSet_.emplace(label);
             updateStmtUsesPairSet(stmtCnt_, label);
-            if (isIfCond) {
+            if (isIfCond_) {
                 ifCondUsePairSet_.emplace(stmtCnt_, label);
             } else {
                 whileCondUsePairSet_.emplace(stmtCnt_, label);
@@ -222,9 +217,9 @@ void DesignExtractor::extractIf(const std::shared_ptr<ASTNode> &node) {
     ifSet_.insert(stmtCnt_);
 
     const auto &cond = node->getChildren().at(0);
-    isIfCond = true;
+    isIfCond_ = true;
     extractCondExpr(cond);
-    isIfCond = !isIfCond;
+    isIfCond_ = !isIfCond_;
 
     const auto &thenStmtLst = node->getChildren().at(1);
     extractStmtLst(thenStmtLst);

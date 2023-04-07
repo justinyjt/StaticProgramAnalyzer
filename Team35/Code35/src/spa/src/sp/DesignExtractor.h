@@ -14,7 +14,7 @@ class DesignExtractor {
  public:
     explicit DesignExtractor(std::unique_ptr<PKBWriter>);
 
-    std::shared_ptr<ASTNode> extractProgram(std::shared_ptr<ASTNode>);
+    void extractProgram(std::shared_ptr<ASTNode>);
 
     std::unordered_map<STMT_NUM, ASSIGN_PAT> getAssignPatMap();
 
@@ -64,7 +64,7 @@ class DesignExtractor {
     CFG::CFGraphBuilder CFGBuilder_;
     std::vector<CFG::CFGraph> CFGLst_;
 
-    bool isIfCond;
+    bool isIfCond_;
 
     void addVarNameSetToPKB();
 
