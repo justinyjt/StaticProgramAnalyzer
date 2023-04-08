@@ -17,9 +17,12 @@ typedef std::pair<STMT_NUM, STMT_NUM> STMT_STMT;
 
 typedef std::unordered_set<STMT_NUM> STMT_SET;
 typedef std::unordered_set<ENT_NAME> ENT_SET;
-typedef std::unordered_set<STMT_ENT, hash_pair> STMT_ENT_SET;
-typedef std::unordered_set<ENT_ENT, hash_pair> ENT_ENT_SET;
-typedef std::unordered_set<STMT_STMT, hash_pair> STMT_STMT_SET;
+
+template<typename S, typename T>
+using PairSet = std::unordered_set<std::pair<S, T>, PairHash>;
+typedef PairSet<STMT_NUM, ENT_NAME> STMT_ENT_SET;
+typedef PairSet<ENT_NAME, ENT_NAME> ENT_ENT_SET;
+typedef PairSet<STMT_NUM, STMT_NUM> STMT_STMT_SET;
 typedef std::queue<STMT_NUM> STMT_QUEUE;
 
 typedef std::shared_ptr<ExprNode> ASSIGN_PAT_RIGHT;
@@ -56,4 +59,12 @@ enum class StmtStmtRelationship {
 
 enum class Entity {
     Variable, Constant, Procedure
+};
+
+enum class ArgType {
+    Key, Value
+};
+
+enum class UsageType {
+    Transitive, Direct
 };

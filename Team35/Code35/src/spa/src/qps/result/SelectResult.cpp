@@ -1,6 +1,6 @@
 #include "SelectResult.h"
 
-#include <iterator>
+#include <cstdint>
 #include <memory>
 #include <utility>
 
@@ -8,16 +8,17 @@
 
 // general constructor for n-cols
 SelectResult::SelectResult(std::vector<std::string> &_idents, const std::vector<TableResult> &_cols) :
-    Result(Tag::SELECT) {
+        Result(Tag::SELECT) {
     idents.insert(idents.end(), _idents.begin(), _idents.end());
     cols.insert(cols.end(), _cols.begin(), _cols.end());
 }
 
-std::vector<int> SelectResult::getOutputOrder(const TableResult &intermediateRes) const {
-    std::vector<int> order;
+std::vector<uint32_t> SelectResult::getOutputOrder(const TableResult &intermediateRes) const {
+    std::vector<uint32_t> order;
+    auto &intermediateResIdents = intermediateRes.getTableHeaders();
     for (const auto &ident : idents) {
-        for (int j = 0; j < intermediateRes.idents.size(); j++) {
-            if (ident == intermediateRes.idents[j]) {
+        for (int j = 0; j < intermediateResIdents.size(); ++j) {
+            if (ident == intermediateResIdents.at(j)) {
                 order.push_back(j);
             }
         }
@@ -28,8 +29,8 @@ std::vector<int> SelectResult::getOutputOrder(const TableResult &intermediateRes
 std::unique_ptr<TableResult> SelectResult::getResultForOutput(std::unique_ptr<Result> finalRes) {
     std::unordered_set<std::string> selectIdents(idents.begin(), idents.end());
     std::unique_ptr<TableResult> finalTableRes = (dynamic_cast<TableResult &>(*finalRes)).projectColumns(selectIdents);
-    std::vector<int> order = getOutputOrder(*finalTableRes);
-    return std::make_unique<TableResult>(finalTableRes->idents, finalTableRes->rows, order);
+    std::vector<uint32_t> order = getOutputOrder(*finalTableRes);
+    return std::make_unique<TableResult>(*finalTableRes, order);
 }
 
 std::unique_ptr<Result> SelectResult::getColsCrossProduct() {
@@ -53,8 +54,9 @@ std::unique_ptr<Result> SelectResult::join(Result &rhs) {
     }
 
     auto &t2 = dynamic_cast<TableResult &>(rhs);
-    std::unordered_set<std::string> intermediateIdentsSet(t2.idents.begin(), t2.idents.end());
-    std::unique_ptr<Result> finalRes = std::make_unique<TableResult>(TableResult(t2));
+    auto &intermediateResIdents = t2.getTableHeaders();
+    std::unordered_set<std::string> intermediateIdentsSet(intermediateResIdents.begin(), intermediateResIdents.end());
+    std::unique_ptr<Result> finalRes = std::make_unique<TableResult>(t2);
     for (int i = 0; i < idents.size(); i++) {
         if (intermediateIdentsSet.find(idents[i]) == intermediateIdentsSet.end()) {  // if non-overlapping
             finalRes = finalRes->join(cols[i]);
@@ -64,7 +66,7 @@ std::unique_ptr<Result> SelectResult::join(Result &rhs) {
     return getResultForOutput(std::move(finalRes));
 }
 
-void SelectResult::output(std::list<std::string> &list) {}
+void SelectResult::output(std::list<std::string> &list) const {}
 
 bool SelectResult::operator==(const Result &rhs) const {
     const auto *pRhs = dynamic_cast<const SelectResult *>(&rhs);

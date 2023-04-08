@@ -16,7 +16,7 @@ MultipleSynonymSelectClause::MultipleSynonymSelectClause(std::vector<std::unique
     }
 }
 
-STMT_SET MultipleSynonymSelectClause::getStmtSet(PKBReader *db, Synonym synonym) {
+STMT_SET MultipleSynonymSelectClause::getStmtSet(PKBReader *db, const Synonym &synonym) {
     switch (synonym.de) {
         case Synonym::DesignEntity::STMT:
             return db->getStatements(StmtType::None);
@@ -37,7 +37,7 @@ STMT_SET MultipleSynonymSelectClause::getStmtSet(PKBReader *db, Synonym synonym)
     }
 }
 
-ENT_SET MultipleSynonymSelectClause::getEntSet(PKBReader *db, Synonym synonym) {
+ENT_SET MultipleSynonymSelectClause::getEntSet(PKBReader *db, const Synonym &synonym) {
     switch (synonym.de) {
         case Synonym::DesignEntity::PROCEDURE:
             return db->getEntities(Entity::Procedure);
@@ -50,7 +50,7 @@ ENT_SET MultipleSynonymSelectClause::getEntSet(PKBReader *db, Synonym synonym) {
     }
 }
 
-STMT_ENT_SET MultipleSynonymSelectClause::getStmtEntSet(PKBReader *db, Synonym synonym) {
+STMT_ENT_SET MultipleSynonymSelectClause::getStmtEntSet(PKBReader *db, const Synonym &synonym) {
     STMT_ENT_SET ses;
 
     switch (synonym.de) {
@@ -83,8 +83,8 @@ std::unique_ptr<Result> MultipleSynonymSelectClause::evaluate(PKBReader *db) {
     for (auto &selectedSynonym : selectedSynonyms_) {
         // add ident and columns(tableResult)
         if (selectedSynonym->de == Synonym::DesignEntity::PROCEDURE ||
-            selectedSynonym->de == Synonym::DesignEntity::VARIABLE ||
-            selectedSynonym->de == Synonym::DesignEntity::CONSTANT) {
+                selectedSynonym->de == Synonym::DesignEntity::VARIABLE ||
+                selectedSynonym->de == Synonym::DesignEntity::CONSTANT) {
             ENT_SET es = getEntSet(db, *selectedSynonym);
             idents.emplace_back(selectedSynonym->ident);
             selectTables.emplace_back(selectedSynonym->ident, es);
@@ -105,8 +105,8 @@ std::unique_ptr<Result> MultipleSynonymSelectClause::evaluate(PKBReader *db) {
 bool MultipleSynonymSelectClause::operator==(const Clause &rhs) const {
     const auto *pRhs = dynamic_cast<const MultipleSynonymSelectClause *>(&rhs);
     return pRhs != nullptr &&
-           std::equal(selectedSynonyms_.begin(), selectedSynonyms_.end(), pRhs->selectedSynonyms_.begin(),
-                      [](const std::unique_ptr<Synonym> &lhs, const std::unique_ptr<Synonym> &rhs) {
-                          return *lhs == *rhs;
-                      });
+            std::equal(selectedSynonyms_.begin(), selectedSynonyms_.end(), pRhs->selectedSynonyms_.begin(),
+                       [](const std::unique_ptr<Synonym> &lhs, const std::unique_ptr<Synonym> &rhs) {
+                           return *lhs == *rhs;
+                       });
 }

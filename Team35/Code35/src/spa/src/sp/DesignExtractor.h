@@ -149,4 +149,8 @@ class DesignExtractor {
     void updateStmtUsesPairSetWithCalls();
 
     void updateStmtModsPairSetWithCalls();
+
+    void digest();
+
+    void populatePKB();
 };

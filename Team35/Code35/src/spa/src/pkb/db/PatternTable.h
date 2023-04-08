@@ -1,8 +1,8 @@
-#ifndef TEAM35_CODE35_SRC_SPA_SRC_PKB_DB_PATTERNTABLE_H_
-#define TEAM35_CODE35_SRC_SPA_SRC_PKB_DB_PATTERNTABLE_H_
+#pragma once
 
-#include <unordered_map>
 #include <string>
+#include <unordered_map>
+
 #include "commons/types.h"
 
 class PatternTable {
@@ -22,5 +22,3 @@ class PatternTable {
 
     STMT_SET getPartialPatternIntersect(ASSIGN_PAT_LEFT left, ASSIGN_PAT_RIGHT right) const;
 };
-
-#endif  // TEAM35_CODE35_SRC_SPA_SRC_PKB_DB_PATTERNTABLE_H_

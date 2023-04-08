@@ -157,18 +157,18 @@ TEST_CASE("1. test CFGraph isReachable() method") {
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
         graph.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(3));
         graph.addEdge(CFG::makeNodeData(3), CFG::makeNodeData(4));
-        requireTrue(graph.isReachable(1, 2, false));
-        requireTrue(graph.isReachable(1, 2, true));
-        requireTrue(graph.isReachable(1, 3, false));
-        requireFalse(graph.isReachable(1, 3, true));
-        requireTrue(graph.isReachable(1, 4, false));
-        requireFalse(graph.isReachable(1, 4, true));
-        requireTrue(graph.isReachable(2, 3, false));
-        requireTrue(graph.isReachable(2, 3, true));
-        requireTrue(graph.isReachable(2, 4, false));
-        requireFalse(graph.isReachable(2, 4, true));
-        requireTrue(graph.isReachable(3, 4, false));
-        requireTrue(graph.isReachable(3, 4, true));
+        requireTrue(graph.isReachable(1, 2, UsageType::Transitive));
+        requireTrue(graph.isReachable(1, 2, UsageType::Direct));
+        requireTrue(graph.isReachable(1, 3, UsageType::Transitive));
+        requireFalse(graph.isReachable(1, 3, UsageType::Direct));
+        requireTrue(graph.isReachable(1, 4, UsageType::Transitive));
+        requireFalse(graph.isReachable(1, 4, UsageType::Direct));
+        requireTrue(graph.isReachable(2, 3, UsageType::Transitive));
+        requireTrue(graph.isReachable(2, 3, UsageType::Direct));
+        requireTrue(graph.isReachable(2, 4, UsageType::Transitive));
+        requireFalse(graph.isReachable(2, 4, UsageType::Direct));
+        requireTrue(graph.isReachable(3, 4, UsageType::Transitive));
+        requireTrue(graph.isReachable(3, 4, UsageType::Direct));
     }
 
     SECTION("1.13. check neighbor only with dummy node") {
@@ -176,38 +176,38 @@ TEST_CASE("1. test CFGraph isReachable() method") {
         graph.addEdge(CFG::makeNodeData(1), CFG::makeDummyNodeData(2));
         graph.addEdge(CFG::makeDummyNodeData(2), CFG::makeNodeData(3));
         graph.addEdge(CFG::makeNodeData(3), CFG::makeNodeData(4));
-        requireFalse(graph.isReachable(1, 2, false));
-        requireFalse(graph.isReachable(1, 2, true));
-        requireTrue(graph.isReachable(1, 3, false));
-        requireTrue(graph.isReachable(1, 3, true));
-        requireTrue(graph.isReachable(1, 4, false));
-        requireFalse(graph.isReachable(1, 4, true));
-        requireFalse(graph.isReachable(2, 3, false));
-        requireFalse(graph.isReachable(2, 3, true));
-        requireFalse(graph.isReachable(2, 4, false));
-        requireFalse(graph.isReachable(2, 4, true));
-        requireTrue(graph.isReachable(3, 4, false));
-        requireTrue(graph.isReachable(3, 4, true));
+        requireFalse(graph.isReachable(1, 2, UsageType::Transitive));
+        requireFalse(graph.isReachable(1, 2, UsageType::Direct));
+        requireTrue(graph.isReachable(1, 3, UsageType::Transitive));
+        requireTrue(graph.isReachable(1, 3, UsageType::Direct));
+        requireTrue(graph.isReachable(1, 4, UsageType::Transitive));
+        requireFalse(graph.isReachable(1, 4, UsageType::Direct));
+        requireFalse(graph.isReachable(2, 3, UsageType::Transitive));
+        requireFalse(graph.isReachable(2, 3, UsageType::Direct));
+        requireFalse(graph.isReachable(2, 4, UsageType::Transitive));
+        requireFalse(graph.isReachable(2, 4, UsageType::Direct));
+        requireTrue(graph.isReachable(3, 4, UsageType::Transitive));
+        requireTrue(graph.isReachable(3, 4, UsageType::Direct));
     }
 }
 
 TEST_CASE("2. test CFGraph getPredecessors() method, transitive closure") {
     SECTION("2.1. empty graph") {
         CFG::CFGraph graph;
-        requireTrue(graph.getPredecessors(1, true).empty());
+        requireTrue(graph.getPredecessors(1, UsageType::Transitive).empty());
     }
 
     SECTION("2.2. graph with one node") {
         CFG::CFGraph graph;
         graph.addNode(CFG::makeNodeData(1));
-        requireTrue(graph.getPredecessors(1, true).empty());
+        requireTrue(graph.getPredecessors(1, UsageType::Transitive).empty());
     }
 
     SECTION("2.3. graph with two nodes") {
         CFG::CFGraph graph;
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
-        requireTrue(graph.getPredecessors(1, true).empty());
-        STMT_SET set = graph.getPredecessors(2, true);
+        requireTrue(graph.getPredecessors(1, UsageType::Transitive).empty());
+        STMT_SET set = graph.getPredecessors(2, UsageType::Transitive);
         requireEqual(static_cast<int>(set.size()), 1);
         requireEqual(static_cast<int>(set.count(1)), 1);
     }
@@ -215,16 +215,16 @@ TEST_CASE("2. test CFGraph getPredecessors() method, transitive closure") {
     SECTION("2.4. graph with two nodes and non-existent node") {
         CFG::CFGraph graph;
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
-        requireTrue(graph.getPredecessors(3, true).empty());
-        requireTrue(graph.getPredecessors(4, true).empty());
+        requireTrue(graph.getPredecessors(3, UsageType::Transitive).empty());
+        requireTrue(graph.getPredecessors(4, UsageType::Transitive).empty());
     }
 
     SECTION("2.5. graph with two nodes and a loop") {
         CFG::CFGraph graph;
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
         graph.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(1));
-        STMT_SET set1 = graph.getPredecessors(1, true);
-        STMT_SET set2 = graph.getPredecessors(2, true);
+        STMT_SET set1 = graph.getPredecessors(1, UsageType::Transitive);
+        STMT_SET set2 = graph.getPredecessors(2, UsageType::Transitive);
         requireEqual(static_cast<int>(set1.size()), 2);
         requireEqual(static_cast<int>(set1.count(1)), 1);
         requireEqual(static_cast<int>(set1.count(2)), 1);
@@ -239,7 +239,7 @@ TEST_CASE("2. test CFGraph getPredecessors() method, transitive closure") {
             graph.addEdge(CFG::makeNodeData(i), CFG::makeNodeData(i % 10 + 1));
         }
         for (int i = 1; i <= 10; i++) {
-            STMT_SET set = graph.getPredecessors(i, true);
+            STMT_SET set = graph.getPredecessors(i, UsageType::Transitive);
             requireEqual(static_cast<int>(set.size()), 10);
             for (int j = 1; j <= 10; j++) {
                 requireEqual(static_cast<int>(set.count(j)), 1);
@@ -258,10 +258,10 @@ TEST_CASE("2. test CFGraph getPredecessors() method, transitive closure") {
         graph.addEdge(CFG::makeNodeData(4), CFG::makeNodeData(8));
         graph.addEdge(CFG::makeNodeData(4), CFG::makeNodeData(9));
         graph.addEdge(CFG::makeNodeData(5), CFG::makeNodeData(10));
-        STMT_SET set1 = graph.getPredecessors(1, true);
-        STMT_SET set6 = graph.getPredecessors(6, true);
-        STMT_SET set8 = graph.getPredecessors(8, true);
-        STMT_SET set10 = graph.getPredecessors(10, true);
+        STMT_SET set1 = graph.getPredecessors(1, UsageType::Transitive);
+        STMT_SET set6 = graph.getPredecessors(6, UsageType::Transitive);
+        STMT_SET set8 = graph.getPredecessors(8, UsageType::Transitive);
+        STMT_SET set10 = graph.getPredecessors(10, UsageType::Transitive);
         requireEqual(static_cast<int>(set1.size()), 0);
         requireEqual(static_cast<int>(set6.size()), 2);
         requireEqual(static_cast<int>(set6.count(1)), 1);
@@ -288,7 +288,7 @@ TEST_CASE("2. test CFGraph getPredecessors() method, transitive closure") {
         }
 
         for (int i = 1; i <= 10; i++) {
-            STMT_SET set = graph.getPredecessors(i, true);
+            STMT_SET set = graph.getPredecessors(i, UsageType::Transitive);
             if (i % 2 == 0) {
                 requireEqual(static_cast<int>(set.size()), 0);
                 continue;
@@ -313,11 +313,11 @@ TEST_CASE("2. test CFGraph getPredecessors() method, transitive closure") {
         graph.addEdge(CFG::makeNodeData(4), CFG::makeDummyNodeData(8));
         graph.addEdge(CFG::makeNodeData(4), CFG::makeNodeData(9));
         graph.addEdge(CFG::makeNodeData(5), CFG::makeDummyNodeData(10));
-        STMT_SET set1 = graph.getPredecessors(1, true);
-        STMT_SET set6 = graph.getPredecessors(6, true);
-        STMT_SET set8 = graph.getPredecessors(8, true);
-        STMT_SET set9 = graph.getPredecessors(9, true);
-        STMT_SET set10 = graph.getPredecessors(10, true);
+        STMT_SET set1 = graph.getPredecessors(1, UsageType::Transitive);
+        STMT_SET set6 = graph.getPredecessors(6, UsageType::Transitive);
+        STMT_SET set8 = graph.getPredecessors(8, UsageType::Transitive);
+        STMT_SET set9 = graph.getPredecessors(9, UsageType::Transitive);
+        STMT_SET set10 = graph.getPredecessors(10, UsageType::Transitive);
         requireEqual(static_cast<int>(set1.size()), 0);
         requireEqual(static_cast<int>(set6.size()), 0);
         requireEqual(static_cast<int>(set8.size()), 0);
@@ -331,37 +331,37 @@ TEST_CASE("2. test CFGraph getPredecessors() method, transitive closure") {
 TEST_CASE("3. test CFGraph getSuccessors() method, transitive closure") {
     SECTION("3.1. empty graph") {
         CFG::CFGraph graph;
-        requireTrue(graph.getSuccessors(1, true).empty());
+        requireTrue(graph.getSuccessors(1, UsageType::Transitive).empty());
     }
 
     SECTION("3.2. graph with one node") {
         CFG::CFGraph graph;
         graph.addNode(CFG::makeNodeData(1));
-        requireTrue(graph.getSuccessors(1, true).empty());
+        requireTrue(graph.getSuccessors(1, UsageType::Transitive).empty());
     }
 
     SECTION("3.3. graph with two nodes") {
         CFG::CFGraph graph;
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
-        STMT_SET set = graph.getSuccessors(1, true);
+        STMT_SET set = graph.getSuccessors(1, UsageType::Transitive);
         requireEqual(static_cast<int>(set.size()), 1);
         requireEqual(static_cast<int>(set.count(2)), 1);
-        requireTrue(graph.getSuccessors(2, true).empty());
+        requireTrue(graph.getSuccessors(2, UsageType::Transitive).empty());
     }
 
     SECTION("3.4. graph with two nodes and non-existent node") {
         CFG::CFGraph graph;
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
-        requireTrue(graph.getSuccessors(3, true).empty());
-        requireTrue(graph.getSuccessors(4, true).empty());
+        requireTrue(graph.getSuccessors(3, UsageType::Transitive).empty());
+        requireTrue(graph.getSuccessors(4, UsageType::Transitive).empty());
     }
 
     SECTION("3.5. graph with two nodes and a loop") {
         CFG::CFGraph graph;
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
         graph.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(1));
-        STMT_SET set1 = graph.getSuccessors(1, true);
-        STMT_SET set2 = graph.getSuccessors(2, true);
+        STMT_SET set1 = graph.getSuccessors(1, UsageType::Transitive);
+        STMT_SET set2 = graph.getSuccessors(2, UsageType::Transitive);
         requireEqual(static_cast<int>(set1.size()), 2);
         requireEqual(static_cast<int>(set1.count(1)), 1);
         requireEqual(static_cast<int>(set1.count(2)), 1);
@@ -376,7 +376,7 @@ TEST_CASE("3. test CFGraph getSuccessors() method, transitive closure") {
             graph.addEdge(CFG::makeNodeData(i), CFG::makeNodeData(i % 10 + 1));
         }
         for (int i = 1; i <= 10; i++) {
-            STMT_SET set = graph.getSuccessors(i, true);
+            STMT_SET set = graph.getSuccessors(i, UsageType::Transitive);
             requireEqual(static_cast<int>(set.size()), 10);
             for (int j = 1; j <= 10; j++) {
                 requireEqual(static_cast<int>(set.count(j)), 1);
@@ -395,11 +395,11 @@ TEST_CASE("3. test CFGraph getSuccessors() method, transitive closure") {
         graph.addEdge(CFG::makeNodeData(4), CFG::makeNodeData(8));
         graph.addEdge(CFG::makeNodeData(4), CFG::makeNodeData(9));
         graph.addEdge(CFG::makeNodeData(5), CFG::makeNodeData(10));
-        STMT_SET set1 = graph.getSuccessors(1, true);
-        STMT_SET set2 = graph.getSuccessors(2, true);
-        STMT_SET set6 = graph.getSuccessors(6, true);
-        STMT_SET set8 = graph.getSuccessors(8, true);
-        STMT_SET set10 = graph.getSuccessors(10, true);
+        STMT_SET set1 = graph.getSuccessors(1, UsageType::Transitive);
+        STMT_SET set2 = graph.getSuccessors(2, UsageType::Transitive);
+        STMT_SET set6 = graph.getSuccessors(6, UsageType::Transitive);
+        STMT_SET set8 = graph.getSuccessors(8, UsageType::Transitive);
+        STMT_SET set10 = graph.getSuccessors(10, UsageType::Transitive);
         requireEqual(static_cast<int>(set1.size()), 9);
         requireEqual(static_cast<int>(set1.count(2)), 1);
         requireEqual(static_cast<int>(set1.count(3)), 1);
@@ -433,7 +433,7 @@ TEST_CASE("3. test CFGraph getSuccessors() method, transitive closure") {
         }
 
         for (int i = 1; i <= 10; i++) {
-            STMT_SET set = graph.getSuccessors(i, true);
+            STMT_SET set = graph.getSuccessors(i, UsageType::Transitive);
             if (i % 2 == 0) {
                 requireEqual(static_cast<int>(set.size()), 0);
                 continue;
@@ -460,12 +460,12 @@ TEST_CASE("3. test CFGraph getSuccessors() method, transitive closure") {
         graph.addEdge(CFG::makeDummyNodeData(4), CFG::makeNodeData(8));
         graph.addEdge(CFG::makeDummyNodeData(4), CFG::makeNodeData(9));
         graph.addEdge(CFG::makeDummyNodeData(5), CFG::makeNodeData(10));
-        STMT_SET set1 = graph.getSuccessors(1, true);
-        STMT_SET set2 = graph.getSuccessors(2, true);
-        STMT_SET set4 = graph.getSuccessors(4, true);
-        STMT_SET set6 = graph.getSuccessors(6, true);
-        STMT_SET set8 = graph.getSuccessors(8, true);
-        STMT_SET set10 = graph.getSuccessors(10, true);
+        STMT_SET set1 = graph.getSuccessors(1, UsageType::Transitive);
+        STMT_SET set2 = graph.getSuccessors(2, UsageType::Transitive);
+        STMT_SET set4 = graph.getSuccessors(4, UsageType::Transitive);
+        STMT_SET set6 = graph.getSuccessors(6, UsageType::Transitive);
+        STMT_SET set8 = graph.getSuccessors(8, UsageType::Transitive);
+        STMT_SET set10 = graph.getSuccessors(10, UsageType::Transitive);
         requireEqual(static_cast<int>(set1.size()), 7);
         requireEqual(static_cast<int>(set1.count(4)), 1);
         requireEqual(static_cast<int>(set1.count(5)), 1);
@@ -487,37 +487,37 @@ TEST_CASE("3. test CFGraph getSuccessors() method, transitive closure") {
 TEST_CASE("4. test CFGraph getPredecessors() method, non-transitive closure") {
     SECTION("4.1. empty graph") {
         CFG::CFGraph graph;
-        requireTrue(graph.getPredecessors(1, false).empty());
+        requireTrue(graph.getPredecessors(1, UsageType::Direct).empty());
     }
 
     SECTION("4.2. graph with one node") {
         CFG::CFGraph graph;
         graph.addNode(CFG::makeNodeData(1));
-        requireTrue(graph.getPredecessors(1, false).empty());
+        requireTrue(graph.getPredecessors(1, UsageType::Direct).empty());
     }
 
     SECTION("4.3. graph with two nodes") {
         CFG::CFGraph graph;
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
-        STMT_SET set = graph.getPredecessors(2, false);
+        STMT_SET set = graph.getPredecessors(2, UsageType::Direct);
         requireEqual(static_cast<int>(set.size()), 1);
         requireEqual(static_cast<int>(set.count(1)), 1);
-        requireTrue(graph.getPredecessors(1, false).empty());
+        requireTrue(graph.getPredecessors(1, UsageType::Direct).empty());
     }
 
     SECTION("4.4. graph with two nodes and non-existent node") {
         CFG::CFGraph graph;
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
-        requireTrue(graph.getPredecessors(3, false).empty());
-        requireTrue(graph.getPredecessors(4, false).empty());
+        requireTrue(graph.getPredecessors(3, UsageType::Direct).empty());
+        requireTrue(graph.getPredecessors(4, UsageType::Direct).empty());
     }
 
     SECTION("4.5. graph with two nodes and a loop") {
         CFG::CFGraph graph;
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
         graph.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(1));
-        STMT_SET set1 = graph.getPredecessors(1, false);
-        STMT_SET set2 = graph.getPredecessors(2, false);
+        STMT_SET set1 = graph.getPredecessors(1, UsageType::Direct);
+        STMT_SET set2 = graph.getPredecessors(2, UsageType::Direct);
         requireEqual(static_cast<int>(set1.size()), 1);
         requireEqual(static_cast<int>(set1.count(2)), 1);
         requireEqual(static_cast<int>(set2.size()), 1);
@@ -531,7 +531,7 @@ TEST_CASE("4. test CFGraph getPredecessors() method, non-transitive closure") {
         }
         for (int i = 1; i <= 10; i++) {
             STMT_NUM j = (i % 10) + 1;
-            STMT_SET set = graph.getPredecessors(j, false);
+            STMT_SET set = graph.getPredecessors(j, UsageType::Direct);
             requireEqual(static_cast<int>(set.size()), 1);
             requireEqual(static_cast<int>(set.count(i)), 1);
         }
@@ -548,11 +548,11 @@ TEST_CASE("4. test CFGraph getPredecessors() method, non-transitive closure") {
         graph.addEdge(CFG::makeNodeData(4), CFG::makeNodeData(8));
         graph.addEdge(CFG::makeNodeData(4), CFG::makeNodeData(9));
         graph.addEdge(CFG::makeNodeData(5), CFG::makeNodeData(10));
-        STMT_SET set1 = graph.getPredecessors(1, false);
-        STMT_SET set2 = graph.getPredecessors(2, false);
-        STMT_SET set6 = graph.getPredecessors(6, false);
-        STMT_SET set8 = graph.getPredecessors(8, false);
-        STMT_SET set10 = graph.getPredecessors(10, false);
+        STMT_SET set1 = graph.getPredecessors(1, UsageType::Direct);
+        STMT_SET set2 = graph.getPredecessors(2, UsageType::Direct);
+        STMT_SET set6 = graph.getPredecessors(6, UsageType::Direct);
+        STMT_SET set8 = graph.getPredecessors(8, UsageType::Direct);
+        STMT_SET set10 = graph.getPredecessors(10, UsageType::Direct);
         requireEqual(static_cast<int>(set1.size()), 0);
         requireEqual(static_cast<int>(set2.size()), 1);
         requireEqual(static_cast<int>(set2.count(1)), 1);
@@ -570,7 +570,7 @@ TEST_CASE("4. test CFGraph getPredecessors() method, non-transitive closure") {
         graph.addEdge(CFG::makeNodeData(3), CFG::makeDummyNodeData(1));
         graph.addEdge(CFG::makeNodeData(4), CFG::makeDummyNodeData(1));
         graph.addEdge(CFG::makeNodeData(5), CFG::makeDummyNodeData(1));
-        STMT_SET set2 = graph.getPredecessors(2, false);
+        STMT_SET set2 = graph.getPredecessors(2, UsageType::Direct);
         requireEqual(static_cast<int>(set2.size()), 3);
         requireEqual(static_cast<int>(set2.count(3)), 1);
         requireEqual(static_cast<int>(set2.count(4)), 1);
@@ -584,7 +584,7 @@ TEST_CASE("4. test CFGraph getPredecessors() method, non-transitive closure") {
         graph.addEdge(CFG::makeNodeData(6), CFG::makeDummyNodeData(3));
         graph.addEdge(CFG::makeNodeData(4), CFG::makeDummyNodeData(1));
         graph.addEdge(CFG::makeNodeData(5), CFG::makeDummyNodeData(1));
-        STMT_SET set2 = graph.getPredecessors(2, false);
+        STMT_SET set2 = graph.getPredecessors(2, UsageType::Direct);
         requireEqual(static_cast<int>(set2.size()), 3);
         requireEqual(static_cast<int>(set2.count(6)), 1);
         requireEqual(static_cast<int>(set2.count(4)), 1);
@@ -603,7 +603,7 @@ TEST_CASE("4. test CFGraph getPredecessors() method, non-transitive closure") {
         }
 
         for (int i = 1; i <= 10; i++) {
-            STMT_SET set = graph.getSuccessors(i, false);
+            STMT_SET set = graph.getSuccessors(i, UsageType::Direct);
             if (i % 2 == 0) {
                 requireEqual(static_cast<int>(set.size()), 0);
                 continue;
@@ -618,37 +618,37 @@ TEST_CASE("4. test CFGraph getPredecessors() method, non-transitive closure") {
 TEST_CASE("5. test CFGraph getSuccessors() method, non-transitive closure") {
     SECTION("5.1. empty graph") {
         CFG::CFGraph graph;
-        requireTrue(graph.getSuccessors(1, false).empty());
+        requireTrue(graph.getSuccessors(1, UsageType::Direct).empty());
     }
 
     SECTION("5.2. graph with one node") {
         CFG::CFGraph graph;
         graph.addNode(CFG::makeNodeData(1));
-        requireTrue(graph.getSuccessors(1, false).empty());
+        requireTrue(graph.getSuccessors(1, UsageType::Direct).empty());
     }
 
     SECTION("5.3. graph with two nodes") {
         CFG::CFGraph graph;
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
-        STMT_SET set = graph.getSuccessors(1, false);
+        STMT_SET set = graph.getSuccessors(1, UsageType::Direct);
         requireEqual(static_cast<int>(set.size()), 1);
         requireEqual(static_cast<int>(set.count(2)), 1);
-        requireTrue(graph.getSuccessors(2, false).empty());
+        requireTrue(graph.getSuccessors(2, UsageType::Direct).empty());
     }
 
     SECTION("5.4. graph with two nodes and non-existent node") {
         CFG::CFGraph graph;
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
-        requireTrue(graph.getSuccessors(3, false).empty());
-        requireTrue(graph.getSuccessors(4, false).empty());
+        requireTrue(graph.getSuccessors(3, UsageType::Direct).empty());
+        requireTrue(graph.getSuccessors(4, UsageType::Direct).empty());
     }
 
     SECTION("5.5. graph with two nodes and a loop") {
         CFG::CFGraph graph;
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
         graph.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(1));
-        STMT_SET set1 = graph.getSuccessors(1, false);
-        STMT_SET set2 = graph.getSuccessors(2, false);
+        STMT_SET set1 = graph.getSuccessors(1, UsageType::Direct);
+        STMT_SET set2 = graph.getSuccessors(2, UsageType::Direct);
         requireEqual(static_cast<int>(set1.size()), 1);
         requireEqual(static_cast<int>(set1.count(2)), 1);
         requireEqual(static_cast<int>(set2.size()), 1);
@@ -662,7 +662,7 @@ TEST_CASE("5. test CFGraph getSuccessors() method, non-transitive closure") {
         }
         for (int i = 1; i <= 10; i++) {
             STMT_NUM j = (i % 10) + 1;
-            STMT_SET set = graph.getSuccessors(i, false);
+            STMT_SET set = graph.getSuccessors(i, UsageType::Direct);
             requireEqual(static_cast<int>(set.size()), 1);
             requireEqual(static_cast<int>(set.count(j)), 1);
         }
@@ -674,12 +674,12 @@ TEST_CASE("5. test CFGraph getSuccessors() method, non-transitive closure") {
         graph.addEdge(CFG::makeDummyNodeData(2), CFG::makeNodeData(3));
         graph.addEdge(CFG::makeDummyNodeData(2), CFG::makeNodeData(4));
         graph.addEdge(CFG::makeDummyNodeData(2), CFG::makeNodeData(5));
-        STMT_SET set1 = graph.getSuccessors(1, false);
+        STMT_SET set1 = graph.getSuccessors(1, UsageType::Direct);
         requireEqual(static_cast<int>(set1.size()), 3);
         requireEqual(static_cast<int>(set1.count(3)), 1);
         requireEqual(static_cast<int>(set1.count(4)), 1);
         requireEqual(static_cast<int>(set1.count(5)), 1);
-        STMT_SET set2 = graph.getSuccessors(2, false);
+        STMT_SET set2 = graph.getSuccessors(2, UsageType::Direct);
         requireEqual(static_cast<int>(set2.size()), 0);
     }
 
@@ -690,12 +690,12 @@ TEST_CASE("5. test CFGraph getSuccessors() method, non-transitive closure") {
         graph.addEdge(CFG::makeDummyNodeData(3), CFG::makeNodeData(6));
         graph.addEdge(CFG::makeDummyNodeData(2), CFG::makeNodeData(4));
         graph.addEdge(CFG::makeDummyNodeData(2), CFG::makeNodeData(5));
-        STMT_SET set1 = graph.getSuccessors(1, false);
+        STMT_SET set1 = graph.getSuccessors(1, UsageType::Direct);
         requireEqual(static_cast<int>(set1.size()), 3);
         requireEqual(static_cast<int>(set1.count(6)), 1);
         requireEqual(static_cast<int>(set1.count(4)), 1);
         requireEqual(static_cast<int>(set1.count(5)), 1);
-        STMT_SET set2 = graph.getSuccessors(2, false);
+        STMT_SET set2 = graph.getSuccessors(2, UsageType::Direct);
         requireEqual(static_cast<int>(set2.size()), 0);
     }
 
@@ -711,27 +711,27 @@ TEST_CASE("5. test CFGraph getSuccessors() method, non-transitive closure") {
         graph.addEdge(CFG::makeDummyNodeData(6), CFG::makeNodeData(9));
         graph.addEdge(CFG::makeDummyNodeData(7), CFG::makeNodeData(10));
         graph.addEdge(CFG::makeDummyNodeData(8), CFG::makeNodeData(11));
-        STMT_SET set1 = graph.getSuccessors(1, false);
+        STMT_SET set1 = graph.getSuccessors(1, UsageType::Direct);
         requireEqual(static_cast<int>(set1.size()), 3);
         requireEqual(static_cast<int>(set1.count(3)), 1);
         requireEqual(static_cast<int>(set1.count(4)), 1);
         requireEqual(static_cast<int>(set1.count(5)), 1);
-        STMT_SET set2 = graph.getSuccessors(2, false);
+        STMT_SET set2 = graph.getSuccessors(2, UsageType::Direct);
         requireEqual(static_cast<int>(set2.size()), 0);
-        STMT_SET set3 = graph.getSuccessors(3, false);
+        STMT_SET set3 = graph.getSuccessors(3, UsageType::Direct);
         requireEqual(static_cast<int>(set3.size()), 1);
         requireEqual(static_cast<int>(set3.count(9)), 1);
-        STMT_SET set4 = graph.getSuccessors(4, false);
+        STMT_SET set4 = graph.getSuccessors(4, UsageType::Direct);
         requireEqual(static_cast<int>(set4.size()), 1);
         requireEqual(static_cast<int>(set4.count(10)), 1);
-        STMT_SET set5 = graph.getSuccessors(5, false);
+        STMT_SET set5 = graph.getSuccessors(5, UsageType::Direct);
         requireEqual(static_cast<int>(set5.size()), 1);
         requireEqual(static_cast<int>(set5.count(11)), 1);
-        STMT_SET set6 = graph.getSuccessors(6, false);
+        STMT_SET set6 = graph.getSuccessors(6, UsageType::Direct);
         requireEqual(static_cast<int>(set6.size()), 0);
-        STMT_SET set7 = graph.getSuccessors(7, false);
+        STMT_SET set7 = graph.getSuccessors(7, UsageType::Direct);
         requireEqual(static_cast<int>(set7.size()), 0);
-        STMT_SET set8 = graph.getSuccessors(8, false);
+        STMT_SET set8 = graph.getSuccessors(8, UsageType::Direct);
         requireEqual(static_cast<int>(set8.size()), 0);
     }
 }
@@ -739,14 +739,14 @@ TEST_CASE("5. test CFGraph getSuccessors() method, non-transitive closure") {
 TEST_CASE("6. test getPairwiseControlFlow() method, transitive closure") {
     SECTION("6.1. empty graph") {
         CFG::CFGraph graph;
-        STMT_STMT_SET result = graph.getPairwiseControlFlow(true);
+        STMT_STMT_SET result = graph.getPairwiseControlFlow(UsageType::Transitive);
         requireTrue(result.empty());
     }
 
     SECTION("6.2. graph with one node, self-loop") {
         CFG::CFGraph graph;
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(1));
-        STMT_STMT_SET result = graph.getPairwiseControlFlow(true);
+        STMT_STMT_SET result = graph.getPairwiseControlFlow(UsageType::Transitive);
         requireEqual(static_cast<int>(result.size()), 1);
         requireEqual(static_cast<int>(result.count(std::make_pair(1, 1))), 1);
     }
@@ -754,7 +754,7 @@ TEST_CASE("6. test getPairwiseControlFlow() method, transitive closure") {
     SECTION("6.3. graph with two nodes") {
         CFG::CFGraph graph;
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
-        STMT_STMT_SET result = graph.getPairwiseControlFlow(true);
+        STMT_STMT_SET result = graph.getPairwiseControlFlow(UsageType::Transitive);
         requireEqual(static_cast<int>(result.size()), 1);
         requireEqual(static_cast<int>(result.count(std::make_pair(1, 2))), 1);
     }
@@ -763,14 +763,14 @@ TEST_CASE("6. test getPairwiseControlFlow() method, transitive closure") {
         CFG::CFGraph graph;
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
         graph.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(1));
-        STMT_STMT_SET result = graph.getPairwiseControlFlow(true);
+        STMT_STMT_SET result = graph.getPairwiseControlFlow(UsageType::Transitive);
         requireEqual(static_cast<int>(result.size()), 4);
         requireEqual(static_cast<int>(result.count(std::make_pair(1, 1))), 1);
         requireEqual(static_cast<int>(result.count(std::make_pair(1, 2))), 1);
         requireEqual(static_cast<int>(result.count(std::make_pair(2, 1))), 1);
         requireEqual(static_cast<int>(result.count(std::make_pair(2, 2))), 1);
         // test memoization by test coverage
-        STMT_STMT_SET result2 = graph.getPairwiseControlFlow(true);
+        STMT_STMT_SET result2 = graph.getPairwiseControlFlow(UsageType::Transitive);
         requireEqual(static_cast<int>(result2.size()), 4);
         requireEqual(result, result2);
     }
@@ -780,7 +780,7 @@ TEST_CASE("6. test getPairwiseControlFlow() method, transitive closure") {
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
         graph.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(3));
         graph.addEdge(CFG::makeNodeData(3), CFG::makeNodeData(1));
-        STMT_STMT_SET result = graph.getPairwiseControlFlow(true);
+        STMT_STMT_SET result = graph.getPairwiseControlFlow(UsageType::Transitive);
         requireEqual(static_cast<int>(result.size()), 9);
         requireEqual(static_cast<int>(result.count(std::make_pair(1, 1))), 1);
         requireEqual(static_cast<int>(result.count(std::make_pair(1, 2))), 1);
@@ -804,7 +804,7 @@ TEST_CASE("6. test getPairwiseControlFlow() method, transitive closure") {
         graph.addEdge(CFG::makeNodeData(4), CFG::makeNodeData(8));
         graph.addEdge(CFG::makeNodeData(4), CFG::makeNodeData(9));
         graph.addEdge(CFG::makeNodeData(5), CFG::makeNodeData(10));
-        STMT_STMT_SET result = graph.getPairwiseControlFlow(true);
+        STMT_STMT_SET result = graph.getPairwiseControlFlow(UsageType::Transitive);
         requireEqual(static_cast<int>(result.size()), 19);
         requireEqual(static_cast<int>(result.count(std::make_pair(1, 2))), 1);
         requireEqual(static_cast<int>(result.count(std::make_pair(1, 3))), 1);
@@ -834,7 +834,7 @@ TEST_CASE("6. test getPairwiseControlFlow() method, transitive closure") {
         graph.addEdge(CFG::makeDummyNodeData(3), CFG::makeNodeData(6));
         graph.addEdge(CFG::makeDummyNodeData(2), CFG::makeNodeData(4));
         graph.addEdge(CFG::makeDummyNodeData(2), CFG::makeNodeData(5));
-        STMT_STMT_SET result = graph.getPairwiseControlFlow(true);
+        STMT_STMT_SET result = graph.getPairwiseControlFlow(UsageType::Transitive);
         requireEqual(static_cast<int>(result.size()), 3);
         requireEqual(static_cast<int>(result.count(std::make_pair(1, 4))), 1);
         requireEqual(static_cast<int>(result.count(std::make_pair(1, 5))), 1);
@@ -845,14 +845,14 @@ TEST_CASE("6. test getPairwiseControlFlow() method, transitive closure") {
 TEST_CASE("6. test getPairwiseControlFlow() method, non-transitive closure") {
     SECTION("6.1. empty graph") {
         CFG::CFGraph graph;
-        STMT_STMT_SET result = graph.getPairwiseControlFlow(false);
+        STMT_STMT_SET result = graph.getPairwiseControlFlow(UsageType::Direct);
         requireTrue(result.empty());
     }
 
     SECTION("6.2. graph with one node, self-loop") {
         CFG::CFGraph graph;
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(1));
-        STMT_STMT_SET result = graph.getPairwiseControlFlow(false);
+        STMT_STMT_SET result = graph.getPairwiseControlFlow(UsageType::Direct);
         requireEqual(static_cast<int>(result.size()), 1);
         requireEqual(static_cast<int>(result.count(std::make_pair(1, 1))), 1);
     }
@@ -860,7 +860,7 @@ TEST_CASE("6. test getPairwiseControlFlow() method, non-transitive closure") {
     SECTION("6.3. graph with two nodes") {
         CFG::CFGraph graph;
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
-        STMT_STMT_SET result = graph.getPairwiseControlFlow(false);
+        STMT_STMT_SET result = graph.getPairwiseControlFlow(UsageType::Direct);
         requireEqual(static_cast<int>(result.size()), 1);
         requireEqual(static_cast<int>(result.count(std::make_pair(1, 2))), 1);
     }
@@ -869,12 +869,12 @@ TEST_CASE("6. test getPairwiseControlFlow() method, non-transitive closure") {
         CFG::CFGraph graph;
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
         graph.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(1));
-        STMT_STMT_SET result = graph.getPairwiseControlFlow(false);
+        STMT_STMT_SET result = graph.getPairwiseControlFlow(UsageType::Direct);
         requireEqual(static_cast<int>(result.size()), 2);
         requireEqual(static_cast<int>(result.count(std::make_pair(1, 2))), 1);
         requireEqual(static_cast<int>(result.count(std::make_pair(2, 1))), 1);
         // test memoization by test coverage
-        STMT_STMT_SET result2 = graph.getPairwiseControlFlow(false);
+        STMT_STMT_SET result2 = graph.getPairwiseControlFlow(UsageType::Direct);
         requireEqual(static_cast<int>(result2.size()), 2);
         requireEqual(result, result2);
     }
@@ -884,7 +884,7 @@ TEST_CASE("6. test getPairwiseControlFlow() method, non-transitive closure") {
         graph.addEdge(CFG::makeNodeData(1), CFG::makeNodeData(2));
         graph.addEdge(CFG::makeNodeData(2), CFG::makeNodeData(3));
         graph.addEdge(CFG::makeNodeData(3), CFG::makeNodeData(1));
-        STMT_STMT_SET result = graph.getPairwiseControlFlow(false);
+        STMT_STMT_SET result = graph.getPairwiseControlFlow(UsageType::Direct);
         requireEqual(static_cast<int>(result.size()), 3);
         requireEqual(static_cast<int>(result.count(std::make_pair(1, 2))), 1);
         requireEqual(static_cast<int>(result.count(std::make_pair(2, 3))), 1);
@@ -902,7 +902,7 @@ TEST_CASE("6. test getPairwiseControlFlow() method, non-transitive closure") {
         graph.addEdge(CFG::makeNodeData(4), CFG::makeNodeData(8));
         graph.addEdge(CFG::makeNodeData(4), CFG::makeNodeData(9));
         graph.addEdge(CFG::makeNodeData(5), CFG::makeNodeData(10));
-        STMT_STMT_SET result = graph.getPairwiseControlFlow(false);
+        STMT_STMT_SET result = graph.getPairwiseControlFlow(UsageType::Direct);
         requireEqual(static_cast<int>(result.size()), 9);
         requireEqual(static_cast<int>(result.count(std::make_pair(1, 2))), 1);
         requireEqual(static_cast<int>(result.count(std::make_pair(1, 3))), 1);
@@ -922,7 +922,7 @@ TEST_CASE("6. test getPairwiseControlFlow() method, non-transitive closure") {
         graph.addEdge(CFG::makeDummyNodeData(3), CFG::makeNodeData(6));
         graph.addEdge(CFG::makeDummyNodeData(2), CFG::makeNodeData(4));
         graph.addEdge(CFG::makeDummyNodeData(2), CFG::makeNodeData(5));
-        STMT_STMT_SET result = graph.getPairwiseControlFlow(false);
+        STMT_STMT_SET result = graph.getPairwiseControlFlow(UsageType::Direct);
         requireEqual(static_cast<int>(result.size()), 3);
         requireEqual(static_cast<int>(result.count(std::make_pair(1, 4))), 1);
         requireEqual(static_cast<int>(result.count(std::make_pair(1, 5))), 1);

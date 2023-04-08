@@ -20,12 +20,19 @@ void DesignExtractor::extractProgram(std::shared_ptr<ASTNode> root) {
     for (const auto &child : root_->getChildren()) {
         extractProc(child);
     }
+    digest();
+    populatePKB();
+}
+
+void DesignExtractor::digest() {
     analyzeProcedure();
     updateStmtUsesPairSetWithCalls();
     updateStmtModsPairSetWithCalls();
     updateStmtUsesPairSetWithContainedCalls();
     updateStmtModsPairSetWithContainedCalls();
+}
 
+void DesignExtractor::populatePKB() {
     addVarNameSetToPKB();
     addConstantSetToPKB();
     addProcSetToPKB();

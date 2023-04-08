@@ -7,6 +7,8 @@
 #include <unordered_set>
 #include <vector>
 
+#include "commons/types.h"
+
 using std::unordered_set;
 
 typedef uint32_t Index;
@@ -34,7 +36,7 @@ class Graph {
 
     bool operator==(const Graph &other) const {
         return nodes == other.nodes && node_to_index_ == other.node_to_index_ &&
-                outgoing_adj_list_ == other.outgoing_adj_list_ && incoming_adj_list_ == other.incoming_adj_list_;
+               outgoing_adj_list_ == other.outgoing_adj_list_ && incoming_adj_list_ == other.incoming_adj_list_;
     }
 
     bool operator!=(const Graph &other) const {
@@ -96,7 +98,7 @@ class Graph {
         return incoming_adj_list_.at(node_index).size();
     }
 
-    unordered_set<T> getPredecessors(const T &node, bool isTransitive) const {
+    unordered_set<T> getPredecessors(const T &node, UsageType usage) const {
         if (!this->hasNode(node)) {
             return {};
         }
@@ -105,7 +107,7 @@ class Graph {
 
         unordered_set<T> predecessors;
 
-        if (!isTransitive) {
+        if (usage == UsageType::Direct) {
             for (Index predecessor_index : this->getIncomingNodes(node_index)) {
                 predecessors.insert(this->getNode(predecessor_index));
             }
@@ -129,7 +131,7 @@ class Graph {
         return predecessors;
     }
 
-    unordered_set<T> getSuccessors(const T &node, bool isTransitive) const {
+    unordered_set<T> getSuccessors(const T &node, UsageType usageType) const {
         if (!this->hasNode(node)) {
             return {};
         }
@@ -138,7 +140,7 @@ class Graph {
 
         unordered_set<T> successors;
 
-        if (!isTransitive) {
+        if (usageType == UsageType::Direct) {
             for (Index successor_index : this->getIncomingNodes(node_index)) {
                 successors.insert(this->getNode(successor_index));
             }
@@ -162,14 +164,14 @@ class Graph {
         return successors;
     }
 
-    bool isReachable(const T &node1, const T &node2, bool check_neighbor_only) const {
+    bool isReachable(const T &node1, const T &node2, UsageType usageType) const {
         if (!this->hasNode(node1) || !this->hasNode(node2)) {
             return false;
         }
         Index node_index1 = this->getNodeIndex(node1);
         Index node_index2 = this->getNodeIndex(node2);
 
-        if (check_neighbor_only) {
+        if (usageType == UsageType::Direct) {
             return isNeighbor(node_index1, node_index2);
         }
 

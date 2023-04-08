@@ -6,7 +6,7 @@
 #define DUMMY_NAME "common-name"
 
 WithEntClause::WithEntClause(std::unique_ptr<PQLToken> first, std::unique_ptr<PQLToken> second) :
-    TwoArgClause(std::move(first), std::move(second)) {}
+        TwoArgClause(std::move(first), std::move(second)) {}
 
 STMT_ENT_SET WithEntClause::getStmtEntSet(PKBReader *db, Synonym &syn) {
     switch (syn.de) {
@@ -47,7 +47,7 @@ ENT_SET WithEntClause::getEntSet(PKBReader *db, Synonym &syn) {
 
 bool WithEntClause::isStmtSyn(Synonym &syn) {
     return syn.de == Synonym::DesignEntity::CALL || syn.de == Synonym::DesignEntity::READ
-        || syn.de == Synonym::DesignEntity::PRINT;
+            || syn.de == Synonym::DesignEntity::PRINT;
 }
 
 std::unique_ptr<Result> WithEntClause::handleSameSynCase(PKBReader *db, Synonym &syn) {
@@ -81,18 +81,17 @@ std::unique_ptr<Result> WithEntClause::handleStmtEnt(PKBReader *db, Synonym &fir
 std::unique_ptr<Result> WithEntClause::handleEntEnt(PKBReader *db, Synonym &first, Synonym &second) {
     ENT_SET syn1EntSet = getEntSet(db, first);
     ENT_SET syn2EntSet = getEntSet(db, second);
-    std::vector<ENT_NAME> resultVec;
+    ENT_ENT_SET result;
 
     for (auto const &ent : syn1EntSet) {
         for (auto const &ent2 : syn2EntSet) {
             if (ent == ent2) {
-                resultVec.emplace_back(ent);
+                result.emplace(ent, ent);
             }
         }
     }
 
-    std::unique_ptr<Result> res = std::make_unique<TableResult>(first.str(), second.str(), resultVec);
-    return std::move(res);
+    return std::make_unique<TableResult>(first.str(), second.str(), result);
 }
 
 std::unique_ptr<Result> WithEntClause::handleSynSyn(PKBReader *db, Synonym &first, Synonym &second) {
@@ -137,10 +136,9 @@ std::unique_ptr<Result> WithEntClause::handleEntIdent(PKBReader *db, Synonym &en
     return std::make_unique<TableResult>(ent.str(), resultSet);
 }
 
-
 std::unique_ptr<Result> WithEntClause::handleSynIdent(PKBReader *db, Synonym &first, Ident &second) {
     if (first.de == Synonym::DesignEntity::CALL || first.de == Synonym::DesignEntity::READ
-        || first.de == Synonym::DesignEntity::PRINT) {
+            || first.de == Synonym::DesignEntity::PRINT) {
         return handleStmtIdent(db, first, second);
     } else {
         return handleEntIdent(db, first, second);
@@ -159,7 +157,7 @@ std::unique_ptr<Result> WithEntClause::evaluate(PKBReader *db) {
             return handleSynIdent(db, dynamic_cast<Synonym &>(*second_), dynamic_cast<Ident &>(*first_));
         case pairEnum(PQLToken::Tag::IDENT, PQLToken::Tag::IDENT) :  // Uses/Modifies(1, "x") -> bool
             return std::make_unique<BoolResult>(
-                (dynamic_cast<Ident &>(*first_)).s == (dynamic_cast<Ident &>(*second_)).s);
+                    (dynamic_cast<Ident &>(*first_)).s == (dynamic_cast<Ident &>(*second_)).s);
         default:
             throw std::runtime_error("");
     }

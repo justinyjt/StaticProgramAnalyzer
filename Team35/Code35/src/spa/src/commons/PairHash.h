@@ -1,11 +1,10 @@
-#ifndef TEAM35_CODE35_SRC_SPA_SRC_COMMONS_PAIRHASH_H_
-#define TEAM35_CODE35_SRC_SPA_SRC_COMMONS_PAIRHASH_H_
+#pragma once
 
 #include <utility>
 
-struct hash_pair {
-    template <class T1, class T2>
-    size_t operator()(const std::pair<T1, T2>& p) const {
+struct PairHash {
+    template<class T1, class T2>
+    size_t operator()(const std::pair<T1, T2> &p) const {
         auto hash1 = std::hash<T1>{}(p.first);
         auto hash2 = std::hash<T2>{}(p.second);
 
@@ -17,5 +16,3 @@ struct hash_pair {
         return hash1;
     }
 };
-
-#endif  // TEAM35_CODE35_SRC_SPA_SRC_COMMONS_PAIRHASH_H_

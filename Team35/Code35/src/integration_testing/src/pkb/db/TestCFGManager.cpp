@@ -47,51 +47,25 @@ TEST_CASE("2. Test isNextExists in CFGManager with valid CFG") {
             STMT_SET expected;
             expected.emplace(2);
             expected.emplace(3);
-            requireEqual(expected, manager.getConnectedStmts(1, false, false));
+            requireEqual(expected, manager.getConnectedStmts(1, ArgType::Key, UsageType::Direct));
         }
         {
             STMT_SET expected;
             expected.emplace(5);
             expected.emplace(6);
-            requireEqual(expected, manager.getConnectedStmts(4, false, false));
+            requireEqual(expected, manager.getConnectedStmts(4, ArgType::Key, UsageType::Direct));
         }
         {
             STMT_SET expected;
             expected.emplace(4);
-            requireEqual(expected, manager.getConnectedStmts(2, false, false));
-            requireEqual(expected, manager.getConnectedStmts(3, false, false));
+            requireEqual(expected, manager.getConnectedStmts(2, ArgType::Key, UsageType::Direct));
+            requireEqual(expected, manager.getConnectedStmts(3, ArgType::Key, UsageType::Direct));
         }
         {
             STMT_SET expected;
-            requireEqual(expected, manager.getConnectedStmts(5, false, false));
-            requireEqual(expected, manager.getConnectedStmts(6, false, false));
+            requireEqual(expected, manager.getConnectedStmts(5, ArgType::Key, UsageType::Direct));
+            requireEqual(expected, manager.getConnectedStmts(6, ArgType::Key, UsageType::Direct));
         }
-        requireFalse(manager.isNextExistAfterStmtNum(5, true));
-        requireFalse(manager.isNextExistAfterStmtNum(6, false));
-    }
-
-    SECTION("Test is next exist by key") {
-        requireTrue(manager.isNextExistAfterStmtNum(1, true));
-        requireTrue(manager.isNextExistAfterStmtNum(2, true));
-        requireTrue(manager.isNextExistAfterStmtNum(3, true));
-        requireTrue(manager.isNextExistAfterStmtNum(4, true));
-        requireFalse(manager.isNextExistAfterStmtNum(5, true));
-        requireFalse(manager.isNextExistAfterStmtNum(6, false));
-    }
-
-    SECTION("Test is next exist by val") {
-        requireTrue(manager.isNextExistBeforeStmtNum(6, true));
-        requireTrue(manager.isNextExistBeforeStmtNum(5, true));
-        requireTrue(manager.isNextExistBeforeStmtNum(4, true));
-        requireTrue(manager.isNextExistBeforeStmtNum(3, true));
-        requireTrue(manager.isNextExistBeforeStmtNum(2, true));
-        requireFalse(manager.isNextExistBeforeStmtNum(1, true));
-        requireTrue(manager.isNextExistBeforeStmtNum(6, false));
-        requireTrue(manager.isNextExistBeforeStmtNum(5, false));
-        requireTrue(manager.isNextExistBeforeStmtNum(4, false));
-        requireTrue(manager.isNextExistBeforeStmtNum(3, false));
-        requireTrue(manager.isNextExistBeforeStmtNum(2, false));
-        requireFalse(manager.isNextExistBeforeStmtNum(1, false));
     }
 }
 
@@ -125,41 +99,41 @@ TEST_CASE("3. test isNext() method") {
     manager.setGraphs(std::move(test));
 
     SECTION("3.1. all possible isNext() non-transitive") {
-        requireTrue(manager.isNext(1, 2, false));
-        requireFalse(manager.isNext(1, 3, false));
-        requireTrue(manager.isNext(1, 4, false));
-        requireFalse(manager.isNext(1, 5, false));
-        requireFalse(manager.isNext(1, 6, false));
-        requireFalse(manager.isNext(1, 7, false));
-        requireFalse(manager.isNext(1, 8, false));
-        requireFalse(manager.isNext(1, 9, false));
-        requireFalse(manager.isNext(1, 10, false));
-        requireTrue(manager.isNext(2, 3, false));
-        requireFalse(manager.isNext(2, 4, false));
-        requireFalse(manager.isNext(2, 5, false));
-        requireFalse(manager.isNext(2, 6, false));
-        requireFalse(manager.isNext(2, 7, false));
-        requireFalse(manager.isNext(2, 8, false));
-        requireFalse(manager.isNext(2, 9, false));
-        requireFalse(manager.isNext(2, 10, false));
-        requireFalse(manager.isNext(3, 4, false));
-        requireFalse(manager.isNext(3, 5, false));
-        requireTrue(manager.isNext(3, 6, false));
-        requireFalse(manager.isNext(3, 7, false));
-        requireFalse(manager.isNext(3, 8, false));
-        requireFalse(manager.isNext(3, 9, false));
-        requireFalse(manager.isNext(3, 10, false));
-        requireTrue(manager.isNext(4, 5, false));
-        requireFalse(manager.isNext(4, 6, false));
-        requireFalse(manager.isNext(4, 7, false));
-        requireFalse(manager.isNext(4, 8, false));
-        requireFalse(manager.isNext(4, 9, false));
-        requireFalse(manager.isNext(4, 10, false));
-        requireTrue(manager.isNext(5, 6, false));
-        requireTrue(manager.isNext(7, 8, false));
-        requireTrue(manager.isNext(8, 9, false));
-        requireTrue(manager.isNext(9, 7, false));
-        requireTrue(manager.isNext(7, 10, false));
+        requireTrue(manager.isNext(1, 2, UsageType::Direct));
+        requireFalse(manager.isNext(1, 3, UsageType::Direct));
+        requireTrue(manager.isNext(1, 4, UsageType::Direct));
+        requireFalse(manager.isNext(1, 5, UsageType::Direct));
+        requireFalse(manager.isNext(1, 6, UsageType::Direct));
+        requireFalse(manager.isNext(1, 7, UsageType::Direct));
+        requireFalse(manager.isNext(1, 8, UsageType::Direct));
+        requireFalse(manager.isNext(1, 9, UsageType::Direct));
+        requireFalse(manager.isNext(1, 10, UsageType::Direct));
+        requireTrue(manager.isNext(2, 3, UsageType::Direct));
+        requireFalse(manager.isNext(2, 4, UsageType::Direct));
+        requireFalse(manager.isNext(2, 5, UsageType::Direct));
+        requireFalse(manager.isNext(2, 6, UsageType::Direct));
+        requireFalse(manager.isNext(2, 7, UsageType::Direct));
+        requireFalse(manager.isNext(2, 8, UsageType::Direct));
+        requireFalse(manager.isNext(2, 9, UsageType::Direct));
+        requireFalse(manager.isNext(2, 10, UsageType::Direct));
+        requireFalse(manager.isNext(3, 4, UsageType::Direct));
+        requireFalse(manager.isNext(3, 5, UsageType::Direct));
+        requireTrue(manager.isNext(3, 6, UsageType::Direct));
+        requireFalse(manager.isNext(3, 7, UsageType::Direct));
+        requireFalse(manager.isNext(3, 8, UsageType::Direct));
+        requireFalse(manager.isNext(3, 9, UsageType::Direct));
+        requireFalse(manager.isNext(3, 10, UsageType::Direct));
+        requireTrue(manager.isNext(4, 5, UsageType::Direct));
+        requireFalse(manager.isNext(4, 6, UsageType::Direct));
+        requireFalse(manager.isNext(4, 7, UsageType::Direct));
+        requireFalse(manager.isNext(4, 8, UsageType::Direct));
+        requireFalse(manager.isNext(4, 9, UsageType::Direct));
+        requireFalse(manager.isNext(4, 10, UsageType::Direct));
+        requireTrue(manager.isNext(5, 6, UsageType::Direct));
+        requireTrue(manager.isNext(7, 8, UsageType::Direct));
+        requireTrue(manager.isNext(8, 9, UsageType::Direct));
+        requireTrue(manager.isNext(9, 7, UsageType::Direct));
+        requireTrue(manager.isNext(7, 10, UsageType::Direct));
     }
 }
 
@@ -180,9 +154,9 @@ TEST_CASE("4. getValidNextPairs, getValidPredecessors, getValidSuccessors") {
     cf_graph_builder.setProcName("proc");
     CFG::CFGraph cf_graph = cf_graph_builder.build();
     {
-        STMT_STMT_SET allPairs = cf_graph.getPairwiseControlFlow(false);
+        STMT_STMT_SET allPairs = cf_graph.getPairwiseControlFlow(UsageType::Direct);
         expected.insert(allPairs.begin(), allPairs.end());
-        STMT_STMT_SET allPairsT = cf_graph.getPairwiseControlFlow(true);
+        STMT_STMT_SET allPairsT = cf_graph.getPairwiseControlFlow(UsageType::Transitive);
         expectedT.insert(allPairsT.begin(), allPairsT.end());
     }
     test.emplace_back(std::move(cf_graph));
@@ -198,9 +172,9 @@ TEST_CASE("4. getValidNextPairs, getValidPredecessors, getValidSuccessors") {
     cf_graph_builder.setProcName("proc");
     CFG::CFGraph cf_graph2 = cf_graph_builder.build();
     {
-        STMT_STMT_SET allPairs = cf_graph2.getPairwiseControlFlow(false);
+        STMT_STMT_SET allPairs = cf_graph2.getPairwiseControlFlow(UsageType::Direct);
         expected.insert(allPairs.begin(), allPairs.end());
-        STMT_STMT_SET allPairsT = cf_graph2.getPairwiseControlFlow(true);
+        STMT_STMT_SET allPairsT = cf_graph2.getPairwiseControlFlow(UsageType::Transitive);
         expectedT.insert(allPairsT.begin(), allPairsT.end());
     }
     test.emplace_back(std::move(cf_graph2));
@@ -208,8 +182,8 @@ TEST_CASE("4. getValidNextPairs, getValidPredecessors, getValidSuccessors") {
     manager.setGraphs(std::move(test));
 
     SECTION("4.1 transitive and non-transitive getValidNextPairs") {
-        requireEqualRef(expected, manager.getValidNextPairs(false));
-        requireEqualRef(expectedT, manager.getValidNextPairs(true));
+        requireEqualRef(expected, manager.getValidNextPairs(UsageType::Direct));
+        requireEqualRef(expectedT, manager.getValidNextPairs(UsageType::Transitive));
     }
 
     SECTION("4.2 predecessors") {

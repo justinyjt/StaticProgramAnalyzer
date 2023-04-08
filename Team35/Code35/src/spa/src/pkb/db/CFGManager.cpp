@@ -41,7 +41,7 @@ bool CFGManager::isValidStmtNum(STMT_NUM num) const {
     return this->getIndex(num) != -1;
 }
 
-bool CFGManager::isNext(STMT_NUM first, STMT_NUM second, bool isTransitive) const {
+bool CFGManager::isNext(STMT_NUM first, STMT_NUM second, UsageType usageType) const {
     if (!isValidStmtNum(first) || !isValidStmtNum(second)) {
         return false;
     }
@@ -53,7 +53,7 @@ bool CFGManager::isNext(STMT_NUM first, STMT_NUM second, bool isTransitive) cons
         return false;
     }
     const CFGraph &curr = getCFG(first);
-    return curr.isReachable(first, second, !isTransitive);
+    return curr.isReachable(first, second, usageType);
 }
 
 bool CFGManager::isNextExists() const {
@@ -62,29 +62,21 @@ bool CFGManager::isNextExists() const {
     });
 }
 
-STMT_SET CFGManager::getConnectedStmts(STMT_NUM num, bool isAfter, bool isTransitive) const {
+STMT_SET CFGManager::getConnectedStmts(STMT_NUM num, ArgType arg, UsageType usage) const {
     if (!isValidStmtNum(num)) {
         return {};
     }
     const CFGraph &curr = getCFG(num);
-    if (!isAfter) {
-        return curr.getSuccessors(num, isTransitive);
+    if (arg == ArgType::Key) {
+        return curr.getSuccessors(num, usage);
     }
-    return curr.getPredecessors(num, isTransitive);
+    return curr.getPredecessors(num, usage);
 }
 
-bool CFGManager::isNextExistAfterStmtNum(STMT_NUM num, bool isTransitive) {
-    return !getConnectedStmts(num, false, isTransitive).empty();
-}
-
-bool CFGManager::isNextExistBeforeStmtNum(STMT_NUM num, bool isTransitive) {
-    return !getConnectedStmts(num, true, isTransitive).empty();
-}
-
-STMT_STMT_SET CFGManager::getValidNextPairs(bool isTransitive) {
+STMT_STMT_SET CFGManager::getValidNextPairs(UsageType usageType) {
     STMT_STMT_SET result;
     for (auto &curr : this->graphs_) {
-        const STMT_STMT_SET &temp = curr.getPairwiseControlFlow(isTransitive);
+        const STMT_STMT_SET &temp = curr.getPairwiseControlFlow(usageType);
         result.insert(temp.begin(), temp.end());
     }
     return result;
