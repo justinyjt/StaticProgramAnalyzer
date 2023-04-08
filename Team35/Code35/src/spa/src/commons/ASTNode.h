@@ -1,9 +1,9 @@
 #pragma once
 
+#include <memory>
+#include <optional>
 #include <string>
 #include <vector>
-#include <optional>
-#include <memory>
 
 class ASTNode {
  public:
@@ -55,6 +55,8 @@ class ASTNode {
     void addChild(std::shared_ptr<ASTNode>);
 
     virtual ~ASTNode() = default;
+
+    virtual std::string toString() const;
 
  private:
     std::optional<std::string> label_;

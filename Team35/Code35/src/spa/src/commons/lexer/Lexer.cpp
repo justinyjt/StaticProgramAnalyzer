@@ -70,42 +70,10 @@ std::unique_ptr<Token> Lexer::scan() {
     }
 
     if (include_operator_) {
-        char character = readChar();
-        switch (character) {
-            case '&':
-                if (readChar('&')) {
-                    return std::make_unique<Token>("&&", Token::Tag::LogicalAnd);
-                }
-                break;
-            case '|':
-                if (readChar('|')) {
-                    return std::make_unique<Token>("||", Token::Tag::LogicalOr);
-                }
-                break;
-            case '=':
-                if (readChar('=')) {
-                    return std::make_unique<Token>("==", Token::Tag::Equivalence);
-                }
-                break;
-            case '!':
-                if (readChar('=')) {
-                    return std::make_unique<Token>("!=", Token::Tag::NotEqual);
-                }
-                return std::make_unique<Character>(character, Token::Tag::LogicalNot);
-            case '<':
-                if (readChar('=')) {
-                    return std::make_unique<Token>("<=", Token::Tag::LessThanEqualTo);
-                }
-                return std::make_unique<Character>('<', Token::Tag::LessThan);
-            case '>':
-                if (readChar('=')) {
-                    return std::make_unique<Token>(">=", Token::Tag::GreaterThanEqualTo);
-                }
-                return std::make_unique<Character>('>', Token::Tag::GreaterThan);
-            default:
-                break;
+        auto token = scanNextOperator();
+        if (token != std::nullopt) {
+            return std::move(token.value());
         }
-        unreadChar();
     }
 
     char character = peekChar();
@@ -207,23 +175,63 @@ std::unique_ptr<Token> Lexer::scanNextString() {
     return std::make_unique<Token>(lexeme, Token::Tag::String);
 }
 
-bool Lexer::isNameStart(char c) const {
+std::optional<std::unique_ptr<Token>> Lexer::scanNextOperator() {
+    char character = readChar();
+    switch (character) {
+        case '&':
+            if (readChar('&')) {
+                return std::make_unique<Token>("&&", Token::Tag::LogicalAnd);
+            }
+            break;
+        case '|':
+            if (readChar('|')) {
+                return std::make_unique<Token>("||", Token::Tag::LogicalOr);
+            }
+            break;
+        case '=':
+            if (readChar('=')) {
+                return std::make_unique<Token>("==", Token::Tag::Equivalence);
+            }
+            break;
+        case '!':
+            if (readChar('=')) {
+                return std::make_unique<Token>("!=", Token::Tag::NotEqual);
+            }
+            return std::make_unique<Character>(character, Token::Tag::LogicalNot);
+        case '<':
+            if (readChar('=')) {
+                return std::make_unique<Token>("<=", Token::Tag::LessThanEqualTo);
+            }
+            return std::make_unique<Character>('<', Token::Tag::LessThan);
+        case '>':
+            if (readChar('=')) {
+                return std::make_unique<Token>(">=", Token::Tag::GreaterThanEqualTo);
+            }
+            return std::make_unique<Character>('>', Token::Tag::GreaterThan);
+        default:
+            break;
+    }
+    unreadChar();
+    return std::nullopt;
+}
+
+bool Lexer::isNameStart(char c) {
     return isalpha(c);
 }
 
-bool Lexer::isNamePart(char c) const {
+bool Lexer::isNamePart(char c) {
     return isalnum(c);
 }
 
-bool Lexer::isDigit(char c) const {
+bool Lexer::isDigit(char c) {
     return isdigit(c);
 }
 
-bool Lexer::isStringStartEnd(char c) const {
+bool Lexer::isStringStartEnd(char c) {
     return c == '"';
 }
 
-bool Lexer::isControlOrSpace(char c) const {
+bool Lexer::isControlOrSpace(char c) {
     return iscntrl(c) || isspace(c);
 }
 

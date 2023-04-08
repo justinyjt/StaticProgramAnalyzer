@@ -23,3 +23,7 @@ void ASTNode::addChild(std::shared_ptr<ASTNode> newChild) {
 const std::vector<std::shared_ptr<ASTNode> > &ASTNode::getChildren() const {
     return this->children_;
 }
+
+std::string ASTNode::toString() const {
+    return this->label_.value();
+}

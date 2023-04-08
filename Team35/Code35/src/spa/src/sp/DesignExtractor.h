@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <string>
 #include <unordered_map>
 #include <vector>
 
@@ -11,18 +10,11 @@
 #include "pkb/PKBWriter.h"
 #include "CFGraphBuilder.h"
 
-struct ProcNode {
-    ENT_NAME procName;
-    std::vector<ENT_NAME> path;
-
-    ProcNode(ENT_NAME name, const std::vector<ENT_NAME> &newPath);
-};
-
 class DesignExtractor {
  public:
     explicit DesignExtractor(std::unique_ptr<PKBWriter>);
 
-    std::shared_ptr<ASTNode> extractProgram(std::shared_ptr<ASTNode>);
+    void extractProgram(std::shared_ptr<ASTNode>);
 
     std::unordered_map<STMT_NUM, ASSIGN_PAT> getAssignPatMap();
 
@@ -72,7 +64,7 @@ class DesignExtractor {
     CFG::CFGraphBuilder CFGBuilder_;
     std::vector<CFG::CFGraph> CFGLst_;
 
-    bool isIfCond;
+    bool isIfCond_;
 
     void addVarNameSetToPKB();
 
@@ -112,7 +104,9 @@ class DesignExtractor {
 
     void addContainerCallPairSetToPKB();
 
-    void analyzeProc();
+    void analyzeProcedure();
+
+    void analyzeProcedureHelper(const ENT_NAME &curProcName, std::vector<ENT_NAME> &path);
 
     void updateStmtUsesPairSetWithContainedCalls();
 

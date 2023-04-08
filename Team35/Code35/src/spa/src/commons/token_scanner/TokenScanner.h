@@ -1,17 +1,16 @@
 #pragma once
 
-#include <deque>
 #include <memory>
+#include <vector>
 
 #include "commons/lexer/ILexer.h"
 #include "commons/token/Token.h"
 
-typedef std::deque<std::unique_ptr<Token>> TokenLst;
+typedef std::vector<std::unique_ptr<Token>> TokenList;
 
 class TokenScanner {
  public:
     explicit TokenScanner(std::unique_ptr<ILexer> lex);
-    explicit TokenScanner(TokenLst token_lst);
     int next();
     int peek(Token::Tag tag) const;
     int match(Token::Tag tag);
@@ -23,12 +22,11 @@ class TokenScanner {
     void reset();
     void saveState();
     void restoreState();
-    [[nodiscard]] TokenLst getTokenLst();
 
  private:
     std::unique_ptr<ILexer> lex_;
-    std::deque<std::unique_ptr<Token>> token_lst_;
+    TokenList token_list_;
     uint32_t cur_idx_ = 0;
     uint32_t saved_idx_ = 0;
-    void initialise();
+    [[nodiscard]] TokenList getTokenList();
 };

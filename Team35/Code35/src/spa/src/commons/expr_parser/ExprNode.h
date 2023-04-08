@@ -17,7 +17,7 @@ class ExprNode : public ASTNode {
     ExprNode(SyntaxType syntaxType, std::optional<std::string> label)
             : ASTNode(syntaxType, std::move(label)) {}
 
-    [[nodiscard]] std::string toString() const;
+    [[nodiscard]] std::string toString() const override;
 
     // Override the == operator to compare two expressions
     bool operator==(const ExprNode &other) const;

@@ -53,7 +53,7 @@ class setUpMcp {
         identStr = std::make_unique<Ident>("x");
         std::string exprStr = "x";
         std::unique_ptr<ILexer> lxr =
-            LexerFactory::createLexer(exprStr, LexerFactory::LexerType::Expression);
+                LexerFactory::createLexer(exprStr, LexerFactory::LexerType::Expression);
         TokenScanner scanner(std::move(lxr));
         ExprParser parser(scanner);
         ASSIGN_PAT_RIGHT pattern = parser.parseExpr();
@@ -116,7 +116,7 @@ TEST_CASE_METHOD(setUpMcp, "modifiesS, usesS, invalid syntax") {
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     ClauseParser cp(pqlTokenScanner, declarationList);
     requireThrowAs<SyntaxException>([&cp]() {
-      cp.parse();
+        cp.parse();
     });
 }
 
@@ -126,7 +126,7 @@ TEST_CASE_METHOD(setUpMcp, "and start, invalid syntax") {
     PQLTokenScanner pqlTokenScanner(std::move(lexer));
     ClauseParser cp(pqlTokenScanner, declarationList);
     requireThrowAs<SyntaxException>([&cp]() {
-      cp.parse();
+        cp.parse();
     });
 }
 
@@ -241,8 +241,9 @@ TEST_CASE_METHOD(setUpMcp, "with clauses, withNum, withEnt") {
 TEST_CASE_METHOD(setUpMcp, "with, such that, syntax error") {
     query = "Select a with ifs.stmt# = a.stmt# and Modifies(1,v)";
     lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-    std::unique_ptr<QuerySyntaxValidator> sv = std::make_unique<QuerySyntaxValidator>(std::move(lexer));
-    requireTrue(!sv->validateQuery());
+    PQLTokenScanner pqlTokenScanner(std::move(lexer));
+    QuerySyntaxValidator sv(pqlTokenScanner);
+    requireTrue(!sv.validateQuery());
 }
 
 TEST_CASE_METHOD(setUpMcp, "with clauses, such that clauses, pattern clauses") {

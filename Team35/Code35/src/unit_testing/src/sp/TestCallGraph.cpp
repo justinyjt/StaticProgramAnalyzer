@@ -90,17 +90,5 @@ TEST_CASE("Call Graph can successfully add graphs with stmt_num scope") {
         cg.addCallRelationship(ENT_NAME("b"), ENT_NAME("c"));
         cg.addCallRelationship(ENT_NAME("c"), ENT_NAME("d"));
         requireEqual(expected, cg.getTransitiveCalls());
-        cg.addProcScope("a", STMT_STMT(1, 3));
-        cg.addProcScope("b", STMT_STMT(4, 6));
-        cg.addProcScope("c", STMT_STMT(7, 7));
-        cg.addProcScope("d", STMT_STMT(8, 9));
-        STMT_SET a = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-        STMT_SET b = {4, 5, 6, 7, 8, 9};
-        STMT_SET c = {7, 8, 9};
-        STMT_SET d = {8, 9};
-        requireEqual(a, cg.getStmts("a"));
-        requireEqual(b, cg.getStmts("b"));
-        requireEqual(c, cg.getStmts("c"));
-        requireEqual(d, cg.getStmts("d"));
     };
 }

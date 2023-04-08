@@ -2,6 +2,7 @@
 
 #include <list>
 #include <memory>
+#include <optional>
 #include <string>
 #include <unordered_map>
 
@@ -67,10 +68,11 @@ class Lexer : public ILexer {
     std::unique_ptr<Token> scanNextInteger();
     std::unique_ptr<Token> scanNextString();
     std::unique_ptr<Token> scanNextCharacter();
+    std::optional<std::unique_ptr<Token>> scanNextOperator();
 
-    bool isNameStart(char c) const;
-    bool isNamePart(char c) const;
-    bool isDigit(char c) const;
-    bool isStringStartEnd(char c) const;
-    bool isControlOrSpace(char c) const;
+    static bool isNameStart(char c);
+    static bool isNamePart(char c);
+    static bool isDigit(char c);
+    static bool isStringStartEnd(char c);
+    static bool isControlOrSpace(char c);
 };

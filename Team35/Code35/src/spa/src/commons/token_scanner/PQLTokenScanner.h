@@ -10,7 +10,6 @@
 class PQLTokenScanner : public TokenScanner {
  public:
     explicit PQLTokenScanner(std::unique_ptr<ILexer> lex);
-    explicit PQLTokenScanner(TokenLst token_lst);
     int peekDesignEntity() const;
     int peekSuchThatClause() const;
     int peekIdent() const;

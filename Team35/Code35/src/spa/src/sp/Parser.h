@@ -13,12 +13,12 @@ using std::shared_ptr;
 
 class Parser : public IParser {
  public:
-    explicit Parser(TokenLst token_lst);
+    explicit Parser(SimpleTokenScanner &scanner);
 
-    shared_ptr<ASTNode> Parse() override;
+    shared_ptr<ASTNode> parse() override;
 
  private:
-    SimpleTokenScanner scanner_;
+    SimpleTokenScanner &scanner_;
 
     shared_ptr<ASTNode> parseProc();
 

@@ -15,11 +15,12 @@ std::pair<std::unique_ptr<SelectClause>,
           std::vector<std::unique_ptr<OptimisableClause>>> QueryParser::parse(std::string &query) {
     try {
         std::unique_ptr<ILexer> lexer = LexerFactory::createLexer(query, LexerFactory::LexerType::Pql);
-        std::unique_ptr<QuerySyntaxValidator> sv = std::make_unique<QuerySyntaxValidator>(std::move(lexer));
+        PQLTokenScanner pqlTokenScanner(std::move(lexer));
+        std::unique_ptr<QuerySyntaxValidator> sv = std::make_unique<QuerySyntaxValidator>(pqlTokenScanner);
         if (!sv->validateQuery()) {
             throw SyntaxException();
         }
-        PQLTokenScanner pqlTokenScanner(std::move(sv->getTokenLst()));
+        pqlTokenScanner.reset();
         // pass tokenList and parse declaration
         std::unordered_map<std::string, Synonym::DesignEntity> declarationList;
         // std::vector<Synonym> declarationList;
