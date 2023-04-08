@@ -56,6 +56,8 @@ class ASTNode {
 
     virtual ~ASTNode() = default;
 
+    virtual std::string toString() const;
+
  private:
     std::optional<std::string> label_;
     SyntaxType type_;
