@@ -46,6 +46,36 @@ TEST_CASE("1. Test WithEntClause") {
         requireTrue(expectedResult == *actualResult);
     }
 
+    SECTION("Test with syn = ent") {
+        std::unique_ptr<Synonym> arg2 = std::make_unique<Synonym>(Synonym::DesignEntity::PROCEDURE, "p");
+        std::unique_ptr<Ident> arg1 = std::make_unique<Ident>("a");
+        WithEntClause withEntClause(std::move(arg1), std::move(arg2));
+        ENT_SET s{"a"};
+        TableResult expectedResult("p", s);
+        auto actualResult = withEntClause.evaluate(pkbReaderPtr);
+        requireTrue(expectedResult == *actualResult);
+    }
+
+    SECTION("Test with same syn ent") {
+        std::unique_ptr<Synonym> syn1 = std::make_unique<Synonym>(Synonym::DesignEntity::PROCEDURE, "p");
+        std::unique_ptr<Synonym> syn2 = std::make_unique<Synonym>(Synonym::DesignEntity::PROCEDURE, "p");
+        WithEntClause withEntClause(std::move(syn1), std::move(syn2));
+        ENT_SET s{"a", "b"};
+        TableResult expectedResult("p", s);
+        auto actualResult = withEntClause.evaluate(pkbReaderPtr);
+        requireTrue(expectedResult == *actualResult);
+    }
+
+    SECTION("Test with same syn stmt") {
+        std::unique_ptr<Synonym> syn1 = std::make_unique<Synonym>(Synonym::DesignEntity::PRINT, "pr");
+        std::unique_ptr<Synonym> syn2 = std::make_unique<Synonym>(Synonym::DesignEntity::PRINT, "pr");
+        WithEntClause withEntClause(std::move(syn1), std::move(syn2));
+        ENT_SET s{"1", "2"};
+        TableResult expectedResult("pr", s);
+        auto actualResult = withEntClause.evaluate(pkbReaderPtr);
+        requireTrue(expectedResult == *actualResult);
+    }
+
     SECTION("Test with syn = ent with print") {
         std::unique_ptr<Synonym> arg1 = std::make_unique<Synonym>(Synonym::DesignEntity::PRINT, "pr");
         std::unique_ptr<Ident> arg2 = std::make_unique<Ident>("a");
@@ -72,6 +102,26 @@ TEST_CASE("1. Test WithEntClause") {
         WithEntClause withEntClause(std::move(arg1), std::move(arg2));
         ENT_ENT_SET s{std::make_pair("b", "b")};
         TableResult expectedResult("p", "v", s);
+        auto actualResult = withEntClause.evaluate(pkbReaderPtr);
+        requireTrue(expectedResult == *actualResult);
+    }
+
+    SECTION("Test with ent syn = stmt syn") {
+        std::unique_ptr<Synonym> arg1 = std::make_unique<Synonym>(Synonym::DesignEntity::PROCEDURE, "p");
+        std::unique_ptr<Synonym> arg2 = std::make_unique<Synonym>(Synonym::DesignEntity::READ, "r");
+        WithEntClause withEntClause(std::move(arg1), std::move(arg2));
+        ENT_ENT_SET s{std::make_pair("3", "b")};
+        TableResult expectedResult("r", "p", s);
+        auto actualResult = withEntClause.evaluate(pkbReaderPtr);
+        requireTrue(expectedResult == *actualResult);
+    }
+
+    SECTION("Test with stmt syn = ent syn") {
+        std::unique_ptr<Synonym> arg2 = std::make_unique<Synonym>(Synonym::DesignEntity::PROCEDURE, "p");
+        std::unique_ptr<Synonym> arg1 = std::make_unique<Synonym>(Synonym::DesignEntity::READ, "r");
+        WithEntClause withEntClause(std::move(arg1), std::move(arg2));
+        ENT_ENT_SET s{std::make_pair("3", "b")};
+        TableResult expectedResult("r", "p", s);
         auto actualResult = withEntClause.evaluate(pkbReaderPtr);
         requireTrue(expectedResult == *actualResult);
     }

@@ -17,17 +17,13 @@ class CFGManager {
 
     bool isValidStmtNum(STMT_NUM num) const;
 
-    bool isNext(STMT_NUM first, STMT_NUM second, bool isTransitive) const;
+    bool isNext(STMT_NUM first, STMT_NUM second, UsageType usageType) const;
 
     bool isNextExists() const;
 
-    STMT_SET getConnectedStmts(STMT_NUM num, bool isAfter, bool isTransitive) const;
+    STMT_SET getConnectedStmts(STMT_NUM num, ArgType arg, UsageType usage) const;
 
-    bool isNextExistAfterStmtNum(STMT_NUM num, bool isTransitive);
-
-    bool isNextExistBeforeStmtNum(STMT_NUM num, bool isTransitive);
-
-    STMT_STMT_SET getValidNextPairs(bool isTransitive);
+    STMT_STMT_SET getValidNextPairs(UsageType usageType);
 
     STMT_SET getValidPredecessors() const;
 

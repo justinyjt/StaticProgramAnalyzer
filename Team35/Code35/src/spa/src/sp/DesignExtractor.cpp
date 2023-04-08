@@ -21,15 +21,24 @@ std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode
     for (const auto &child : root_->getChildren()) {
         extractProc(child);
     }
+    // todo(Jun Kang): delete when the syntax validator is updated
     if (callGraph_.isCyclic()) {
         return std::move(root_);
     }
+    digest();
+    populatePKB();
+    return std::move(root_);
+}
+
+void DesignExtractor::digest() {
     analyzeProc();
     updateStmtUsesPairSetWithCalls();
     updateStmtModsPairSetWithCalls();
     updateStmtUsesPairSetWithContainedCalls();
     updateStmtModsPairSetWithContainedCalls();
+}
 
+void DesignExtractor::populatePKB() {
     addVarNameSetToPKB();
     addConstantSetToPKB();
     addProcSetToPKB();
@@ -49,8 +58,6 @@ std::shared_ptr<ASTNode> DesignExtractor::extractProgram(std::shared_ptr<ASTNode
     addContainerCallPairSetToPKB();
     addProcUsesPairSetToPKB();
     addProcModifiesPairSetToPKB();
-
-    return std::move(root_);
 }
 
 void DesignExtractor::extractProc(const std::shared_ptr<ASTNode> &node) {

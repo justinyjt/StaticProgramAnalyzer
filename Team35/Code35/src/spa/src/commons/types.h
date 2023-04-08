@@ -60,3 +60,11 @@ enum class StmtStmtRelationship {
 enum class Entity {
     Variable, Constant, Procedure
 };
+
+enum class ArgType {
+    Key, Value
+};
+
+enum class UsageType {
+    Transitive, Direct
+};
