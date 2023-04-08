@@ -66,6 +66,14 @@ class CFGraph : public Graph<CFGraphNodeData> {
 
     STMT_SET getSuccessorsByIndex(Index index, UsageType usageType) const;
 
+    STMT_SET getDirectSuccessorsByIndex(Index index) const;
+
+    STMT_SET getTransitiveSuccessorsByIndex(Index index) const;
+
     STMT_SET getPredecessorsByIndex(Index index, UsageType usageType) const;
+
+    STMT_SET getDirectPredecessorsByIndex(Index index) const;
+
+    STMT_SET getTransitivePredecessorsByIndex(Index index) const;
 };
 }  // namespace CFG

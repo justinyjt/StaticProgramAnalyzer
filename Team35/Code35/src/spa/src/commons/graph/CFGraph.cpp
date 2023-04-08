@@ -74,20 +74,28 @@ STMT_SET CFGraph::getAllPredecessors() const {
 }
 
 STMT_SET CFGraph::getSuccessorsByIndex(Index index, UsageType usageType) const {
-    STMT_SET successors;
-
     if (usageType == UsageType::Direct) {
-        for (Index successor_index : this->getOutgoingNodes(index)) {
-            if (!isIndexDummyNode(successor_index)) {
-                successors.insert(this->getStmtNumFromIndex(successor_index));
-            } else {
-                for (Index successor_of_dummy_node_index : this->getDummyNodeSuccessors(successor_index)) {
-                    successors.insert(this->getStmtNumFromIndex(successor_of_dummy_node_index));
-                }
-            }
-        }
-        return successors;
+        return getDirectSuccessorsByIndex(index);
     }
+    return getTransitiveSuccessorsByIndex(index);
+}
+
+STMT_SET CFGraph::getDirectSuccessorsByIndex(Index index) const {
+    STMT_SET successors;
+    for (Index successor_index : this->getOutgoingNodes(index)) {
+        if (!isIndexDummyNode(successor_index)) {
+            successors.insert(this->getStmtNumFromIndex(successor_index));
+            continue;
+        }
+        for (Index successor_of_dummy_node_index : this->getDummyNodeSuccessors(successor_index)) {
+            successors.insert(this->getStmtNumFromIndex(successor_of_dummy_node_index));
+        }
+    }
+    return successors;
+}
+
+STMT_SET CFGraph::getTransitiveSuccessorsByIndex(Index index) const {
+    STMT_SET successors;
     IndexQueue frontier;
     IndexSet visited;
     frontier.push(index);
@@ -109,20 +117,28 @@ STMT_SET CFGraph::getSuccessorsByIndex(Index index, UsageType usageType) const {
 }
 
 STMT_SET CFGraph::getPredecessorsByIndex(Index index, UsageType usageType) const {
-    STMT_SET predecessors;
-
     if (usageType == UsageType::Direct) {
-        for (Index predecessor_index : this->getIncomingNodes(index)) {
-            if (!isIndexDummyNode(predecessor_index)) {
-                predecessors.insert(this->getStmtNumFromIndex(predecessor_index));
-            } else {
-                for (Index predecessor_of_dummy_index : this->getDummyNodePredecessors(predecessor_index)) {
-                    predecessors.insert(this->getStmtNumFromIndex(predecessor_of_dummy_index));
-                }
-            }
-        }
-        return predecessors;
+        return getDirectPredecessorsByIndex(index);
     }
+    return getTransitivePredecessorsByIndex(index);
+}
+
+STMT_SET CFGraph::getDirectPredecessorsByIndex(Index index) const {
+    STMT_SET predecessors;
+    for (Index predecessor_index : this->getIncomingNodes(index)) {
+        if (!isIndexDummyNode(predecessor_index)) {
+            predecessors.insert(this->getStmtNumFromIndex(predecessor_index));
+            continue;
+        }
+        for (Index predecessor_of_dummy_index : this->getDummyNodePredecessors(predecessor_index)) {
+            predecessors.insert(this->getStmtNumFromIndex(predecessor_of_dummy_index));
+        }
+    }
+    return predecessors;
+}
+
+STMT_SET CFGraph::getTransitivePredecessorsByIndex(Index index) const {
+    STMT_SET predecessors;
     IndexQueue frontier;
     IndexSet visited;
     frontier.push(index);
