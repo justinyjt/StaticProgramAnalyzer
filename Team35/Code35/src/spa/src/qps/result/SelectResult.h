@@ -1,4 +1,6 @@
 #pragma once
+
+#include <cstdint>
 #include <iostream>
 #include <iterator>
 #include <list>
@@ -14,22 +16,22 @@
 // n-col result
 class SelectResult : public Result {
  public:
-    std::vector<std::string> idents;  // eg list<"v", "s1">
-    std::vector<TableResult> cols;  // eg vector<TableResult(v), TableResult(s1), ...>
+    std::vector<std::string> idents;
+    std::vector<TableResult> cols;
 
     // general constructor for n-cols
     SelectResult(std::vector<std::string> &_idents, const std::vector<TableResult> &_cols);
 
     std::unique_ptr<Result> join(Result &rhs) override;
 
-    void output(std::list<std::string> &list) override;
+    void output(std::list<std::string> &list) const override;
 
     bool operator==(const Result &rhs) const;
 
     bool isNull() const override;
 
  private:
-    std::vector<int> getOutputOrder(const TableResult &intermediateRes) const;
+    [[nodiscard]] std::vector<uint32_t> getOutputOrder(const TableResult &intermediateRes) const;
 
     std::unique_ptr<TableResult> getResultForOutput(std::unique_ptr<Result> finalRes);
 

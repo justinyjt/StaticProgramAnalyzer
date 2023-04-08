@@ -1,6 +1,7 @@
 #include "catch.hpp"
 #include "../../TestHelper.h"
 #include "qps/result/BoolResult.h"
+#include "qps/result/TableResult.h"
 
 TEST_CASE("Boolean join") {
     SECTION("true and true") {
@@ -44,13 +45,9 @@ TEST_CASE("Boolean join") {
         rows2.push_back({"1", "z"});
         std::unique_ptr<TableResult> tableResult2 = std::make_unique<TableResult>(header2, rows2);
 
-        std::vector<std::string> resultHeader = {"a", "v"};
-        std::vector<std::vector<std::string>> resultRows;
-        resultRows.push_back({"1", "x"});
-        resultRows.push_back({"1", "z"});
-        std::unique_ptr<TableResult> expectedResult = std::make_unique<TableResult>(resultHeader, resultRows);
+        BoolResult expectedResult(true);
 
-        requireTrue(*expectedResult == *boolResult->join(*tableResult2));
+        requireTrue(expectedResult == *boolResult->join(*tableResult2));
     }
 
     SECTION("false and table") {
@@ -86,7 +83,7 @@ TEST_CASE("Boolean join") {
     }
 
     SECTION("Select boolean, non-empty intermediate") {
-        std::unique_ptr<BoolResult> boolResult = std::make_unique<BoolResult>(true, true);
+        std::unique_ptr<BoolResult> boolResult = std::make_unique<BoolResult>(true);
 
         std::vector<std::string> header2 = {"a", "v"};
         std::vector<std::vector<std::string>> rows2;
@@ -100,7 +97,7 @@ TEST_CASE("Boolean join") {
     }
 
     SECTION("Select boolean, empty intermediate") {
-        std::unique_ptr<BoolResult> boolResult = std::make_unique<BoolResult>(false, true);
+        std::unique_ptr<BoolResult> boolResult = std::make_unique<BoolResult>(false);
 
         std::vector<std::string> header2 = {"a", "v"};
         std::vector<std::vector<std::string>> rows2;
