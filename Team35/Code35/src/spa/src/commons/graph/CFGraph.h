@@ -31,17 +31,17 @@ class CFGraph : public Graph<CFGraphNodeData> {
 
     CFGraph(const CFGraph &graph, STMT_NUM min_stmt_num, STMT_NUM max_stmt_num, ENT_NAME proc_name);
 
-    STMT_SET getPredecessors(STMT_NUM stmt_num, bool isTransitive) const;
+    STMT_SET getPredecessors(STMT_NUM stmt_num, UsageType usageType) const;
 
     STMT_SET getAllPredecessors() const;
 
-    STMT_SET getSuccessors(STMT_NUM stmt_num, bool isTransitive) const;
+    STMT_SET getSuccessors(STMT_NUM stmt_num, UsageType usageType) const;
 
     STMT_SET getAllSuccessors() const;
 
-    const STMT_STMT_SET &getPairwiseControlFlow(bool isTransitive);
+    const STMT_STMT_SET &getPairwiseControlFlow(UsageType usageType);
 
-    bool isReachable(STMT_NUM stmt1, STMT_NUM stmt2, bool check_neighbor_only = false) const;
+    bool isReachable(STMT_NUM stmt1, STMT_NUM stmt2, UsageType usageType = UsageType::Transitive) const;
 
     STMT_NUM getMaxStmtNum() const;
 
@@ -64,8 +64,16 @@ class CFGraph : public Graph<CFGraphNodeData> {
 
     IndexSet getDummyNodeSuccessors(Index index) const;
 
-    STMT_SET getSuccessorsByIndex(Index index, bool isTransitive) const;
+    STMT_SET getSuccessorsByIndex(Index index, UsageType usageType) const;
 
-    STMT_SET getPredecessorsByIndex(Index index, bool isTransitive) const;
+    STMT_SET getDirectSuccessorsByIndex(Index index) const;
+
+    STMT_SET getTransitiveSuccessorsByIndex(Index index) const;
+
+    STMT_SET getPredecessorsByIndex(Index index, UsageType usageType) const;
+
+    STMT_SET getDirectPredecessorsByIndex(Index index) const;
+
+    STMT_SET getTransitivePredecessorsByIndex(Index index) const;
 };
 }  // namespace CFG

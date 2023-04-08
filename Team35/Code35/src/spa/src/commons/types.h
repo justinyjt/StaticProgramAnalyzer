@@ -59,4 +59,12 @@ enum class Entity {
     Variable, Constant, Procedure
 };
 
+enum class ArgType {
+    Key, Value
+};
+
+enum class UsageType {
+    Transitive, Direct
+};
+
 #endif  // TEAM35_CODE35_SRC_SPA_SRC_COMMONS_TYPES_H_

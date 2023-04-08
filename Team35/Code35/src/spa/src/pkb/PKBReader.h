@@ -51,7 +51,7 @@ class PKBReader {
     STMT_SET getRelationshipByStmtWithFilter(StmtStmtRelationship tableType,
                                              STMT_NUM stmt,
                                              StmtType stmtType,
-                                             bool isKey);
+                                             ArgType argType);
 
     STMT_STMT_SET getAllRelationshipsWithFilter(StmtStmtRelationship tableType, StmtType first, StmtType second);
 
@@ -61,7 +61,7 @@ class PKBReader {
 
     STMT_SET getValueStmtByRelationship(StmtStmtRelationship tableType);
 
-    STMT_SET getStmtByRelationshipWithFilter(StmtStmtRelationship tableType, StmtType stmtType, bool isKey);
+    STMT_SET getStmtByRelationshipWithFilter(StmtStmtRelationship tableType, StmtType stmtType, ArgType argType);
 
     bool isRelationshipExists(StmtStmtRelationship tableType, STMT_NUM keyName, STMT_NUM valName);
 
@@ -94,11 +94,11 @@ class PKBReader {
 
     bool isValidAffectsPredecessor(STMT_NUM stmt);
 
-    STMT_SET getAffectsBySuccessor(STMT_NUM stmt2, bool isTransitive);
+    STMT_SET getAffectsBySuccessor(STMT_NUM stmt2, UsageType usageType);
 
-    STMT_SET getAffectsByPredecessor(STMT_NUM stmt1, bool isTransitive);
+    STMT_SET getAffectsByPredecessor(STMT_NUM stmt1, UsageType usageType);
 
-    STMT_STMT_SET getAllAffects(bool isTransitive);
+    STMT_STMT_SET getAllAffects(UsageType usageType);
 
     STMT_SET getAllAffectsPredecessors();
 
@@ -111,6 +111,12 @@ class PKBReader {
     [[nodiscard]] bool isModifies(STMT_NUM key, const ENT_NAME &val) const;
 
     STMT_STMT_SET getAllRelationships(StmtStmtRelationship tableType);
+
+    bool isContainerStmt(STMT_NUM num) const;
+
+    bool isSuccessorCandidate(STMT_NUM num, ENT_SET modifies) const;
+
+    bool isAffectsHelper(STMT_NUM start, STMT_NUM end, ENT_SET modifies) const;
 
     void computeAffectsGraph();
 };

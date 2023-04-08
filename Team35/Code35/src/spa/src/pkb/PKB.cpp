@@ -200,9 +200,9 @@ bool PKB::isEntEntPairExists(NameNameRelationship tableType, const ENT_NAME &key
 STMT_SET PKB::getStmtByStmtKey(StmtStmtRelationship tableType, STMT_NUM stmt) const {
     switch (tableType) {
         case StmtStmtRelationship::Next:
-            return cfgManager_.getConnectedStmts(stmt, false, false);
+            return cfgManager_.getConnectedStmts(stmt, ArgType::Key, UsageType::Direct);
         case StmtStmtRelationship::NextStar:
-            return cfgManager_.getConnectedStmts(stmt, false, true);
+            return cfgManager_.getConnectedStmts(stmt, ArgType::Key, UsageType::Transitive);
         default:
             return getStmtStmtRelationshipTable(tableType).getValuesByKey(stmt);
     }
@@ -211,9 +211,9 @@ STMT_SET PKB::getStmtByStmtKey(StmtStmtRelationship tableType, STMT_NUM stmt) co
 STMT_SET PKB::getStmtByStmtVal(StmtStmtRelationship tableType, STMT_NUM stmt) const {
     switch (tableType) {
         case StmtStmtRelationship::Next:
-            return cfgManager_.getConnectedStmts(stmt, true, false);
+            return cfgManager_.getConnectedStmts(stmt, ArgType::Value, UsageType::Direct);
         case StmtStmtRelationship::NextStar:
-            return cfgManager_.getConnectedStmts(stmt, true, true);
+            return cfgManager_.getConnectedStmts(stmt, ArgType::Value, UsageType::Transitive);
         default:
             return getStmtStmtRelationshipTable(tableType).getKeysByValue(stmt);
     }
@@ -222,9 +222,9 @@ STMT_SET PKB::getStmtByStmtVal(StmtStmtRelationship tableType, STMT_NUM stmt) co
 STMT_STMT_SET PKB::getStmtStmtSet(StmtStmtRelationship tableType) {
     switch (tableType) {
         case StmtStmtRelationship::Next:
-            return cfgManager_.getValidNextPairs(false);
+            return cfgManager_.getValidNextPairs(UsageType::Direct);
         case StmtStmtRelationship::NextStar:
-            return cfgManager_.getValidNextPairs(true);
+            return cfgManager_.getValidNextPairs(UsageType::Transitive);
         default:
             return getStmtStmtRelationshipTable(tableType).getKeyValuePairs();
     }
@@ -253,9 +253,9 @@ STMT_SET PKB::getValStmtByRs(StmtStmtRelationship tableType) const {
 bool PKB::isStmtStmtPairExists(StmtStmtRelationship tableType, STMT_NUM key, STMT_NUM val) const {
     switch (tableType) {
         case StmtStmtRelationship::Next:
-            return cfgManager_.isNext(key, val, false);
+            return cfgManager_.isNext(key, val, UsageType::Direct);
         case StmtStmtRelationship::NextStar:
-            return cfgManager_.isNext(key, val, true);
+            return cfgManager_.isNext(key, val, UsageType::Transitive);
         default:
             return getStmtStmtRelationshipTable(tableType).containsPair(key, val);
     }

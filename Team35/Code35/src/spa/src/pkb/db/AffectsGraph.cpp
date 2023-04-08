@@ -14,8 +14,8 @@ bool AffectsGraph::hasAffectsRelationship(STMT_NUM first, STMT_NUM second) {
     return direct_affects_set_.find(STMT_STMT(first, second)) != direct_affects_set_.end();
 }
 
-const STMT_STMT_SET &AffectsGraph::getAllAffectsRelationships(bool is_transitive) {
-    if (!is_transitive) {
+const STMT_STMT_SET &AffectsGraph::getAllAffectsRelationships(UsageType usageType) {
+    if (usageType == UsageType::Direct) {
         return direct_affects_set_;
     }
     if (transitive_affects_set_.has_value()) {
