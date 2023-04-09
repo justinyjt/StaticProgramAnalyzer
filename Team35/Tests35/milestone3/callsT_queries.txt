@@ -1,0 +1,765 @@
+1 - Calls*(mainPr0ceDUR3, ORDLOOOOOOOO)
+
+Select BOOLEAN such that Calls*("mainPr0ceDUR3", "ORDLOOOOOOOO")
+TRUE
+5000
+2 - Calls*(24, _) 
+stmt s;
+Select BOOLEAN such that Calls*(24, _)
+SyntaxError
+5000
+3 - Calls*(24, s) 
+stmt s;
+Select s such that Calls*(24, s)
+SyntaxError
+5000
+4 - Calls*(5, pn) 
+print pn;
+Select pn such that Calls*(5, pn)
+SyntaxError
+5000
+5 - Calls*(135, r) 
+read r;
+Select r such that Calls*(135, r)
+SyntaxError
+5000
+6 - Calls*(111, a) 
+assign a;
+Select a such that Calls*(111, a)
+SyntaxError
+5000
+7 - Calls*(75, ifs) 
+if ifs;
+Select ifs such that Calls*(75, ifs)
+SyntaxError
+5000
+8 - Calls*(_, w) 
+while w;
+Select BOOLEAN such that Calls*(_, w)
+SemanticError
+5000
+9 - Calls*(55, cl) 
+call cl;
+Select cl such that Calls*(55, cl)
+SyntaxError
+5000
+11 - Calls*(24, p) // Semantic error
+procedure p;
+Select p such that Calls*(24, p)
+SyntaxError
+5000
+12 - Calls*(24, v) 
+variable v;
+Select BOOLEAN such that Calls*(24, v)
+SyntaxError
+5000
+13 - Calls*(24, semanticError) // Semantic error
+constant semanticError;
+Select BOOLEAN such that Calls*(24, semanticError)
+SyntaxError
+5000
+14 - Calls*(_, 28) // _ , ?
+
+Select BOOLEAN such that Calls*(_, 65)
+SyntaxError
+5000
+15 - Calls*(_, _) 
+
+Select BOOLEAN such that Calls*(_, _)
+TRUE
+5000
+16 - Calls*(_, s) // False
+stmt s;
+Select BOOLEAN such that Calls*(_, s)
+SemanticError
+5000
+17 - Calls*(_, pn) 
+print pn;
+Select pn such that Calls*(_, pn)
+SemanticError
+5000
+18 - Calls*(_, r) 
+read r;
+Select r such that Calls*(_, r)
+SemanticError
+5000
+19 - Calls*(_, a) 
+assign a;
+Select a such that Calls*(_, a)
+SemanticError
+5000
+20 - Calls*(_, ifs) 
+if ifs;
+Select ifs such that Calls*(_, ifs)
+SemanticError
+5000
+21 - Calls*(_, w) 
+while w;
+Select w such that Calls*(_, w)
+SemanticError
+5000
+22 - Calls*(_, cl) 
+call cl;
+Select cl such that Calls*(_, cl)
+SemanticError
+5000
+24 - Calls*(_, p)
+procedure p;
+Select p such that Calls*(_, p)
+TIGGERISNAUGHTY,SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow,WAIRUGEH,ORDLOOOOOOOO,deeDEEd330987654321,C4LLME10TIMES,f1r5tCA11
+5000
+25 - Calls*(_, v) 
+variable v;
+Select BOOLEAN such that Calls*(_, v)
+SemanticError
+5000
+26 - Calls*(_, semanticError)
+constant semanticError;
+Select BOOLEAN such that Calls*(_, semanticError)
+SemanticError
+5000
+27 - Calls*(s, 28) // s , ?
+stmt s;
+Select BOOLEAN such that Calls*(s, 28)
+SyntaxError
+5000
+28 - Calls*(s, _) 
+stmt s;
+Select BOOLEAN such that Calls*(s, _)
+SemanticError
+5000
+29 - Calls*(s, S) 
+stmt s, S;
+Select BOOLEAN such that Calls*(s, S)
+SemanticError
+5000
+30 - Calls*(s, pn) 
+print pn; stmt s;
+Select pn such that Calls*(s, pn)
+SemanticError
+5000
+31 - Calls*(s, r) 
+read r; stmt s;
+Select r such that Calls*(s, r)
+SemanticError
+5000
+32 - Calls*(s, a) 
+assign a; stmt s;
+Select a such that Calls*(s, a)
+SemanticError
+5000
+33 - Calls*(s, ifs) 
+if ifs; stmt s;
+Select ifs such that Calls*(s, ifs)
+SemanticError
+5000
+34 - Calls*(s, w) 
+while w; stmt s;
+Select w such that Calls*(s, w)
+SemanticError
+5000
+35 - Calls*(s, cl) 
+call cl; stmt s;
+Select cl such that Calls*(s, cl)
+SemanticError
+5000
+37 - Calls*(s, p) // Semantic error
+stmt s; procedure p;
+Select p such that Calls*(s, p)
+SemanticError
+5000
+38 - Calls*(s, v) // Semantic error
+stmt s; variable v;
+Select BOOLEAN such that Calls*(s, v)
+SemanticError
+5000
+39 - Calls*(s, semanticError) // Semantic error
+stmt s; constant semanticError;
+Select BOOLEAN such that Calls*(s, semanticError)
+SemanticError
+5000
+40 - Calls*(pn, 32) // pn , ?
+print pn;
+Select pn such that Calls*(pn, 32)
+SyntaxError
+5000
+41 - Calls*(pn, _) 
+print pn;
+Select pn such that Calls*(pn, _)
+SemanticError
+5000
+42 - Calls*(pn, s) 
+stmt s; print pn;
+Select s such that Calls*(pn, s)
+SemanticError
+5000
+43 - Calls*(pn, pN) 
+print pn, pN;
+Select pn such that Calls*(pn, pN)
+SemanticError
+5000
+44 - Calls*(pn, r)   
+read r; print pn; 
+Select r such that Calls*(pn, r)  
+SemanticError
+5000
+45 - Calls*(pn, a)   
+assign a; print pn; 
+Select a such that Calls*(pn, a)  
+SemanticError
+5000
+46 - Calls*(pn, ifs)   
+if ifs; print pn; 
+Select ifs such that Calls*(pn, ifs)  
+SemanticError
+5000
+47 - Calls*(pn, w)   
+while w; print pn; 
+Select w such that Calls*(pn, w)  
+SemanticError
+5000
+48 - Calls*(pn, cl)   
+call cl; print pn; 
+Select cl such that Calls*(pn, cl)  
+SemanticError
+5000
+50 - Calls*(pn, p) // Semantic error
+print pn; procedure p;
+Select BOOLEAN such that Calls*(pn, p)
+SemanticError
+5000
+51 - Calls*(pn, v) // Semantic error
+print pn; variable v;
+Select v such that Calls*(pn, v)
+SemanticError
+5000
+52 - Calls*(pn, semanticError) // Semantic error
+print pn; constant semanticError;
+Select BOOLEAN such that Calls*(pn, semanticError)
+SemanticError
+5000
+53 - Calls*(r, 12) // r , ?
+read r;
+Select r such that Calls*(r, 12)
+SyntaxError
+5000
+54 - Calls*(r, _) 
+read r;
+Select r such that Calls*(r, _)
+SemanticError
+5000
+55 - Calls*(r, s) 
+stmt s; read r;
+Select s such that Calls*(r, s)
+SemanticError
+5000
+56 - Calls*(r, pn) 
+print pn; read r;
+Select pn such that Calls*(r, pn)
+SemanticError
+5000
+57 - Calls*(r, R)   
+read r, R; 
+Select r such that Calls*(r, R)  
+SemanticError
+5000
+58 - Calls*(r, a)   
+assign a; read r; 
+Select a such that Calls*(r, a)  
+SemanticError
+5000
+59 - Calls*(r, ifs)   
+if ifs; read r; 
+Select ifs such that Calls*(r, ifs)  
+SemanticError
+5000
+60 - Calls*(r, w)   
+while w; read r; 
+Select w such that Calls*(r, w)  
+SemanticError
+5000
+61 - Calls*(r, cl)   
+call cl; read r; 
+Select cl such that Calls*(r, cl)  
+SemanticError
+5000
+63 - Calls*(r, p) // Semantic error
+read r; procedure p;
+Select p such that Calls*(r, p)
+SemanticError
+5000
+64 - Calls*(r, v) // Semantic error
+read r; variable v;
+Select BOOLEAN such that Calls*(r, v)
+SemanticError
+5000
+65 - Calls*(r, semanticError) // Semantic error
+read r; constant semanticError;
+Select BOOLEAN such that Calls*(r, semanticError)
+SemanticError
+5000
+66 - Calls*(a, 59) // a , ?
+assign a;
+Select a such that Calls*(a, 59)
+SyntaxError
+5000
+67 - Calls*(a, _) 
+assign a;
+Select a such that Calls*(a, _)
+SemanticError
+5000
+68 - Calls*(a, s) 
+stmt s; assign a;
+Select s such that Calls*(a, s)
+SemanticError
+5000
+69 - Calls*(a, pn) 
+print pn; assign a;
+Select pn such that Calls*(a, pn)
+SemanticError
+5000
+70 - Calls*(a, r)   
+read r; assign a;
+Select r such that Calls*(a, r)  
+SemanticError
+5000
+71 - Calls*(a, A)   
+assign a, A; 
+Select a such that Calls*(a, A)  
+SemanticError
+5000
+72 - Calls*(a, ifs)   
+if ifs; assign a; 
+Select ifs such that Calls*(a, ifs)  
+SemanticError
+5000
+73 - Calls*(a, w)   
+while w; assign a; 
+Select w such that Calls*(a, w)  
+SemanticError
+5000
+74 - Calls*(a, cl)   
+call cl; assign a; 
+Select cl such that Calls*(a, cl)  
+SemanticError
+5000
+76 - Calls*(a, p) // Semantic error
+assign a; procedure p;
+Select p such that Calls*(a, p)
+SemanticError
+5000
+77 - Calls*(a, v) // Semantic error
+assign a; variable v;
+Select BOOLEAN such that Calls*(a, v)
+SemanticError
+5000
+78 - Calls*(a, semanticError) // Semantic error
+assign a; constant semanticError;
+Select BOOLEAN such that Calls*(a, semanticError)
+SemanticError
+5000
+79 - Calls*(ifs, 28) // ifs , ?
+if ifs;
+Select ifs such that Calls*(ifs, 132)
+SyntaxError
+5000
+80 - Calls*(ifs, _) 
+if ifs;
+Select ifs such that Calls*(ifs, _)
+SemanticError
+5000
+81 - Calls*(ifs, s) 
+stmt s; if ifs;
+Select s such that Calls*(ifs, s)
+SemanticError
+5000
+82 - Calls*(ifs, pn) 
+print pn; if ifs;
+Select pn such that Calls*(ifs, pn)
+SemanticError
+5000
+83 - Calls*(ifs, r)   
+read r; if ifs;
+Select r such that Calls*(ifs, r)  
+SemanticError
+5000
+84 - Calls*(ifs, a)   
+assign a; if ifs;
+Select BOOLEAN such that Calls*(ifs, a)  
+SemanticError
+5000
+85 - Calls*(ifs, ifS)   
+if ifs, ifS; 
+Select ifs such that Calls*(ifs, ifS)  
+SemanticError
+5000
+86 - Calls*(ifs, w)   
+while w; if ifs; 
+Select w such that Calls*(ifs, w)  
+SemanticError
+5000
+87 - Calls*(ifs, cl)   
+call cl; if ifs; 
+Select cl such that Calls*(ifs, cl)  
+SemanticError
+5000
+89 - Calls*(ifs, p) // Semantic error
+if ifs; procedure p;
+Select p such that Calls*(ifs, p)
+SemanticError
+5000
+90 - Calls*(ifs, v) // Semantic error
+if ifs; variable v;
+Select BOOLEAN such that Calls*(ifs, v)
+SemanticError
+5000
+91 - Calls*(ifs, semanticError) // Semantic error
+if ifs; constant semanticError;
+Select BOOLEAN such that Calls*(ifs, semanticError)
+SemanticError
+5000
+92 - Calls*(w, 28) // w , ?
+while w;
+Select w such that Calls*(w, 28)
+SyntaxError
+5000
+93 - Calls*(w, _) 
+while w;
+Select w such that Calls*(w, _)
+SemanticError
+5000
+94 - Calls*(w, s) 
+stmt s; while w;
+Select s such that Calls*(w, s)
+SemanticError
+5000
+95 - Calls*(w, pn) 
+print pn; while w;
+Select pn such that Calls*(w, pn)
+SemanticError
+5000
+96 - Calls*(w, r)   
+read r; while w;
+Select r such that Calls*(w, r)  
+SemanticError
+5000
+97 - Calls*(w, a)   
+assign a; while w;
+Select a such that Calls*(w, a)  
+SemanticError
+5000
+98 - Calls*(w, ifs)   
+if ifs; while w; 
+Select ifs such that Calls*(w, ifs)  
+SemanticError
+5000
+99 - Calls*(w, W)   
+while w, W; 
+Select w such that Calls*(w, W)  
+SemanticError
+5000
+100 - Calls*(w, cl)   
+call cl; while w; 
+Select cl such that Calls*(w, cl)  
+SemanticError
+5000
+102 - Calls*(w, p) // Semantic error
+while w; procedure p;
+Select p such that Calls*(w, p)
+SemanticError
+5000
+103 - Calls*(w, v) // Semantic error
+while w; variable v;
+Select BOOLEAN such that Calls*(w, v)
+SemanticError
+5000
+104 - Calls*(w, semanticError) // Semantic error
+while w; constant semanticError;
+Select BOOLEAN such that Calls*(w, semanticError)
+SemanticError
+5000
+105 - Calls*(cl, 69) // cl , ?
+call cl;
+Select cl such that Calls*(cl, 69)
+SyntaxError
+5000
+106 - Calls*(cl, _) 
+call cl;
+Select cl such that Calls*(cl, _)
+SemanticError
+5000
+107 - Calls*(cl, s) 
+stmt s; call cl;
+Select s such that Calls*(cl, s)
+SemanticError
+5000
+108 - Calls*(cl, pn) 
+print pn; call cl;
+Select pn such that Calls*(cl, pn)
+SemanticError
+5000
+109 - Calls*(cl, r)   
+read r; call cl;
+Select BOOLEAN such that Calls*(cl, r)  
+SemanticError
+5000
+110 - Calls*(cl, a)   
+assign a; call cl;
+Select a such that Calls*(cl, a)  
+SemanticError
+5000
+111 - Calls*(cl, ifs)   
+if ifs; call cl; 
+Select ifs such that Calls*(cl, ifs)  
+SemanticError
+5000
+112 - Calls*(cl, w)   
+while w; call cl; 
+Select w such that Calls*(cl, w)  
+SemanticError
+5000
+113 - Calls*(cl, cL)   
+call cl, cL; 
+Select cl such that Calls*(cl, cL)  
+SemanticError
+5000
+115 - Calls*(cl, p) // Semantic error
+call cl; procedure p;
+Select p such that Calls*(cl, p)
+SemanticError
+5000
+116 - Calls*(cl, v) // Semantic error
+call cl; variable v;
+Select BOOLEAN such that Calls*(cl, v)
+SemanticError
+5000
+117 - Calls*(cl, semanticError) // Semantic error
+call cl; constant semanticError;
+Select BOOLEAN such that Calls*(cl, semanticError)
+SemanticError
+5000
+131 - Calls*(p, ORDLOOOOOOOO)
+procedure p;
+Select BOOLEAN such that Calls*(p, "ORDLOOOOOOOO")
+TRUE
+5000
+132 - Calls*(p, _)  // Semantic error
+procedure p; 
+Select BOOLEAN such that Calls*(p, _)
+TRUE
+5000
+133 - Calls*(p, s)  // Semantic error
+stmt s; procedure p; 
+Select BOOLEAN such that Calls*(p, s)
+SemanticError
+5000
+134 - Calls*(p, pn)  // Semantic error
+print pn; procedure p; 
+Select pn such that Calls*(p, pn)
+SemanticError
+5000
+135 - Calls*(p, r)  // Semantic error
+read r; procedure p; 
+Select r such that Calls*(p, r)
+SemanticError
+5000
+136 - Calls*(p, a)  // Semantic error
+assign a; procedure p; 
+Select a such that Calls*(p, a)
+SemanticError
+5000
+137 - Calls*(p, ifs)  // Semantic error
+if ifs; procedure p; 
+Select ifs such that Calls*(p, ifs)
+SemanticError
+5000
+138 - Calls*(p, w)  // Semantic error
+while w; procedure p; 
+Select w such that Calls*(p, w)
+SemanticError
+5000
+139 - Calls*(p, cl)  // Semantic error
+call cl; procedure p; 
+Select cl such that Calls*(p, cl)
+SemanticError
+5000
+141 - Calls*(p, P) // Semantic error
+procedure p, P;
+Select p such that Calls*(p, P)
+TIGGERISNAUGHTY,WAIRUGEH,ORDLOOOOOOOO,eye,mainPr0ceDUR3,f1r5tCA11
+5000
+142 - Calls*(p, v) // Semantic error 
+procedure p; variable v;
+Select BOOLEAN such that Calls*(p, v)
+SemanticError
+5000
+143 - Calls*(p, semanticError) // Semantic error
+procedure p; constant semanticError;
+Select BOOLEAN such that Calls*(p, semanticError)
+SemanticError
+5000
+144 - Calls*(v, 28) // v , ? // Semantic error
+variable v;
+Select BOOLEAN such that Calls*(v, 28)
+SyntaxError
+5000
+145 - Calls*(v, _)  // Semantic error
+variable v; 
+Select BOOLEAN such that Calls*(v, _)
+SemanticError
+5000
+146 - Calls*(v, s)  // Semantic error
+stmt s; variable v; 
+Select BOOLEAN such that Calls*(v, s)
+SemanticError
+5000
+147 - Calls*(v, pn)  // Semantic error
+print pn; variable v; 
+Select pn such that Calls*(v, pn)
+SemanticError
+5000
+148 - Calls*(v, r)  // Semantic error
+read r; variable v; 
+Select r such that Calls*(v, r)
+SemanticError
+5000
+149 - Calls*(v, a)  // Semantic error
+assign a; variable v; 
+Select a such that Calls*(v, a)
+SemanticError
+5000
+150 - Calls*(v, ifs)  // Semantic error
+if ifs; variable v; 
+Select ifs such that Calls*(v, ifs)
+SemanticError
+5000
+151 - Calls*(v, w)  // Semantic error
+while w; variable v; 
+Select w such that Calls*(v, w)
+SemanticError
+5000
+152 - Calls*(v, cl)  // Semantic error
+call cl; variable v; 
+Select cl such that Calls*(v, cl)
+SemanticError
+5000
+154 - Calls*(v, p) // Semantic error
+variable v; procedure p;
+Select p such that Calls*(v, p)
+SemanticError
+5000
+155 - Calls*(v, V) // Semantic error 
+variable v, V; 
+Select BOOLEAN such that Calls*(v, V)
+SemanticError
+5000
+156 - Calls*(v, semanticError) // Semantic error
+variable v; constant semanticError;
+Select BOOLEAN such that Calls*(v, semanticError)
+SemanticError
+5000
+157 - Calls*(semanticError, 28) // semanticError , ? // Semantic error
+constant semanticError;
+Select BOOLEAN such that Calls*(semanticError, 28)
+SyntaxError
+5000
+158 - Calls*(semanticError, _)  // Semantic error
+constant semanticError;
+Select BOOLEAN such that Calls*(semanticError, _)
+SemanticError
+5000
+159 - Calls*(semanticError, s)  // Semantic error
+stmt s; constant semanticError;
+Select BOOLEAN such that Calls*(semanticError, s)
+SemanticError
+5000
+160 - Calls*(semanticError, pn)  // Semantic error
+print pn; constant semanticError;
+Select pn such that Calls*(semanticError, pn)
+SemanticError
+5000
+161 - Calls*(semanticError, r)  // Semantic error
+read r; constant semanticError;
+Select r such that Calls*(semanticError, r)
+SemanticError
+5000
+162 - Calls*(semanticError, a)  // Semantic error
+assign a; constant semanticError;
+Select a such that Calls*(semanticError, a)
+SemanticError
+5000
+163 - Calls*(semanticError, ifs)  // Semantic error
+if ifs; constant semanticError;
+Select ifs such that Calls*(semanticError, ifs)
+SemanticError
+5000
+164 - Calls*(semanticError, w)  // Semantic error
+while w; constant semanticError;
+Select w such that Calls*(semanticError, w)
+SemanticError
+5000
+165 - Calls*(semanticError, cl)  // Semantic error
+call cl; constant semanticError;
+Select cl such that Calls*(semanticError, cl)
+SemanticError
+5000
+167 - Calls*(semanticError, p) // Semantic error
+constant semanticError; procedure p;
+Select p such that Calls*(semanticError, p)
+SemanticError
+5000
+168 - Calls*(semanticError, v) // Semantic error
+constant semanticError; variable v;
+Select BOOLEAN such that Calls*(semanticError, v)
+SemanticError
+5000
+169 - Calls*(semanticError, C) // Semantic error
+constant semanticError, C;
+Select BOOLEAN such that Calls*(semanticError, C)
+SemanticError
+5000
+170 - Calls*(p,ORDLOOOOOOOO)
+procedure p;
+Select p such that Calls*(p, "ORDLOOOOOOOO")
+mainPr0ceDUR3,f1r5tCA11
+5000
+171 - Calls*(ORDLOOOOOOOO,p) // forward calls
+procedure p;
+Select p such that Calls*("ORDLOOOOOOOO",p)
+deeDEEd330987654321
+5000
+172 - Calls*(p1,p2)
+procedure p1,p2;
+Select p1 such that Calls*(p1,p2)
+TIGGERISNAUGHTY,WAIRUGEH,ORDLOOOOOOOO,eye,mainPr0ceDUR3,f1r5tCA11
+5000
+173 - Calls*(s1,s2)
+stmt s1,s2;
+Select s1 such that Calls*(s1,s2)
+SemanticError
+5000
+174 - Calls*(_,_)
+procedure p1,p2;
+Select <p1,p2> such that Calls*(_,_)
+TIGGERISNAUGHTY TIGGERISNAUGHTY,TIGGERISNAUGHTY SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow,TIGGERISNAUGHTY WAIRUGEH,TIGGERISNAUGHTY ORDLOOOOOOOO,TIGGERISNAUGHTY deeDEEd330987654321,TIGGERISNAUGHTY eye,TIGGERISNAUGHTY mainPr0ceDUR3,TIGGERISNAUGHTY ODINBOI,TIGGERISNAUGHTY C4LLME10TIMES,TIGGERISNAUGHTY j4gU4rr,TIGGERISNAUGHTY f1r5tCA11,SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow TIGGERISNAUGHTY,SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow,SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow WAIRUGEH,SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow ORDLOOOOOOOO,SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow deeDEEd330987654321,SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow eye,SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow mainPr0ceDUR3,SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow ODINBOI,SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow C4LLME10TIMES,SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow j4gU4rr,SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow f1r5tCA11,WAIRUGEH TIGGERISNAUGHTY,WAIRUGEH SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow,WAIRUGEH WAIRUGEH,WAIRUGEH ORDLOOOOOOOO,WAIRUGEH deeDEEd330987654321,WAIRUGEH eye,WAIRUGEH mainPr0ceDUR3,WAIRUGEH ODINBOI,WAIRUGEH C4LLME10TIMES,WAIRUGEH j4gU4rr,WAIRUGEH f1r5tCA11,ORDLOOOOOOOO TIGGERISNAUGHTY,ORDLOOOOOOOO SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow,ORDLOOOOOOOO WAIRUGEH,ORDLOOOOOOOO ORDLOOOOOOOO,ORDLOOOOOOOO deeDEEd330987654321,ORDLOOOOOOOO eye,ORDLOOOOOOOO mainPr0ceDUR3,ORDLOOOOOOOO ODINBOI,ORDLOOOOOOOO C4LLME10TIMES,ORDLOOOOOOOO j4gU4rr,ORDLOOOOOOOO f1r5tCA11,deeDEEd330987654321 TIGGERISNAUGHTY,deeDEEd330987654321 SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow,deeDEEd330987654321 WAIRUGEH,deeDEEd330987654321 ORDLOOOOOOOO,deeDEEd330987654321 deeDEEd330987654321,deeDEEd330987654321 eye,deeDEEd330987654321 mainPr0ceDUR3,deeDEEd330987654321 ODINBOI,deeDEEd330987654321 C4LLME10TIMES,deeDEEd330987654321 j4gU4rr,deeDEEd330987654321 f1r5tCA11,eye TIGGERISNAUGHTY,eye SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow,eye WAIRUGEH,eye ORDLOOOOOOOO,eye deeDEEd330987654321,eye eye,eye mainPr0ceDUR3,eye ODINBOI,eye C4LLME10TIMES,eye j4gU4rr,eye f1r5tCA11,mainPr0ceDUR3 TIGGERISNAUGHTY,mainPr0ceDUR3 SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow,mainPr0ceDUR3 WAIRUGEH,mainPr0ceDUR3 ORDLOOOOOOOO,mainPr0ceDUR3 deeDEEd330987654321,mainPr0ceDUR3 eye,mainPr0ceDUR3 mainPr0ceDUR3,mainPr0ceDUR3 ODINBOI,mainPr0ceDUR3 C4LLME10TIMES,mainPr0ceDUR3 j4gU4rr,mainPr0ceDUR3 f1r5tCA11,ODINBOI TIGGERISNAUGHTY,ODINBOI SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow,ODINBOI WAIRUGEH,ODINBOI ORDLOOOOOOOO,ODINBOI deeDEEd330987654321,ODINBOI eye,ODINBOI mainPr0ceDUR3,ODINBOI ODINBOI,ODINBOI C4LLME10TIMES,ODINBOI j4gU4rr,ODINBOI f1r5tCA11,C4LLME10TIMES TIGGERISNAUGHTY,C4LLME10TIMES SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow,C4LLME10TIMES WAIRUGEH,C4LLME10TIMES ORDLOOOOOOOO,C4LLME10TIMES deeDEEd330987654321,C4LLME10TIMES eye,C4LLME10TIMES mainPr0ceDUR3,C4LLME10TIMES ODINBOI,C4LLME10TIMES C4LLME10TIMES,C4LLME10TIMES j4gU4rr,C4LLME10TIMES f1r5tCA11,j4gU4rr TIGGERISNAUGHTY,j4gU4rr SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow,j4gU4rr WAIRUGEH,j4gU4rr ORDLOOOOOOOO,j4gU4rr deeDEEd330987654321,j4gU4rr eye,j4gU4rr mainPr0ceDUR3,j4gU4rr ODINBOI,j4gU4rr C4LLME10TIMES,j4gU4rr j4gU4rr,j4gU4rr f1r5tCA11,f1r5tCA11 TIGGERISNAUGHTY,f1r5tCA11 SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow,f1r5tCA11 WAIRUGEH,f1r5tCA11 ORDLOOOOOOOO,f1r5tCA11 deeDEEd330987654321,f1r5tCA11 eye,f1r5tCA11 mainPr0ceDUR3,f1r5tCA11 ODINBOI,f1r5tCA11 C4LLME10TIMES,f1r5tCA11 j4gU4rr,f1r5tCA11 f1r5tCA11
+5000
+175 - Calls*(_,p1)
+procedure p1;
+Select p1 such that Calls*(_,p1)
+TIGGERISNAUGHTY,SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow,WAIRUGEH,ORDLOOOOOOOO,deeDEEd330987654321,C4LLME10TIMES,f1r5tCA11
+5000
+176 - Calls*(p1,_)
+procedure p1;
+Select p1 such that Calls*(p1,_)
+TIGGERISNAUGHTY,WAIRUGEH,ORDLOOOOOOOO,eye,mainPr0ceDUR3,f1r5tCA11
+5000
+177 - Calls*(p,cee533see) 
+procedure p;
+Select p such that Calls*(p, "ORDLOOOOOOOO")
+mainPr0ceDUR3,f1r5tCA11
+5000
+178 - Calls*(eye,p) // diamond
+procedure p;
+Select p such that Calls*("eye",p)
+TIGGERISNAUGHTY,SNOWYISAMOUSEEEEEEEEeeeeeeeeemiaomeow,WAIRUGEH,C4LLME10TIMES
+5000

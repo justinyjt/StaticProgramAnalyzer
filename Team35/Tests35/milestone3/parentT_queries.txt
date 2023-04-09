@@ -1,0 +1,675 @@
+1 - Parent*(3, 15)
+
+Select BOOLEAN such that Parent*(3, 15)
+TRUE
+5000
+2 - Parent*(24, _)
+stmt s;
+Select BOOLEAN such that Parent*(24, _)
+TRUE
+5000
+3 - Parent*(24, s)
+stmt s;
+Select s such that Parent*(24, s)
+25,26,27
+5000
+4 - Parent*(3, pn)
+print pn;
+Select pn such that Parent*(3, pn)
+18,8,9
+5000
+5 - Parent*(37, r)
+read r;
+Select r such that Parent*(37, r)
+38,40,45
+5000
+6 - Parent*(12, a)
+assign a;
+Select a such that Parent*(12, a)
+13,15,17
+5000
+7 - Parent*(28, ifs)
+if ifs;
+Select ifs such that Parent*(28, ifs)
+32
+5000
+8 - Parent*(37, w)
+while w;
+Select w such that Parent*(37, w)
+41,43
+5000
+9 - Parent*(55, cl)
+call cl;
+Select cl such that Parent*(55, cl)
+57,65
+5000
+11 - Parent*(_, 28) // _ , ?
+
+Select BOOLEAN such that Parent*(_, 65)
+TRUE
+5000
+12 - Parent*(_, _)
+
+Select BOOLEAN such that Parent*(_, _)
+TRUE
+5000
+13 - Parent*(_, s)
+stmt s;
+Select BOOLEAN such that Parent*(_, s)
+TRUE
+5000
+14 - Parent*(_, pn)
+print pn;
+Select pn such that Parent*(_, pn)
+8, 18, 27, 31, 39, 46, 89, 109,42,44,9
+5000
+15 - Parent*(_, r)
+read r;
+Select r such that Parent*(_, r)
+11, 110, 14, 16, 30, 45, 64, 78, 87, 91,25,38,40,62
+5000
+16 - Parent*(_, a)
+assign a;
+Select a such that Parent*(_, a)
+10,104,106,107,108,112,113,115,116,117,118,119,120,121,122,123,124,125,128,129,13,130,131,133,134,136,137,138,140,141,142,143,15,17,19,20,21,26,29,34,35,4,56,58,61,63,7,77,79,80,82,83,85,86,88,90,92
+5000
+17 - Parent*(_, ifs)
+if ifs;
+Select ifs such that Parent*(_, ifs)
+12,32,5,81,60
+5000
+18 - Parent*(_, w)
+while w;
+Select w such that Parent*(_, w)
+105,41,43,59,84,111,76
+5000
+19 - Parent*(_, cl)
+call cl;
+Select cl such that Parent*(_, cl)
+36,47,57,65,33,6
+5000
+21 - Parent*(s, 28) // s , ?
+stmt s;
+Select BOOLEAN such that Parent*(s, 28)
+FALSE
+5000
+22 - Parent*(s, _)
+stmt s;
+Select BOOLEAN such that Parent*(s, _)
+TRUE
+5000
+23 - Parent*(s, S)
+stmt s, S;
+Select BOOLEAN such that Parent*(s, S)
+TRUE
+5000
+24 - Parent*(s, pn)
+print pn; stmt s;
+Select pn such that Parent*(s, pn)
+8, 18, 27, 31, 39, 46, 89, 109,42,44,9
+5000
+25 - Parent*(s, r)
+read r; stmt s;
+Select r such that Parent*(s, r)
+11, 110, 14, 16, 30, 45, 64, 78, 87, 91,25,38,40,62
+5000
+26 - Parent*(s, a)
+assign a; stmt s;
+Select a such that Parent*(s, a)
+10,104,106,107,108,112,113,115,116,117,118,119,120,121,122,123,124,125,128,129,13,130,131,133,134,136,137,138,140,141,142,143,15,17,19,20,21,26,29,34,35,4,56,58,61,63,7,77,79,80,82,83,85,86,88,90,92
+5000
+27 - Parent*(s, ifs)
+if ifs; stmt s;
+Select ifs such that Parent*(s, ifs)
+12,32,5,81,60
+5000
+28 - Parent*(s, w)
+while w; stmt s;
+Select w such that Parent*(s, w)
+105,41,43,59,84,111,76
+5000
+29 - Parent*(s, cl)
+call cl; stmt s;
+Select cl such that Parent*(s, cl)
+36,47,57,65,33,6
+5000
+31 - Parent*(pn, 32) // pn , ?
+print pn;
+Select pn such that Parent*(pn, 32)
+none
+5000
+32 - Parent*(pn, _)
+print pn;
+Select pn such that Parent*(pn, _)
+none
+5000
+33 - Parent*(pn, s)
+stmt s; print pn;
+Select s such that Parent*(pn, s)
+none
+5000
+34 - Parent*(pn, pN)
+print pn, pN;
+Select pn such that Parent*(pn, pN)
+none
+5000
+35 - Parent*(pn, r)
+read r; print pn;
+Select r such that Parent*(pn, r)
+none
+5000
+36 - Parent*(pn, a)
+assign a; print pn;
+Select a such that Parent*(pn, a)
+none
+5000
+37 - Parent*(pn, ifs)
+if ifs; print pn;
+Select ifs such that Parent*(pn, ifs)
+none
+5000
+38 - Parent*(pn, w)
+while w; print pn;
+Select w such that Parent*(pn, w)
+none
+5000
+39 - Parent*(pn, cl)
+call cl; print pn;
+Select cl such that Parent*(pn, cl)
+none
+5000
+41 - Parent*(r, 12) // r , ?
+read r;
+Select r such that Parent*(r, 12)
+none
+5000
+42 - Parent*(r, _)
+read r;
+Select r such that Parent*(r, _)
+none
+5000
+43 - Parent*(r, s)
+stmt s; read r;
+Select s such that Parent*(r, s)
+none
+5000
+44 - Parent*(r, pn)
+print pn; read r;
+Select pn such that Parent*(r, pn)
+none
+5000
+45 - Parent*(r, R)
+read r, R;
+Select r such that Parent*(r, R)
+none
+5000
+46 - Parent*(r, a)
+assign a; read r;
+Select a such that Parent*(r, a)
+none
+5000
+47 - Parent*(r, ifs)
+if ifs; read r;
+Select ifs such that Parent*(r, ifs)
+none
+5000
+48 - Parent*(r, w)
+while w; read r;
+Select w such that Parent*(r, w)
+none
+5000
+49 - Parent*(r, cl)
+call cl; read r;
+Select cl such that Parent*(r, cl)
+none
+5000
+51 - Parent*(a, 59) // a , ?
+assign a;
+Select a such that Parent*(a, 59)
+none
+5000
+52 - Parent*(a, _)
+assign a;
+Select a such that Parent*(a, _)
+none
+5000
+53 - Parent*(a, s)
+stmt s; assign a;
+Select s such that Parent*(a, s)
+none
+5000
+54 - Parent*(a, pn)
+print pn; assign a;
+Select pn such that Parent*(a, pn)
+none
+5000
+55 - Parent*(a, r)
+read r; assign a;
+Select r such that Parent*(a, r)
+none
+5000
+56 - Parent*(a, A)
+assign a, A;
+Select a such that Parent*(a, A)
+none
+5000
+57 - Parent*(a, ifs)
+if ifs; assign a;
+Select ifs such that Parent*(a, ifs)
+none
+5000
+58 - Parent*(a, w)
+while w; assign a;
+Select w such that Parent*(a, w)
+none
+5000
+59 - Parent*(a, cl)
+call cl; assign a;
+Select cl such that Parent*(a, cl)
+none
+5000
+61 - Parent*(ifs, 28) // ifs , ?
+if ifs;
+Select ifs such that Parent*(ifs, 132)
+none
+5000
+62 - Parent*(ifs, _)
+if ifs;
+Select ifs such that Parent*(ifs, _)
+103,139,32,37,5,60,75,81,114,12,127,132
+5000
+63 - Parent*(ifs, s)
+stmt s; if ifs;
+Select s such that Parent*(ifs, s)
+10,104,105,106,107,108,109,11,110,111,112,113,115,116,117,118,119,12,120,121,122,123,124,125,128,129,13,130,131,133,134,14,140,141,142,143,15,16,17,18,19,20,21,33,34,35,36,38,39,40,41,42,43,44,45,46,47,6,61,62,63,64,7,76,77,78,79,8,80,81,82,83,84,85,86,87,88,89,9,90,91,92
+5000
+64 - Parent*(ifs, pn)
+print pn; if ifs;
+Select pn such that Parent*(ifs, pn)
+109,39,42,44,46,8,89,9,18
+5000
+65 - Parent*(ifs, r)
+read r; if ifs;
+Select r such that Parent*(ifs, r)
+11,110,14,16,38,40,45,62,64,78,87,91
+5000
+66 - Parent*(ifs, a)
+assign a; if ifs;
+Select a such that Parent*(ifs, a)
+19,20,21,10,104,106,107,108,112,113,115,116,117,118,119,120,121,122,123,124,125,128,129,13,130,131,133,134,140,141,142,143,15,17,34,35,61,63,7,77,79,80,82,83,85,86,88,90,92
+5000
+67 - Parent*(ifs, ifS)
+if ifs, ifS;
+Select ifs such that Parent*(ifs, ifS)
+5,75
+5000
+68 - Parent*(ifs, w)
+while w; if ifs;
+Select w such that Parent*(ifs, w)
+105,111,41,43,76,84
+5000
+69 - Parent*(ifs, cl)
+call cl; if ifs;
+Select cl such that Parent*(ifs, cl)
+33,36,47,6
+5000
+71 - Parent*(w, 28) // w , ?
+while w;
+Select w such that Parent*(w, 28)
+none
+5000
+72 - Parent*(w, _)
+while w;
+Select w such that Parent*(w, _)
+111,28,84,105,135,24,3,41,43,55,59,76
+5000
+73 - Parent*(w, s)
+stmt s; while w;
+Select s such that Parent*(w, s)
+10,106,107,108,11,112,113,12,13,136,137,138,14,15,16,17,18,19,20,21,25,26,27,29,30,31,32,33,34,35,36,4,42,44,5,56,57,58,59,6,60,61,62,63,64,7,77,78,79,8,85,86,87,9,65
+5000
+74 - Parent*(w, pn)
+print pn; while w;
+Select pn such that Parent*(w, pn)
+18,27,31,42,44,8,9
+5000
+75 - Parent*(w, r)
+read r; while w;
+Select r such that Parent*(w, r)
+11,14,16,25,30,62,64,78,87
+5000
+76 - Parent*(w, a)
+assign a; while w;
+Select a such that Parent*(w, a)
+10,106,107,108,112,113,13,136,137,138,15,17,19,20,21,26,29,34,35,4,56,58,61,63,7,77,79,85,86
+5000
+77 - Parent*(w, ifs)
+if ifs; while w;
+Select ifs such that Parent*(w, ifs)
+12,32,5,60
+5000
+78 - Parent*(w, W)
+while w, W;
+Select w such that Parent*(w, W)
+55
+5000
+79 - Parent*(w, cl)
+call cl; while w;
+Select cl such that Parent*(w, cl)
+65,33,36,57,6
+5000
+81 - Parent*(cl, 69) // cl , ?
+call cl;
+Select cl such that Parent*(cl, 69)
+none
+5000
+82 - Parent*(cl, _)
+call cl;
+Select cl such that Parent*(cl, _)
+none
+5000
+83 - Parent*(cl, s)
+stmt s; call cl;
+Select s such that Parent*(cl, s)
+none
+5000
+84 - Parent*(cl, pn)
+print pn; call cl;
+Select pn such that Parent*(cl, pn)
+none
+5000
+85 - Parent*(cl, r)
+read r; call cl;
+Select BOOLEAN such that Parent*(cl, r)
+FALSE
+5000
+86 - Parent*(cl, a)
+assign a; call cl;
+Select a such that Parent*(cl, a)
+none
+5000
+87 - Parent*(cl, ifs)
+if ifs; call cl;
+Select ifs such that Parent*(cl, ifs)
+none
+5000
+88 - Parent*(cl, w)
+while w; call cl;
+Select w such that Parent*(cl, w)
+none
+5000
+89 - Parent*(cl, cL)
+call cl, cL;
+Select cl such that Parent*(cl, cL)
+none
+5000
+102 - Parent*(w, p) // Semantic error
+while w; procedure p;
+Select p such that Parent*(w, p)
+SemanticError
+5000
+103 - Parent*(w, v) // Semantic error
+while w; variable v;
+Select BOOLEAN such that Parent*(w, v)
+SemanticError
+5000
+104 - Parent*(w, semanticError) // Semantic error
+while w; constant semanticError;
+Select BOOLEAN such that Parent*(w, semanticError)
+SemanticError
+5000
+105 - Parent*(cl, 69) // cl , ?
+call cl;
+Select cl such that Parent*(cl, 69)
+none
+5000
+106 - Parent*(cl, _)
+call cl;
+Select cl such that Parent*(cl, _)
+none
+5000
+107 - Parent*(cl, s)
+stmt s; call cl;
+Select s such that Parent*(cl, s)
+none
+5000
+108 - Parent*(cl, pn)
+print pn; call cl;
+Select pn such that Parent*(cl, pn)
+none
+5000
+109 - Parent*(cl, r)
+read r; call cl;
+Select BOOLEAN such that Parent*(cl, r)
+FALSE
+5000
+110 - Parent*(cl, a)
+assign a; call cl;
+Select a such that Parent*(cl, a)
+none
+5000
+111 - Parent*(cl, ifs)
+if ifs; call cl;
+Select ifs such that Parent*(cl, ifs)
+none
+5000
+112 - Parent*(cl, w)
+while w; call cl;
+Select w such that Parent*(cl, w)
+none
+5000
+113 - Parent*(cl, cL)
+call cl, cL;
+Select cl such that Parent*(cl, cL)
+none
+5000
+115 - Parent*(cl, p) // Semantic error
+call cl; procedure p;
+Select p such that Parent*(cl, p)
+SemanticError
+5000
+116 - Parent*(cl, v) // Semantic error
+call cl; variable v;
+Select BOOLEAN such that Parent*(cl, v)
+SemanticError
+5000
+117 - Parent*(cl, semanticError) // Semantic error
+call cl; constant semanticError;
+Select BOOLEAN such that Parent*(cl, semanticError)
+SemanticError
+5000
+131 - Parent*(p, 28) // p , ? // Semantic error
+procedure p;
+Select BOOLEAN such that Parent*(p, 28)
+SemanticError
+5000
+132 - Parent*(p, _)  // Semantic error
+procedure p;
+Select BOOLEAN such that Parent*(p, _)
+SemanticError
+5000
+133 - Parent*(p, s)  // Semantic error
+stmt s; procedure p;
+Select BOOLEAN such that Parent*(p, s)
+SemanticError
+5000
+134 - Parent*(p, pn)  // Semantic error
+print pn; procedure p;
+Select pn such that Parent*(p, pn)
+SemanticError
+5000
+135 - Parent*(p, r)  // Semantic error
+read r; procedure p;
+Select r such that Parent*(p, r)
+SemanticError
+5000
+136 - Parent*(p, a)  // Semantic error
+assign a; procedure p;
+Select a such that Parent*(p, a)
+SemanticError
+5000
+137 - Parent*(p, ifs)  // Semantic error
+if ifs; procedure p;
+Select ifs such that Parent*(p, ifs)
+SemanticError
+5000
+138 - Parent*(p, w)  // Semantic error
+while w; procedure p;
+Select w such that Parent*(p, w)
+SemanticError
+5000
+139 - Parent*(p, cl)  // Semantic error
+call cl; procedure p;
+Select cl such that Parent*(p, cl)
+SemanticError
+5000
+141 - Parent*(p, P) // Semantic error
+procedure p, P;
+Select p such that Parent*(p, P)
+SemanticError
+5000
+142 - Parent*(p, v) // Semantic error
+procedure p; variable v;
+Select BOOLEAN such that Parent*(p, v)
+SemanticError
+5000
+143 - Parent*(p, semanticError) // Semantic error
+procedure p; constant semanticError;
+Select BOOLEAN such that Parent*(p, semanticError)
+SemanticError
+5000
+144 - Parent*(v, 28) // v , ? // Semantic error
+variable v;
+Select BOOLEAN such that Parent*(v, 28)
+SemanticError
+5000
+145 - Parent*(v, _)  // Semantic error
+variable v;
+Select BOOLEAN such that Parent*(v, _)
+SemanticError
+5000
+146 - Parent*(v, s)  // Semantic error
+stmt s; variable v;
+Select BOOLEAN such that Parent*(v, s)
+SemanticError
+5000
+147 - Parent*(v, pn)  // Semantic error
+print pn; variable v;
+Select pn such that Parent*(v, pn)
+SemanticError
+5000
+148 - Parent*(v, r)  // Semantic error
+read r; variable v;
+Select r such that Parent*(v, r)
+SemanticError
+5000
+149 - Parent*(v, a)  // Semantic error
+assign a; variable v;
+Select a such that Parent*(v, a)
+SemanticError
+5000
+150 - Parent*(v, ifs)  // Semantic error
+if ifs; variable v;
+Select ifs such that Parent*(v, ifs)
+SemanticError
+5000
+151 - Parent*(v, w)  // Semantic error
+while w; variable v;
+Select w such that Parent*(v, w)
+SemanticError
+5000
+152 - Parent*(v, cl)  // Semantic error
+call cl; variable v;
+Select cl such that Parent*(v, cl)
+SemanticError
+5000
+154 - Parent*(v, p) // Semantic error
+variable v; procedure p;
+Select p such that Parent*(v, p)
+SemanticError
+5000
+155 - Parent*(v, V) // Semantic error
+variable v, V;
+Select BOOLEAN such that Parent*(v, V)
+SemanticError
+5000
+156 - Parent*(v, semanticError) // Semantic error
+variable v; constant semanticError;
+Select BOOLEAN such that Parent*(v, semanticError)
+SemanticError
+5000
+157 - Parent*(semanticError, 28) // semanticError , ? // Semantic error
+constant semanticError;
+Select BOOLEAN such that Parent*(semanticError, 28)
+SemanticError
+5000
+158 - Parent*(semanticError, _)  // Semantic error
+constant semanticError;
+Select BOOLEAN such that Parent*(semanticError, _)
+SemanticError
+5000
+159 - Parent*(semanticError, s)  // Semantic error
+stmt s; constant semanticError;
+Select BOOLEAN such that Parent*(semanticError, s)
+SemanticError
+5000
+160 - Parent*(semanticError, pn)  // Semantic error
+print pn; constant semanticError;
+Select BOOLEAN such that Parent*(semanticError, pn)
+SemanticError
+5000
+161 - Parent*(semanticError, r)  // Semantic error
+read r; constant semanticError;
+Select r such that Parent*(semanticError, r)
+SemanticError
+5000
+162 - Parent*(semanticError, a)  // Semantic error
+assign a; constant semanticError;
+Select a such that Parent*(semanticError, a)
+SemanticError
+5000
+163 - Parent*(semanticError, ifs)  // Semantic error
+if ifs; constant semanticError;
+Select ifs such that Parent*(semanticError, ifs)
+SemanticError
+5000
+164 - Parent*(semanticError, w)  // Semantic error
+while w; constant semanticError;
+Select w such that Parent*(semanticError, w)
+SemanticError
+5000
+165 - Parent*(semanticError, cl)  // Semantic error
+call cl; constant semanticError;
+Select cl such that Parent*(semanticError, cl)
+SemanticError
+5000
+167 - Parent*(semanticError, p) // Semantic error
+constant semanticError; procedure p;
+Select p such that Parent*(semanticError, p)
+SemanticError
+5000
+168 - Parent*(semanticError, v) // Semantic error
+constant semanticError; variable v;
+Select BOOLEAN such that Parent*(semanticError, v)
+SemanticError
+5000
+169 - Parent*(semanticError, C) // Semantic error
+constant semanticError, C;
+Select BOOLEAN such that Parent*(semanticError, C)
+SemanticError
+5000
+170 - innermost statement of while-else-then
+stmt s;
+Select s such that Parent*(s,13)
+3,5,12
+5000
+172 - innermost statement of while-while-else
+stmt s;
+Select s such that Parent*(s,62)
+55,59,60
+5000
+173 - parent* of itself (none/FALSE)
+stmt s;
+Select BOOLEAN such that Parent*(s,s)
+FALSE
+5000

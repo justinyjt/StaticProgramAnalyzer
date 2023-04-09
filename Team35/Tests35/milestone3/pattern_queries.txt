@@ -1,0 +1,470 @@
+78 - Pattern ifs('print',_,_)
+if ifs; variable print;
+Select ifs pattern ifs("print",_,_)
+5,32
+5000
+1 - Pattern a(_,_)
+assign a;
+Select BOOLEAN pattern a(_,_)
+TRUE
+5000
+2 - Pattern a(_,'123451255125 * 3069/while +40-41*43/44%45+46-47')
+assign a;
+Select a pattern a(_,"* 3069/while +40-41*43/44%45+46-47")
+SyntaxError
+5000
+2 - Pattern a(_,'123451255125 * 3069/while +40-41*43/44%45+46-47')
+assign a;
+Select a pattern a(_,"123451255125 * 3069/while +40-41*43/44%45+46-47")
+17
+5000
+2 - Pattern a(_,'123451255125 * 3069/while +40-41*43/44%45+46-47')
+assign a;
+Select a pattern a(_,"123451255125 * 3069/while +40-41*43/44%45+46-47")
+17
+5000
+3 - Pattern a(_,_'123451255125 * 3069/while'_)
+assign a;
+Select a pattern a(_,_"123451255125 * 3069/while"_)
+17
+5000
+4 - Pattern a(_,_'3069/while'_)
+assign a;
+Select BOOLEAN pattern a(_,_"3069/while"_)
+FALSE
+5000
+5 - Pattern a(_,_'123451255125 * 3069/while +40-41*43/44%45+46-47'_)
+assign a;
+Select BOOLEAN pattern a(_,_"123451255125 * 3069/while +40-41*43/44%45+46-47"_)
+TRUE
+5000
+6 - Pattern a(_,_'(123451255125 * 3069/while) +40-41*43/44%45+46-47'_)
+assign a;
+Select BOOLEAN pattern a(_,_"(123451255125 * 3069/while) +40-41*43/44%45+46-47"_)
+TRUE
+5000
+7 - Pattern a('print',_)
+assign a;
+Select a pattern a("print",_)
+15,17,19,20,21
+5000
+8 - Pattern a('print','40-41*43/44 - print')
+assign a;
+Select a pattern a("print","40-41*43/44 - print")
+19
+5000
+9 - Pattern a('print',_'123451255125 * 3069/while'_)
+assign a;
+Select a pattern a("print",_"123451255125 * 3069/while"_)
+17
+5000
+10 - Pattern a('print',_'3069/while'_)
+assign a;
+Select BOOLEAN pattern a("print",_"3069/while"_)
+FALSE
+5000
+11 - Pattern a('print',_'123451255125 * 3069/while +40-41*43/44%45+46-47'_)
+assign a;
+Select BOOLEAN pattern a("print",_"123451255125 * 3069/while +40-41*43/44%45+46-47"_)
+TRUE
+5000
+12 - Pattern a('print',_'(123451255125 * 3069/while) +40-41*43/44%45+46-47'_)
+assign a;
+Select BOOLEAN pattern a("print",_"(123451255125 * 3069/while) +40-41*43/44%45+46-47"_)
+TRUE
+5000
+13 - Pattern a(v,_)
+assign a; variable v;
+Select a pattern a(v,_)
+10,101,104,106,107,108,112,113,115,116,117,118,119,120,121,122,123,124,125,128,129,13,130,131,133,134,136,137,138,140,141,142,143,15,17,19,20,21,26,29,34,35,4,48,51,54,56,58,61,63,7,77,79,80,82,83,85,86,88,90,92,93,94,95,96,97,98
+5000
+13 - Pattern a(v,_)
+assign a; variable v;
+Select <a,v> pattern a(v,_)
+10 JUNKANG,101 MACIEISGOODGIRL,104 MACIEISGOODGIRL1,106 MACIEISGOODGIRL,107 MACIEISGOODGIRL1,108 MACIEISGOODGIRL2,112 MACIEISGOODGIRL7,113 MACIEISGOODGIRL8,115 B1GpP11,116 MACIEISGOODGIRL1,117 MACIEISGOODGIRL2,118 MACIEISGOODGIRL3,119 MACIEISGOODGIRL4,120 MACIEISGOODGIRL5,121 MACIEISGOODGIRL6,122 MACIEISGOODGIRL7,123 MACIEISGOODGIRL8,124 MACIEISGOODGIRL9,125 MACIEISGOODGIRL10,128 assign,129 if,13 YUANKEEDOODLE,130 a,131 ifs,133 while,134 w,136 pn,137 r,138 cl,140 proc,141 p,142 var,143 v,15 print,17 print,19 print,20 print,21 print,26 read,29 JUNKANG,34 JUNKANG,35 read,4 YUANKEEDOODLE,48 POLOBUNBUN1,51 POLOBUNBUN1,54 B1GjuNK4NG,56 KINOISCUTE1,58 KINOISCUTE1,61 eVar,63 evar,7 JUNKANG,77 KINOISCUTE1,79 KINOISCUTE1,80 KINOISCUTE1,82 KINOISCUTE1,83 KINOISCUTE2,85 KINOISCUTE2,86 KINOISCUTE1,88 KINOISCUTE3,90 KINOISCUTE3,92 KINOISCUTE3,93 h6,94 h1,95 h2,96 h3,97 h4,98 h5
+5000
+14 - Pattern a(v,'40-41*43/44 - print')
+assign a; variable v;
+Select a pattern a(v,"40-41*43/44 - print")
+19
+5000
+15 - Pattern a('print',_'123451255125 * 3069/while'_)
+assign a; variable v;
+Select a pattern a(v,_"123451255125 * 3069/while"_)
+17
+5000
+15 - Pattern a('print',_'123451255125 * 3069/while'_)
+assign a; variable v;
+Select v pattern a(v,_"123451255125 * 3069/while"_)
+print
+5000
+15 - Pattern a('print',_'123451255125 * 3069/while'_)
+assign a; variable v;
+Select <a,v,a> pattern a(v,_"123451255125 * 3069/while"_)
+17 print 17
+5000
+16 - Pattern a(v,_'3069/while'_)
+assign a; variable v;
+Select BOOLEAN pattern a(v,_"3069/while"_)
+FALSE
+5000
+17 - Pattern a(v,_'123451255125 * 3069/while +40-41*43/44%45+46-47'_)
+assign a; variable v;
+Select BOOLEAN pattern a(v,_"123451255125 * 3069/while +40-41*43/44%45+46-47"_)
+TRUE
+5000
+18 - Pattern a(v,_'(123451255125 * 3069/while) +40-41*43/44%45+46-47'_)
+assign a; variable v;
+Select v pattern a(v,_"(123451255125 * 3069/while) +40-41*43/44%45+46-47"_)
+print
+5000
+19 - Pattern a(s,_) //Semantic error
+assign a; stmt s;
+Select BOOLEAN pattern a(s,_)
+SemanticError
+5000
+20 - Pattern a(r,_) //Semantic error
+assign a; read r;
+Select BOOLEAN pattern a(r,_)
+SemanticError
+5000
+21 - Pattern a(pn,_) //Semantic error
+assign a; print pn;
+Select BOOLEAN pattern a(pn,_)
+SemanticError
+5000
+22 - Pattern a(a1,_) //Semantic error
+assign a; assign a1;
+Select BOOLEAN pattern a(a1,_)
+SemanticError
+5000
+23 - Pattern a(ifs,_) //Semantic error
+assign a; if ifs;
+Select BOOLEAN pattern a(ifs,_)
+SemanticError
+5000
+24 - Pattern a(w,_) //Semantic error
+assign a; while w;
+Select BOOLEAN pattern a(w,_)
+SemanticError
+5000
+25 - Pattern a(cl,_) //Semantic error
+assign a; call cl;
+Select BOOLEAN pattern a(cl,_)
+SemanticError
+5000
+27 - Pattern a(semanticError,_) //Semantic error
+assign a; constant semanticError;
+Select BOOLEAN pattern a(semanticError,_)
+SemanticError
+5000
+28 - Pattern a(p,_) //Semantic error
+assign a; procedure p;
+Select BOOLEAN pattern a(p,_)
+SemanticError
+5000
+29 - Pattern a(_,s) //Syntactic error
+assign a; stmt s;
+Select BOOLEAN pattern a(_,s)
+SyntaxError
+5000
+30 - Pattern a(_,r) //Syntactic error
+assign a; read r;
+Select BOOLEAN pattern a(_,r)
+SyntaxError
+5000
+31 - Pattern a(_,pn) //Syntactic error
+assign a; print pn;
+Select BOOLEAN pattern a(_,pn)
+SyntaxError
+5000
+32 - Pattern a(_,a1) //Syntactic error
+assign a; assign a1;
+Select BOOLEAN pattern a(_,a1)
+SyntaxError
+5000
+33 - Pattern a(_,ifs) //Syntactic error
+assign a; if ifs;
+Select BOOLEAN pattern a(_,ifs)
+SyntaxError
+5000
+34 - Pattern a(_,w) //Syntactic error
+assign a; while w;
+Select BOOLEAN pattern a(_,w)
+SyntaxError
+5000
+35 - Pattern a(_,cl) //Syntactic error
+assign a; call cl;
+Select BOOLEAN pattern a(_,cl)
+SyntaxError
+5000
+36 - Pattern a(_,v) //Syntactic error
+assign a; variable v;
+Select BOOLEAN pattern a(_,v)
+SyntaxError
+5000
+37 - Pattern a(_,p) //Syntactic error
+assign a; procedure p;
+Select BOOLEAN pattern a(_,p)
+SyntaxError
+5000
+38 - Pattern a(_,semanticError) //Syntactic error
+assign a; constant semanticError;
+Select BOOLEAN pattern a(_,semanticError)
+SyntaxError
+5000
+39 - Pattern w(_,_)
+while w;
+Select w pattern w(_,_)
+105,111,135,28,3,41,55,59,76,84
+5000
+40 - Pattern w('print',_)
+while w;
+Select w pattern w("print",_)
+28,135
+5000
+41 - Pattern w(v,_)
+while w; variable v;
+Select w pattern w(v,_)
+105,111,135,28,3,41,55,59,76,84
+5000
+41 - Pattern w(v,_)
+while w; variable v;
+Select v pattern w(v,_)
+MACIEISGOODGIRL74,MACIEISGOODGIRL7,MACIEISGOODGIRL8,call,print,read,JUNKANG,YUANKEEDOODLE,POLOBUNBUN1,eVar,evar,KINOISCUTE1,,KINOISCUTE2
+5000
+41 - Pattern w(v,_)
+while w; variable v;
+Select <w, v> pattern w(v,_)
+105 MACIEISGOODGIRL74,111 MACIEISGOODGIRL7,111 MACIEISGOODGIRL8,135 call,135 print,135 read,28 print,28 read,3 JUNKANG,3 YUANKEEDOODLE,41 POLOBUNBUN1,55 eVar,55 evar,59 eVar,59 evar,76 KINOISCUTE1,76 KINOISCUTE2,84 KINOISCUTE1,84 KINOISCUTE2
+5000
+42 - Pattern w(_,'print') //Syntactic error
+while w;
+Select BOOLEAN pattern w(_,"print")
+SemanticError
+5000
+43 - Pattern w('print','print') //Syntactic error
+while w;
+Select BOOLEAN pattern w("print","print")
+SemanticError
+5000
+44 - Pattern w(v,'print') //Syntactic error
+while w; variable v;
+Select BOOLEAN pattern w(v,"print")
+SemanticError
+5000
+45 - Pattern w(_,s) //Syntactic error
+while w; stmt s;
+Select BOOLEAN pattern w(_,s)
+SyntaxError
+5000
+46 - Pattern w('print',s) //Syntactic error
+while w; stmt s;
+Select BOOLEAN pattern w("print",s)
+SyntaxError
+5000
+47 - Pattern w(v,s) //Syntactic error
+while w; variable v; stmt s;
+Select BOOLEAN pattern w(v,s)
+SyntaxError
+5000
+48 - Pattern w(_,r) //Syntactic error
+while w; read r;
+Select BOOLEAN pattern w(_,r)
+SyntaxError
+5000
+49 - Pattern w('print',r) //Syntactic error
+while w; read r;
+Select BOOLEAN pattern w("print",r)
+SyntaxError
+5000
+50 - Pattern w(v,r) //Syntactic error
+while w; variable v; read r;
+Select BOOLEAN pattern w(v,r)
+SyntaxError
+5000
+51 - Pattern w(_,pn) //Syntactic error
+while w; print pn;
+Select BOOLEAN pattern w(_,pn)
+SyntaxError
+5000
+52 - Pattern w('print',pn) //Syntactic error
+while w; print pn;
+Select BOOLEAN pattern w("print",pn)
+SyntaxError
+5000
+53 - Pattern w(v,pn) //Syntactic error
+while w; variable v; print pn;
+Select BOOLEAN pattern w(v,pn)
+SyntaxError
+5000
+54 - Pattern w(_,a) //Syntactic error
+while w; assign a;
+Select BOOLEAN pattern w(_,a)
+SyntaxError
+5000
+55 - Pattern w('print',a) //Syntactic error
+while w; assign a;
+Select BOOLEAN pattern w("print",a)
+SyntaxError
+5000
+56 - Pattern w(v,a) //Syntactic error
+while w; variable v; assign a;
+Select BOOLEAN pattern w(v,a)
+SyntaxError
+5000
+57 - Pattern w(_,ifs) //Syntactic error
+while w; if ifs;
+Select BOOLEAN pattern w(_,ifs)
+SyntaxError
+5000
+58 - Pattern w('print',ifs) //Syntactic error
+while w; if ifs;
+Select BOOLEAN pattern w("print",a)
+SyntaxError
+5000
+59 - Pattern w(v,ifs) //Syntactic error
+while w; variable v; if ifs;
+Select BOOLEAN pattern w(v,ifs)
+SyntaxError
+5000
+60 - Pattern w(_,w1) //Syntactic error
+while w; while w1;
+Select BOOLEAN pattern w(_,w1)
+SyntaxError
+5000
+61 - Pattern w('print',w1) //Syntactic error
+while w; while w1;
+Select BOOLEAN pattern w("print",w1)
+SyntaxError
+5000
+62 - Pattern w(v,w1) //Syntactic error
+while w; variable v; while w1;
+Select BOOLEAN pattern w(v,w1)
+SyntaxError
+5000
+63 - Pattern w(_,cl) //Syntactic error
+while w; call cl;
+Select BOOLEAN pattern w(_,cl)
+SyntaxError
+5000
+64 - Pattern w('print',cl) //Syntactic error
+while w; call cl;
+Select BOOLEAN pattern w("print",cl)
+SyntaxError
+5000
+65 - Pattern w(v,cl) //Syntactic error
+while w; variable v; call cl;
+Select BOOLEAN pattern w(v,cl)
+SyntaxError
+5000
+66 - Pattern w(_,pl) //Syntactic error
+while w; prog_line pl;
+Select BOOLEAN pattern w(_,pl)
+SyntaxError
+5000
+68 - Pattern w(_,p) //Syntactic error
+while w; procedure p;
+Select BOOLEAN pattern w(_,p)
+SyntaxError
+5000
+69 - Pattern w('print',p) //Syntactic error
+while w; procedure p;
+Select BOOLEAN pattern w("print",p)
+SyntaxError
+5000
+70 - Pattern w(v,p) //Syntactic error
+while w; variable v; procedure p;
+Select BOOLEAN pattern w(v,p)
+SyntaxError
+5000
+71 - Pattern w(_,v) //Syntactic error
+while w; variable v;
+Select BOOLEAN pattern w(_,v)
+SyntaxError
+5000
+72 - Pattern w('print',v) //Syntactic error
+while w; variable v;
+Select BOOLEAN pattern w("print",v)
+SyntaxError
+5000
+73 - Pattern w(v,v1) //Syntactic error
+while w; variable v; variable v1;
+Select BOOLEAN pattern w(v,v1)
+SyntaxError
+5000
+74 - Pattern w(_,semanticError) //Syntactic error
+while w; constant semanticError;
+Select BOOLEAN pattern w(_,semanticError)
+SyntaxError
+5000
+75 - Pattern w('print',semanticError) //Syntactic error
+while w; constant semanticError;
+Select BOOLEAN pattern w("print",semanticError)
+SyntaxError
+5000
+76 - Pattern w(v,semanticError) //Syntactic error
+while w; variable v; constant semanticError;
+Select BOOLEAN pattern w(v,semanticError)
+SyntaxError
+5000
+77 - Pattern ifs(_,_,_)
+if ifs;
+Select ifs pattern ifs(_,_,_)
+103,12,127,132,139,32,37,5,60,75
+5000
+78 - Pattern ifs('print',_,_)
+if ifs;
+Select ifs pattern ifs("print",_,_)
+5,32
+5000
+80 - Pattern ifs(v,_,_)
+if ifs; variable v;
+Select ifs pattern ifs(v,_,_)
+103,12,127,132,139,32,37,5,60,75
+5000
+80 - Pattern ifs(v,_,_)
+if ifs; variable v;
+Select v pattern ifs(v,_,_)
+MACIEISGOODGIRL1,MACIEISGOODGIRL2,MACIEISGOODGIRL3,MACIEISGOODGIRL4,MACIEISGOODGIRL5,MACIEISGOODGIRL6,JUNKANG,YUANKEEDOODLE,else,if,then,while,proc,procedure,var,variable,print,read,TIGGERISNAUGHTY,LOOOOOOOOOOOOOOOOOooooooo000000000000NNGNAME,eVar,evar,KINOISCUTE2
+5000
+80 - Pattern ifs(v,_,_)
+if ifs; variable v;
+Select <ifs, v> pattern ifs(v,_,_)
+103 MACIEISGOODGIRL1,103 MACIEISGOODGIRL2,103 MACIEISGOODGIRL3,103 MACIEISGOODGIRL4,103 MACIEISGOODGIRL5,103 MACIEISGOODGIRL6,12 JUNKANG,12 YUANKEEDOODLE,127 else,127 if,132 then,132 while,139 proc,139 procedure,139 var,139 variable,32 print,32 read,37 TIGGERISNAUGHTY,37 LOOOOOOOOOOOOOOOOOooooooo000000000000NNGNAME,5 JUNKANG,5 print,60 eVar,60 evar,75 KINOISCUTE2
+5000
+81 - Pattern ifs(_,'print','print') //Syntactic Error
+if ifs;
+Select BOOLEAN pattern ifs(_,"print", "print")
+SyntaxError
+5000
+82 - Pattern ifs(_,'print') //Syntactic Error
+if ifs;
+Select BOOLEAN pattern ifs(_,"print")
+SemanticError
+5000
+83 - Pattern ifs(_,_, 'print') //Syntactic Error
+if ifs;
+Select BOOLEAN pattern ifs(_,_,"print")
+SyntaxError
+5000
+84 - Pattern ifs(_,'print',_) //Syntactic Error
+if ifs;
+Select BOOLEAN pattern ifs(_,"print",_)
+SyntaxError
+5000
+85 - Pattern ifs(_,s,_) //Syntactic Error
+if ifs; stmt s;
+Select BOOLEAN pattern ifs(_,s,_)
+SyntaxError
+5000
+86 - Pattern ifs(_,_,s) //Syntactic Error
+if ifs; stmt s;
+Select BOOLEAN pattern ifs(_,_,s)
+SyntaxError
+5000
+87 - Pattern a(_,_,_) //Syntactic Error
+assign a;
+Select BOOLEAN pattern a(_,_,_)
+SemanticError
+5000

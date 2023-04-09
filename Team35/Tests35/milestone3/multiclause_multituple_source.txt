@@ -1,0 +1,46 @@
+procedure main {
+    venice = 2;
+
+    while (x == y) {
+        hello = 3;
+        barryalklen = 5;
+        while (x == 2) {
+            def = on + pp;
+            print alkali;
+            while (truth == 3 * 5 + valaria) {
+
+                while (x < valaria) {
+                    if (3 > valaria + 1000 - venice) then {
+                        time = 5 + barryalklen + venice;
+                    } else {
+                        fire = ice;
+                    }
+                }
+                if (venice == 4) then {
+                    STARRKWOLF = dragonstone + venice + barryalklen * banana + chocolate * 10;
+                    STARRKWOLF = venice + barryalklen * banana + chocolate;
+                }
+                else {
+                    STARRKWOLF = time - dragonstone + (venice + barryalklen * banana + chocolate);
+                }
+            }
+        }
+        if (venice == 3) then {
+            call SHARPSTORMcuCCCCk;
+        } else {
+            print semanticError;
+            print syntaxError;
+        }
+        print runtimeError;
+    }
+}
+
+procedure SHARPSTORMcuCCCCk {
+    if (x == y) then {
+        print banana;
+    } else {
+        while (x < 3) {
+            read banana;
+        }
+    }
+}

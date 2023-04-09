@@ -1,0 +1,235 @@
+1 - cy
+stmt s; assign a; variable v;
+Select a such that Follows* (a, v) pattern s (v,  _)
+SemanticError
+5000
+18 - semantic invalid, APQL 2, select BOOL
+if i;
+Select BOOLEAN pattern i(_, _)
+SemanticError
+5000
+1 - semantic invalid, BPQL 1, same type, select syn
+stmt s; stmt s;
+Select s
+SemanticError
+5000
+2 - semantic invalid, BPQL 1, same type, select BOOL
+print p; print p;
+Select BOOLEAN
+SemanticError
+5000
+3 - semantic invalid, BPQL 1, diff type, select syn
+assign a; call a;
+Select a
+SemanticError
+5000
+4 - semantic invalid, BPQL 1, diff type, select BOOL
+procedure p; while p;
+Select BOOLEAN
+SemanticError
+5000
+5 - semantic invalid, BPQL 2, declared more than once, select syn
+read r; read r;
+Select r such that Uses(r, "x")
+SemanticError
+5000
+6 - semantic invalid, BPQL 2, declared more than once, select BOOL
+procedure p; print p;
+Select BOOLEAN such that Modifies(p, "x")
+SemanticError
+5000
+7 - semantic invalid, BPQL 2, declared 0 times, select syn
+stmt s;
+Select s such that Parent(s1, s2)
+SemanticError
+5000
+8 - semantic invalid, BPQL 2, declared 0 times, select BOOL
+stmt s; read r;
+Select BOOLEAN such that Follows(p, re)
+SemanticError
+5000
+9 - semantic invalid, BPQL 3, select syn
+stmt s;
+Select s pattern s (_, _)
+SemanticError
+5000
+10 - semantic invalid, BPQL 3, select BOOL
+read r;
+Select BOOLEAN pattern r ("x", _)
+SemanticError
+5000
+11 - semantic invalid, BPQL 4, uses, select syn
+stmt s; variable v;
+Select s such that Uses(_, v)
+SemanticError
+5000
+12 - semantic invalid, BPQL 4, uses, select BOOL
+stmt s; variable v;
+Select BOOLEAN such that Uses(_, "x")
+SemanticError
+5000
+13 - semantic invalid, BPQL 4, modifies, select syn
+stmt s; variable v;
+Select s such that Modifies(_, v)
+SemanticError
+5000
+14 - semantic invalid, BPQL 4, modifies, select BOOL
+stmt s; variable v;
+Select BOOLEAN such that Modifies(_, "x")
+SemanticError
+5000
+15 - semantic invalid, BPQL 5, follows, select syn
+stmt s; variable v;
+Select s such that Follows(s, v)
+SemanticError
+5000
+16 - semantic invalid, BPQL 5, parents, select BOOL
+stmt s; variable v;
+Select BOOLEAN such that Parent(v, v)
+SemanticError
+5000
+17 - semantic invalid, APQL 2, select syn
+stmt s; read r;
+Select s pattern r ("x", _)
+SemanticError
+5000
+18 - semantic invalid, APQL 2, select BOOL
+if i;
+Select BOOLEAN pattern i (_, _)
+SemanticError
+5000
+19 - semantic invalid, APQL 3, select syn
+stmt s; call semanticError;
+Select s pattern semanticError ("x", _, _)
+SemanticError
+5000
+20 - semantic invalid, APQL 3, select BOOL
+while w;
+Select BOOLEAN pattern w (_, _, _)
+SemanticError
+5000
+21 - semantic invalid, APQL 4, select syn
+stmt s; read r;
+Select s with r.varName = 1
+SemanticError
+5000
+22 - semantic invalid, APQL 4, select BOOL
+stmt s;
+Select BOOLEAN with s.stmt# = "x"
+SemanticError
+5000
+23 - semantic invalid, APQL 4, select syn
+stmt s; read r;
+Select s with r.varName = 1
+SemanticError
+5000
+24 - semantic invalid, APQL 4, select BOOL
+stmt s;
+Select BOOLEAN with s.stmt# = "x"
+SemanticError
+5000
+25 - semantic invalid select BOOLEAN
+stmt s;
+Select BOOLEAN with s.varName = "x"
+SemanticError
+5000
+26 - semantic invalid select BOOLEAN
+stmt s;
+Select BOOLEAN with s.varName = 1
+SemanticError
+5000
+27 - semantic invalid + syntactic invalid (should catch syntactic error)
+stmt s;
+Select BOOLEAN with s.varName = "x" BLAH
+SyntaxError
+5000
+28 - semantic invalid BUT not select boolean
+stmt BOOLEAN; variable BOOLEAN;
+Select BOOLEAN
+SemanticError
+5000
+29 - semantic invalid BUT not select boolean
+stmt s; variable s; constant BOOLEAN;
+Select BOOLEAN
+SemanticError
+5000
+30 - semantic invalid and select boolean
+stmt s; variable s;
+Select BOOLEAN
+SemanticError
+5000
+31 - semantic invalid and select boolean
+stmt s;
+Select BOOLEAN such that Modifies(s1, s2)
+SemanticError
+5000
+32 - semantic invalid + syntactic invalid
+stmt s;
+Select BOOLEAN such that Modifies(s1, s2) BLAH + syntactic invalid (should catch syntactic error)
+SyntaxError
+5000
+33 - Affect with other statement types (Select bool just returns false)
+read r; print p;
+Select BOOLEAN such that Affects(r, p)
+FALSE
+5000
+34 - Assign with other statement types (Select syn just returns empty)
+stmt s; read r; print p;
+Select s such that Affects(r, p)
+none
+5000
+35 - semantic invalid + syntactic invalid, BPQL 5, (should catch syntactic error)
+stmt s; variable v;
+Select BOOLEAN such that Follows(v, "x")
+SyntaxError
+5000
+36 - semantic invalid + syntactic invalid, BPQL 3, (should catch syntactic error)
+read r;
+Select BOOLEAN pattern r (_, 1)
+SyntaxError
+5000
+37 - semantic invalid + syntactic invalid, APQL 2, (should catch syntactic error)
+call semanticError;
+Select BOOLEAN pattern semanticError ("x", 1)
+SyntaxError
+5000
+38 - semantic invalid + syntactic invalid, APQL 3, (should catch syntactic error)
+while w;
+Select BOOLEAN pattern w (_, 100, _)
+SyntaxError
+5000
+39 - semantic invalid + syntactic invalid, APQL 4, (should catch syntactic error)
+stmt s;
+Select BOOLEAN with s.stmt# = "1"
+SyntaxError
+5000
+40 - semantic invalid + syntactic invalid, APQL 4, (should catch syntactic error)
+stmt s; read r;
+Select BOOLEAN with r.varName = x
+SyntaxError
+5000
+41 - pattern with Follows inside
+assign a;
+Select BOOLEAN pattern a (_, _"Follows*(1, 2)"_)
+SyntaxError
+5000
+42 - pattern with Follows inside
+assign a;
+Select BOOLEAN pattern a (_, _"Follows*x"_)
+TRUE
+5000
+43 - pattern with Follows inside
+assign a;
+Select BOOLEAN pattern a (_, _"Follows* x"_)
+TRUE
+5000
+44 - pattern with Follows inside
+assign a;
+Select BOOLEAN pattern a (_, _"Follows * x"_)
+TRUE
+5000
+45 - semantic invalid + syntatic invalid, BPQL 5, parents and modifies, select BOOL
+stmt s; variable v;
+Select BOOLEAN such that Parent(v, v) and Modifies(s, 5)
+SyntaxError
+5000

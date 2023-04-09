@@ -1,0 +1,13 @@
+procedure foo {
+read x;
+x = x;
+while (x ==x) {
+x=x;
+}
+if (x >= x) then {
+print x;
+} else {
+read x;
+a = Follows * x;
+}
+}

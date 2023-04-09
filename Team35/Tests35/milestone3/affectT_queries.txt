@@ -1,0 +1,790 @@
+1 - Affects*(48, 51) // 36 , ?
+
+Select BOOLEAN such that Affects*(48, 51)
+TRUE
+5000
+2 - Affects*(35, _)
+stmt s;
+Select BOOLEAN such that Affects*(35, _)
+TRUE
+5000
+3 - Affects*(48, s)
+stmt s;
+Select s such that Affects*(48, s)
+51,54
+5000
+4 - Affects*(21, pn)
+print pn;
+Select pn such that Affects*(21, pn)
+none
+5000
+5 - Affects*(66, r)
+read r;
+Select r such that Affects*(66, r)
+none
+5000
+6 - Affects*(106, a)
+assign a;
+Select a such that Affects*(106, a)
+106,107,108
+5000
+7 - Affects*(62, ifs)
+if ifs;
+Select ifs such that Affects*(62, ifs)
+
+5000
+8 - Affects*(61, w)
+while w;
+Select w such that Affects*(61, w)
+none
+5000
+9 - Affects*(16, cl)
+call cl;
+Select cl such that Affects*(16, cl)
+none
+5000
+11 - Affects*(24, p) // Semantic error
+procedure p;
+Select p such that Affects*(24, p)
+SemanticError
+5000
+12 - Affects*(24, v)
+variable v;
+Select BOOLEAN such that Affects*(24, v)
+SemanticError
+5000
+13 - Affects*(24, semanticError) // Semantic error
+constant semanticError;
+Select BOOLEAN such that Affects*(24, semanticError)
+SemanticError
+5000
+14 - Affects*(_, 61) // _ , ?
+
+Select BOOLEAN such that Affects*(_, 61)
+TRUE
+5000
+15 - Affects*(_, _)
+
+Select BOOLEAN such that Affects*(_, _)
+TRUE
+5000
+16 - Affects*(_, s)
+stmt s;
+Select s such that Affects*(_, s)
+4,13,19,29,34,51,54,61,77,80,82,85,86,90,98,106,107,108,112,113
+5000
+17 - Affects*(_, pn)
+print pn;
+Select pn such that Affects*(_, pn)
+none
+5000
+18 - Affects*(_, r)
+read r;
+Select r such that Affects*(_, r)
+none
+5000
+19 - Affects*(_, a)
+assign a;
+Select a such that Affects*(_, a)
+4,13,19,29,34,51,54,61,77,80,82,85,86,90,98,106,107,108,112,113
+5000
+20 - Affects*(_, ifs)
+if ifs;
+Select ifs such that Affects*(_, ifs)
+none
+5000
+21 - Affects*(_, w)
+while w;
+Select w such that Affects*(_, w)
+none
+5000
+22 - Affects*(_, cl)
+call cl;
+Select cl such that Affects*(_, cl)
+none
+5000
+24 - Affects*(_, p) // Semantic error
+procedure p;
+Select p such that Affects*(_, p)
+SemanticError
+5000
+25 - Affects*(_, v) // Semantic error
+variable v;
+Select BOOLEAN such that Affects*(_, v)
+SemanticError
+5000
+26 - Affects*(_, semanticError) // Semantic error
+constant semanticError;
+Select BOOLEAN such that Affects*(_, semanticError)
+SemanticError
+5000
+27 - Affects*(s, 61) // s , ?
+stmt s;
+Select BOOLEAN such that Affects*(s, 61)
+TRUE
+5000
+28 - Affects*(s, _)
+stmt s;
+Select s such that Affects*(s, _)
+10,106,113,17,21,26,35,48,51,58,63,7,79,80,83,85,88,93
+5000
+29 - Affects*(s, S)
+stmt s, S;
+Select s such that Affects*(s, S)
+10,106,113,17,21,26,35,48,51,58,63,7,79,80,83,85,88,93
+5000
+30 - Affects*(s, pn)
+print pn; stmt s;
+Select pn such that Affects*(s, pn)
+none
+5000
+31 - Affects*(s, r)
+read r; stmt s;
+Select r such that Affects*(s, r)
+none
+5000
+32 - Affects*(s, a)
+assign a; stmt s;
+Select a such that Affects*(s, a)
+4,13,19,29,34,51,54,61,77,80,82,85,86,90,98,106,107,108,112,113
+5000
+33 - Affects*(s, ifs)
+if ifs; stmt s;
+Select ifs such that Affects*(s, ifs)
+none
+5000
+34 - Affects*(s, w)
+while w; stmt s;
+Select w such that Affects*(s, w)
+none
+5000
+35 - Affects*(s, cl)
+call cl; stmt s;
+Select cl such that Affects*(s, cl)
+none
+5000
+37 - Affects*(s, p) // Semantic error
+stmt s; procedure p;
+Select p such that Affects*(s, p)
+SemanticError
+5000
+38 - Affects*(s, v) // Semantic error
+stmt s; variable v;
+Select BOOLEAN such that Affects*(s, v)
+SemanticError
+5000
+39 - Affects*(s, semanticError) // Semantic error
+stmt s; constant semanticError;
+Select BOOLEAN such that Affects*(s, semanticError)
+SemanticError
+5000
+40 - Affects*(pn, 51) // pn , ?
+print pn;
+Select pn such that Affects*(pn, 51)
+none
+5000
+41 - Affects*(pn, _)
+print pn;
+Select pn such that Affects*(pn, _)
+none
+5000
+42 - Affects*(pn, s)
+stmt s; print pn;
+Select s such that Affects*(pn, s)
+
+5000
+43 - Affects*(pn, pN)
+print pn, pN;
+Select pn such that Affects*(pn, pN)
+none
+5000
+44 - Affects*(pn, r)
+read r; print pn;
+Select r such that Affects*(pn, r)
+none
+5000
+45 - Affects*(pn, a)
+assign a; print pn;
+Select a such that Affects*(pn, a)
+none
+5000
+46 - Affects*(pn, ifs)
+if ifs; print pn;
+Select ifs such that Affects*(pn, ifs)
+none
+5000
+47 - Affects*(pn, w)
+while w; print pn;
+Select w such that Affects*(pn, w)
+none
+5000
+48 - Affects*(pn, cl)
+call cl; print pn;
+Select cl such that Affects*(pn, cl)
+none
+5000
+50 - Affects*(pn, p) // Semantic error
+print pn; procedure p;
+Select BOOLEAN such that Affects*(pn, p)
+SemanticError
+5000
+51 - Affects*(pn, v) // Semantic error
+print pn; variable v;
+Select v such that Affects*(pn, v)
+SemanticError
+5000
+52 - Affects*(pn, semanticError) // Semantic error
+print pn; constant semanticError;
+Select semanticError such that Affects*(pn, semanticError)
+SemanticError
+5000
+53 - Affects*(r, 65) // r , ?
+read r;
+Select r such that Affects*(r, 65)
+none
+5000
+54 - Affects*(r, _)
+read r;
+Select r such that Affects*(r, _)
+none
+5000
+55 - Affects*(r, s)
+stmt s; read r;
+Select BOOLEAN such that Affects*(r, s)
+FALSE
+5000
+56 - Affects*(r, pn)
+print pn; read r;
+Select pn such that Affects*(r, pn)
+none
+5000
+57 - Affects*(r, R)
+read r, R;
+Select r such that Affects*(r, R)
+none
+5000
+58 - Affects*(r, a)
+assign a; read r;
+Select a such that Affects*(r, a)
+none
+5000
+59 - Affects*(r, ifs)
+if ifs; read r;
+Select ifs such that Affects*(r, ifs)
+none
+5000
+60 - Affects*(r, w)
+while w; read r;
+Select w such that Affects*(r, w)
+none
+5000
+61 - Affects*(r, cl)
+call cl; read r;
+Select cl such that Affects*(r, cl)
+none
+5000
+63 - Affects*(r, p) // Semantic error
+read r; procedure p;
+Select p such that Affects*(r, p)
+SemanticError
+5000
+64 - Affects*(r, v) // Semantic error
+read r; variable v;
+Select BOOLEAN such that Affects*(r, v)
+SemanticError
+5000
+65 - Affects*(r, semanticError) // Semantic error
+read r; constant semanticError;
+Select BOOLEAN such that Affects*(r, semanticError)
+SemanticError
+5000
+66 - Affects*(a, 86) // a , ?
+assign a;
+Select a such that Affects*(a, 86)
+79,80,83,85
+5000
+67 - Affects*(a, _)
+assign a;
+Select a such that Affects*(a, _)
+10,106,113,17,21,26,35,48,51,58,63,7,79,80,83,85,88,93
+5000
+68 - Affects*(a, s)
+stmt s; assign a;
+Select a such that Affects*(a, s)
+10,106,113,17,21,26,35,48,51,58,63,7,79,80,83,85,88,93
+5000
+69 - Affects*(a, pn)
+print pn; assign a;
+Select pn such that Affects*(a, pn)
+none
+5000
+70 - Affects*(a, r)
+read r; assign a;
+Select r such that Affects*(a, r)
+none
+5000
+71 - Affects*(a, A)
+assign a, A;
+Select <a,A> such that Affects*(a, A)
+7 4,10 13,10 4,17 19,21 19,26 29,26 34,35 29,35 34,48 51,48 54,51 54,58 61,63 61,79 77,79 80,79 82,79 86,80 82,80 86,83 85,83 86,85 85,85 86,88 90,93 98,106 106,106 107,106 108,113 112,113 113
+5000
+72 - Affects*(a, ifs)
+if ifs; assign a;
+Select ifs such that Affects*(a, ifs)
+none
+5000
+73 - Affects*(a, w)
+while w; assign a;
+Select w such that Affects*(a, w)
+none
+5000
+74 - Affects*(a, cl)
+call cl; assign a;
+Select cl such that Affects*(a, cl)
+none
+5000
+76 - Affects*(a, p) // Semantic error
+assign a; procedure p;
+Select p such that Affects*(a, p)
+SemanticError
+5000
+77 - Affects*(a, v) // Semantic error
+assign a; variable v;
+Select BOOLEAN such that Affects*(a, v)
+SemanticError
+5000
+78 - Affects*(a, semanticError) // Semantic error
+assign a; constant semanticError;
+Select BOOLEAN such that Affects*(a, semanticError)
+SemanticError
+5000
+79 - Affects*(ifs, 87) // ifs , ?
+if ifs;
+Select ifs such that Affects*(ifs, 87)
+none
+5000
+80 - Affects*(ifs, _)
+if ifs;
+Select ifs such that Affects*(ifs, _)
+none
+5000
+81 - Affects*(ifs, s)
+stmt s; if ifs;
+Select ifs such that Affects*(ifs, s)
+none
+5000
+82 - Affects*(ifs, pn)
+print pn; if ifs;
+Select pn such that Affects*(ifs, pn)
+none
+5000
+83 - Affects*(ifs, r)
+read r; if ifs;
+Select r such that Affects*(ifs, r)
+none
+5000
+84 - Affects*(ifs, a)
+assign a; if ifs;
+Select BOOLEAN such that Affects*(ifs, a)
+FALSE
+5000
+85 - Affects*(ifs, ifS)
+if ifs, ifS;
+Select ifs such that Affects*(ifs, ifS)
+none
+5000
+86 - Affects*(ifs, w)
+while w; if ifs;
+Select w such that Affects*(ifs, w)
+none
+5000
+87 - Affects*(ifs, cl)
+call cl; if ifs;
+Select cl such that Affects*(ifs, cl)
+none
+5000
+89 - Affects*(ifs, p) // Semantic error
+if ifs; procedure p;
+Select p such that Affects*(ifs, p)
+SemanticError
+5000
+90 - Affects*(ifs, v) // Semantic error
+if ifs; variable v;
+Select BOOLEAN such that Affects*(ifs, v)
+SemanticError
+5000
+91 - Affects*(ifs, semanticError) // Semantic error
+if ifs; constant semanticError;
+Select BOOLEAN such that Affects*(ifs, semanticError)
+SemanticError
+5000
+92 - Affects*(w, 21) // w , ?
+while w;
+Select w such that Affects*(w, 21)
+none
+5000
+93 - Affects*(w, _)
+while w;
+Select w such that Affects*(w, _)
+none
+5000
+94 - Affects*(w, s)
+stmt s; while w;
+Select w such that Affects*(w, s)
+none
+5000
+95 - Affects*(w, pn)
+print pn; while w;
+Select pn such that Affects*(w, pn)
+none
+5000
+96 - Affects*(w, r)
+read r; while w;
+Select r such that Affects*(w, r)
+none
+5000
+97 - Affects*(w, a)
+assign a; while w;
+Select a such that Affects*(w, a)
+none
+5000
+98 - Affects*(w, ifs)
+if ifs; while w;
+Select ifs such that Affects*(w, ifs)
+none
+5000
+99 - Affects*(w, W)
+while w, W;
+Select w such that Affects*(w, W)
+none
+5000
+100 - Affects*(w, cl)
+call cl; while w;
+Select cl such that Affects*(w, cl)
+none
+5000
+102 - Affects*(w, p) // Semantic error
+while w; procedure p;
+Select p such that Affects*(w, p)
+SemanticError
+5000
+103 - Affects*(w, v) // Semantic error
+while w; variable v;
+Select BOOLEAN such that Affects*(w, v)
+SemanticError
+5000
+104 - Affects*(w, semanticError) // Semantic error
+while w; constant semanticError;
+Select BOOLEAN such that Affects*(w, semanticError)
+SemanticError
+5000
+105 - Affects*(cl, 61) // cl , ?
+call cl;
+Select cl such that Affects*(cl, 61)
+none
+5000
+106 - Affects*(cl, _)
+call cl;
+Select cl such that Affects*(cl, _)
+none
+5000
+107 - Affects*(cl, s)
+stmt s; call cl;
+Select cl such that Affects*(cl, s)
+none
+5000
+108 - Affects*(cl, pn)
+print pn; call cl;
+Select pn such that Affects*(cl, pn)
+none
+5000
+109 - Affects*(cl, r)
+read r; call cl;
+Select r such that Affects*(cl, r)
+none
+5000
+110 - Affects*(cl, a)
+assign a; call cl;
+Select BOOLEAN such that Affects*(cl, a)
+FALSE
+5000
+111 - Affects*(cl, ifs)
+if ifs; call cl;
+Select ifs such that Affects*(cl, ifs)
+none
+5000
+112 - Affects*(cl, w)
+while w; call cl;
+Select w such that Affects*(cl, w)
+none
+5000
+113 - Affects*(cl, cL)
+call cl, cL;
+Select cl such that Affects*(cl, cL)
+none
+5000
+115 - Affects*(cl, p) // Semantic error
+call cl; procedure p;
+Select p such that Affects*(cl, p)
+SemanticError
+5000
+116 - Affects*(cl, v) // Semantic error
+call cl; variable v;
+Select BOOLEAN such that Affects*(cl, v)
+SemanticError
+5000
+117 - Affects*(cl, semanticError) // Semantic error
+call cl; constant semanticError;
+Select BOOLEAN such that Affects*(cl, semanticError)
+SemanticError
+5000
+131 - Affects*(p, 28) // p , ? // Semantic error
+procedure p;
+Select BOOLEAN such that Affects*(p, 28)
+SemanticError
+5000
+132 - Affects*(p, _)  // Semantic error
+procedure p;
+Select BOOLEAN such that Affects*(p, _)
+SemanticError
+5000
+133 - Affects*(p, s)  // Semantic error
+stmt s; procedure p;
+Select BOOLEAN such that Affects*(p, s)
+SemanticError
+5000
+134 - Affects*(p, pn)  // Semantic error
+print pn; procedure p;
+Select pn such that Affects*(p, pn)
+SemanticError
+5000
+135 - Affects*(p, r)  // Semantic error
+read r; procedure p;
+Select r such that Affects*(p, r)
+SemanticError
+5000
+136 - Affects*(p, a)  // Semantic error
+assign a; procedure p;
+Select a such that Affects*(p, a)
+SemanticError
+5000
+137 - Affects*(p, ifs)  // Semantic error
+if ifs; procedure p;
+Select ifs such that Affects*(p, ifs)
+SemanticError
+5000
+138 - Affects*(p, w)  // Semantic error
+while w; procedure p;
+Select w such that Affects*(p, w)
+SemanticError
+5000
+139 - Affects*(p, cl)  // Semantic error
+call cl; procedure p;
+Select cl such that Affects*(p, cl)
+SemanticError
+5000
+141 - Affects*(p, P) // Semantic error
+procedure p, P;
+Select p such that Affects*(p, P)
+SemanticError
+5000
+142 - Affects*(p, v) // Semantic error
+procedure p; variable v;
+Select BOOLEAN such that Affects*(p, v)
+SemanticError
+5000
+143 - Affects*(p, semanticError) // Semantic error
+procedure p; constant semanticError;
+Select BOOLEAN such that Affects*(p, semanticError)
+SemanticError
+5000
+144 - Affects*(v, 28) // v , ? // Semantic error
+variable v;
+Select BOOLEAN such that Affects*(v, 28)
+SemanticError
+5000
+145 - Affects*(v, _)  // Semantic error
+variable v;
+Select BOOLEAN such that Affects*(v, _)
+SemanticError
+5000
+146 - Affects*(v, s)  // Semantic error
+stmt s; variable v;
+Select BOOLEAN such that Affects*(v, s)
+SemanticError
+5000
+147 - Affects*(v, pn)  // Semantic error
+print pn; variable v;
+Select pn such that Affects*(v, pn)
+SemanticError
+5000
+148 - Affects*(v, r)  // Semantic error
+read r; variable v;
+Select r such that Affects*(v, r)
+SemanticError
+5000
+149 - Affects*(v, a)  // Semantic error
+assign a; variable v;
+Select a such that Affects*(v, a)
+SemanticError
+5000
+150 - Affects*(v, ifs)  // Semantic error
+if ifs; variable v;
+Select ifs such that Affects*(v, ifs)
+SemanticError
+5000
+151 - Affects*(v, w)  // Semantic error
+while w; variable v;
+Select w such that Affects*(v, w)
+SemanticError
+5000
+152 - Affects*(v, cl)  // Semantic error
+call cl; variable v;
+Select cl such that Affects*(v, cl)
+SemanticError
+5000
+154 - Affects*(v, p) // Semantic error
+variable v; procedure p;
+Select p such that Affects*(v, p)
+SemanticError
+5000
+155 - Affects*(v, V) // Semantic error
+variable v, V;
+Select BOOLEAN such that Affects*(v, V)
+SemanticError
+5000
+156 - Affects*(v, semanticError) // Semantic error
+variable v; constant semanticError;
+Select BOOLEAN such that Affects*(v, semanticError)
+SemanticError
+5000
+157 - Affects*(semanticError, 28) // semanticError , ? // Semantic error
+constant semanticError;
+Select BOOLEAN such that Affects*(semanticError, 28)
+SemanticError
+5000
+158 - Affects*(semanticError, _)  // Semantic error
+constant semanticError;
+Select BOOLEAN such that Affects*(semanticError, _)
+SemanticError
+5000
+159 - Affects*(semanticError, s)  // Semantic error
+stmt s; constant semanticError;
+Select BOOLEAN such that Affects*(semanticError, s)
+SemanticError
+5000
+160 - Affects*(semanticError, pn)  // Semantic error
+print pn; constant semanticError;
+Select BOOLEAN such that Affects*(semanticError, pn)
+SemanticError
+5000
+161 - Affects*(semanticError, r)  // Semantic error
+read r; constant semanticError;
+Select r such that Affects*(semanticError, r)
+SemanticError
+5000
+162 - Affects*(semanticError, a)  // Semantic error
+assign a; constant semanticError;
+Select a such that Affects*(semanticError, a)
+SemanticError
+5000
+163 - Affects*(semanticError, ifs)  // Semantic error
+if ifs; constant semanticError;
+Select ifs such that Affects*(semanticError, ifs)
+SemanticError
+5000
+164 - Affects*(semanticError, w)  // Semantic error
+while w; constant semanticError;
+Select w such that Affects*(semanticError, w)
+SemanticError
+5000
+165 - Affects*(semanticError, cl)  // Semantic error
+call cl; constant semanticError;
+Select cl such that Affects*(semanticError, cl)
+SemanticError
+5000
+167 - Affects*(semanticError, p) // Semantic error
+constant semanticError; procedure p;
+Select p such that Affects*(semanticError, p)
+SemanticError
+5000
+168 - Affects*(semanticError, v) // Semantic error
+constant semanticError; variable v;
+Select BOOLEAN such that Affects*(semanticError, v)
+SemanticError
+5000
+169 - Affects*(semanticError, C) // Semantic error
+constant semanticError, C;
+Select BOOLEAN such that Affects*(semanticError, C)
+SemanticError
+5000
+171 - Unobstructed by print
+
+Select BOOLEAN such that Affects*(88, 90)
+TRUE
+5000
+172 - Unobstructed by unreleated read
+
+Select BOOLEAN such that Affects*(51, 54)
+TRUE
+5000
+173 - Unobstructed by assign due to alternative path
+
+Select BOOLEAN such that Affects*(10, 4)
+TRUE
+5000
+174 - Unobstructed by if that modifies in one block
+
+Select BOOLEAN such that Affects*(10, 13)
+TRUE
+5000
+175 - Unobstructed by while looping back
+
+Select BOOLEAN such that Affects*(21, 19)
+TRUE
+5000
+176 - Unobstructed by if and while that modifies
+
+Select BOOLEAN such that Affects*(7, 4)
+TRUE
+5000
+177 - Unobstructed by unrelated call
+
+Select BOOLEAN such that Affects*(35, 29)
+TRUE
+5000
+178 - Else affects Then stmts across while loops
+
+Select BOOLEAN such that Affects*(35, 34)
+TRUE
+5000
+179 - Obstructed by read
+
+Select BOOLEAN such that Affects*(77, 79)
+FALSE
+5000
+180 - Obstructed by read II
+
+Select BOOLEAN such that Affects*(29, 34)
+FALSE
+5000
+181 - Obstructed by read III
+
+Select BOOLEAN such that Affects*(_, 63)
+FALSE
+5000
+182 - Obstructed by assign but unobstructed transitively
+
+Select BOOLEAN such that Affects*(48, 54)
+TRUE
+5000
+183 - Obstructed by call
+
+Select BOOLEAN such that Affects*(4, 7)
+FALSE
+5000
+184 - Obstructed by call II
+
+Select BOOLEAN such that Affects*(56, 58)
+FALSE
+5000
